@@ -1,0 +1,2 @@
+The Class We Edited/Changed: 
+net.glowstone.GlowServer
