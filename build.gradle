@@ -1,5 +1,5 @@
 // Tasks to perform when no task is specified
-defaultTasks 'clean', 'build', 'remap'
+defaultTasks 'clean', 'build', 'remap', 'shadowJar'
 
 // Plugins used
 apply plugin: 'java' // Specifies a java project
@@ -9,7 +9,6 @@ apply plugin: 'eclipse' // Adds eclipse project tasks
 apply plugin: 'idea' // Adds idea project tasks
 apply plugin: 'com.github.johnrengelman.shadow' // Provides dependency shading
 apply plugin: 'net.glowstone.remapper' // Provides method remapping
-apply plugin: 'checkstyle' // Checks code style
 apply from: 'etc/publish.gradle'
 
 // Methods to determine detailed version string
@@ -50,13 +49,13 @@ def getVersionName() {
 }
 
 // Basic project information
-group = 'net.glowstone'
-version = '0.0.1-SNAPSHOT'
-description = "Glowstone"
+group = 'org.dragonet'
+version = 'pre0.0.1'
+description = "Dragonet"
 mainClassName = "net.glowstone.GlowServer"
 
 // Extended project information
-ext.url = 'https://github.com/GlowstoneMC/Glowstone'
+ext.url = 'https://github.com/DragonetMC/Dragonet'
 ext.bukkitVersion = '1.8-R1-SNAPSHOT'
 ext.gitDescribe = getVersionName()
 ext.lombok = 'org.projectlombok:lombok:1.14.8'
@@ -108,11 +107,6 @@ dependencies {
     testCompile 'junit:junit:4.8.1'
 }
 
-// Checkstyle plugin settings
-checkstyle {
-    configFile = file('etc/checkstyle.xml')
-}
-
 // Shadow plugin settings
 shadowJar {
     dependencies {
@@ -129,7 +123,7 @@ remap {
 // Eclipse project name
 eclipse {
     project {
-        name = 'Glowstone'
+        name = 'Dragonet'
     }
 }
 

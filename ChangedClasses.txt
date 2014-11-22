@@ -1,2 +1,3 @@
-The Class We Edited/Changed: 
-net.glowstone.GlowServer
+[The Class We Edited/Changed]
+net.glowstone.GlowServer: Added dragonet instance getter, set dragonet instance to a private variable. 
+net.glowstone.scheduler.GlowScheduler

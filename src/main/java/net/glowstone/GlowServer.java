@@ -49,6 +49,7 @@ import java.security.KeyPair;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import lombok.Getter;
 import org.dragonet.DragonetServer;
 
 /**
@@ -71,6 +72,10 @@ public final class GlowServer implements Server {
      * The protocol version supported by the server.
      */
     public static final int PROTOCOL_VERSION = 47;
+    
+    //DRAGONET-Start
+    private @Getter DragonetServer dragonetServer;
+    //DRAGONET-End
     
     /**
      * Creates a new server on TCP port 25565 and starts listening for
@@ -388,8 +393,9 @@ public final class GlowServer implements Server {
         ipBans.load();
 
         //DRAGONET-Start
-        DragonetServer dragonet = new DragonetServer(this);
-        dragonet.initialize();
+        this.dragonetServer = new DragonetServer(this);
+        this.dragonetServer.initialize();
+        //DRAGONET-End
         
         // Start loading plugins
         loadPlugins();
