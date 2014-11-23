@@ -21,15 +21,14 @@ import org.dragonet.net.translator.Translator;
 public class Translator_v0_10_0 implements Translator{
 
     @Override
-    public Message[] translateToPC() {
+    public Message[] translateToPC(PEPacket packet) {
         //TODO
         return null;
     }
 
     @Override
-    public PEPacket[] translateToPE() {
+    public PEPacket[] translateToPE(Message message) {
         //TODO
         return null;
     }
-
 }

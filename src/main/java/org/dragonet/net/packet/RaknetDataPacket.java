@@ -10,7 +10,6 @@
  *
  * @author The Dragonet Team
  */
-
 package org.dragonet.net.packet;
 
 import com.google.common.collect.Lists;
@@ -19,34 +18,45 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import lombok.Getter;
+import lombok.Setter;
 import org.dragonet.utilities.io.PEBinaryReader;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
-public class RaknetDataPacket extends BinaryPacket{
+public class RaknetDataPacket extends BinaryPacket {
 
-    private @Getter int sequenceNumber;
-    private @Getter ArrayList<EncapsulatedPacket> encapsulatedPackets = new ArrayList<>();
-    
+    private @Getter
+    @Setter
+    int sequenceNumber;
+    private @Getter
+    ArrayList<EncapsulatedPacket> encapsulatedPackets = new ArrayList<>();
+
+    public RaknetDataPacket(int sequenceNumber) {
+        this(sequenceNumber, new EncapsulatedPacket[0]);
+    }
+
+    public RaknetDataPacket(int sequenceNumber, EncapsulatedPacket[] packets) {
+        this.sequenceNumber = sequenceNumber;
+        for (EncapsulatedPacket pk : packets) {
+            this.encapsulatedPackets.add(pk);
+        }
+    }
+
     public RaknetDataPacket(byte[] data) {
         super(data);
     }
 
-    public RaknetDataPacket(EncapsulatedPacket[] packets) {
-        for(EncapsulatedPacket pk : packets) this.encapsulatedPackets.add(pk);
-    }
-    
     @Override
     public void encode() {
-        try{
+        try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PEBinaryWriter writer = new PEBinaryWriter(bos);
-            writer.writeByte((byte)0x84);
+            writer.writeByte((byte) 0x84);
             writer.writeTriad(this.sequenceNumber);
-            for(EncapsulatedPacket packet : this.encapsulatedPackets.toArray(new EncapsulatedPacket[0])){
+            for (EncapsulatedPacket packet : this.encapsulatedPackets.toArray(new EncapsulatedPacket[0])) {
                 writer.write(EncapsulatedPacket.toBinary(packet));
             }
             this.setData(bos.toByteArray());
-        }catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
             this.setData(new byte[0]);
         }
@@ -54,15 +64,32 @@ public class RaknetDataPacket extends BinaryPacket{
 
     @Override
     public void decode() {
-        try{
+        try {
             PEBinaryReader reader = new PEBinaryReader(new ByteArrayInputStream(this.getData()));
             this.sequenceNumber = reader.readTriad();
-            while(reader.available() > 3){
+            while (reader.available() > 3) {
                 this.encapsulatedPackets.add(EncapsulatedPacket.fromBinary(reader));
             }
-        }catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public int getLength() {
+        int len = 4;
+        for (EncapsulatedPacket packet : this.encapsulatedPackets) {
+            len += packet.buffer.length + 1 + 2;
+            if (packet.reliability == 2 || packet.reliability == 3 || packet.reliability == 4 || packet.reliability == 6 || packet.reliability == 7) {
+                len += 3;
+            }
+            if (packet.reliability == 1 || packet.reliability == 3 || packet.reliability == 4 || packet.reliability == 7) {
+                len += 3 + 1;
+            }
+            if (packet.hasSplit) {
+                len += 4 + 2 + 4;
+            }
+        }
+        return len;
     }
 
 }

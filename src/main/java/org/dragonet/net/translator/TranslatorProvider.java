@@ -13,6 +13,15 @@
 
 package org.dragonet.net.translator;
 
-public class TranslatorProvider {
+import org.dragonet.net.translator.protocols.v0_10_0.Translator_v0_10_0;
 
+public class TranslatorProvider {
+    public Translator getByPEProtocolID(int protocolID){
+        switch(protocolID){
+            case 20:
+                return new Translator_v0_10_0();
+            default:
+                return null;
+        }
+    }
 }

@@ -18,13 +18,15 @@ import org.dragonet.net.packet.minecraft.PEPacket;
 public interface Translator {
     /**
      * Translate a packet into PC packet(s). 
+     * @param packet Minecraft PE Packet
      * @return Minecraft PC Packet(s)
      */
-    public Message[] translateToPC();
+    public Message[] translateToPC(PEPacket packet);
     
     /**
      * Translate a packet into PE packet(s). 
+     * @param message Minecraft PC Message
      * @return Minecraft PE Packet(s)
      */
-    public PEPacket[] translateToPE();
+    public PEPacket[] translateToPE(Message message);
 }

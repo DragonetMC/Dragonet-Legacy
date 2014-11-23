@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Queue;
 import javax.crypto.SecretKey;
 import lombok.Getter;
+import lombok.Setter;
 import net.glowstone.EventFactory;
 import net.glowstone.GlowServer;
 import net.glowstone.entity.GlowPlayer;
@@ -40,6 +41,7 @@ import org.dragonet.entity.DragonetPlayer;
 import org.dragonet.net.packet.EncapsulatedPacket;
 import org.dragonet.net.packet.RaknetDataPacket;
 import org.dragonet.net.packet.minecraft.PEPacket;
+import org.dragonet.net.translator.Translator;
 import org.dragonet.utilities.io.PEBinaryReader;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
@@ -50,25 +52,29 @@ public class DragonetSession extends GlowSession {
 
     private SocketAddress remoteAddress;
 
-    private @Getter
-    long clientID;
-    private short clientMTU;
+    private @Getter long clientID;
+    private @Getter short clientMTU;
 
-    private int sequenceNum;        //Server->Client
-    private int lastSequenceNum;    //Server<-Client
+    private @Getter int sequenceNum;        //Server->Client
+    private @Getter int lastSequenceNum;    //Server<-Client
 
-    private int messageID;
-    private int splitID;
+    private @Getter @Setter int messageIndex;          //Server->Client
+    private @Getter @Setter int splitID;
+
+    private RaknetDataPacket queue;
 
     private ArrayList<Integer> queueACK = new ArrayList<>();
     private ArrayList<Integer> queueNACK = new ArrayList<>();
     private HashMap<Integer, RaknetDataPacket> cachedOutgoingPacket = new HashMap<>();
+
+    private Translator translator;
 
     public DragonetSession(DragonetServer dServer, SocketAddress remoteAddress, long clientID, short clientMTU) {
         super(dServer.getServer(), null);
         this.dServer = dServer;
         this.clientID = clientID;
         this.clientMTU = clientMTU;
+        this.queue = new RaknetDataPacket(this.sequenceNum);
     }
 
     /**
@@ -77,6 +83,9 @@ public class DragonetSession extends GlowSession {
     public void onTick() {
         sendAllACK();
         sendAllNACK();
+        if(this.queue.getEncapsulatedPackets().size() > 0){
+            this.fireQueue();
+        }
     }
 
     private synchronized void sendAllACK() {
@@ -96,7 +105,7 @@ public class DragonetSession extends GlowSession {
                 int start = ackSeqs[0];
                 int last = ackSeqs[0];
                 ByteArrayOutputStream recBos = new ByteArrayOutputStream();
-                PEBinaryWriter recWriter = null;
+                PEBinaryWriter recWriter;
                 while (pointer < count) {
                     int current = ackSeqs[pointer++];
                     int diff = current - last;
@@ -199,6 +208,7 @@ public class DragonetSession extends GlowSession {
 
     /**
      * Process a ACK packet
+     *
      * @param buffer The ACK packet binary array
      */
     public void processACKPacket(byte[] buffer) {
@@ -222,8 +232,8 @@ public class DragonetSession extends GlowSession {
                 }
             }
             int[] seqNums = ArrayUtils.toPrimitive(packets.toArray(new Integer[0]));
-            for(int seq : seqNums){
-                if(this.cachedOutgoingPacket.containsKey(seq)){
+            for (int seq : seqNums) {
+                if (this.cachedOutgoingPacket.containsKey(seq)) {
                     this.cachedOutgoingPacket.remove(seq);
                 }
             }
@@ -233,6 +243,7 @@ public class DragonetSession extends GlowSession {
 
     /**
      * Process a NACK packet
+     *
      * @param buffer The NACK packet binary array
      */
     public void processNACKPacket(byte[] buffer) {
@@ -256,13 +267,39 @@ public class DragonetSession extends GlowSession {
                 }
             }
             int[] seqNums = ArrayUtils.toPrimitive(packets.toArray(new Integer[0]));
-            for(int seq : seqNums){
-                if(this.cachedOutgoingPacket.containsKey(seq)){
+            for (int seq : seqNums) {
+                if (this.cachedOutgoingPacket.containsKey(seq)) {
                     this.dServer.networkHandler.getUdp().send(this.cachedOutgoingPacket.get(seq).getData(), this.remoteAddress);
                 }
             }
         } catch (IOException e) {
         }
+    }
+
+    /**
+     * Send a packet to the client
+     *
+     * @param packet Packet to send
+     */
+    public void send(PEPacket packet) {
+        if (this.queue.getLength() > this.clientMTU) {
+            this.fireQueue();
+        }
+        EncapsulatedPacket[] encapsulatedPacket = EncapsulatedPacket.fromPEPacket(this, packet);
+        for(EncapsulatedPacket ePacket : encapsulatedPacket){
+            ePacket.encode();
+            if(this.queue.getLength() + ePacket.getData().length > this.clientMTU - 24){
+                this.fireQueue();
+            }
+            this.queue.getEncapsulatedPackets().add(ePacket);
+        }
+    }
+
+    private synchronized void fireQueue() {
+        this.cachedOutgoingPacket.put(this.queue.getSequenceNumber(), this.queue);
+        this.queue.encode();
+        this.dServer.getNetworkHandler().getUdp().send(this.queue.getData(), this.remoteAddress);
+        this.queue = new RaknetDataPacket(this.sequenceNum++);
     }
 
     /**
@@ -272,7 +309,16 @@ public class DragonetSession extends GlowSession {
      */
     @Override
     public void send(Message message) throws ChannelClosedException {
-        //TODO
+        PEPacket[] packets = this.translator.translateToPE(message);
+        if (packets == null) {
+            return;
+        }
+        for (PEPacket packet : packets) {
+            if (packet == null) {
+                continue;
+            }
+            this.send(packet);
+        }
     }
 
     /**
@@ -302,6 +348,8 @@ public class DragonetSession extends GlowSession {
             for (int i = this.lastSequenceNum + 1; i < dataPacket.getSequenceNumber(); i++) {
                 this.queueNACK.add(i);
             }
+        }else{
+            this.lastSequenceNum = dataPacket.getSequenceNumber();
         }
         this.queueACK.add(dataPacket.getSequenceNumber());
         if (dataPacket.getEncapsulatedPackets().isEmpty()) {
@@ -309,7 +357,16 @@ public class DragonetSession extends GlowSession {
         }
         for (EncapsulatedPacket epacket : dataPacket.getEncapsulatedPackets()) {
             PEPacket packet = PEPacket.fromBinary(epacket.buffer);
-
+            Message[] msgs = this.translator.translateToPC(packet);
+            if (msgs == null) {
+                return;
+            }
+            for (Message msg : msgs) {
+                if (msg == null) {
+                    continue;
+                }
+                this.messageReceived(msg);
+            }
         }
     }
 
