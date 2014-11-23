@@ -34,6 +34,7 @@ import javax.crypto.SecretKey;
 import java.net.InetSocketAddress;
 import java.util.*;
 import java.util.logging.Level;
+import lombok.Getter;
 
 /**
  * A single connection to the server, which may or may not be associated with a
@@ -87,7 +88,8 @@ public class GlowSession extends BasicSession {
     /**
      * The hostname used to connect.
      */
-    private String hostname;
+    //DRAGONET-Added @Getter
+    private @Getter String hostname;
 
     /**
      * A timeout counter. This is increment once every tick and if it goes above
@@ -110,7 +112,8 @@ public class GlowSession extends BasicSession {
     /**
      * The player associated with this session (if there is one).
      */
-    private GlowPlayer player;
+    //DRAGONET-Change private into protected
+    protected GlowPlayer player;
 
     /**
      * The ID of the last ping message sent, used to ensure the client responded correctly.

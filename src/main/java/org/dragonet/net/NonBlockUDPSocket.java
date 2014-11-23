@@ -32,7 +32,6 @@ public class NonBlockUDPSocket extends Thread{
 	public NonBlockUDPSocket(DragonetServer udp, SocketAddress address){
 		this.dragonetServer = udp;
 		addr = address;
-		start();
 	}
 	@Override
 	public void run(){
@@ -50,6 +49,7 @@ public class NonBlockUDPSocket extends Thread{
 				throw new RuntimeException(e);
 			}
 			socket.setSoTimeout(0);
+                        running = true;
 			while(running){
 				DatagramPacket pk = new DatagramPacket(new byte[1024 * 1024], 1024 * 1024);
 				socket.receive(pk);

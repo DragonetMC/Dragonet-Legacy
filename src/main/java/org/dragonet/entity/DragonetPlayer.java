@@ -16,11 +16,11 @@ package org.dragonet.entity;
 import net.glowstone.entity.GlowPlayer;
 import net.glowstone.entity.meta.profile.PlayerProfile;
 import net.glowstone.io.PlayerDataService;
-import net.glowstone.net.GlowSession;
+import org.dragonet.net.DragonetSession;
 
 public class DragonetPlayer extends GlowPlayer {
 
-    public DragonetPlayer(GlowSession session, PlayerProfile profile, PlayerDataService.PlayerReader reader) {
+    public DragonetPlayer(DragonetSession session, PlayerProfile profile, PlayerDataService.PlayerReader reader) {
         super(session, profile, reader);
     }
 

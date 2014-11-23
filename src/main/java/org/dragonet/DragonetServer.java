@@ -53,6 +53,6 @@ public class DragonetServer {
      * Trigger a tick update
      */
     public void tickUpdate(){
-        //TODO
+        this.networkHandler.onTick();
     }
 }

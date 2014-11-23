@@ -120,4 +120,8 @@ public class PEBinaryWriter implements Flushable, Closeable{
 	protected <T> void writeUnknownType(T obj, Object[] args) throws IOException{
 		throw new UnsupportedOperationException(String.format("Unknown BSF object type %s", obj.getClass().getName()));
 	}
+
+    public void writeByte(int ID_OPEN_CONNECTION_REPLY_1) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
