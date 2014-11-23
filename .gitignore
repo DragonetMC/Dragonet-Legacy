@@ -6,6 +6,12 @@
 .nb-gradle
 .gradle
 build
+
+worlds
+logs
+plugins
+config
+
 out
 classes
 nbproject

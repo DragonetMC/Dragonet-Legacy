@@ -10,7 +10,6 @@
  *
  * @author The Dragonet Team
  */
-
 package org.dragonet.net;
 
 import java.io.ByteArrayInputStream;
@@ -28,45 +27,49 @@ import org.dragonet.utilities.io.PEBinaryReader;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class NetworkHandler {
+
     public final static long serverID = 0x0000000012345678L;
-    
-    private @Getter DragonetServer server;
-    private @Getter NonBlockUDPSocket udp;
-    
+
+    private @Getter
+    DragonetServer server;
+    private @Getter
+    NonBlockUDPSocket udp;
+
     private HashMap<String, DragonetSession> sessions;
-    
+
     public NetworkHandler(DragonetServer server, InetSocketAddress address) {
         this.server = server;
         this.sessions = new HashMap<>();
         this.udp = new NonBlockUDPSocket(this.server, address);
         this.udp.start();
     }
-    
-    public void onTick(){
+
+    public void onTick() {
         DatagramPacket packet = null;
-        while((packet = this.udp.receive()) != null){
+        while ((packet = this.udp.receive()) != null) {
             this.processPacket(packet);
         }
-        for(DragonetSession session : this.sessions.values()){
+        for (DragonetSession session : this.sessions.values()) {
             session.onTick();
         }
     }
 
-    private void processPacket(DatagramPacket packet){
-        try{
+    private void processPacket(DatagramPacket packet) {
+        try {
             PEBinaryReader reader = new PEBinaryReader(new ByteArrayInputStream(packet.getData()));
             int raknetPID = reader.readByte() & 0xFF;
-            switch(raknetPID){
+            System.out.println("Got RakNet Packet ID: " + Integer.toHexString(raknetPID));
+            switch (raknetPID) {
                 case RaknetConstants.ID_OPEN_CONNECTION_REQUEST_1:
                     reader.read(16); //MAGIC
                     reader.readByte(); //RakNet Protocol
-                    short mtu = (short)((packet.getLength() - 18) & 0xFFFF);
+                    short mtu = (short) ((packet.getLength() - 18) & 0xFFFF);
                     ByteArrayOutputStream bos = new ByteArrayOutputStream();
                     PEBinaryWriter writer = new PEBinaryWriter(bos);
                     writer.writeByte(RaknetConstants.ID_OPEN_CONNECTION_REPLY_1);
                     writer.write(RaknetConstants.magic);
                     writer.writeLong(NetworkHandler.serverID);
-                    writer.writeByte((byte)0x00);
+                    writer.writeByte((byte) 0x00);
                     writer.writeShort(mtu);
                     this.udp.send(bos.toByteArray(), packet.getSocketAddress());
                     break;
@@ -76,9 +79,18 @@ public class NetworkHandler {
                     reader.readShort();
                     short clientMTU = reader.readShort();
                     long clientID = reader.readLong();
+                    ByteArrayOutputStream bos8 = new ByteArrayOutputStream();
+                    PEBinaryWriter writer8 = new PEBinaryWriter(bos8);
+                    writer8.writeByte(RaknetConstants.ID_OPEN_CONNECTION_REPLY_2);
+                    writer8.write(RaknetConstants.magic);
+                    writer8.writeLong(NetworkHandler.serverID);
+                    writer8.writeShort((short)(packet.getPort() & 0xFFFF));
+                    writer8.writeShort(clientMTU);
+                    writer8.writeByte((byte) 0x00);
+                    this.send(bos8.toByteArray(), packet.getSocketAddress());
                     DragonetSession session = new DragonetSession(this.server, packet.getSocketAddress(), clientID, clientMTU);
                     this.sessions.put(packet.getSocketAddress().toString(), session);
-                    this.server.getServer().getSessionRegistry().add(session);
+                    //this.server.getServer().getSessionRegistry().add(session);
                     break;
                 case 0x80:
                 case 0x81:
@@ -96,17 +108,19 @@ public class NetworkHandler {
                 case 0x8D:
                 case 0x8E:
                 case 0x8F:
-                    if(this.sessions.containsKey(packet.getAddress().toString())){
+                    if (this.sessions.containsKey(packet.getSocketAddress().toString())) {
                         RaknetDataPacket dataPacket = new RaknetDataPacket(ArrayUtils.subarray(packet.getData(), 1, packet.getLength()));
-                        this.sessions.get(packet.getAddress().toString()).processDataPacket(dataPacket);
+                        dataPacket.decode();
+                        this.sessions.get(packet.getSocketAddress().toString()).processDataPacket(dataPacket);
                     }
                     break;
             }
-        }catch(IOException e){}
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
-    
-    
-    public void send(byte[] buffer, SocketAddress remoteAddr){
+
+    public void send(byte[] buffer, SocketAddress remoteAddr) {
         this.udp.send(buffer, remoteAddr);
     }
 }

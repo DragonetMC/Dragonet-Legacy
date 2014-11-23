@@ -58,9 +58,9 @@ public class EncapsulatedPacket extends BinaryPacket {
 
             int flags = reader.readByte();
             packet.reliability = (flags & 0b11100000) >> 5;
-            packet.hasSplit = (flags & 0b00010000) > 0;
+            packet.hasSplit = (flags & 0b00010000 >> 4) > 0;
 
-            int length = reader.readShort();
+            int length = (reader.readShort() & 0xFFFF) / 8;
             if (packet.reliability == 2 || packet.reliability == 3 || packet.reliability == 4 || packet.reliability == 6 || packet.reliability == 7) {
                 packet.messageIndex = reader.readTriad();
             }

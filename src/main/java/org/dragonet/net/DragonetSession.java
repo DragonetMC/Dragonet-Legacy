@@ -70,10 +70,11 @@ public class DragonetSession extends GlowSession {
     private Translator translator;
 
     public DragonetSession(DragonetServer dServer, SocketAddress remoteAddress, long clientID, short clientMTU) {
-        super(dServer.getServer(), null);
+        super(dServer.getServer());
         this.dServer = dServer;
         this.clientID = clientID;
         this.clientMTU = clientMTU;
+        this.remoteAddress = remoteAddress;
         this.queue = new RaknetDataPacket(this.sequenceNum);
     }
 
@@ -357,6 +358,7 @@ public class DragonetSession extends GlowSession {
         }
         for (EncapsulatedPacket epacket : dataPacket.getEncapsulatedPackets()) {
             PEPacket packet = PEPacket.fromBinary(epacket.buffer);
+            if(packet == null) continue;
             Message[] msgs = this.translator.translateToPC(packet);
             if (msgs == null) {
                 return;

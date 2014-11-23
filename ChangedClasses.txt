@@ -9,5 +9,6 @@ net.glowstone.entity.GlowPlayer: Removed final
 net.glowstone.net.GlowSession: Removed final
 net.glowstone.net.GlowSession: Changed player variable into protected
 net.glowstone.net.GlowSession: Added @Getter at hostname variable
+net.glowstone.net.GlowSession: Added another constructor
 
 net.glowstone.net.message.*: Changed every variable to public in order to read/write

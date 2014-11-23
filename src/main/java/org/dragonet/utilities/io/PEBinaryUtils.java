@@ -31,7 +31,7 @@ public abstract class PEBinaryUtils{
 		long x = 0;
 		for(int i = 0; i < length; i++){
 			x <<= 8;
-			x |= buffer[endianness == BIG_ENDIAN ? (start + i) : (start + length - 1 - i)];
+			x |= buffer[endianness == BIG_ENDIAN ? (start + i) : (start + length - 1 - i)] & 0xFF;
 		}
 		return x;
 	}

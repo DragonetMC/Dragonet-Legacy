@@ -141,6 +141,16 @@ public class GlowSession extends BasicSession {
         address = super.getAddress();
     }
 
+    //DRAGONET-Add another constructor
+    /**
+     * Constructor for Dragonet to use
+     * @param server The GlowStone server instance
+     */
+    public GlowSession(GlowServer server) {
+        super(null, ProtocolType.HANDSHAKE.getProtocol());
+        this.server = server;
+    }
+    
     /**
      * Gets the server associated with this session.
      * @return The server.

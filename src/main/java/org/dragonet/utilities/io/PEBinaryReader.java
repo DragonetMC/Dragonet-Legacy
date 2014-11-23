@@ -55,17 +55,20 @@ public class PEBinaryReader implements Closeable {
 
     public short readShort() throws IOException {
         falloc(2);
-        return (short) readNat(2);
+        return (short) (readNat(2) & 0xFFFF);
     }
 
     public int readTriad() throws IOException {
         falloc(3);
-        return (int) readNat(3);
+        this.endianness = !this.endianness;
+        int triad = (int) (readNat(3) & 0xFFFFFF);
+        this.endianness = !this.endianness;
+        return triad;
     }
 
     public int readInt() throws IOException {
         falloc(4);
-        return (int) readNat(4);
+        return (int) (readNat(4) & 0xFFFFFFFF);
     }
 
     public long readLong() throws IOException {
