@@ -18,6 +18,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.HashMap;
 import lombok.Getter;
 import org.apache.commons.lang.ArrayUtils;
@@ -30,15 +31,13 @@ public class NetworkHandler {
     public final static long serverID = 0x0000000012345678L;
     
     private @Getter DragonetServer server;
-    private @Getter NonBlockUDPSocket socket;
-
-    private NonBlockUDPSocket udp;
+    private @Getter NonBlockUDPSocket udp;
     
     private HashMap<String, DragonetSession> sessions;
     
     public NetworkHandler(DragonetServer server, InetSocketAddress address) {
         this.server = server;
-        this.sessions = new HashMap<String, DragonetSession>();
+        this.sessions = new HashMap<>();
         this.udp = new NonBlockUDPSocket(this.server, address);
         this.udp.start();
     }
@@ -77,7 +76,7 @@ public class NetworkHandler {
                     reader.readShort();
                     short clientMTU = reader.readShort();
                     long clientID = reader.readLong();
-                    DragonetSession session = new DragonetSession(this.server.getServer(), packet.getSocketAddress(), clientID, clientMTU);
+                    DragonetSession session = new DragonetSession(this.server, packet.getSocketAddress(), clientID, clientMTU);
                     this.sessions.put(packet.getSocketAddress().toString(), session);
                     this.server.getServer().getSessionRegistry().add(session);
                     break;
@@ -104,5 +103,10 @@ public class NetworkHandler {
                     break;
             }
         }catch(IOException e){}
+    }
+    
+    
+    public void send(byte[] buffer, SocketAddress remoteAddr){
+        this.udp.send(buffer, remoteAddr);
     }
 }
