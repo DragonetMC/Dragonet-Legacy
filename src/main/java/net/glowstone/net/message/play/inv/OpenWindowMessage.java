@@ -9,10 +9,10 @@ import net.glowstone.util.TextMessage;
 @RequiredArgsConstructor
 public final class OpenWindowMessage implements Message {
 
-    private final int id;
-    private final String type;
-    private final TextMessage title;
-    private final int slots, entityId;
+    public final int id;
+    public final String type;
+    public final TextMessage title;
+    public final int slots, entityId;
 
     public OpenWindowMessage(int id, String type, String title, int slots) {
         this(id, type, new TextMessage(title), slots, 0);

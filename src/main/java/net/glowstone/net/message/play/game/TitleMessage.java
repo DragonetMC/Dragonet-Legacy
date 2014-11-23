@@ -6,9 +6,9 @@ import lombok.Data;
 @Data
 public final class TitleMessage implements Message {
 
-    private final Action action;
-    private final String text;
-    private final int fadeIn, stay, fadeOut;
+    public final Action action;
+    public final String text;
+    public final int fadeIn, stay, fadeOut;
 
     // TITLE, SUBTITLE
     public TitleMessage(Action action, String text) {

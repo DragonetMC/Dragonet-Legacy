@@ -7,7 +7,7 @@ import org.bukkit.inventory.ItemStack;
 @Data
 public final class SetWindowSlotMessage implements Message {
 
-    private final int id, slot;
-    private final ItemStack item;
+    public final int id, slot;
+    public final ItemStack item;
 
 }

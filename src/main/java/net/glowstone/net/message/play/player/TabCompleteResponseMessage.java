@@ -8,7 +8,7 @@ import java.util.List;
 @Data
 public final class TabCompleteResponseMessage implements Message {
 
-    private final List<String> completions;
+    public final List<String> completions;
 
 }
 

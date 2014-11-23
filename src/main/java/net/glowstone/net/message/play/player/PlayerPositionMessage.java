@@ -8,7 +8,7 @@ import org.bukkit.Location;
 @EqualsAndHashCode(callSuper = true)
 public final class PlayerPositionMessage extends PlayerUpdateMessage {
 
-    private final double x, y, z;
+    public final double x, y, z;
 
     public PlayerPositionMessage(boolean onGround, double x, double y, double z) {
         super(onGround);

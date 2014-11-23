@@ -7,7 +7,7 @@ import org.bukkit.inventory.ItemStack;
 @Data
 public final class CreativeItemMessage implements Message {
 
-    private final int slot;
-    private final ItemStack item;
+    public final int slot;
+    public final ItemStack item;
 
 }

@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public final class EntityStatusMessage implements Message {
 
-    private final int id, status;
+    public final int id, status;
 
     public EntityStatusMessage(int id, Status status) {
         this(id, status.ordinal());

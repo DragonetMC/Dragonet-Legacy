@@ -8,6 +8,6 @@ import java.util.Map;
 @Data
 public final class StatisticMessage implements Message {
 
-    private final Map<String, Integer> values;
+    public final Map<String, Integer> values;
 
 }

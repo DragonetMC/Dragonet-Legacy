@@ -12,8 +12,8 @@ import java.util.UUID;
 @Data
 public final class UserListItemMessage implements Message {
 
-    private final Action action;
-    private final List<Entry> entries;
+    public final Action action;
+    public final List<Entry> entries;
 
     public UserListItemMessage(Action action, List<Entry> entries) {
         this.action = action;

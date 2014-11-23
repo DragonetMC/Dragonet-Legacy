@@ -9,8 +9,8 @@ import java.util.List;
 @Data
 public final class EntityMetadataMessage implements Message {
 
-    private final int id;
-    private final List<MetadataMap.Entry> entries;
+    public final int id;
+    public final List<MetadataMap.Entry> entries;
 
     @Override
     public String toString() {
