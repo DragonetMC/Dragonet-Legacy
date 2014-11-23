@@ -1,5 +1,6 @@
 [The Class We Edited/Changed]
 net.glowstone.GlowServer: Added dragonet instance getter, set dragonet instance to a private variable. 
+net.glowstone.GlowServer: Changed getViewDistance() method always return 8
 net.glowstone.scheduler.GlowScheduler
 net.glowstone.entity.GlowPlayer: Removed final
 net.glowstone.net.GlowSession: Removed final

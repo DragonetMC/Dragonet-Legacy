@@ -49,10 +49,6 @@ public class EncapsulatedPacket extends BinaryPacket {
     private EncapsulatedPacket() {
     }
     
-    public EncapsulatedPacket(byte[] data) {
-        super(data);
-    }
-
     @Override
     public void encode() {
     }

@@ -13,8 +13,18 @@
 package org.dragonet.net.translator;
 
 import com.flowpowered.networking.Message;
+import org.dragonet.net.packet.minecraft.PEPacket;
 
 public interface Translator {
-    public Message translateToPC();
+    /**
+     * Translate a packet into PC packet(s). 
+     * @return Minecraft PC Packet(s)
+     */
+    public Message[] translateToPC();
     
+    /**
+     * Translate a packet into PE packet(s). 
+     * @return Minecraft PE Packet(s)
+     */
+    public PEPacket[] translateToPE();
 }

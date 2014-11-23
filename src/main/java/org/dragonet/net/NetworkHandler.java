@@ -18,7 +18,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
+import java.util.HashMap;
 import lombok.Getter;
 import org.apache.commons.lang.ArrayUtils;
 import org.dragonet.DragonetServer;
@@ -34,11 +34,11 @@ public class NetworkHandler {
 
     private NonBlockUDPSocket udp;
     
-    private ArrayList<DragonetSession> sessions;
+    private HashMap<String, DragonetSession> sessions;
     
     public NetworkHandler(DragonetServer server, InetSocketAddress address) {
         this.server = server;
-        this.sessions = new ArrayList<DragonetSession>();
+        this.sessions = new HashMap<String, DragonetSession>();
         this.udp = new NonBlockUDPSocket(this.server, address);
         this.udp.start();
     }
@@ -75,6 +75,7 @@ public class NetworkHandler {
                     short clientMTU = reader.readShort();
                     long clientID = reader.readLong();
                     DragonetSession session = new DragonetSession(this.server.getServer(), packet.getSocketAddress(), clientID, clientMTU);
+                    this.sessions.put(packet.getSocketAddress().toString(), session);
                     this.server.getServer().getSessionRegistry().add(session);
                     break;
                 case 0x80:
@@ -93,8 +94,10 @@ public class NetworkHandler {
                 case 0x8D:
                 case 0x8E:
                 case 0x8F:
-                    RaknetDataPacket dataPacket = new RaknetDataPacket(ArrayUtils.subarray(packet.getData(), 1, packet.getLength()));
-                    //TODO
+                    if(this.sessions.containsKey(packet.getAddress().toString())){
+                        RaknetDataPacket dataPacket = new RaknetDataPacket(ArrayUtils.subarray(packet.getData(), 1, packet.getLength()));
+                        this.sessions.get(packet.getAddress().toString()).processDataPacket(dataPacket);
+                    }
                     break;
             }
         }catch(IOException e){}

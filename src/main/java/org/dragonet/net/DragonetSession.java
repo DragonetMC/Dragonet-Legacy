@@ -17,9 +17,12 @@ import com.flowpowered.networking.Message;
 import com.flowpowered.networking.exception.ChannelClosedException;
 import io.netty.channel.ChannelFuture;
 import java.net.SocketAddress;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Queue;
 import javax.crypto.SecretKey;
 import net.glowstone.EventFactory;
 import net.glowstone.GlowServer;
@@ -30,6 +33,9 @@ import net.glowstone.net.GlowSession;
 import net.glowstone.net.message.play.game.UserListItemMessage;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.dragonet.entity.DragonetPlayer;
+import org.dragonet.net.packet.EncapsulatedPacket;
+import org.dragonet.net.packet.RaknetDataPacket;
+import org.dragonet.net.packet.minecraft.PEPacket;
 
 public class DragonetSession extends GlowSession {
     
@@ -38,7 +44,16 @@ public class DragonetSession extends GlowSession {
     private long clientID;
     private short clientMTU;
     
-    //private HashMap<Integer,>
+    private int sequenceNum;        //Server->Client
+    private int lastSequenceNum;    //Server<-Client
+    
+    private int messageID;
+    private int splitID;
+    
+    private Queue<Integer> queueACK = new ArrayDeque<>();
+    private Queue<Integer> queueNACK = new ArrayDeque<>();
+    private HashMap<Integer,RaknetDataPacket> cachedOutgoingPacket = new HashMap<>();
+    
     
     public DragonetSession(GlowServer server, SocketAddress remoteAddress, long clientID, short clientMTU) {
         super(server, null);
@@ -46,11 +61,17 @@ public class DragonetSession extends GlowSession {
         this.clientMTU = clientMTU;
     }
 
+    /**
+     * Send a message to the client
+     */
     @Override
     public void send(Message message) throws ChannelClosedException {
         //TODO
     }
 
+    /**
+     * Send multiple messages
+     */
     @Override
     public void sendAll(Message... messages) throws ChannelClosedException {
         //TODO
@@ -61,7 +82,21 @@ public class DragonetSession extends GlowSession {
         //TODO
         return null;
     }
-
+    
+    public void processDataPacket(RaknetDataPacket dataPacket){
+        if(dataPacket.getSequenceIndex() - this.lastSequenceNum > 1){
+            for(int i = this.lastSequenceNum + 1; i < dataPacket.getSequenceIndex(); i++){
+                this.queueNACK.add(i);
+            }
+        }
+        this.queueACK.add(dataPacket.getSequenceIndex());
+        if(dataPacket.getEncapsulatedPackets().size() == 0) return;
+        for(EncapsulatedPacket epacket : dataPacket.getEncapsulatedPackets()){
+            PEPacket packet = PEPacket.fromBinary(epacket.buffer);
+            
+        }
+    }
+    
     @Override
     public void enableCompression(int threshold) {
     }

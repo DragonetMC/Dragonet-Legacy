@@ -21,6 +21,7 @@ import org.dragonet.utilities.io.PEBinaryReader;
 
 public class RaknetDataPacket extends BinaryPacket{
 
+    private @Getter int sequenceIndex;
     private @Getter ArrayList<EncapsulatedPacket> encapsulatedPackets;
     
     public RaknetDataPacket(byte[] data) {
@@ -35,6 +36,7 @@ public class RaknetDataPacket extends BinaryPacket{
     public void decode() {
         try{
             PEBinaryReader reader = new PEBinaryReader(new ByteArrayInputStream(this.getData()));
+            this.sequenceIndex = reader.readTriad();
             while(reader.available() > 3){
                 this.encapsulatedPackets.add(EncapsulatedPacket.fromBinary(reader));
             }

@@ -1458,7 +1458,9 @@ public final class GlowServer implements Server {
 
     @Override
     public int getViewDistance() {
-        return config.getInt(ServerConfig.Key.VIEW_DISTANCE);
+        //DRAGONET-Always return 8
+        //return config.getInt(ServerConfig.Key.VIEW_DISTANCE);
+        return 8;
     }
 
     @Override
