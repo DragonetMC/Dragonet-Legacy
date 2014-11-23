@@ -13,9 +13,11 @@
 
 package org.dragonet.net.packet;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import lombok.Getter;
 import org.dragonet.utilities.io.PEBinaryReader;
+import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class EncapsulatedPacket extends BinaryPacket {
 
@@ -88,4 +90,32 @@ public class EncapsulatedPacket extends BinaryPacket {
         }
     }
     
+    
+    /**
+     * Convert an Encapsulated packet into bytes array
+     * @param packet The packet you want to encode
+     */
+    public static byte[] toBinary(EncapsulatedPacket packet){
+        try{
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            PEBinaryWriter writer = new PEBinaryWriter(bos);
+            writer.writeByte((byte)((packet.reliability << 5) ^ (packet.hasSplit ? 0b0001 : 0x00)));
+            writer.writeShort((short)((packet.buffer.length << 3) & 0xFFFF));
+            if(packet.reliability == 2 || packet.reliability == 3 || packet.reliability == 4 || packet.reliability == 6 || packet.reliability == 7){
+                writer.writeTriad(packet.messageIndex);
+            }
+            if(packet.reliability == 1 || packet.reliability == 3 || packet.reliability == 4 || packet.reliability == 7){
+                writer.writeTriad(packet.orderIndex);
+                writer.writeByte((byte)(packet.orderChannel & 0xFF));
+            }
+            if(packet.hasSplit){
+                writer.writeInt(packet.splitCount);
+                writer.writeShort((short)(packet.splitID & 0xFFFF));
+                writer.writeInt(packet.splitIndex);
+            }
+            writer.write(packet.buffer);
+            return bos.toByteArray();
+        }catch(IOException e){}
+        return new byte[0];
+    }
 }

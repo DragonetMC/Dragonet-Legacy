@@ -15,6 +15,7 @@ package org.dragonet.net;
 import com.flowpowered.networking.Message;
 import com.flowpowered.networking.exception.ChannelClosedException;
 import io.netty.channel.ChannelFuture;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.SocketAddress;
@@ -39,15 +40,18 @@ import org.dragonet.entity.DragonetPlayer;
 import org.dragonet.net.packet.EncapsulatedPacket;
 import org.dragonet.net.packet.RaknetDataPacket;
 import org.dragonet.net.packet.minecraft.PEPacket;
+import org.dragonet.utilities.io.PEBinaryReader;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class DragonetSession extends GlowSession {
 
-    private @Getter DragonetServer dServer;
-    
+    private @Getter
+    DragonetServer dServer;
+
     private SocketAddress remoteAddress;
 
-    private @Getter long clientID;
+    private @Getter
+    long clientID;
     private short clientMTU;
 
     private int sequenceNum;        //Server->Client
@@ -126,8 +130,8 @@ public class DragonetSession extends GlowSession {
             }
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PEBinaryWriter writer = new PEBinaryWriter(allRecBos);
-            writer.writeByte((byte)0xC0);
-            writer.writeShort((short)(records & 0xFFFF));
+            writer.writeByte((byte) 0xC0);
+            writer.writeShort((short) (records & 0xFFFF));
             writer.write(allRecBos.toByteArray());
             this.dServer.getNetworkHandler().send(bos.toByteArray(), this.remoteAddress);
         } catch (IOException e) {
@@ -185,28 +189,82 @@ public class DragonetSession extends GlowSession {
             }
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PEBinaryWriter writer = new PEBinaryWriter(allRecBos);
-            writer.writeByte((byte)0xA0);
-            writer.writeShort((short)(records & 0xFFFF));
+            writer.writeByte((byte) 0xA0);
+            writer.writeShort((short) (records & 0xFFFF));
             writer.write(allRecBos.toByteArray());
             this.dServer.getNetworkHandler().send(bos.toByteArray(), this.remoteAddress);
         } catch (IOException e) {
         }
     }
 
-    
     /**
      * Process a ACK packet
+     * @param buffer The ACK packet binary array
      */
-    public void processACKPacket(byte[] buffer){
-        
+    public void processACKPacket(byte[] buffer) {
+        try {
+            PEBinaryReader reader = new PEBinaryReader(new ByteArrayInputStream(buffer));
+            int count = reader.readShort();
+            List<Integer> packets = new ArrayList<>();
+            for (int i = 0; i < count && reader.available() > 0; ++i) {
+                byte[] tmp = new byte[6];
+                if (reader.readByte() == (byte) 0x00) {
+                    int start = reader.readTriad();
+                    int end = reader.readTriad();
+                    if ((end - start) > 4096) {
+                        end = start + 4096;
+                    }
+                    for (int c = start; c <= end; ++c) {
+                        packets.add(c);
+                    }
+                } else {
+                    packets.add(reader.readTriad());
+                }
+            }
+            int[] seqNums = ArrayUtils.toPrimitive(packets.toArray(new Integer[0]));
+            for(int seq : seqNums){
+                if(this.cachedOutgoingPacket.containsKey(seq)){
+                    this.cachedOutgoingPacket.remove(seq);
+                }
+            }
+        } catch (IOException e) {
+        }
     }
+
     /**
      * Process a NACK packet
+     * @param buffer The NACK packet binary array
      */
-    public void processNACKPacket(byte[] buffer){
-        
+    public void processNACKPacket(byte[] buffer) {
+        try {
+            PEBinaryReader reader = new PEBinaryReader(new ByteArrayInputStream(buffer));
+            int count = reader.readShort();
+            List<Integer> packets = new ArrayList<>();
+            for (int i = 0; i < count && reader.available() > 0; ++i) {
+                byte[] tmp = new byte[6];
+                if (reader.readByte() == (byte) 0x00) {
+                    int start = reader.readTriad();
+                    int end = reader.readTriad();
+                    if ((end - start) > 4096) {
+                        end = start + 4096;
+                    }
+                    for (int c = start; c <= end; ++c) {
+                        packets.add(c);
+                    }
+                } else {
+                    packets.add(reader.readTriad());
+                }
+            }
+            int[] seqNums = ArrayUtils.toPrimitive(packets.toArray(new Integer[0]));
+            for(int seq : seqNums){
+                if(this.cachedOutgoingPacket.containsKey(seq)){
+                    this.dServer.networkHandler.getUdp().send(this.cachedOutgoingPacket.get(seq).getData(), this.remoteAddress);
+                }
+            }
+        } catch (IOException e) {
+        }
     }
-    
+
     /**
      * Send a message to the client
      *
@@ -240,12 +298,12 @@ public class DragonetSession extends GlowSession {
     }
 
     public void processDataPacket(RaknetDataPacket dataPacket) {
-        if (dataPacket.getSequenceIndex() - this.lastSequenceNum > 1) {
-            for (int i = this.lastSequenceNum + 1; i < dataPacket.getSequenceIndex(); i++) {
+        if (dataPacket.getSequenceNumber() - this.lastSequenceNum > 1) {
+            for (int i = this.lastSequenceNum + 1; i < dataPacket.getSequenceNumber(); i++) {
                 this.queueNACK.add(i);
             }
         }
-        this.queueACK.add(dataPacket.getSequenceIndex());
+        this.queueACK.add(dataPacket.getSequenceNumber());
         if (dataPacket.getEncapsulatedPackets().isEmpty()) {
             return;
         }
