@@ -57,7 +57,8 @@ import java.util.logging.Level;
  * @author Graham Edgecombe
  */
 @DelegateDeserialization(GlowOfflinePlayer.class)
-public final class GlowPlayer extends GlowHumanEntity implements Player {
+//DRAGONET-Removed final to let DragonetPlayer to extend it
+public class GlowPlayer extends GlowHumanEntity implements Player {
 
     /**
      * A static entity id to use when telling the client about itself.

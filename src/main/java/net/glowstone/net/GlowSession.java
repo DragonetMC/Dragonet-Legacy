@@ -40,7 +40,8 @@ import java.util.logging.Level;
  * player.
  * @author Graham Edgecombe
  */
-public final class GlowSession extends BasicSession {
+//DRAGONET-Removed final, DragonetSession extends it
+public class GlowSession extends BasicSession {
 
     /**
      * The number of ticks which are elapsed before a client is disconnected due

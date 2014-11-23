@@ -18,7 +18,8 @@ import java.net.BindException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketAddress;
-import java.util.ArrayList;
+import java.util.ArrayDeque;
+import java.util.Queue;
 
 import org.dragonet.DragonetServer;
 
@@ -26,7 +27,7 @@ public class NonBlockUDPSocket extends Thread{
 	private DragonetServer dragonetServer;
 	private SocketAddress addr;
 	private DatagramSocket socket;
-	private ArrayList<DatagramPacket> receivedPacketQueue = new ArrayList<DatagramPacket>();
+	private Queue<DatagramPacket> receivedPacketQueue = new ArrayDeque<DatagramPacket>();
 	private boolean running;
 	public NonBlockUDPSocket(DragonetServer udp, SocketAddress address){
 		this.dragonetServer = udp;
@@ -67,7 +68,7 @@ public class NonBlockUDPSocket extends Thread{
 			return null;
 		}
 		synchronized(receivedPacketQueue){
-			return receivedPacketQueue.remove(0);
+			return receivedPacketQueue.poll();
 		}
 	}
 	public boolean send(byte[] buffer, SocketAddress addr){
