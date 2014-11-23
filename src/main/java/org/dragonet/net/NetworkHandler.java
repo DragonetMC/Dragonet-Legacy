@@ -93,7 +93,7 @@ public class NetworkHandler {
                 case 0x8D:
                 case 0x8E:
                 case 0x8F:
-                    RaknetDataPacket dataPacket = new RaknetDataPacket(ArrayUtils.subarray(packet.getData(), 0, packet.getLength()));
+                    RaknetDataPacket dataPacket = new RaknetDataPacket(ArrayUtils.subarray(packet.getData(), 1, packet.getLength()));
                     //TODO
                     break;
             }

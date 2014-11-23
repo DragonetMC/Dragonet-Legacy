@@ -13,8 +13,11 @@
 
 package org.dragonet.net.packet;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import lombok.Getter;
+import org.dragonet.utilities.io.PEBinaryReader;
 
 public class RaknetDataPacket extends BinaryPacket{
 
@@ -26,12 +29,18 @@ public class RaknetDataPacket extends BinaryPacket{
     
     @Override
     public void encode() {
-        //TODO
     }
 
     @Override
     public void decode() {
-        //TODO
+        try{
+            PEBinaryReader reader = new PEBinaryReader(new ByteArrayInputStream(this.getData()));
+            while(reader.available() > 3){
+                this.encapsulatedPackets.add(EncapsulatedPacket.fromBinary(reader));
+            }
+        }catch(IOException e){
+            e.printStackTrace();
+        }
     }
 
 }
