@@ -48,6 +48,9 @@ public class NetworkHandler {
         while((packet = this.udp.receive()) != null){
             this.processPacket(packet);
         }
+        for(DragonetSession session : this.sessions.values()){
+            session.onTick();
+        }
     }
 
     private void processPacket(DatagramPacket packet){

@@ -62,6 +62,15 @@ public class DragonetSession extends GlowSession {
     }
 
     /**
+     * Trigger a tick update for the session
+     */
+    public void onTick(){
+        if(this.queueACK.size() > 0){
+            
+        }
+    }
+    
+    /**
      * Send a message to the client
      */
     @Override
