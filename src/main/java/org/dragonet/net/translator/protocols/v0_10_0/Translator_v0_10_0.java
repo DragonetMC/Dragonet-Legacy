@@ -2,6 +2,7 @@ package org.dragonet.net.translator.protocols.v0_10_0;
 
 
 import com.flowpowered.networking.Message;
+import net.glowstone.net.message.play.game.ChunkBulkMessage;
 import org.dragonet.net.packet.minecraft.PEPacket;
 import org.dragonet.net.translator.Translator;
 
@@ -30,7 +31,9 @@ public class Translator_v0_10_0 implements Translator{
     @Override
     public PEPacket[] translateToPE(Message message) {
         System.out.print("Trnaslating to PE: " + message.getClass().getSimpleName());
-        //TODO
+        if(message instanceof ChunkBulkMessage){
+            //return ChunkBulkMessageTranslator.translate((ChunkBulkMessage)message);
+        }
         return null;
     }
 }
