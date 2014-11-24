@@ -31,6 +31,15 @@ public class PEBinaryWriter implements Flushable, Closeable {
         this.os = os;
         this.endianness = endianness;
     }
+    
+    public boolean switchEndianness(){
+        this.endianness = !this.endianness;
+        return this.endianness;
+    }
+    
+    public boolean getEndianness(){
+        return this.endianness;
+    }
 
     @Override
     public void flush() throws IOException {

@@ -25,10 +25,19 @@ public class PEBinaryReader implements Closeable {
     public PEBinaryReader(InputStream is) {
         this(is, PEBinaryUtils.BIG_ENDIAN);
     }
-
+    
     public PEBinaryReader(InputStream is, boolean endianness) {
         this.is = is;
         this.endianness = endianness;
+    }
+    
+    public boolean switchEndianness(){
+        this.endianness = !this.endianness;
+        return this.endianness;
+    }
+    
+    public boolean getEndianness(){
+        return this.endianness;
     }
 
     @Override

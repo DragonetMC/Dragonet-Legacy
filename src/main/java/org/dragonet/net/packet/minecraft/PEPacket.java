@@ -28,6 +28,18 @@ public abstract class PEPacket extends BinaryPacket{
     
     public static PEPacket fromBinary(byte[] buffer){
         System.out.print("Got PEPacket 0x" + Integer.toHexString(buffer[0] & 0xFF));
-        return null;
+        PEPacket packet;
+        switch(buffer[0]){
+            case PEPacketIDs.CLIENT_CONNECT:
+                packet = new ClientConnectPacket(buffer);
+                break;
+            case PEPacketIDs.CLIENT_HANDSHAKE:
+                packet = null;//TODO
+                break;
+            default:
+                return null;
+        }
+        packet.decode();
+        return packet;
     }
 }

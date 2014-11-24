@@ -40,7 +40,10 @@ import org.dragonet.DragonetServer;
 import org.dragonet.entity.DragonetPlayer;
 import org.dragonet.net.packet.EncapsulatedPacket;
 import org.dragonet.net.packet.RaknetDataPacket;
+import org.dragonet.net.packet.minecraft.ClientConnectPacket;
 import org.dragonet.net.packet.minecraft.PEPacket;
+import org.dragonet.net.packet.minecraft.PEPacketIDs;
+import org.dragonet.net.packet.minecraft.ServerHandshakePacket;
 import org.dragonet.net.translator.Translator;
 import org.dragonet.utilities.io.PEBinaryReader;
 import org.dragonet.utilities.io.PEBinaryWriter;
@@ -51,15 +54,28 @@ public class DragonetSession extends GlowSession {
     DragonetServer dServer;
 
     private SocketAddress remoteAddress;
+    private String remoteIP;
+    private int remotePort;
 
-    private @Getter long clientID;
-    private @Getter short clientMTU;
+    private @Getter
+    long clientID;
+    private @Getter
+    short clientMTU;
 
-    private @Getter int sequenceNum;        //Server->Client
-    private @Getter int lastSequenceNum;    //Server<-Client
+    private @Getter
+    long clientSessionID ;
 
-    private @Getter @Setter int messageIndex;          //Server->Client
-    private @Getter @Setter int splitID;
+    private @Getter
+    int sequenceNum;        //Server->Client
+    private @Getter
+    int lastSequenceNum;    //Server<-Client
+
+    private @Getter
+    @Setter
+    int messageIndex;          //Server->Client
+    private @Getter
+    @Setter
+    int splitID;
 
     private RaknetDataPacket queue;
 
@@ -75,6 +91,8 @@ public class DragonetSession extends GlowSession {
         this.clientID = clientID;
         this.clientMTU = clientMTU;
         this.remoteAddress = remoteAddress;
+        this.remoteIP = this.remoteAddress.toString().substring(1, this.remoteAddress.toString().indexOf(":"));
+        this.remotePort = Integer.parseInt(this.remoteAddress.toString().substring(this.remoteAddress.toString().indexOf(":")+1));
         this.queue = new RaknetDataPacket(this.sequenceNum);
     }
 
@@ -84,7 +102,7 @@ public class DragonetSession extends GlowSession {
     public void onTick() {
         sendAllACK();
         sendAllNACK();
-        if(this.queue.getEncapsulatedPackets().size() > 0){
+        if (this.queue.getEncapsulatedPackets().size() > 0) {
             this.fireQueue();
         }
     }
@@ -283,13 +301,15 @@ public class DragonetSession extends GlowSession {
      * @param packet Packet to send
      */
     public void send(PEPacket packet) {
+        if(!(packet instanceof PEPacket)) return;
+        packet.encode();
         if (this.queue.getLength() > this.clientMTU) {
             this.fireQueue();
         }
         EncapsulatedPacket[] encapsulatedPacket = EncapsulatedPacket.fromPEPacket(this, packet);
-        for(EncapsulatedPacket ePacket : encapsulatedPacket){
+        for (EncapsulatedPacket ePacket : encapsulatedPacket) {
             ePacket.encode();
-            if(this.queue.getLength() + ePacket.getData().length > this.clientMTU - 24){
+            if (this.queue.getLength() + ePacket.getData().length > this.clientMTU - 24) {
                 this.fireQueue();
             }
             this.queue.getEncapsulatedPackets().add(ePacket);
@@ -329,7 +349,9 @@ public class DragonetSession extends GlowSession {
      */
     @Override
     public void sendAll(Message... messages) throws ChannelClosedException {
-        //TODO
+        for (Message message : messages) {
+            this.send(message);
+        }
     }
 
     /**
@@ -349,7 +371,7 @@ public class DragonetSession extends GlowSession {
             for (int i = this.lastSequenceNum + 1; i < dataPacket.getSequenceNumber(); i++) {
                 this.queueNACK.add(i);
             }
-        }else{
+        } else {
             this.lastSequenceNum = dataPacket.getSequenceNumber();
         }
         this.queueACK.add(dataPacket.getSequenceNumber());
@@ -358,16 +380,30 @@ public class DragonetSession extends GlowSession {
         }
         for (EncapsulatedPacket epacket : dataPacket.getEncapsulatedPackets()) {
             PEPacket packet = PEPacket.fromBinary(epacket.buffer);
-            if(packet == null) continue;
-            Message[] msgs = this.translator.translateToPC(packet);
-            if (msgs == null) {
-                return;
+            if (packet == null) {
+                continue;
             }
-            for (Message msg : msgs) {
-                if (msg == null) {
-                    continue;
-                }
-                this.messageReceived(msg);
+            switch (packet.pid()) {
+                case PEPacketIDs.CLIENT_CONNECT:
+                    this.clientSessionID = ((ClientConnectPacket)packet).sessionID;
+                    ServerHandshakePacket pkServerHandshake = new ServerHandshakePacket();
+                    pkServerHandshake.port = (short)(this.remotePort & 0xFFFF);
+                    pkServerHandshake.session = this.clientSessionID;
+                    pkServerHandshake.session2 = 0x04440BA9L;
+                    this.send(pkServerHandshake);
+                    break;
+                default:
+                    Message[] msgs = this.translator.translateToPC(packet);
+                    if (msgs == null) {
+                        return;
+                    }
+                    for (Message msg : msgs) {
+                        if (msg == null) {
+                            continue;
+                        }
+                        this.messageReceived(msg);
+                    }
+                    break;
             }
         }
     }
