@@ -32,7 +32,7 @@ public class Translator_v0_10_0 implements Translator{
     public PEPacket[] translateToPE(Message message) {
         System.out.print("Trnaslating to PE: " + message.getClass().getSimpleName());
         if(message instanceof ChunkBulkMessage){
-            //return ChunkBulkMessageTranslator.translate((ChunkBulkMessage)message);
+            return ChunkBulkMessageTranslator.translate((ChunkBulkMessage)message);
         }
         return null;
     }
