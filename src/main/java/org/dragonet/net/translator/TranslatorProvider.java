@@ -15,8 +15,8 @@ package org.dragonet.net.translator;
 
 import org.dragonet.net.translator.protocols.v0_10_0.Translator_v0_10_0;
 
-public class TranslatorProvider {
-    public Translator getByPEProtocolID(int protocolID){
+public final class TranslatorProvider {
+    public static Translator getByPEProtocolID(int protocolID){
         switch(protocolID){
             case 20:
                 return new Translator_v0_10_0();

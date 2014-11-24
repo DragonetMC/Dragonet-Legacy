@@ -14,15 +14,20 @@ package org.dragonet.net;
 
 import com.flowpowered.networking.Message;
 import com.flowpowered.networking.exception.ChannelClosedException;
+import com.flowpowered.networking.protocol.AbstractProtocol;
 import io.netty.channel.ChannelFuture;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.crypto.SecretKey;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,31 +37,45 @@ import net.glowstone.entity.GlowPlayer;
 import net.glowstone.entity.meta.profile.PlayerProfile;
 import net.glowstone.io.PlayerDataService;
 import net.glowstone.net.GlowSession;
+import net.glowstone.net.message.KickMessage;
 import net.glowstone.net.message.play.game.UserListItemMessage;
+import net.glowstone.net.protocol.ProtocolType;
 import org.apache.commons.lang.ArrayUtils;
+import org.bukkit.GameMode;
+import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.dragonet.DragonetServer;
 import org.dragonet.entity.DragonetPlayer;
 import org.dragonet.net.packet.EncapsulatedPacket;
 import org.dragonet.net.packet.RaknetDataPacket;
 import org.dragonet.net.packet.minecraft.ClientConnectPacket;
+import org.dragonet.net.packet.minecraft.LoginPacket;
+import org.dragonet.net.packet.minecraft.LoginStatusPacket;
 import org.dragonet.net.packet.minecraft.PEPacket;
 import org.dragonet.net.packet.minecraft.PEPacketIDs;
 import org.dragonet.net.packet.minecraft.PingPongPacket;
 import org.dragonet.net.packet.minecraft.ServerHandshakePacket;
+import org.dragonet.net.packet.minecraft.StartGamePacket;
 import org.dragonet.net.translator.Translator;
+import org.dragonet.net.translator.TranslatorProvider;
+import org.dragonet.utilities.MD5Encrypt;
 import org.dragonet.utilities.io.PEBinaryReader;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class DragonetSession extends GlowSession {
 
+    private final static Pattern patternUsername = Pattern.compile("^[a-zA-Z0-9_]{3,16}$");
+    
     private @Getter
     DragonetServer dServer;
 
     private SocketAddress remoteAddress;
     private String remoteIP;
     private int remotePort;
+    private InetSocketAddress remoteInetSocketAddress;
 
+    private int loginStage;
+    
     private @Getter
     long clientID;
     private @Getter
@@ -77,6 +96,8 @@ public class DragonetSession extends GlowSession {
     @Setter
     int splitID;
 
+    private @Getter String username;
+    
     private RaknetDataPacket queue;
 
     private ArrayList<Integer> queueACK = new ArrayList<>();
@@ -93,7 +114,9 @@ public class DragonetSession extends GlowSession {
         this.remoteAddress = remoteAddress;
         this.remoteIP = this.remoteAddress.toString().substring(1, this.remoteAddress.toString().indexOf(":"));
         this.remotePort = Integer.parseInt(this.remoteAddress.toString().substring(this.remoteAddress.toString().indexOf(":")+1));
+        this.remoteInetSocketAddress = new InetSocketAddress(this.remoteIP, this.remotePort);
         this.queue = new RaknetDataPacket(this.sequenceNum);
+        this.loginStage = 0;
     }
 
     /**
@@ -157,7 +180,7 @@ public class DragonetSession extends GlowSession {
                 records++;
             }
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            PEBinaryWriter writer = new PEBinaryWriter(allRecBos);
+            PEBinaryWriter writer = new PEBinaryWriter(bos);
             writer.writeByte((byte) 0xC0);
             writer.writeShort((short) (records & 0xFFFF));
             writer.write(allRecBos.toByteArray());
@@ -216,7 +239,7 @@ public class DragonetSession extends GlowSession {
                 records++;
             }
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            PEBinaryWriter writer = new PEBinaryWriter(allRecBos);
+            PEBinaryWriter writer = new PEBinaryWriter(bos);
             writer.writeByte((byte) 0xA0);
             writer.writeShort((short) (records & 0xFFFF));
             writer.write(allRecBos.toByteArray());
@@ -395,20 +418,56 @@ public class DragonetSession extends GlowSession {
                 continue;
             }
             switch (packet.pid()) {
-                case PEPacketIDs.CLIENT_CONNECT:
-                    this.clientSessionID = ((ClientConnectPacket)packet).sessionID;
-                    ServerHandshakePacket pkServerHandshake = new ServerHandshakePacket();
-                    pkServerHandshake.port = (short)(this.remotePort & 0xFFFF);
-                    pkServerHandshake.session = this.clientSessionID;
-                    pkServerHandshake.session2 = 0x04440BA9L;
-                    this.send(pkServerHandshake);
-                    break;
                 case PEPacketIDs.PING:
                     PingPongPacket pkPong = new PingPongPacket();
                     pkPong.pingID = ((PingPongPacket)packet).pingID;
                     this.send(pkPong, 0);
                     break;
+                case PEPacketIDs.CLIENT_CONNECT:
+                    if(this.loginStage != 0) break;
+                    this.clientSessionID = ((ClientConnectPacket)packet).sessionID;
+                    ServerHandshakePacket pkServerHandshake = new ServerHandshakePacket();
+                    pkServerHandshake.port = (short)(this.remotePort & 0xFFFF);
+                    pkServerHandshake.session = this.clientSessionID;
+                    pkServerHandshake.session2 = 0x04440BA9L;
+                    this.loginStage = 1;
+                    this.send(pkServerHandshake);
+                    break;
+                case PEPacketIDs.CLIENT_HANDSHAKE:
+                    if(this.loginStage != 1) break;
+                    this.loginStage = 2;
+                    break;
+                case PEPacketIDs.LOGIN_PACKET:
+                    if(this.loginStage != 2) break;
+                    LoginPacket packetLogin = (LoginPacket) packet;
+                    this.username = packetLogin.username;
+                    
+                    this.translator = TranslatorProvider.getByPEProtocolID(packetLogin.protocol1);
+                    if(!(this.translator instanceof Translator)){
+                        LoginStatusPacket pkLoginStatus = new LoginStatusPacket();
+                        pkLoginStatus.status = 2;
+                        this.send(pkLoginStatus);
+                        this.disconnect("Unsupported game version! ");
+                        break;
+                    }
+                    
+                    LoginStatusPacket pkLoginStatus = new LoginStatusPacket();
+                    pkLoginStatus.status = 0;
+                    this.send(pkLoginStatus);
+                    
+                    this.getLogger().info("Sent LoginStatusPacket! ");
+                    
+                    Matcher matcher = patternUsername.matcher(this.username);
+                    if(!matcher.matches()){
+                        this.disconnect("Bad username! ");
+                        break;
+                    }
+                    
+                    this.loginStage = 3;
+                    this.setPlayer(new PlayerProfile(this.username, UUID.nameUUIDFromBytes(MD5Encrypt.encryptString(this.username))));
+                    break;
                 default:
+                    if(this.loginStage != 3) break;
                     if(!(this.translator instanceof Translator)) break;
                     Message[] msgs = this.translator.translateToPC(packet);
                     if (msgs == null) {
@@ -426,6 +485,12 @@ public class DragonetSession extends GlowSession {
     }
 
     @Override
+    public void disconnect(String reason) {
+        super.disconnect(reason);
+        this.dServer.getNetworkHandler().removeSession(this);
+    }
+
+    @Override
     @Deprecated
     public void enableCompression(int threshold) {
     }
@@ -433,6 +498,11 @@ public class DragonetSession extends GlowSession {
     @Override
     @Deprecated
     public void enableEncryption(SecretKey sharedSecret) {
+    }
+
+    @Override
+    public boolean isActive() {
+        return true;
     }
 
     /**
@@ -485,6 +555,26 @@ public class DragonetSession extends GlowSession {
 
         GlowServer.logger.info(player.getName() + " [" + this.getAddress() + "] connected, UUID: " + player.getUniqueId());
 
+        //Send the StartGamePacket
+        StartGamePacket pkStartGame = new StartGamePacket();
+        pkStartGame.seed = 0;
+        pkStartGame.generator = 1;
+        if(this.player.getGameMode().equals(GameMode.SURVIVAL)){
+            pkStartGame.gamemode = 0;
+        }else if(this.player.getGameMode().equals(GameMode.CREATIVE)){
+            pkStartGame.gamemode = 1;
+        }else{
+            pkStartGame.gamemode = 0;
+        }
+        pkStartGame.eid = this.player.getEntityId();
+        pkStartGame.spawnX = this.player.getWorld().getSpawnLocation().getBlockX();
+        pkStartGame.spawnY = this.player.getWorld().getSpawnLocation().getBlockY();
+        pkStartGame.spawnZ = this.player.getWorld().getSpawnLocation().getBlockZ();
+        pkStartGame.x = (float)this.player.getLocation().getX();
+        pkStartGame.y = (float)this.player.getLocation().getY();
+        pkStartGame.z = (float)this.player.getLocation().getZ();
+        this.send(pkStartGame);
+        
         // message and user list
         String message = EventFactory.onPlayerJoin(player).getJoinMessage();
         if (message != null && !message.isEmpty()) {
@@ -504,6 +594,52 @@ public class DragonetSession extends GlowSession {
             }
         }
         send(new UserListItemMessage(UserListItemMessage.Action.ADD_PLAYER, entries));
+    }
+
+    
+    /**
+     * Disconnects the session with the specified reason. This causes a
+     * KickMessage to be sent. When it has been delivered, the channel
+     * is closed.
+     * @param reason The reason for disconnection.
+     * @param overrideKick Whether to skip the kick event.
+     */
+    @Override
+    public void disconnect(String reason, boolean overrideKick) {
+        if (player != null && !overrideKick) {
+            PlayerKickEvent event = EventFactory.onPlayerKick(player, reason);
+            if (event.isCancelled()) {
+                return;
+            }
+
+            reason = event.getReason();
+
+            if (event.getLeaveMessage() != null) {
+                this.getServer().broadcastMessage(event.getLeaveMessage());
+            }
+        }
+
+        // log that the player was kicked
+        if (player != null) {
+            GlowServer.logger.info(player.getName() + " kicked: " + reason);
+        } else {
+            GlowServer.logger.info("[" + this.remoteIP + ":" + this.remotePort + "] kicked: " + reason);
+        }
+
+        this.send(new KickMessage(reason));
+    }
+
+    @Override
+    public InetSocketAddress getAddress() {
+        return this.remoteInetSocketAddress;
+    }
+    
+    @Override
+    public void setProtocol(ProtocolType protocol) {
+    }
+
+    @Override
+    protected void setProtocol(AbstractProtocol protocol) {
     }
 
 }

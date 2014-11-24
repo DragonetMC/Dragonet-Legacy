@@ -22,12 +22,14 @@ public class Translator_v0_10_0 implements Translator{
 
     @Override
     public Message[] translateToPC(PEPacket packet) {
+        System.out.print("Trnaslating to PC: " + packet.getClass().getSimpleName());
         //TODO
         return null;
     }
 
     @Override
     public PEPacket[] translateToPE(Message message) {
+        System.out.print("Trnaslating to PE: " + message.getClass().getSimpleName());
         //TODO
         return null;
     }

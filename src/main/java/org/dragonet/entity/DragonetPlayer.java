@@ -13,6 +13,7 @@
 
 package org.dragonet.entity;
 
+import java.net.InetSocketAddress;
 import net.glowstone.entity.GlowPlayer;
 import net.glowstone.entity.meta.profile.PlayerProfile;
 import net.glowstone.io.PlayerDataService;
@@ -23,5 +24,5 @@ public class DragonetPlayer extends GlowPlayer {
     public DragonetPlayer(DragonetSession session, PlayerProfile profile, PlayerDataService.PlayerReader reader) {
         super(session, profile, reader);
     }
-
+    
 }

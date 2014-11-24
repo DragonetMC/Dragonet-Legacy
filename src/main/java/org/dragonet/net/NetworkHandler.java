@@ -44,7 +44,7 @@ public class NetworkHandler {
         this.udp.start();
     }
 
-    public void onTick() {
+    public synchronized void onTick() {
         DatagramPacket packet = null;
         while ((packet = this.udp.receive()) != null) {
             this.processPacket(packet);
@@ -120,5 +120,9 @@ public class NetworkHandler {
 
     public void send(byte[] buffer, SocketAddress remoteAddr) {
         this.udp.send(buffer, remoteAddr);
+    }
+
+    public synchronized void removeSession(DragonetSession session) {
+        this.sessions.remove(session);
     }
 }

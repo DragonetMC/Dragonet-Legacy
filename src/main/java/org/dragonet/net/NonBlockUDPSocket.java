@@ -75,6 +75,11 @@ public class NonBlockUDPSocket extends Thread {
     }
 
     public boolean send(byte[] buffer, SocketAddress addr) {
+        /*
+        if(buffer.length > 1 && (buffer[0] == (byte)0xC0 || buffer[0] == (byte)0xA0)){
+            System.out.println("ACK/NACK: " + ByteUtility.bytesToHexString(buffer));
+        }
+        */
         try {
             socket.send(new DatagramPacket(buffer, buffer.length, addr));
             return true;

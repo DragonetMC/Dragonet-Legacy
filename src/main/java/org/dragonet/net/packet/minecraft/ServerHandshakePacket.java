@@ -14,7 +14,6 @@ package org.dragonet.net.packet.minecraft;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.dragonet.utilities.io.ByteUtility;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class ServerHandshakePacket extends PEPacket {

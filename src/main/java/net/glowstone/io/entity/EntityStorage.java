@@ -96,6 +96,11 @@ public final class EntityStorage {
      */
     private static EntityStore<?> find(Class<? extends GlowEntity> clazz, String type) {
         EntityStore<?> store = classTable.get(clazz);
+        //DRAGONET-Start: Check parent class
+        if (store == null) {
+            store = classTable.get(clazz.getSuperclass());
+        }
+        //Dragonet-End
         if (store == null) {
             // todo: maybe try to look up a parent class's store if one isn't found
             throw new IllegalArgumentException("Unknown entity type to " + type + ": " + clazz);
