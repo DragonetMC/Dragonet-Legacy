@@ -14,6 +14,6 @@ public final class AnimateEntityMessage implements Message {
     public static final int OUT_HURT = 1;
     public static final int OUT_LEAVE_BED = 2;
 
-    private final int id, animation;
+    public final int id, animation;
 
 }
