@@ -14,39 +14,37 @@
 package org.dragonet.net.packet.minecraft;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.dragonet.utilities.io.PEBinaryReader;
+import org.dragonet.utilities.io.PEBinaryWriter;
 
-public class ClientConnectPacket extends PEPacket {
+public class PingPongPacket extends PEPacket{
 
-    public long clientID;
-    public long sessionID;
-    public byte unknown1;
-
-    public ClientConnectPacket(byte[] data) {
-        this.setData(data);
-    }
+    public long pingID;
     
     @Override
     public int pid() {
-        return PEPacketIDs.CLIENT_CONNECT;
+        return PEPacketIDs.PING;
     }
 
     @Override
     public void encode() {
+        try {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            PEBinaryWriter writer = new PEBinaryWriter(bos);
+            writer.writeByte((byte)(this.pid() & 0xFF));
+            writer.writeLong(this.pingID);
+        }catch(IOException e) {}
     }
 
     @Override
     public void decode() {
-        try{
+        try {
             PEBinaryReader reader = new PEBinaryReader(new ByteArrayInputStream(this.getData()));
-            reader.readByte(); //PID
-            this.clientID = reader.readLong();
-            this.sessionID = reader.readLong();
-            this.unknown1 = reader.readByte();
-        }catch(IOException e){
-            e.printStackTrace();
-        }
+            reader.readByte();
+            this.pingID = reader.readLong();
+        }catch(IOException e) {}
     }
 
 }

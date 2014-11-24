@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Queue;
 import javax.crypto.SecretKey;
 import lombok.Getter;
 import lombok.Setter;
@@ -43,6 +42,7 @@ import org.dragonet.net.packet.RaknetDataPacket;
 import org.dragonet.net.packet.minecraft.ClientConnectPacket;
 import org.dragonet.net.packet.minecraft.PEPacket;
 import org.dragonet.net.packet.minecraft.PEPacketIDs;
+import org.dragonet.net.packet.minecraft.PingPongPacket;
 import org.dragonet.net.packet.minecraft.ServerHandshakePacket;
 import org.dragonet.net.translator.Translator;
 import org.dragonet.utilities.io.PEBinaryReader;
@@ -296,17 +296,18 @@ public class DragonetSession extends GlowSession {
     }
 
     /**
-     * Send a packet to the client
+     * Send a packet to the client with a reliability defined
      *
      * @param packet Packet to send
+     * @param reliability Packet reliability
      */
-    public void send(PEPacket packet) {
+    public void send(PEPacket packet, int reliability) {
         if(!(packet instanceof PEPacket)) return;
         packet.encode();
         if (this.queue.getLength() > this.clientMTU) {
             this.fireQueue();
         }
-        EncapsulatedPacket[] encapsulatedPacket = EncapsulatedPacket.fromPEPacket(this, packet);
+        EncapsulatedPacket[] encapsulatedPacket = EncapsulatedPacket.fromPEPacket(this, packet, reliability);
         for (EncapsulatedPacket ePacket : encapsulatedPacket) {
             ePacket.encode();
             if (this.queue.getLength() + ePacket.getData().length > this.clientMTU - 24) {
@@ -315,6 +316,16 @@ public class DragonetSession extends GlowSession {
             this.queue.getEncapsulatedPackets().add(ePacket);
         }
     }
+    
+    /***
+     * Send a packet to the client with default packet reliability 2
+     * @param packet Packet to send
+     */
+    public void send(PEPacket packet){
+        this.send(packet, 2);
+    }
+    
+    
 
     private synchronized void fireQueue() {
         this.cachedOutgoingPacket.put(this.queue.getSequenceNumber(), this.queue);
@@ -392,7 +403,13 @@ public class DragonetSession extends GlowSession {
                     pkServerHandshake.session2 = 0x04440BA9L;
                     this.send(pkServerHandshake);
                     break;
+                case PEPacketIDs.PING:
+                    PingPongPacket pkPong = new PingPongPacket();
+                    pkPong.pingID = ((PingPongPacket)packet).pingID;
+                    this.send(pkPong, 0);
+                    break;
                 default:
+                    if(!(this.translator instanceof Translator)) break;
                     Message[] msgs = this.translator.translateToPC(packet);
                     if (msgs == null) {
                         return;

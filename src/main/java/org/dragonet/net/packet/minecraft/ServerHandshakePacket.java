@@ -14,6 +14,7 @@ package org.dragonet.net.packet.minecraft;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import org.dragonet.utilities.io.ByteUtility;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class ServerHandshakePacket extends PEPacket {
@@ -32,6 +33,7 @@ public class ServerHandshakePacket extends PEPacket {
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PEBinaryWriter writer = new PEBinaryWriter(bos);
+            writer.writeByte((byte)(this.pid() & 0xFF));
             writer.write(new byte[]{(byte) 0x04, (byte) 0x3F, (byte) 0x57, (byte) 0xFE}); //Cookie
             writer.writeByte((byte) 0xCD);
             writer.writeShort(this.port);
@@ -53,6 +55,7 @@ public class ServerHandshakePacket extends PEPacket {
             writer.writeLong(this.session2);
             this.setData(bos.toByteArray());
         } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

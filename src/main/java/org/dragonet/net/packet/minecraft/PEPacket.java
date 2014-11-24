@@ -34,7 +34,7 @@ public abstract class PEPacket extends BinaryPacket{
                 packet = new ClientConnectPacket(buffer);
                 break;
             case PEPacketIDs.CLIENT_HANDSHAKE:
-                packet = null;//TODO
+                packet = new ClientHandshakePacket(buffer);
                 break;
             default:
                 return null;

@@ -58,7 +58,6 @@ public class NetworkHandler {
         try {
             PEBinaryReader reader = new PEBinaryReader(new ByteArrayInputStream(packet.getData()));
             int raknetPID = reader.readByte() & 0xFF;
-            System.out.println("Got RakNet Packet ID: " + Integer.toHexString(raknetPID));
             switch (raknetPID) {
                 case RaknetConstants.ID_OPEN_CONNECTION_REQUEST_1:
                     reader.read(16); //MAGIC
@@ -84,7 +83,7 @@ public class NetworkHandler {
                     writer8.writeByte(RaknetConstants.ID_OPEN_CONNECTION_REPLY_2);
                     writer8.write(RaknetConstants.magic);
                     writer8.writeLong(NetworkHandler.serverID);
-                    writer8.writeShort((short)(packet.getPort() & 0xFFFF));
+                    writer8.writeShort((short) (packet.getPort() & 0xFFFF));
                     writer8.writeShort(clientMTU);
                     writer8.writeByte((byte) 0x00);
                     this.send(bos8.toByteArray(), packet.getSocketAddress());
@@ -116,7 +115,6 @@ public class NetworkHandler {
                     break;
             }
         } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 

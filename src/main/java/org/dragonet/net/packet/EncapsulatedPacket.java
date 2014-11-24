@@ -40,6 +40,7 @@ public class EncapsulatedPacket extends BinaryPacket {
 
     @Override
     public void encode() {
+        this.setData(toBinary(this));
     }
 
     @Override
@@ -79,6 +80,7 @@ public class EncapsulatedPacket extends BinaryPacket {
 
             return packet;
         } catch (IOException e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -110,23 +112,24 @@ public class EncapsulatedPacket extends BinaryPacket {
             writer.write(packet.buffer);
             return bos.toByteArray();
         } catch (IOException e) {
+            e.printStackTrace();
         }
         return new byte[0];
     }
 
     /**
      * Automatically wrap PEPacket into a EncapsulatedPacket
-     *
+     * @param session The DragonetSession context
      * @param packet The PEPacket you want to encapsulate.
      * @return Wrapped EncapsulatedPacket
      */
-    public static EncapsulatedPacket[] fromPEPacket(DragonetSession session, PEPacket packet) {
+    public static EncapsulatedPacket[] fromPEPacket(DragonetSession session, PEPacket packet, int reliability) {
         packet.encode();
         byte[] data = packet.getData();
         if (data.length + 24 < session.getClientMTU()) {
             //Fit in one packet
             EncapsulatedPacket singlePacket = new EncapsulatedPacket();
-            singlePacket.reliability = 2;
+            singlePacket.reliability = reliability;
             singlePacket.hasSplit = false;
             singlePacket.messageIndex = session.getMessageIndex();
             singlePacket.buffer = data;
@@ -144,7 +147,7 @@ public class EncapsulatedPacket extends BinaryPacket {
             int slice = 0;
             for (byte[] sliceData : multipleData) {
                 encapsulatedPackets[slice] = new EncapsulatedPacket();
-                encapsulatedPackets[slice].reliability = 2;
+                encapsulatedPackets[slice].reliability = reliability;
                 encapsulatedPackets[slice].hasSplit = true;
                 encapsulatedPackets[slice].splitID = currentSplitID;
                 encapsulatedPackets[slice].splitCount = currentSplitCount;
