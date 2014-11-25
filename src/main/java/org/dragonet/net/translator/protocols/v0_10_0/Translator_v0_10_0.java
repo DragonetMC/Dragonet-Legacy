@@ -14,11 +14,15 @@ package org.dragonet.net.translator.protocols.v0_10_0;
 
 import com.flowpowered.networking.Message;
 import java.util.HashMap;
+import net.glowstone.net.message.play.game.ChatMessage;
 import net.glowstone.net.message.play.game.ChunkBulkMessage;
 import net.glowstone.net.message.play.game.ChunkDataMessage;
+import net.glowstone.net.message.play.game.IncomingChatMessage;
 import org.dragonet.ChunkLocation;
 import org.dragonet.net.DragonetSession;
+import org.dragonet.net.packet.minecraft.MessagePacket;
 import org.dragonet.net.packet.minecraft.PEPacket;
+import org.dragonet.net.packet.minecraft.PEPacketIDs;
 import org.dragonet.net.translator.BaseTranslator;
 
 public class Translator_v0_10_0 extends BaseTranslator {
@@ -36,13 +40,19 @@ public class Translator_v0_10_0 extends BaseTranslator {
         blockMap.put(50, 50);
     }
 
+    /* ===== TO PC ===== */
     @Override
     public Message[] translateToPC(PEPacket packet) {
         System.out.print("Trnaslating to PC: " + packet.getClass().getSimpleName());
-        //TODO
+        switch(packet.pid()){
+            case PEPacketIDs.MESSAGE_PACKET:
+                IncomingChatMessage msgMessage = new IncomingChatMessage(((MessagePacket)packet).message);
+                return new Message[]{msgMessage};
+        }
         return null;
     }
 
+    /* ===== TO PE ===== */
     @Override
     public PEPacket[] translateToPE(Message message) {
         //System.out.print("Trnaslating to PE: " + message.getClass().getSimpleName());
@@ -59,6 +69,16 @@ public class Translator_v0_10_0 extends BaseTranslator {
             return null;
         }
         
+        /***
+         * Chat Message
+         */
+        if(message instanceof ChatMessage){
+            String msg = ((ChatMessage)message).text.asPlaintext();
+            MessagePacket pkMessage = new MessagePacket();
+            pkMessage.sender = "";
+            pkMessage.message = msg;
+            return new PEPacket[]{pkMessage};
+        }
         /* ==================================================================================== */
         return null;
     }

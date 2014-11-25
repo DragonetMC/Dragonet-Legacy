@@ -15,11 +15,14 @@ package org.dragonet;
 
 import java.io.File;
 import java.net.InetSocketAddress;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import lombok.Getter;
 import net.glowstone.GlowServer;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.dragonet.net.NetworkHandler;
+import org.dragonet.statistic.StatisticSender;
 import org.dragonet.utilities.DragonetVersioning;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +32,8 @@ public class DragonetServer {
     public @Getter Logger logger;
     
     public @Getter NetworkHandler networkHandler;
+    
+    public @Getter ExecutorService threadPool;
 
     public DragonetServer(GlowServer server) {
         this.server = server;
@@ -41,7 +46,11 @@ public class DragonetServer {
      * Only called by Glowstone main class. 
      */
     public void initialize(){
+        this.logger.info("Sending statistic... ");
+        StatisticSender statSender = new StatisticSender(DragonetVersioning.DRAGONET_VERSION, System.currentTimeMillis());
+        statSender.sendStatistic();
         Configuration config = YamlConfiguration.loadConfiguration(new File(this.server.getConfigDir() + File.separator + "dragonet.yml"));
+        this.threadPool = Executors.newFixedThreadPool(64);
         String ip = config.getString("server-ip", "0.0.0.0");
         int port = config.getInt("server-port", 19132);
         this.logger.info("Trying to bind on UDP address " + ip + ":" + port + "... ");

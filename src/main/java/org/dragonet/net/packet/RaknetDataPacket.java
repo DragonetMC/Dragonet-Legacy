@@ -67,8 +67,11 @@ public class RaknetDataPacket extends BinaryPacket {
         try {
             PEBinaryReader reader = new PEBinaryReader(new ByteArrayInputStream(this.getData()));
             this.sequenceNumber = reader.readTriad();
+            EncapsulatedPacket pkEncap;
             while (reader.available() > 3) {
-                this.encapsulatedPackets.add(EncapsulatedPacket.fromBinary(reader));
+                pkEncap = EncapsulatedPacket.fromBinary(reader);
+                if(pkEncap == null) return;
+                this.encapsulatedPackets.add(pkEncap);
             }
         } catch (IOException e) {
             e.printStackTrace();

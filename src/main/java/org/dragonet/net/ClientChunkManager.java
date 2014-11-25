@@ -88,14 +88,13 @@ public class ClientChunkManager {
      */
     public synchronized void sendChunks() {
         ChunkLocation chunkLocation;
-        chunkLocation = this.chunksQueue.poll();
-        if (chunkLocation == null) {
-            return;
+        int sent = 0;
+        while ((chunkLocation = this.chunksQueue.poll()) != null) {
+            this.sendChunk(chunkLocation.getX(), chunkLocation.getZ());
+            this.chunksLoaded.add(chunkLocation);
+            sent++;
+            if(sent >= 1) return;
         }
-        //while ((chunkLocation = this.chunksQueue.poll()) != null) {
-        this.sendChunk(chunkLocation.getX(), chunkLocation.getZ());
-        this.chunksLoaded.add(chunkLocation);
-        //}
     }
 
     /**
@@ -117,7 +116,7 @@ public class ClientChunkManager {
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
                     for (int y = 0; y < 128; y++) {
-                        writer.writeByte((byte)(this.getSession().getTranslator().translateBlockToPE(chunk.getBlockTypeId(x, y, z)) & 0xFF));
+                        writer.writeByte((byte) (this.getSession().getTranslator().translateBlockToPE(chunk.getBlockTypeId(x, y, z)) & 0xFF));
                     }
                 }
             }

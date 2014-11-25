@@ -10,10 +10,8 @@
  *
  * @author The Dragonet Team
  */
-
 package org.dragonet.entity;
 
-import java.net.InetSocketAddress;
 import net.glowstone.entity.GlowPlayer;
 import net.glowstone.entity.meta.profile.PlayerProfile;
 import net.glowstone.io.PlayerDataService;

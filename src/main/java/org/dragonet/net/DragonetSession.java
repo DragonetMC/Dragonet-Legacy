@@ -39,6 +39,8 @@ import net.glowstone.io.PlayerDataService;
 import net.glowstone.net.GlowSession;
 import net.glowstone.net.message.KickMessage;
 import net.glowstone.net.message.play.game.UserListItemMessage;
+import net.glowstone.net.pipeline.CodecsHandler;
+import net.glowstone.net.protocol.GlowProtocol;
 import net.glowstone.net.protocol.ProtocolType;
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.GameMode;
@@ -476,16 +478,7 @@ public class DragonetSession extends GlowSession {
                 default:
                     if(this.loginStage != 3) break;
                     if(!(this.translator instanceof BaseTranslator)) break;
-                    Message[] msgs = this.translator.translateToPC(packet);
-                    if (msgs == null) {
-                        return;
-                    }
-                    for (Message msg : msgs) {
-                        if (msg == null) {
-                            continue;
-                        }
-                        this.messageReceived(msg);
-                    }
+                    this.dServer.getThreadPool().submit(new ProcessPEPacketTask(this, packet));
                     break;
             }
         }
@@ -495,16 +488,6 @@ public class DragonetSession extends GlowSession {
     public void disconnect(String reason) {
         super.disconnect(reason);
         this.dServer.getNetworkHandler().removeSession(this);
-    }
-
-    @Override
-    @Deprecated
-    public void enableCompression(int threshold) {
-    }
-
-    @Override
-    @Deprecated
-    public void enableEncryption(SecretKey sharedSecret) {
     }
 
     @Override
@@ -642,11 +625,21 @@ public class DragonetSession extends GlowSession {
     }
     
     @Override
-    public void setProtocol(ProtocolType protocol) {
+    public String getHostname() {
+        return this.remoteIP;
     }
 
     @Override
-    protected void setProtocol(AbstractProtocol protocol) {
+    public void enableCompression(int threshold) {
     }
 
+    @Override
+    public void enableEncryption(SecretKey sharedSecret) {
+    }
+    
+    @Override
+    public void setProtocol(ProtocolType protocol) {
+        //GlowProtocol proto = protocol.getProtocol();
+        //super.setProtocol(proto);
+    }
 }

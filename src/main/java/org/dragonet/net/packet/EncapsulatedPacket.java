@@ -77,6 +77,7 @@ public class EncapsulatedPacket extends BinaryPacket {
                 packet.splitID = reader.readShort();
                 packet.splitIndex = reader.readInt();
             }
+            if(reader.available() < length) return null;
             packet.buffer = reader.read(length);
 
             return packet;

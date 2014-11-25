@@ -147,7 +147,7 @@ public class GlowSession extends BasicSession {
      * @param server The GlowStone server instance
      */
     public GlowSession(GlowServer server) {
-        super(null, ProtocolType.HANDSHAKE.getProtocol());
+        super(null, ProtocolType.PLAY.getProtocol());
         this.server = server;
     }
     

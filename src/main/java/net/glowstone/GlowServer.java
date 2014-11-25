@@ -51,6 +51,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
 import org.dragonet.DragonetServer;
+import org.dragonet.utilities.DragonetVersioning;
 
 /**
  * The core class of the Glowstone server.
@@ -830,12 +831,16 @@ public final class GlowServer implements Server {
 
     @Override
     public String getVersion() {
-        return getClass().getPackage().getImplementationVersion();
+        //DRAGONET
+        //return getClass().getPackage().getImplementationVersion();
+        return DragonetVersioning.DRAGONET_VERSION;
     }
 
     @Override
     public String getBukkitVersion() {
-        return getClass().getPackage().getSpecificationVersion();
+        //DRAGONET-Changed to Dragonet version
+        //return getClass().getPackage().getSpecificationVersion();
+        return "Bukkit API 1.8-R0.1-SNAPSHOT";
     }
 
     @Override
@@ -1458,9 +1463,9 @@ public final class GlowServer implements Server {
 
     @Override
     public int getViewDistance() {
-        //DRAGONET-Always return 5
+        //DRAGONET-Always return a built-in number in order to prevent PE clients from lagging/crashing
         //return config.getInt(ServerConfig.Key.VIEW_DISTANCE);
-        return 5;
+        return 7;
     }
 
     @Override
