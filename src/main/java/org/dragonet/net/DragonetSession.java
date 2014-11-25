@@ -56,7 +56,7 @@ import org.dragonet.net.packet.minecraft.PEPacketIDs;
 import org.dragonet.net.packet.minecraft.PingPongPacket;
 import org.dragonet.net.packet.minecraft.ServerHandshakePacket;
 import org.dragonet.net.packet.minecraft.StartGamePacket;
-import org.dragonet.net.translator.Translator;
+import org.dragonet.net.translator.BaseTranslator;
 import org.dragonet.net.translator.TranslatorProvider;
 import org.dragonet.utilities.MD5Encrypt;
 import org.dragonet.utilities.io.PEBinaryReader;
@@ -104,7 +104,9 @@ public class DragonetSession extends GlowSession {
     private ArrayList<Integer> queueNACK = new ArrayList<>();
     private HashMap<Integer, RaknetDataPacket> cachedOutgoingPacket = new HashMap<>();
 
-    private Translator translator;
+    private @Getter BaseTranslator translator;
+    
+    private @Getter ClientChunkManager chunkManager;
 
     public DragonetSession(DragonetServer dServer, SocketAddress remoteAddress, long clientID, short clientMTU) {
         super(dServer.getServer());
@@ -116,6 +118,7 @@ public class DragonetSession extends GlowSession {
         this.remotePort = Integer.parseInt(this.remoteAddress.toString().substring(this.remoteAddress.toString().indexOf(":")+1));
         this.remoteInetSocketAddress = new InetSocketAddress(this.remoteIP, this.remotePort);
         this.queue = new RaknetDataPacket(this.sequenceNum);
+        this.chunkManager = new ClientChunkManager(this);
         this.loginStage = 0;
     }
 
@@ -128,6 +131,7 @@ public class DragonetSession extends GlowSession {
         if (this.queue.getEncapsulatedPackets().size() > 0) {
             this.fireQueue();
         }
+        this.chunkManager.sendChunks();
     }
 
     private synchronized void sendAllACK() {
@@ -333,9 +337,12 @@ public class DragonetSession extends GlowSession {
         EncapsulatedPacket[] encapsulatedPacket = EncapsulatedPacket.fromPEPacket(this, packet, reliability);
         for (EncapsulatedPacket ePacket : encapsulatedPacket) {
             ePacket.encode();
+            /*
             if (this.queue.getLength() + ePacket.getData().length > this.clientMTU - 24) {
                 this.fireQueue();
             }
+            */
+            this.fireQueue();
             this.queue.getEncapsulatedPackets().add(ePacket);
         }
     }
@@ -442,8 +449,8 @@ public class DragonetSession extends GlowSession {
                     LoginPacket packetLogin = (LoginPacket) packet;
                     this.username = packetLogin.username;
                     
-                    this.translator = TranslatorProvider.getByPEProtocolID(packetLogin.protocol1);
-                    if(!(this.translator instanceof Translator)){
+                    this.translator = TranslatorProvider.getByPEProtocolID(this, packetLogin.protocol1);
+                    if(!(this.translator instanceof BaseTranslator)){
                         LoginStatusPacket pkLoginStatus = new LoginStatusPacket();
                         pkLoginStatus.status = 2;
                         this.send(pkLoginStatus);
@@ -468,7 +475,7 @@ public class DragonetSession extends GlowSession {
                     break;
                 default:
                     if(this.loginStage != 3) break;
-                    if(!(this.translator instanceof Translator)) break;
+                    if(!(this.translator instanceof BaseTranslator)) break;
                     Message[] msgs = this.translator.translateToPC(packet);
                     if (msgs == null) {
                         return;

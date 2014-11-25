@@ -22,6 +22,7 @@ import org.dragonet.utilities.io.PEBinaryReader;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class EncapsulatedPacket extends BinaryPacket {
+
     public int reliability;
     public boolean hasSplit = false;
 
@@ -95,7 +96,12 @@ public class EncapsulatedPacket extends BinaryPacket {
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PEBinaryWriter writer = new PEBinaryWriter(bos);
-            writer.writeByte((byte) ((packet.reliability << 5) ^ (packet.hasSplit ? 0b0001 : 0x00)));
+            byte flag = 0;
+            flag = (byte) (flag | packet.reliability << 5);
+            if (packet.hasSplit) {
+                flag = (byte) (flag | 0x10);
+            }
+            writer.writeByte(flag);
             writer.writeShort((short) ((packet.buffer.length << 3) & 0xFFFF));
             if (packet.reliability == 2 || packet.reliability == 3 || packet.reliability == 4 || packet.reliability == 6 || packet.reliability == 7) {
                 writer.writeTriad(packet.messageIndex);
@@ -119,6 +125,7 @@ public class EncapsulatedPacket extends BinaryPacket {
 
     /**
      * Automatically wrap PEPacket into a EncapsulatedPacket
+     *
      * @param session The DragonetSession context
      * @param packet The PEPacket you want to encapsulate.
      * @return Wrapped EncapsulatedPacket
@@ -139,11 +146,10 @@ public class EncapsulatedPacket extends BinaryPacket {
             //Not fit in one packet, need to be splitted
             byte[][] multipleData = ArraySplitter.splitArray(data, session.getClientMTU() - 24);
             EncapsulatedPacket[] encapsulatedPackets = new EncapsulatedPacket[multipleData.length];
-            
+
             int currentSplitID = session.getSplitID();
             int currentSplitCount = multipleData.length;
-            session.setSplitID((session.getSplitID() + 1) % 65535);
-            
+
             int slice = 0;
             for (byte[] sliceData : multipleData) {
                 encapsulatedPackets[slice] = new EncapsulatedPacket();
@@ -153,10 +159,12 @@ public class EncapsulatedPacket extends BinaryPacket {
                 encapsulatedPackets[slice].splitCount = currentSplitCount;
                 encapsulatedPackets[slice].splitIndex = slice;
                 encapsulatedPackets[slice].messageIndex = session.getMessageIndex();
-                encapsulatedPackets[slice].buffer = sliceData;
                 session.setMessageIndex(session.getMessageIndex() + 1);
+                encapsulatedPackets[slice].buffer = sliceData;
                 slice++;
             }
+            
+            session.setSplitID((session.getSplitID() + 1) % 65535);
             return encapsulatedPackets;
         }
     }
