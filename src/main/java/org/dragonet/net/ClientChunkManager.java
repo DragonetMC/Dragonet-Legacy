@@ -88,12 +88,9 @@ public class ClientChunkManager {
      */
     public synchronized void sendChunks() {
         ChunkLocation chunkLocation;
-        int sent = 0;
         while ((chunkLocation = this.chunksQueue.poll()) != null) {
             this.sendChunk(chunkLocation.getX(), chunkLocation.getZ());
             this.chunksLoaded.add(chunkLocation);
-            sent++;
-            if(sent >= 1) return;
         }
     }
 

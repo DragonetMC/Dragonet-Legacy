@@ -43,6 +43,9 @@ public abstract class PEPacket extends BinaryPacket{
             case PEPacketIDs.MESSAGE_PACKET:
                 packet = new MessagePacket(buffer);
                 break;
+            case PEPacketIDs.MOVE_PLAYER_PACKET:
+                packet = new MovePlayerPacket(buffer);
+                break;
             default:
                 return null;
         }
