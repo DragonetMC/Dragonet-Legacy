@@ -113,6 +113,16 @@ public class NetworkHandler {
                         this.sessions.get(packet.getSocketAddress().toString()).processDataPacket(dataPacket);
                     }
                     break;
+                case 0xC0:
+                    if (this.sessions.containsKey(packet.getSocketAddress().toString())) {
+                        this.sessions.get(packet.getSocketAddress().toString()).processACKPacket(ArrayUtils.subarray(packet.getData(), 1, packet.getData().length));
+                    }
+                    break;
+                case 0xA0:
+                    if (this.sessions.containsKey(packet.getSocketAddress().toString())) {
+                        this.sessions.get(packet.getSocketAddress().toString()).processNACKPacket(ArrayUtils.subarray(packet.getData(), 1, packet.getData().length));
+                    }
+                    break;
             }
         } catch (IOException e) {
         }

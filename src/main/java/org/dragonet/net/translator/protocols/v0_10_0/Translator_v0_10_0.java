@@ -14,13 +14,17 @@ package org.dragonet.net.translator.protocols.v0_10_0;
 
 import com.flowpowered.networking.Message;
 import java.util.HashMap;
+import net.glowstone.entity.GlowPlayer;
+import net.glowstone.net.message.play.entity.SpawnPlayerMessage;
 import net.glowstone.net.message.play.game.ChatMessage;
 import net.glowstone.net.message.play.game.ChunkBulkMessage;
 import net.glowstone.net.message.play.game.ChunkDataMessage;
 import net.glowstone.net.message.play.game.IncomingChatMessage;
 import net.glowstone.net.message.play.player.PlayerPositionLookMessage;
 import org.dragonet.ChunkLocation;
+import org.dragonet.entity.metadata.EntityMetaData;
 import org.dragonet.net.DragonetSession;
+import org.dragonet.net.packet.minecraft.AddPlayerPacket;
 import org.dragonet.net.packet.minecraft.MessagePacket;
 import org.dragonet.net.packet.minecraft.MovePlayerPacket;
 import org.dragonet.net.packet.minecraft.PEPacket;
@@ -52,7 +56,7 @@ public class Translator_v0_10_0 extends BaseTranslator {
                 return new Message[]{msgMessage};
             case PEPacketIDs.MOVE_PLAYER_PACKET:
                 MovePlayerPacket pkMovePlayer = (MovePlayerPacket) packet;
-                return new Message[]{new PlayerPositionLookMessage(true, (double) pkMovePlayer.x, (double) pkMovePlayer.y, (double) pkMovePlayer.z, pkMovePlayer.yaw, pkMovePlayer.pitch)};
+                return new Message[]{new PlayerPositionLookMessage(false, (double) pkMovePlayer.x, (double) pkMovePlayer.y, (double) pkMovePlayer.z, pkMovePlayer.yaw, pkMovePlayer.pitch)};
         }
         return null;
     }
@@ -91,6 +95,28 @@ public class Translator_v0_10_0 extends BaseTranslator {
          * Position Update
          */
         //if(message instanceof Player)
+        
+        
+        /**
+         * Spawn Player
+         */
+        if (message instanceof SpawnPlayerMessage){
+            SpawnPlayerMessage msgSpawnPlayer = (SpawnPlayerMessage) message;
+            AddPlayerPacket pkAddPlayer = new AddPlayerPacket();
+            pkAddPlayer.clientID = 0;
+            pkAddPlayer.eid = msgSpawnPlayer.getId();
+            pkAddPlayer.username = this.getSession().getServer().getPlayer(msgSpawnPlayer.getUuid()).getDisplayName();
+            pkAddPlayer.x = (float)msgSpawnPlayer.getX();
+            pkAddPlayer.y = (float)msgSpawnPlayer.getY();
+            pkAddPlayer.z = (float)msgSpawnPlayer.getZ();
+            pkAddPlayer.yaw = (msgSpawnPlayer.getRotation() % 360 + 360) % 360;
+            pkAddPlayer.pitch = msgSpawnPlayer.getPitch();
+            pkAddPlayer.unknown1 = 0;
+            pkAddPlayer.unknown2 = 0;
+            pkAddPlayer.metadata = EntityMetaData.getMetaDataFromPlayer((GlowPlayer)this.getSession().getPlayer().getWorld().getEntityManager().getEntity(msgSpawnPlayer.getId()));
+            return new PEPacket[] {pkAddPlayer};
+        }
+        
         /* ==================================================================================== */
         return null;
     }

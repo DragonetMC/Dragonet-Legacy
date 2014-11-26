@@ -14,7 +14,6 @@ package org.dragonet.net;
 
 import com.flowpowered.networking.Message;
 import com.flowpowered.networking.exception.ChannelClosedException;
-import com.flowpowered.networking.protocol.AbstractProtocol;
 import io.netty.channel.ChannelFuture;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -26,6 +25,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.crypto.SecretKey;
@@ -39,8 +39,6 @@ import net.glowstone.io.PlayerDataService;
 import net.glowstone.net.GlowSession;
 import net.glowstone.net.message.KickMessage;
 import net.glowstone.net.message.play.game.UserListItemMessage;
-import net.glowstone.net.pipeline.CodecsHandler;
-import net.glowstone.net.protocol.GlowProtocol;
 import net.glowstone.net.protocol.ProtocolType;
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.GameMode;
@@ -414,9 +412,8 @@ public class DragonetSession extends GlowSession {
             for (int i = this.lastSequenceNum + 1; i < dataPacket.getSequenceNumber(); i++) {
                 this.queueNACK.add(i);
             }
-        } else {
-            this.lastSequenceNum = dataPacket.getSequenceNumber();
         }
+        this.lastSequenceNum = dataPacket.getSequenceNumber();
         this.queueACK.add(dataPacket.getSequenceNumber());
         if (dataPacket.getEncapsulatedPackets().isEmpty()) {
             return;
@@ -543,7 +540,7 @@ public class DragonetSession extends GlowSession {
 
         player.getWorld().getRawPlayers().add(player);
 
-        GlowServer.logger.info(player.getName() + " [" + this.getAddress() + "] connected, UUID: " + player.getUniqueId());
+        GlowServer.logger.log(Level.INFO, "{0} [{1}] connected, UUID: {2}", new Object[]{player.getName(), this.getAddress(), player.getUniqueId()});
 
         //Send the StartGamePacket
         StartGamePacket pkStartGame = new StartGamePacket();
