@@ -15,7 +15,6 @@ package org.dragonet.entity.metadata;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import net.glowstone.entity.GlowPlayer;
 import org.dragonet.entity.metadata.type.ByteMeta;

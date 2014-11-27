@@ -16,8 +16,6 @@ package org.dragonet.utilities;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public final class MD5Encrypt {
     public static byte[] encrypt(byte[] data){

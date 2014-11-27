@@ -21,7 +21,6 @@ import java.util.ArrayDeque;
 import java.util.Queue;
 
 import org.dragonet.DragonetServer;
-import org.dragonet.utilities.io.ByteUtility;
 
 public class NonBlockUDPSocket extends Thread {
 

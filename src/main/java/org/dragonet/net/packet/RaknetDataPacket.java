@@ -12,7 +12,6 @@
  */
 package org.dragonet.net.packet;
 
-import com.google.common.collect.Lists;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

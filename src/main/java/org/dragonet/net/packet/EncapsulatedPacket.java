@@ -14,7 +14,6 @@ package org.dragonet.net.packet;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import lombok.Getter;
 import org.dragonet.net.DragonetSession;
 import org.dragonet.net.packet.minecraft.PEPacket;
 import org.dragonet.utilities.io.ArraySplitter;
