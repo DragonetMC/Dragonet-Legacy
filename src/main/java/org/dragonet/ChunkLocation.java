@@ -49,6 +49,9 @@ public class ChunkLocation {
             return false;
         }
     }
-    
-    
+
+    @Override
+    public String toString() {
+        return "ChunkLocation(" + this.x + ", " + this.z + ")";
+    }
 }
