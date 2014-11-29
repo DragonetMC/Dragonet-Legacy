@@ -81,7 +81,6 @@ public class EncapsulatedPacket extends BinaryPacket {
 
             return packet;
         } catch (IOException e) {
-            e.printStackTrace();
             return null;
         }
     }
@@ -99,7 +98,7 @@ public class EncapsulatedPacket extends BinaryPacket {
             byte flag = 0;
             flag = (byte) (flag | packet.reliability << 5);
             if (packet.hasSplit) {
-                flag = (byte) (flag | 0x10);
+                flag = (byte) ((flag & 0xFF) | 0x10);
             }
             writer.writeByte(flag);
             writer.writeShort((short) ((packet.buffer.length << 3) & 0xFFFF));
@@ -118,7 +117,6 @@ public class EncapsulatedPacket extends BinaryPacket {
             writer.write(packet.buffer);
             return bos.toByteArray();
         } catch (IOException e) {
-            e.printStackTrace();
         }
         return new byte[0];
     }
@@ -133,7 +131,7 @@ public class EncapsulatedPacket extends BinaryPacket {
     public static EncapsulatedPacket[] fromPEPacket(DragonetSession session, PEPacket packet, int reliability) {
         packet.encode();
         byte[] data = packet.getData();
-        if (data.length + 24 < session.getClientMTU()) {
+        if (data.length + 34 < session.getClientMTU()) {
             //Fit in one packet
             EncapsulatedPacket singlePacket = new EncapsulatedPacket();
             singlePacket.reliability = reliability;
@@ -144,7 +142,7 @@ public class EncapsulatedPacket extends BinaryPacket {
             return new EncapsulatedPacket[]{singlePacket};
         } else {
             //Not fit in one packet, need to be splitted
-            byte[][] multipleData = ArraySplitter.splitArray(data, session.getClientMTU() - 24);
+            byte[][] multipleData = ArraySplitter.splitArray(data, session.getClientMTU() - 34);
             EncapsulatedPacket[] encapsulatedPackets = new EncapsulatedPacket[multipleData.length];
 
             int currentSplitID = session.getSplitID();

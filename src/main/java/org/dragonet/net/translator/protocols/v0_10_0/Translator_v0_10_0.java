@@ -15,6 +15,7 @@ package org.dragonet.net.translator.protocols.v0_10_0;
 import com.flowpowered.networking.Message;
 import java.util.HashMap;
 import net.glowstone.entity.GlowPlayer;
+import net.glowstone.net.message.play.entity.RelativeEntityPositionMessage;
 import net.glowstone.net.message.play.entity.SpawnPlayerMessage;
 import net.glowstone.net.message.play.game.ChatMessage;
 import net.glowstone.net.message.play.game.ChunkBulkMessage;
@@ -22,6 +23,7 @@ import net.glowstone.net.message.play.game.ChunkDataMessage;
 import net.glowstone.net.message.play.game.IncomingChatMessage;
 import net.glowstone.net.message.play.player.PlayerPositionLookMessage;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.dragonet.ChunkLocation;
 import org.dragonet.entity.DragonetPlayer;
 import org.dragonet.entity.metadata.EntityMetaData;
@@ -98,7 +100,18 @@ public class Translator_v0_10_0 extends BaseTranslator {
         /**
          * Position Update
          */
-        //if(message instanceof Player)
+        if(message instanceof RelativeEntityPositionMessage){
+            RelativeEntityPositionMessage msgRelativeEntityPosition = ((RelativeEntityPositionMessage)message);
+            Entity entity = this.getSession().getPlayer().getWorld().getEntityManager().getEntity(msgRelativeEntityPosition.id);
+            if(entity instanceof GlowPlayer){
+                boolean isTeleport = Math.sqrt(msgRelativeEntityPosition.deltaX ^ 2 + msgRelativeEntityPosition.deltaY ^ 2 + msgRelativeEntityPosition.deltaZ ^ 2) > 2;
+                MovePlayerPacket pkMovePlayer = new MovePlayerPacket(msgRelativeEntityPosition.id, (float)entity.getLocation().getX(), (float)entity.getLocation().getY(), (float)entity.getLocation().getZ(), entity.getLocation().getYaw(), entity.getLocation().getPitch(), entity.getLocation().getYaw(), isTeleport);
+                return new PEPacket[] {pkMovePlayer};
+            }else{
+                //TODO: Handle other entities
+                return null;
+            }
+        }
         
         
         /**

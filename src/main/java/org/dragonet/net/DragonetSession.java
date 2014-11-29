@@ -263,7 +263,6 @@ public class DragonetSession extends GlowSession {
             int count = reader.readShort();
             List<Integer> packets = new ArrayList<>();
             for (int i = 0; i < count && reader.available() > 0; ++i) {
-                byte[] tmp = new byte[6];
                 if (reader.readByte() == (byte) 0x00) {
                     int start = reader.readTriad();
                     int end = reader.readTriad();
@@ -298,7 +297,6 @@ public class DragonetSession extends GlowSession {
             int count = reader.readShort();
             List<Integer> packets = new ArrayList<>();
             for (int i = 0; i < count && reader.available() > 0; ++i) {
-                byte[] tmp = new byte[6];
                 if (reader.readByte() == (byte) 0x00) {
                     int start = reader.readTriad();
                     int end = reader.readTriad();
@@ -331,9 +329,7 @@ public class DragonetSession extends GlowSession {
     public void send(PEPacket packet, int reliability) {
         if(!(packet instanceof PEPacket)) return;
         packet.encode();
-        if (this.queue.getLength() > this.clientMTU) {
-            this.fireQueue();
-        }
+        this.fireQueue();
         EncapsulatedPacket[] encapsulatedPacket = EncapsulatedPacket.fromPEPacket(this, packet, reliability);
         for (EncapsulatedPacket ePacket : encapsulatedPacket) {
             ePacket.encode();
@@ -342,8 +338,8 @@ public class DragonetSession extends GlowSession {
                 this.fireQueue();
             }
             */
-            this.fireQueue();
             this.queue.getEncapsulatedPackets().add(ePacket);
+            this.fireQueue();
         }
     }
     
@@ -358,6 +354,7 @@ public class DragonetSession extends GlowSession {
     
 
     private synchronized void fireQueue() {
+        if(this.queue.getEncapsulatedPackets().isEmpty()) return;
         this.cachedOutgoingPacket.put(this.queue.getSequenceNumber(), this.queue);
         this.queue.encode();
         this.dServer.getNetworkHandler().getUdp().send(this.queue.getData(), this.remoteAddress);

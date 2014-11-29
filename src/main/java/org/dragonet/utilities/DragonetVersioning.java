@@ -14,5 +14,5 @@
 package org.dragonet.utilities;
 
 public final class DragonetVersioning {
-    public final static String DRAGONET_VERSION = "0.0.1-preR2";
+    public final static String DRAGONET_VERSION = "0.0.1-preR3";
 }
