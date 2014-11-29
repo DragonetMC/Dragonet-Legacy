@@ -563,7 +563,7 @@ public class DragonetSession extends GlowSession {
         
         //Preprare chunks
         for(int x = this.player.getLocation().getChunk().getX() - 4; x < this.player.getLocation().getChunk().getX() + 4; x++){
-            for(int z = this.player.getLocation().getChunk().getZ() - 4; z < this.player.getLocation().getChunk().getX() + 4; z++){
+            for(int z = this.player.getLocation().getChunk().getZ() - 4; z < this.player.getLocation().getChunk().getZ() + 4; z++){
                 this.chunkManager.prepareChunk(new ChunkLocation(x, z));
             }
         }
