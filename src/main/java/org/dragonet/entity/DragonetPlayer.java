@@ -15,6 +15,7 @@ package org.dragonet.entity;
 import net.glowstone.entity.GlowPlayer;
 import net.glowstone.entity.meta.profile.PlayerProfile;
 import net.glowstone.io.PlayerDataService;
+import org.bukkit.Location;
 import org.dragonet.net.DragonetSession;
 
 public class DragonetPlayer extends GlowPlayer {
@@ -23,4 +24,12 @@ public class DragonetPlayer extends GlowPlayer {
         super(session, profile, reader);
     }
     
+    public void setLocation(Location location){
+        this.location.setX(location.getX());
+        this.location.setY(location.getY());
+        this.location.setZ(location.getZ());
+        this.location.setYaw(location.getYaw());
+        this.location.setPitch(location.getPitch());
+        this.velocityChanged = true;
+    }
 }

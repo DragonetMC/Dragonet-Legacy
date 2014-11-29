@@ -21,7 +21,9 @@ import net.glowstone.net.message.play.game.ChunkBulkMessage;
 import net.glowstone.net.message.play.game.ChunkDataMessage;
 import net.glowstone.net.message.play.game.IncomingChatMessage;
 import net.glowstone.net.message.play.player.PlayerPositionLookMessage;
+import org.bukkit.Location;
 import org.dragonet.ChunkLocation;
+import org.dragonet.entity.DragonetPlayer;
 import org.dragonet.entity.metadata.EntityMetaData;
 import org.dragonet.net.DragonetSession;
 import org.dragonet.net.packet.minecraft.AddPlayerPacket;
@@ -56,6 +58,8 @@ public class Translator_v0_10_0 extends BaseTranslator {
                 return new Message[]{msgMessage};
             case PEPacketIDs.MOVE_PLAYER_PACKET:
                 MovePlayerPacket pkMovePlayer = (MovePlayerPacket) packet;
+                //Hack ;P
+                ((DragonetPlayer)this.getSession().getPlayer()).setLocation(new Location(null, pkMovePlayer.x, pkMovePlayer.y, pkMovePlayer.z, pkMovePlayer.yaw, pkMovePlayer.pitch));
                 return new Message[]{new PlayerPositionLookMessage(false, (double) pkMovePlayer.x, (double) pkMovePlayer.y, (double) pkMovePlayer.z, pkMovePlayer.yaw, pkMovePlayer.pitch)};
         }
         return null;
