@@ -36,7 +36,7 @@ public class ChunkLocation {
      * @return 
      */
     public int distanceTo(ChunkLocation loc){
-        return (int)Math.sqrt(Math.abs(loc.getX() - this.getX()) ^ 2 + Math.abs(loc.getZ() - this.getZ()) ^ 2);
+        return (int)Math.sqrt((double)((loc.getX() - this.getX()) * (loc.getX() - this.getX()) + (loc.getZ() - this.getZ()) * (loc.getZ() - this.getZ())));
     }
     
     @Override

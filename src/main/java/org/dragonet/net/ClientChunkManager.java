@@ -43,6 +43,15 @@ public class ClientChunkManager {
     }
 
     /**
+     * Trigger a chunk tick update
+     */
+    public void onTick(){
+        this.autoPrepareChunks();
+        this.unloadFarChunks();
+        this.sendChunks();
+    }
+    
+    /**
      * Check whether a full chunk is loaded(prepared/sent)
      *
      * @param location Chunk location
@@ -86,31 +95,48 @@ public class ClientChunkManager {
     }
 
     /**
+     * Automatically prepare chunks
+     */
+    public void autoPrepareChunks(){
+        if(!(this.getSession().getPlayer() instanceof GlowPlayer)) return;
+        for(int x = this.getSession().getPlayer().getLocation().getChunk().getX() - 8; x < this.getSession().getPlayer().getLocation().getChunk().getX() + 8; x++){
+            for(int z = this.getSession().getPlayer().getLocation().getChunk().getZ() - 8; z < this.getSession().getPlayer().getLocation().getChunk().getZ() + 8; z++){
+                this.prepareChunk(new ChunkLocation(x, z));
+            }
+        }
+    }
+    
+    /**
      * Send all queued chunks to the client and mark them as sent
      */
     public synchronized void sendChunks() {
-        if(!(this.getSession().getPlayer() instanceof GlowPlayer)) return;
+        if (!(this.getSession().getPlayer() instanceof GlowPlayer)) {
+            return;
+        }
         ChunkLocation chunkLocation;
         while ((chunkLocation = this.chunksQueue.poll()) != null) {
             this.sendChunk(chunkLocation.getX(), chunkLocation.getZ());
             this.chunksLoaded.add(chunkLocation);
         }
     }
-    
+
     /**
      * Unload the chunks that distance > 8
      */
-    public synchronized void unloadFarChunks(){
-        if(!(this.getSession().getPlayer() instanceof GlowPlayer)) return;
-        ChunkLocation playerChunk = new ChunkLocation(this.getSession().getPlayer().getLocation().getChunk().getX(), this.getSession().getPlayer().getLocation().getChunk().getZ());
+    public synchronized void unloadFarChunks() {
+        if (!(this.getSession().getPlayer() instanceof GlowPlayer)) {
+            return;
+        }
+        ChunkLocation playerChunk = new ChunkLocation(this.getSession().getPlayer().getLocation().getBlockX() / 16, this.getSession().getPlayer().getLocation().getBlockZ() / 16);
         ArrayList<ChunkLocation> toUnload = new ArrayList<>();
-        for(ChunkLocation loc : this.chunksLoaded){
-            if(loc.distanceTo(playerChunk) > 6){
+        for (ChunkLocation loc : this.chunksLoaded) {
+            if (loc.distanceTo(playerChunk) > 16) {
                 toUnload.add(loc);
+                System.out.println("Chunk Distance " + playerChunk.toString() + " TO " + loc.toString() + " DISTANCE = " + loc.distanceTo(playerChunk));
             }
         }
         UnloadChunkPacket pkUnloadChunk;
-        for(ChunkLocation locUnload : toUnload){
+        for (ChunkLocation locUnload : toUnload) {
             pkUnloadChunk = new UnloadChunkPacket();
             pkUnloadChunk.x = locUnload.getX();
             pkUnloadChunk.z = locUnload.getZ();
@@ -168,6 +194,7 @@ public class ClientChunkManager {
             packet.compressedData = ArrayUtils.subarray(bufferDeflate, 0, deflatedSize);
             this.getSession().send(packet);
         } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

@@ -61,7 +61,7 @@ public class Translator_v0_10_0 extends BaseTranslator {
             case PEPacketIDs.MOVE_PLAYER_PACKET:
                 MovePlayerPacket pkMovePlayer = (MovePlayerPacket) packet;
                 //Hack ;P
-                ((DragonetPlayer)this.getSession().getPlayer()).setLocation(new Location(null, pkMovePlayer.x, pkMovePlayer.y, pkMovePlayer.z, pkMovePlayer.yaw, pkMovePlayer.pitch));
+                ((DragonetPlayer)this.getSession().getPlayer()).setLocation(new Location(((DragonetPlayer)this.getSession().getPlayer()).getWorld(), pkMovePlayer.x, pkMovePlayer.y, pkMovePlayer.z, pkMovePlayer.yaw, pkMovePlayer.pitch));
                 return new Message[]{new PlayerPositionLookMessage(false, (double) pkMovePlayer.x, (double) pkMovePlayer.y, (double) pkMovePlayer.z, pkMovePlayer.yaw, pkMovePlayer.pitch)};
         }
         return null;
@@ -70,29 +70,35 @@ public class Translator_v0_10_0 extends BaseTranslator {
     /* ===== TO PE ===== */
     @Override
     public PEPacket[] translateToPE(Message message) {
+        /*
         if (message.getClass().getSimpleName().contains("Player") || message.getClass().getSimpleName().contains("Position")
                 || message.getClass().getSimpleName().contains("Chunk")) {
             System.out.print("Trnaslating to PE: " + message.getClass().getSimpleName());
         }
+        */
 
         /* ==================================================================================== */
         /**
          * Chunk Bulk Message
          */
+        /*
         if (message instanceof ChunkBulkMessage) {
             for (ChunkDataMessage dataMsg : ((ChunkBulkMessage) message).getEntries()) {
                 this.getSession().getChunkManager().prepareChunk(new ChunkLocation(dataMsg.x, dataMsg.z));
             }
             return null;
         }
+        */
 
         /**
          * Chunk Data Message
          */
+        /*
         if (message instanceof ChunkDataMessage) {
             ChunkDataMessage dataMsg = (ChunkDataMessage)message;
             this.getSession().getChunkManager().prepareChunk(new ChunkLocation(dataMsg.x, dataMsg.z));
         }
+        */
         
         /**
          * Chat Message

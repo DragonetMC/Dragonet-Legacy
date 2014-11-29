@@ -25,6 +25,7 @@ public class DragonetPlayer extends GlowPlayer {
     }
     
     public void setLocation(Location location){
+        this.location.setWorld(location.getWorld());
         this.location.setX(location.getX());
         this.location.setY(location.getY());
         this.location.setZ(location.getZ());

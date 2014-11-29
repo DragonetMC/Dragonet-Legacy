@@ -109,6 +109,8 @@ public class DragonetSession extends GlowSession {
     
     private @Getter ClientChunkManager chunkManager;
 
+    private boolean statusActive = true;
+    
     public DragonetSession(DragonetServer dServer, SocketAddress remoteAddress, long clientID, short clientMTU) {
         super(dServer.getServer());
         this.dServer = dServer;
@@ -132,8 +134,7 @@ public class DragonetSession extends GlowSession {
         if (this.queue.getEncapsulatedPackets().size() > 0) {
             this.fireQueue();
         }
-        this.chunkManager.sendChunks();
-        this.chunkManager.unloadFarChunks();
+        this.chunkManager.onTick();
     }
 
     private synchronized void sendAllACK() {
@@ -488,7 +489,7 @@ public class DragonetSession extends GlowSession {
 
     @Override
     public boolean isActive() {
-        return true;
+        return this.statusActive;
     }
 
     /**
@@ -539,15 +540,13 @@ public class DragonetSession extends GlowSession {
 
         player.getWorld().getRawPlayers().add(player);
 
-        GlowServer.logger.log(Level.INFO, "{0} [{1}] connected, UUID: {2}", new Object[]{player.getName(), this.getAddress(), player.getUniqueId()});
+        GlowServer.logger.log(Level.INFO, "{0} [{1}] connected from Minecraft PE, UUID: {2}", new Object[]{player.getName(), this.getAddress(), player.getUniqueId()});
 
         //Send the StartGamePacket
         StartGamePacket pkStartGame = new StartGamePacket();
         pkStartGame.seed = 0;
         pkStartGame.generator = 1;
-        if(this.player.getGameMode().equals(GameMode.SURVIVAL)){
-            pkStartGame.gamemode = 0;
-        }else if(this.player.getGameMode().equals(GameMode.CREATIVE)){
+        if(this.player.getGameMode().equals(GameMode.CREATIVE)){
             pkStartGame.gamemode = 1;
         }else{
             pkStartGame.gamemode = 0;
@@ -562,11 +561,7 @@ public class DragonetSession extends GlowSession {
         this.send(pkStartGame);
         
         //Preprare chunks
-        for(int x = this.player.getLocation().getChunk().getX() - 4; x < this.player.getLocation().getChunk().getX() + 4; x++){
-            for(int z = this.player.getLocation().getChunk().getZ() - 4; z < this.player.getLocation().getChunk().getZ() + 4; z++){
-                this.chunkManager.prepareChunk(new ChunkLocation(x, z));
-            }
-        }
+        this.chunkManager.autoPrepareChunks();
         
         // message and user list
         String message = EventFactory.onPlayerJoin(player).getJoinMessage();
