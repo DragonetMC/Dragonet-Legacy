@@ -47,7 +47,7 @@ public class ClientChunkManager {
      */
     public void onTick(){
         this.autoPrepareChunks();
-        this.unloadFarChunks();
+        //this.unloadFarChunks();
         this.sendChunks();
     }
     
@@ -153,6 +153,9 @@ public class ClientChunkManager {
      */
     private synchronized void sendChunk(int chunkX, int chunkZ) {
         try {
+            if(!this.getSession().getPlayer().getWorld().getChunkAt(chunkX, chunkZ).isLoaded()){
+                this.getSession().getPlayer().getWorld().getChunkAt(chunkX, chunkZ).load();
+            }
             GlowChunkSnapshot chunk = this.getSession().getPlayer().getWorld().getChunkAt(chunkX, chunkZ).getChunkSnapshot();
             ByteArrayOutputStream totalData = new ByteArrayOutputStream();
             PEBinaryWriter writer = new PEBinaryWriter(totalData);

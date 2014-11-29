@@ -1,6 +1,5 @@
 ====[The Class We Edited/Changed]====
 net.glowstone.GlowServer: Added dragonet instance getter, set dragonet instance to a private variable. 
-net.glowstone.GlowServer: Changed getViewDistance() method always return 7
 net.glowstone.GlowServer: Changed getVersion() and getBukkitVersion()
 
 net.glowstone.scheduler.GlowScheduler: Added tick trigger

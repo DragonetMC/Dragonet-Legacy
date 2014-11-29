@@ -1463,9 +1463,7 @@ public final class GlowServer implements Server {
 
     @Override
     public int getViewDistance() {
-        //DRAGONET-Always return a built-in number in order to prevent PE clients from lagging/crashing
-        //return config.getInt(ServerConfig.Key.VIEW_DISTANCE);
-        return 7;
+        return config.getInt(ServerConfig.Key.VIEW_DISTANCE);
     }
 
     @Override
