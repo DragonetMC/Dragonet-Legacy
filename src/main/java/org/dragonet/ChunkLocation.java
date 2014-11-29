@@ -30,6 +30,15 @@ public class ChunkLocation {
         this.z = z;
     }
 
+    /**
+     * Caculate the distance to another ChunkLocation. 
+     * @param loc Another chunk location
+     * @return 
+     */
+    public int distanceTo(ChunkLocation loc){
+        return (int)Math.sqrt(Math.abs(loc.getX() - this.getX()) ^ 2 + Math.abs(loc.getZ() - this.getZ()) ^ 2);
+    }
+    
     @Override
     public boolean equals(Object obj) {
         if(!(obj instanceof ChunkLocation)) return false;

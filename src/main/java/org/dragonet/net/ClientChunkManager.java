@@ -20,9 +20,11 @@ import java.util.Deque;
 import java.util.zip.Deflater;
 import lombok.Getter;
 import net.glowstone.GlowChunkSnapshot;
+import net.glowstone.entity.GlowPlayer;
 import org.apache.commons.lang.ArrayUtils;
 import org.dragonet.ChunkLocation;
 import org.dragonet.net.packet.minecraft.FullChunkPacket;
+import org.dragonet.net.packet.minecraft.UnloadChunkPacket;
 import org.dragonet.utilities.io.PEBinaryUtils;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
@@ -87,11 +89,41 @@ public class ClientChunkManager {
      * Send all queued chunks to the client and mark them as sent
      */
     public synchronized void sendChunks() {
+        if(!(this.getSession().getPlayer() instanceof GlowPlayer)) return;
         ChunkLocation chunkLocation;
         while ((chunkLocation = this.chunksQueue.poll()) != null) {
             this.sendChunk(chunkLocation.getX(), chunkLocation.getZ());
             this.chunksLoaded.add(chunkLocation);
         }
+    }
+    
+    /**
+     * Unload the chunks that distance > 8
+     */
+    public synchronized void unloadFarChunks(){
+        if(!(this.getSession().getPlayer() instanceof GlowPlayer)) return;
+        ChunkLocation playerChunk = new ChunkLocation(this.getSession().getPlayer().getLocation().getChunk().getX(), this.getSession().getPlayer().getLocation().getChunk().getZ());
+        ArrayList<ChunkLocation> toUnload = new ArrayList<>();
+        ArrayList<ChunkLocation> toCancelPreparing = new ArrayList<>();
+        for(ChunkLocation loc : this.chunksLoaded){
+            if(loc.distanceTo(playerChunk) > 6){
+                toUnload.add(loc);
+            }
+        }
+        for(ChunkLocation loc : this.chunksQueue){
+            if(loc.distanceTo(playerChunk) > 6){
+                toCancelPreparing.add(loc);
+            }
+        }
+        this.chunksQueue.removeAll(toCancelPreparing);
+        UnloadChunkPacket pkUnloadChunk;
+        for(ChunkLocation locUnload : toUnload){
+            pkUnloadChunk = new UnloadChunkPacket();
+            pkUnloadChunk.x = locUnload.getX();
+            pkUnloadChunk.z = locUnload.getZ();
+            this.getSession().send(pkUnloadChunk);
+        }
+        this.chunksLoaded.removeAll(toUnload);
     }
 
     /**

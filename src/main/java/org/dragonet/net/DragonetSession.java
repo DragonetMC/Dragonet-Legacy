@@ -132,6 +132,7 @@ public class DragonetSession extends GlowSession {
             this.fireQueue();
         }
         this.chunkManager.sendChunks();
+        this.chunkManager.unloadFarChunks();
     }
 
     private synchronized void sendAllACK() {
