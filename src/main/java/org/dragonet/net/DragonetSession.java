@@ -44,6 +44,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.GameMode;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.dragonet.ChunkLocation;
 import org.dragonet.DragonetServer;
 import org.dragonet.entity.DragonetPlayer;
 import org.dragonet.net.packet.EncapsulatedPacket;
@@ -559,6 +560,13 @@ public class DragonetSession extends GlowSession {
         pkStartGame.y = (float)this.player.getLocation().getY();
         pkStartGame.z = (float)this.player.getLocation().getZ();
         this.send(pkStartGame);
+        
+        //Preprare chunks
+        for(int x = this.player.getLocation().getChunk().getX() - 4; x < this.player.getLocation().getChunk().getX() + 4; x++){
+            for(int z = this.player.getLocation().getChunk().getZ() - 4; z < this.player.getLocation().getChunk().getX() + 4; z++){
+                this.chunkManager.prepareChunk(new ChunkLocation(x, z));
+            }
+        }
         
         // message and user list
         String message = EventFactory.onPlayerJoin(player).getJoinMessage();
