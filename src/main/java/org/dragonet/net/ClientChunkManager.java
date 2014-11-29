@@ -104,18 +104,11 @@ public class ClientChunkManager {
         if(!(this.getSession().getPlayer() instanceof GlowPlayer)) return;
         ChunkLocation playerChunk = new ChunkLocation(this.getSession().getPlayer().getLocation().getChunk().getX(), this.getSession().getPlayer().getLocation().getChunk().getZ());
         ArrayList<ChunkLocation> toUnload = new ArrayList<>();
-        ArrayList<ChunkLocation> toCancelPreparing = new ArrayList<>();
         for(ChunkLocation loc : this.chunksLoaded){
             if(loc.distanceTo(playerChunk) > 6){
                 toUnload.add(loc);
             }
         }
-        for(ChunkLocation loc : this.chunksQueue){
-            if(loc.distanceTo(playerChunk) > 6){
-                toCancelPreparing.add(loc);
-            }
-        }
-        this.chunksQueue.removeAll(toCancelPreparing);
         UnloadChunkPacket pkUnloadChunk;
         for(ChunkLocation locUnload : toUnload){
             pkUnloadChunk = new UnloadChunkPacket();
