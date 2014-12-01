@@ -10,22 +10,21 @@
  *
  * @author The Dragonet Team
  */
-
 package org.dragonet.net.packet.minecraft;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.dragonet.utilities.io.PEBinaryReader;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
-public class PingPongPacket extends PEPacket{
+public class WindowSetPropertyPacket extends PEPacket {
 
-    public long pingID;
-    
+    public byte windowID;
+    public short property;
+    public short value;
+
     @Override
     public int pid() {
-        return PEPacketIDs.PING;
+        return PEPacketIDs.WINDOW_SET_PROPERTY_PACKET;
     }
 
     @Override
@@ -33,19 +32,16 @@ public class PingPongPacket extends PEPacket{
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PEBinaryWriter writer = new PEBinaryWriter(bos);
-            writer.writeByte((byte)(this.pid() & 0xFF));
-            writer.writeLong(this.pingID);
+            writer.writeByte((byte) (this.pid() & 0xFF));
+            writer.writeByte(this.windowID);
+            writer.writeShort(this.property);
+            writer.writeShort(this.value);
             this.setData(bos.toByteArray());
-        }catch(IOException e) {}
+        } catch (IOException e) {
+        }
     }
 
     @Override
     public void decode() {
-        try {
-            PEBinaryReader reader = new PEBinaryReader(new ByteArrayInputStream(this.getData()));
-            reader.readByte();
-            this.pingID = reader.readLong();
-        }catch(IOException e) {}
     }
-
 }

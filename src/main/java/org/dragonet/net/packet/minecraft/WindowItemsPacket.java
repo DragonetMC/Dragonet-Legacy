@@ -10,22 +10,22 @@
  *
  * @author The Dragonet Team
  */
-
 package org.dragonet.net.packet.minecraft;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.dragonet.utilities.io.PEBinaryReader;
+import org.dragonet.inventory.PEInventorySlot;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
-public class PingPongPacket extends PEPacket{
+public class WindowItemsPacket extends PEPacket {
 
-    public long pingID;
-    
+    public byte windowID;
+    public PEInventorySlot[] slots;
+    public PEInventorySlot[] hotbar;
+
     @Override
     public int pid() {
-        return PEPacketIDs.PING;
+        return PEPacketIDs.WINDOW_ITEMS_PACKET;
     }
 
     @Override
@@ -33,19 +33,26 @@ public class PingPongPacket extends PEPacket{
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PEBinaryWriter writer = new PEBinaryWriter(bos);
-            writer.writeByte((byte)(this.pid() & 0xFF));
-            writer.writeLong(this.pingID);
+            writer.writeByte((byte) (this.pid() & 0xFF));
+            writer.writeShort((short)(this.slots.length & 0xFFFF));
+            for(PEInventorySlot slot : this.slots){
+                PEInventorySlot.writeSlot(writer, slot);
+            }
+            if(windowID == (byte)0x00){
+                writer.writeShort((short)(this.hotbar.length & 0xFFFF));
+                for(PEInventorySlot slot : this.hotbar){
+                PEInventorySlot.writeSlot(writer, slot);
+            }
+            }else{
+                writer.writeShort((short)0);
+            }
             this.setData(bos.toByteArray());
-        }catch(IOException e) {}
+        } catch (IOException e) {
+        }
     }
 
     @Override
     public void decode() {
-        try {
-            PEBinaryReader reader = new PEBinaryReader(new ByteArrayInputStream(this.getData()));
-            reader.readByte();
-            this.pingID = reader.readLong();
-        }catch(IOException e) {}
     }
 
 }

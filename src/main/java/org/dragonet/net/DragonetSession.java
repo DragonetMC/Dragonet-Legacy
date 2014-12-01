@@ -50,12 +50,14 @@ import org.dragonet.net.packet.EncapsulatedPacket;
 import org.dragonet.net.packet.RaknetDataPacket;
 import org.dragonet.net.packet.minecraft.AdventureSettingsPacket;
 import org.dragonet.net.packet.minecraft.ClientConnectPacket;
+import org.dragonet.net.packet.minecraft.FullChunkPacket;
 import org.dragonet.net.packet.minecraft.LoginPacket;
 import org.dragonet.net.packet.minecraft.LoginStatusPacket;
 import org.dragonet.net.packet.minecraft.PEPacket;
 import org.dragonet.net.packet.minecraft.PEPacketIDs;
 import org.dragonet.net.packet.minecraft.PingPongPacket;
 import org.dragonet.net.packet.minecraft.ServerHandshakePacket;
+import org.dragonet.net.packet.minecraft.SetDifficultyPacket;
 import org.dragonet.net.packet.minecraft.StartGamePacket;
 import org.dragonet.net.translator.BaseTranslator;
 import org.dragonet.net.translator.TranslatorProvider;
@@ -114,6 +116,9 @@ public class DragonetSession extends GlowSession {
 
     private boolean statusActive = true;
 
+    private int sentAndReceivedChunks = 0;
+    private ArrayList<Integer> chunkPacketIDS = new ArrayList<>();
+
     public DragonetSession(DragonetServer dServer, SocketAddress remoteAddress, long clientID, short clientMTU) {
         super(dServer.getServer());
         this.dServer = dServer;
@@ -138,6 +143,10 @@ public class DragonetSession extends GlowSession {
             this.fireQueue();
         }
         this.chunkManager.onTick();
+        if(this.sentAndReceivedChunks >= 56){
+            this.sentAndReceivedChunks = -1;
+            this.sendSettings();
+        }
     }
 
     private synchronized void sendAllACK() {
@@ -287,6 +296,10 @@ public class DragonetSession extends GlowSession {
                 if (this.cachedOutgoingPacket.containsKey(seq)) {
                     this.cachedOutgoingPacket.remove(seq);
                 }
+                if(this.chunkPacketIDS.contains(seq)){
+                    this.sentAndReceivedChunks ++;
+                    this.chunkPacketIDS.remove(new Integer(seq));
+                }
             }
         } catch (IOException e) {
         }
@@ -347,6 +360,9 @@ public class DragonetSession extends GlowSession {
              }
              */
             this.queue.getEncapsulatedPackets().add(ePacket);
+            if (this.sentAndReceivedChunks != -1 && (packet instanceof FullChunkPacket)) {
+                this.chunkPacketIDS.add(this.queue.getSequenceNumber());
+            }
             this.fireQueue();
         }
     }
@@ -510,9 +526,11 @@ public class DragonetSession extends GlowSession {
     }
 
     public void sendSettings() {
-        if(!(this.getPlayer() instanceof GlowPlayer)) return;
+        if (!(this.getPlayer() instanceof GlowPlayer)) {
+            return;
+        }
         int flags = 0;
-        if(this.getPlayer().getGameMode().equals(GameMode.ADVENTURE)){
+        if (this.getPlayer().getGameMode().equals(GameMode.ADVENTURE)) {
             flags |= 0x01;
         }
         flags |= 0x20;
@@ -588,10 +606,12 @@ public class DragonetSession extends GlowSession {
         pkStartGame.y = (float) this.player.getLocation().getY();
         pkStartGame.z = (float) this.player.getLocation().getZ();
         this.send(pkStartGame);
-        
-        //Send settings
-        this.sendSettings();
 
+        //Send Difficulty Packet
+        SetDifficultyPacket pkDifficulty = new SetDifficultyPacket();
+        pkDifficulty.difficulty = this.getServer().getDifficulty().getValue();
+        this.send(pkDifficulty);
+        
         //Preprare chunks
         this.chunkManager.autoPrepareChunks();
 

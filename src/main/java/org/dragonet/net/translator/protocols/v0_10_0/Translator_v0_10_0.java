@@ -18,13 +18,14 @@ import net.glowstone.entity.GlowPlayer;
 import net.glowstone.net.message.play.entity.RelativeEntityPositionMessage;
 import net.glowstone.net.message.play.entity.SpawnPlayerMessage;
 import net.glowstone.net.message.play.game.ChatMessage;
-import net.glowstone.net.message.play.game.ChunkBulkMessage;
-import net.glowstone.net.message.play.game.ChunkDataMessage;
 import net.glowstone.net.message.play.game.IncomingChatMessage;
+import net.glowstone.net.message.play.inv.CloseWindowMessage;
+import net.glowstone.net.message.play.inv.OpenWindowMessage;
+import net.glowstone.net.message.play.inv.SetWindowContentsMessage;
+import net.glowstone.net.message.play.inv.SetWindowSlotMessage;
 import net.glowstone.net.message.play.player.PlayerPositionLookMessage;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
-import org.dragonet.ChunkLocation;
 import org.dragonet.entity.DragonetPlayer;
 import org.dragonet.entity.metadata.EntityMetaData;
 import org.dragonet.net.DragonetSession;
@@ -61,7 +62,7 @@ public class Translator_v0_10_0 extends BaseTranslator {
             case PEPacketIDs.MOVE_PLAYER_PACKET:
                 MovePlayerPacket pkMovePlayer = (MovePlayerPacket) packet;
                 //Hack ;P
-                ((DragonetPlayer)this.getSession().getPlayer()).setLocation(new Location(((DragonetPlayer)this.getSession().getPlayer()).getWorld(), pkMovePlayer.x, pkMovePlayer.y, pkMovePlayer.z, pkMovePlayer.yaw, pkMovePlayer.pitch));
+                ((DragonetPlayer) this.getSession().getPlayer()).setLocation(new Location(((DragonetPlayer) this.getSession().getPlayer()).getWorld(), pkMovePlayer.x, pkMovePlayer.y, pkMovePlayer.z, pkMovePlayer.yaw, pkMovePlayer.pitch));
                 return new Message[]{new PlayerPositionLookMessage(false, (double) pkMovePlayer.x, (double) pkMovePlayer.y, (double) pkMovePlayer.z, pkMovePlayer.yaw, pkMovePlayer.pitch)};
         }
         return null;
@@ -70,36 +71,32 @@ public class Translator_v0_10_0 extends BaseTranslator {
     /* ===== TO PE ===== */
     @Override
     public PEPacket[] translateToPE(Message message) {
-        /*
-        if (message.getClass().getSimpleName().contains("Player") || message.getClass().getSimpleName().contains("Position")
+        if (message.getClass().getSimpleName().contains("Player") || message.getClass().getSimpleName().contains("Window")
                 || message.getClass().getSimpleName().contains("Chunk")) {
             System.out.print("Trnaslating to PE: " + message.getClass().getSimpleName());
         }
-        */
 
         /* ==================================================================================== */
         /**
          * Chunk Bulk Message
          */
         /*
-        if (message instanceof ChunkBulkMessage) {
-            for (ChunkDataMessage dataMsg : ((ChunkBulkMessage) message).getEntries()) {
-                this.getSession().getChunkManager().prepareChunk(new ChunkLocation(dataMsg.x, dataMsg.z));
-            }
-            return null;
-        }
-        */
-
+         if (message instanceof ChunkBulkMessage) {
+         for (ChunkDataMessage dataMsg : ((ChunkBulkMessage) message).getEntries()) {
+         this.getSession().getChunkManager().prepareChunk(new ChunkLocation(dataMsg.x, dataMsg.z));
+         }
+         return null;
+         }
+         */
         /**
          * Chunk Data Message
          */
         /*
-        if (message instanceof ChunkDataMessage) {
-            ChunkDataMessage dataMsg = (ChunkDataMessage)message;
-            this.getSession().getChunkManager().prepareChunk(new ChunkLocation(dataMsg.x, dataMsg.z));
-        }
-        */
-        
+         if (message instanceof ChunkDataMessage) {
+         ChunkDataMessage dataMsg = (ChunkDataMessage)message;
+         this.getSession().getChunkManager().prepareChunk(new ChunkLocation(dataMsg.x, dataMsg.z));
+         }
+         */
         /**
          * Chat Message
          */
@@ -114,40 +111,73 @@ public class Translator_v0_10_0 extends BaseTranslator {
         /**
          * Position Update
          */
-        if(message instanceof RelativeEntityPositionMessage){
-            RelativeEntityPositionMessage msgRelativeEntityPosition = ((RelativeEntityPositionMessage)message);
+        if (message instanceof RelativeEntityPositionMessage) {
+            RelativeEntityPositionMessage msgRelativeEntityPosition = ((RelativeEntityPositionMessage) message);
             Entity entity = this.getSession().getPlayer().getWorld().getEntityManager().getEntity(msgRelativeEntityPosition.id);
-            if(entity instanceof GlowPlayer){
+            if (entity instanceof GlowPlayer) {
                 boolean isTeleport = Math.sqrt(msgRelativeEntityPosition.deltaX ^ 2 + msgRelativeEntityPosition.deltaY ^ 2 + msgRelativeEntityPosition.deltaZ ^ 2) > 2;
-                MovePlayerPacket pkMovePlayer = new MovePlayerPacket(msgRelativeEntityPosition.id, (float)entity.getLocation().getX(), (float)entity.getLocation().getY(), (float)entity.getLocation().getZ(), entity.getLocation().getYaw(), entity.getLocation().getPitch(), entity.getLocation().getYaw(), isTeleport);
-                return new PEPacket[] {pkMovePlayer};
-            }else{
+                MovePlayerPacket pkMovePlayer = new MovePlayerPacket(msgRelativeEntityPosition.id, (float) entity.getLocation().getX(), (float) entity.getLocation().getY(), (float) entity.getLocation().getZ(), entity.getLocation().getYaw(), entity.getLocation().getPitch(), entity.getLocation().getYaw(), isTeleport);
+                return new PEPacket[]{pkMovePlayer};
+            } else {
                 //TODO: Handle other entities
                 return null;
             }
         }
-        
-        
+
         /**
          * Spawn Player
          */
-        if (message instanceof SpawnPlayerMessage){
+        if (message instanceof SpawnPlayerMessage) {
             SpawnPlayerMessage msgSpawnPlayer = (SpawnPlayerMessage) message;
             AddPlayerPacket pkAddPlayer = new AddPlayerPacket();
             pkAddPlayer.clientID = 0;
             pkAddPlayer.eid = msgSpawnPlayer.getId();
             pkAddPlayer.username = this.getSession().getServer().getPlayer(msgSpawnPlayer.getUuid()).getDisplayName();
-            pkAddPlayer.x = (float)msgSpawnPlayer.getX();
-            pkAddPlayer.y = (float)msgSpawnPlayer.getY();
-            pkAddPlayer.z = (float)msgSpawnPlayer.getZ();
+            pkAddPlayer.x = (float) msgSpawnPlayer.getX();
+            pkAddPlayer.y = (float) msgSpawnPlayer.getY();
+            pkAddPlayer.z = (float) msgSpawnPlayer.getZ();
             pkAddPlayer.yaw = (msgSpawnPlayer.getRotation() % 360 + 360) % 360;
             pkAddPlayer.pitch = msgSpawnPlayer.getPitch();
             pkAddPlayer.unknown1 = 0;
             pkAddPlayer.unknown2 = 0;
-            pkAddPlayer.metadata = EntityMetaData.getMetaDataFromPlayer((GlowPlayer)this.getSession().getPlayer().getWorld().getEntityManager().getEntity(msgSpawnPlayer.getId()));
-            return new PEPacket[] {pkAddPlayer};
+            pkAddPlayer.metadata = EntityMetaData.getMetaDataFromPlayer((GlowPlayer) this.getSession().getPlayer().getWorld().getEntityManager().getEntity(msgSpawnPlayer.getId()));
+            return new PEPacket[]{pkAddPlayer};
         }
-        
+
+        /**
+         * Open Window
+         */
+        if (message instanceof OpenWindowMessage) {
+            OpenWindowMessage msgOpenWindow = (OpenWindowMessage) message;
+            //TODO
+        }
+
+        /**
+         * Set Window Items
+         */
+        if (message instanceof SetWindowContentsMessage) {
+            SetWindowContentsMessage msgWindowContents = (SetWindowContentsMessage) message;
+            //TODO
+            System.out.println("Updating window content for " + msgWindowContents.id + ", which has " + msgWindowContents.items.length + " slots. ");
+        }
+
+        /**
+         * Set Window Slot
+         */
+        if (message instanceof SetWindowSlotMessage) {
+            SetWindowSlotMessage msgSetSlot = (SetWindowSlotMessage) message;
+            //TODO
+            System.out.println("Updating item for " + msgSetSlot.id + ", at slot " + msgSetSlot.slot + ". ");
+        }
+
+        /**
+         * Close Window Slot
+         */
+        if (message instanceof CloseWindowMessage) {
+            CloseWindowMessage msgCloseWindow = (CloseWindowMessage) message;
+            //TODO
+        }
+
         /* ==================================================================================== */
         return null;
     }

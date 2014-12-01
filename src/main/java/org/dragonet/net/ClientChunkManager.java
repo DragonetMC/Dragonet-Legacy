@@ -45,12 +45,12 @@ public class ClientChunkManager {
     /**
      * Trigger a chunk tick update
      */
-    public void onTick(){
+    public void onTick() {
         this.autoPrepareChunks();
         //this.unloadFarChunks();
         this.sendChunks();
     }
-    
+
     /**
      * Check whether a full chunk is loaded(prepared/sent)
      *
@@ -97,15 +97,17 @@ public class ClientChunkManager {
     /**
      * Automatically prepare chunks
      */
-    public void autoPrepareChunks(){
-        if(!(this.getSession().getPlayer() instanceof GlowPlayer)) return;
-        for(int x = this.getSession().getPlayer().getLocation().getChunk().getX() - 8; x < this.getSession().getPlayer().getLocation().getChunk().getX() + 8; x++){
-            for(int z = this.getSession().getPlayer().getLocation().getChunk().getZ() - 8; z < this.getSession().getPlayer().getLocation().getChunk().getZ() + 8; z++){
+    public void autoPrepareChunks() {
+        if (!(this.getSession().getPlayer() instanceof GlowPlayer)) {
+            return;
+        }
+        for (int x = this.getSession().getPlayer().getLocation().getChunk().getX() - 8; x < this.getSession().getPlayer().getLocation().getChunk().getX() + 8; x++) {
+            for (int z = this.getSession().getPlayer().getLocation().getChunk().getZ() - 8; z < this.getSession().getPlayer().getLocation().getChunk().getZ() + 8; z++) {
                 this.prepareChunk(new ChunkLocation(x, z));
             }
         }
     }
-    
+
     /**
      * Send all queued chunks to the client and mark them as sent
      */
@@ -153,8 +155,8 @@ public class ClientChunkManager {
      */
     private synchronized void sendChunk(int chunkX, int chunkZ) {
         try {
-            if(!this.getSession().getPlayer().getWorld().getChunkAt(chunkX, chunkZ).isLoaded()){
-                this.getSession().getPlayer().getWorld().getChunkAt(chunkX, chunkZ).load();
+            if (!this.getSession().getPlayer().getWorld().getChunkAt(chunkX, chunkZ).isLoaded()) {
+                this.getSession().getPlayer().getWorld().loadChunk(chunkX, chunkZ, true);
             }
             GlowChunkSnapshot chunk = this.getSession().getPlayer().getWorld().getChunkAt(chunkX, chunkZ).getChunkSnapshot();
             ByteArrayOutputStream totalData = new ByteArrayOutputStream();
