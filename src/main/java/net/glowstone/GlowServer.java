@@ -87,6 +87,7 @@ public final class GlowServer implements Server {
         try {
             ConfigurationSerialization.registerClass(GlowOfflinePlayer.class);
             GlowPotionEffect.register();
+            GlowEnchantment.register();
 
             // parse arguments and read config
             final ServerConfig config = parseArguments(args);

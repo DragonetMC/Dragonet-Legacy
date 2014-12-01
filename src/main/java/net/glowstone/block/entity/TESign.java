@@ -8,10 +8,11 @@ import net.glowstone.util.nbt.CompoundTag;
 import org.bukkit.Material;
 
 import java.util.Arrays;
+import net.glowstone.util.TextMessage;
 
 public class TESign extends TileEntity {
 
-    private final String[] lines = new String[4];
+    private final TextMessage[] lines = new TextMessage[4];
 
     public TESign(GlowBlock block) {
         super(block);
@@ -21,7 +22,7 @@ public class TESign extends TileEntity {
             throw new IllegalArgumentException("Sign must be WALL_SIGN or SIGN_POST, got " + block.getType());
         }
 
-        Arrays.fill(lines, "");
+        Arrays.fill(lines, new TextMessage(""));
     }
 
     @Override
@@ -35,7 +36,7 @@ public class TESign extends TileEntity {
         for (int i = 0; i < lines.length; ++i) {
             String key = "Text" + (i + 1);
             if (tag.isString(key)) {
-                lines[i] = tag.getString(key);
+                lines[i] = TextMessage.decode(tag.getString(key));
             }
         }
     }
@@ -44,7 +45,7 @@ public class TESign extends TileEntity {
     public void saveNbt(CompoundTag tag) {
         super.saveNbt(tag);
         for (int i = 0; i < lines.length; ++i) {
-            tag.putString("Text" + (i + 1), lines[i]);
+            tag.putString("Text" + (i + 1), lines[i].encode());
         }
     }
 
@@ -55,8 +56,10 @@ public class TESign extends TileEntity {
 
     /**
      * Set the lines of text on the sign.
+     *
      * @param text The lines of text.
-     * @throws IllegalArgumentException If the wrong number of lines is provided.
+     * @throws IllegalArgumentException If the wrong number of lines is
+     * provided.
      */
     public void setLines(String[] text) {
         if (text.length != lines.length) {
@@ -64,16 +67,21 @@ public class TESign extends TileEntity {
         }
 
         for (int i = 0; i < lines.length; ++i) {
-            lines[i] = text[i] == null ? "" : text[i];
+            lines[i] = new TextMessage(text[i] == null ? "" : text[i]);
         }
     }
 
     /**
      * Get the lines of text on the sign.
+     *
      * @return The sign's lines.
      */
     public String[] getLines() {
-        return lines.clone();
+        String[] result = new String[lines.length];
+        for (int i = 0; i < result.length; ++i) {
+            result[i] = lines[i].flatten();
+        }
+        return result;
     }
 
 }

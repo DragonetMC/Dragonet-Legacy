@@ -48,6 +48,7 @@ import org.dragonet.DragonetServer;
 import org.dragonet.entity.DragonetPlayer;
 import org.dragonet.net.packet.EncapsulatedPacket;
 import org.dragonet.net.packet.RaknetDataPacket;
+import org.dragonet.net.packet.minecraft.AdventureSettingsPacket;
 import org.dragonet.net.packet.minecraft.ClientConnectPacket;
 import org.dragonet.net.packet.minecraft.LoginPacket;
 import org.dragonet.net.packet.minecraft.LoginStatusPacket;
@@ -65,7 +66,7 @@ import org.dragonet.utilities.io.PEBinaryWriter;
 public class DragonetSession extends GlowSession {
 
     private final static Pattern patternUsername = Pattern.compile("^[a-zA-Z0-9_]{3,16}$");
-    
+
     private @Getter
     DragonetServer dServer;
 
@@ -75,14 +76,14 @@ public class DragonetSession extends GlowSession {
     private InetSocketAddress remoteInetSocketAddress;
 
     private int loginStage;
-    
+
     private @Getter
     long clientID;
     private @Getter
     short clientMTU;
 
     private @Getter
-    long clientSessionID ;
+    long clientSessionID;
 
     private @Getter
     int sequenceNum;        //Server->Client
@@ -96,20 +97,23 @@ public class DragonetSession extends GlowSession {
     @Setter
     int splitID;
 
-    private @Getter String username;
-    
+    private @Getter
+    String username;
+
     private RaknetDataPacket queue;
 
     private ArrayList<Integer> queueACK = new ArrayList<>();
     private ArrayList<Integer> queueNACK = new ArrayList<>();
     private HashMap<Integer, RaknetDataPacket> cachedOutgoingPacket = new HashMap<>();
 
-    private @Getter BaseTranslator translator;
-    
-    private @Getter ClientChunkManager chunkManager;
+    private @Getter
+    BaseTranslator translator;
+
+    private @Getter
+    ClientChunkManager chunkManager;
 
     private boolean statusActive = true;
-    
+
     public DragonetSession(DragonetServer dServer, SocketAddress remoteAddress, long clientID, short clientMTU) {
         super(dServer.getServer());
         this.dServer = dServer;
@@ -117,7 +121,7 @@ public class DragonetSession extends GlowSession {
         this.clientMTU = clientMTU;
         this.remoteAddress = remoteAddress;
         this.remoteIP = this.remoteAddress.toString().substring(1, this.remoteAddress.toString().indexOf(":"));
-        this.remotePort = Integer.parseInt(this.remoteAddress.toString().substring(this.remoteAddress.toString().indexOf(":")+1));
+        this.remotePort = Integer.parseInt(this.remoteAddress.toString().substring(this.remoteAddress.toString().indexOf(":") + 1));
         this.remoteInetSocketAddress = new InetSocketAddress(this.remoteIP, this.remotePort);
         this.queue = new RaknetDataPacket(this.sequenceNum);
         this.chunkManager = new ClientChunkManager(this);
@@ -329,34 +333,38 @@ public class DragonetSession extends GlowSession {
      * @param reliability Packet reliability
      */
     public void send(PEPacket packet, int reliability) {
-        if(!(packet instanceof PEPacket)) return;
+        if (!(packet instanceof PEPacket)) {
+            return;
+        }
         packet.encode();
         this.fireQueue();
         EncapsulatedPacket[] encapsulatedPacket = EncapsulatedPacket.fromPEPacket(this, packet, reliability);
         for (EncapsulatedPacket ePacket : encapsulatedPacket) {
             ePacket.encode();
             /*
-            if (this.queue.getLength() + ePacket.getData().length > this.clientMTU - 24) {
-                this.fireQueue();
-            }
-            */
+             if (this.queue.getLength() + ePacket.getData().length > this.clientMTU - 24) {
+             this.fireQueue();
+             }
+             */
             this.queue.getEncapsulatedPackets().add(ePacket);
             this.fireQueue();
         }
     }
-    
-    /***
+
+    /**
+     * *
      * Send a packet to the client with default packet reliability 2
+     *
      * @param packet Packet to send
      */
-    public void send(PEPacket packet){
+    public void send(PEPacket packet) {
         this.send(packet, 2);
     }
-    
-    
 
     private synchronized void fireQueue() {
-        if(this.queue.getEncapsulatedPackets().isEmpty()) return;
+        if (this.queue.getEncapsulatedPackets().isEmpty()) {
+            return;
+        }
         this.cachedOutgoingPacket.put(this.queue.getSequenceNumber(), this.queue);
         this.queue.encode();
         this.dServer.getNetworkHandler().getUdp().send(this.queue.getData(), this.remoteAddress);
@@ -425,55 +433,65 @@ public class DragonetSession extends GlowSession {
             switch (packet.pid()) {
                 case PEPacketIDs.PING:
                     PingPongPacket pkPong = new PingPongPacket();
-                    pkPong.pingID = ((PingPongPacket)packet).pingID;
+                    pkPong.pingID = ((PingPongPacket) packet).pingID;
                     this.send(pkPong, 0);
                     break;
                 case PEPacketIDs.CLIENT_CONNECT:
-                    if(this.loginStage != 0) break;
-                    this.clientSessionID = ((ClientConnectPacket)packet).sessionID;
+                    if (this.loginStage != 0) {
+                        break;
+                    }
+                    this.clientSessionID = ((ClientConnectPacket) packet).sessionID;
                     ServerHandshakePacket pkServerHandshake = new ServerHandshakePacket();
-                    pkServerHandshake.port = (short)(this.remotePort & 0xFFFF);
+                    pkServerHandshake.port = (short) (this.remotePort & 0xFFFF);
                     pkServerHandshake.session = this.clientSessionID;
                     pkServerHandshake.session2 = 0x04440BA9L;
                     this.loginStage = 1;
                     this.send(pkServerHandshake);
                     break;
                 case PEPacketIDs.CLIENT_HANDSHAKE:
-                    if(this.loginStage != 1) break;
+                    if (this.loginStage != 1) {
+                        break;
+                    }
                     this.loginStage = 2;
                     break;
                 case PEPacketIDs.LOGIN_PACKET:
-                    if(this.loginStage != 2) break;
+                    if (this.loginStage != 2) {
+                        break;
+                    }
                     LoginPacket packetLogin = (LoginPacket) packet;
                     this.username = packetLogin.username;
-                    
+
                     this.translator = TranslatorProvider.getByPEProtocolID(this, packetLogin.protocol1);
-                    if(!(this.translator instanceof BaseTranslator)){
+                    if (!(this.translator instanceof BaseTranslator)) {
                         LoginStatusPacket pkLoginStatus = new LoginStatusPacket();
                         pkLoginStatus.status = 2;
                         this.send(pkLoginStatus);
                         this.disconnect("Unsupported game version! ");
                         break;
                     }
-                    
+
                     LoginStatusPacket pkLoginStatus = new LoginStatusPacket();
                     pkLoginStatus.status = 0;
                     this.send(pkLoginStatus);
-                    
+
                     this.getLogger().info("Sent LoginStatusPacket! ");
-                    
+
                     Matcher matcher = patternUsername.matcher(this.username);
-                    if(!matcher.matches()){
+                    if (!matcher.matches()) {
                         this.disconnect("Bad username! ");
                         break;
                     }
-                    
+
                     this.loginStage = 3;
                     this.setPlayer(new PlayerProfile(this.username, UUID.nameUUIDFromBytes(MD5Encrypt.encryptString(this.username))));
                     break;
                 default:
-                    if(this.loginStage != 3) break;
-                    if(!(this.translator instanceof BaseTranslator)) break;
+                    if (this.loginStage != 3) {
+                        break;
+                    }
+                    if (!(this.translator instanceof BaseTranslator)) {
+                        break;
+                    }
                     this.dServer.getThreadPool().submit(new ProcessPEPacketTask(this, packet));
                     break;
             }
@@ -489,6 +507,18 @@ public class DragonetSession extends GlowSession {
     @Override
     public boolean isActive() {
         return this.statusActive;
+    }
+
+    public void sendSettings() {
+        if(!(this.getPlayer() instanceof GlowPlayer)) return;
+        int flags = 0;
+        if(this.getPlayer().getGameMode().equals(GameMode.ADVENTURE)){
+            flags |= 0x01;
+        }
+        flags |= 0x20;
+        AdventureSettingsPacket pkAdventure = new AdventureSettingsPacket();
+        pkAdventure.flags = flags;
+        this.send(pkAdventure);
     }
 
     /**
@@ -545,23 +575,26 @@ public class DragonetSession extends GlowSession {
         StartGamePacket pkStartGame = new StartGamePacket();
         pkStartGame.seed = 0;
         pkStartGame.generator = 1;
-        if(this.player.getGameMode().equals(GameMode.CREATIVE)){
+        if (this.player.getGameMode().equals(GameMode.CREATIVE)) {
             pkStartGame.gamemode = 1;
-        }else{
+        } else {
             pkStartGame.gamemode = 0;
         }
         pkStartGame.eid = this.player.getEntityId();
         pkStartGame.spawnX = this.player.getWorld().getSpawnLocation().getBlockX();
         pkStartGame.spawnY = this.player.getWorld().getSpawnLocation().getBlockY();
         pkStartGame.spawnZ = this.player.getWorld().getSpawnLocation().getBlockZ();
-        pkStartGame.x = (float)this.player.getLocation().getX();
-        pkStartGame.y = (float)this.player.getLocation().getY();
-        pkStartGame.z = (float)this.player.getLocation().getZ();
+        pkStartGame.x = (float) this.player.getLocation().getX();
+        pkStartGame.y = (float) this.player.getLocation().getY();
+        pkStartGame.z = (float) this.player.getLocation().getZ();
         this.send(pkStartGame);
         
+        //Send settings
+        this.sendSettings();
+
         //Preprare chunks
         this.chunkManager.autoPrepareChunks();
-        
+
         // message and user list
         String message = EventFactory.onPlayerJoin(player).getJoinMessage();
         if (message != null && !message.isEmpty()) {
@@ -583,11 +616,11 @@ public class DragonetSession extends GlowSession {
         send(new UserListItemMessage(UserListItemMessage.Action.ADD_PLAYER, entries));
     }
 
-    
     /**
      * Disconnects the session with the specified reason. This causes a
-     * KickMessage to be sent. When it has been delivered, the channel
-     * is closed.
+     * KickMessage to be sent. When it has been delivered, the channel is
+     * closed.
+     *
      * @param reason The reason for disconnection.
      * @param overrideKick Whether to skip the kick event.
      */
@@ -620,7 +653,7 @@ public class DragonetSession extends GlowSession {
     public InetSocketAddress getAddress() {
         return this.remoteInetSocketAddress;
     }
-    
+
     @Override
     public String getHostname() {
         return this.remoteIP;
@@ -633,7 +666,7 @@ public class DragonetSession extends GlowSession {
     @Override
     public void enableEncryption(SecretKey sharedSecret) {
     }
-    
+
     @Override
     public void setProtocol(ProtocolType protocol) {
         //GlowProtocol proto = protocol.getProtocol();
