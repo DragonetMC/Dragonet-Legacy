@@ -28,17 +28,27 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.dragonet.entity.DragonetPlayer;
 import org.dragonet.entity.metadata.EntityMetaData;
+import org.dragonet.inventory.PEInventorySlot;
+import org.dragonet.inventory.PEInventoryType;
+import org.dragonet.inventory.PEWindowConstantID;
 import org.dragonet.net.DragonetSession;
 import org.dragonet.net.packet.minecraft.AddPlayerPacket;
 import org.dragonet.net.packet.minecraft.MessagePacket;
 import org.dragonet.net.packet.minecraft.MovePlayerPacket;
 import org.dragonet.net.packet.minecraft.PEPacket;
 import org.dragonet.net.packet.minecraft.PEPacketIDs;
+import org.dragonet.net.packet.minecraft.WindowItemsPacket;
 import org.dragonet.net.translator.BaseTranslator;
 
 public class Translator_v0_10_0 extends BaseTranslator {
 
     private HashMap<Integer, Integer> blockMap = new HashMap<>();
+
+    /**
+     * Cached Window Types for Window Item Translating If the value equals
+     * Integer.MAX_VALUE then the window doesn't exist
+     */
+    private int[] chachedWindowType;
 
     public Translator_v0_10_0(DragonetSession session) {
         super(session);
@@ -49,6 +59,10 @@ public class Translator_v0_10_0 extends BaseTranslator {
         blockMap.put(27, 27);
         blockMap.put(31, 31);
         blockMap.put(50, 50);
+        this.chachedWindowType = new int[256];
+        for (int i = 0; i < 256; i++) {
+            this.chachedWindowType[i] = Integer.MAX_VALUE;
+        }
     }
 
     /* ===== TO PC ===== */
@@ -157,7 +171,28 @@ public class Translator_v0_10_0 extends BaseTranslator {
          */
         if (message instanceof SetWindowContentsMessage) {
             SetWindowContentsMessage msgWindowContents = (SetWindowContentsMessage) message;
+            if (msgWindowContents.id == 0) {
+                WindowItemsPacket pkInventory = new WindowItemsPacket();
+                pkInventory.windowID = PEWindowConstantID.PLAYER_INVENTORY;
+                pkInventory.slots = new PEInventorySlot[PEInventoryType.SlotSize.PLAYER];
+                for (int i = 9; i <= 44; i++) {
+                    pkInventory.slots[i - 9] = new PEInventorySlot((short) (msgWindowContents.items[i].getTypeId() & 0xFFFF), (byte) (msgWindowContents.items[i].getAmount() & 0xFF), msgWindowContents.items[i].getData().getData());
+                }
+                pkInventory.hotbar = new PEInventorySlot[9];
+                for (int i = 36; i <= 44; i++) {
+                    pkInventory.slots[i - 36] = new PEInventorySlot((short) (msgWindowContents.items[i].getTypeId() & 0xFFFF), (byte) (msgWindowContents.items[i].getAmount() & 0xFF), msgWindowContents.items[i].getData().getData());
+                }
+
+                WindowItemsPacket pkArmorInv = new WindowItemsPacket();
+                pkArmorInv.windowID = PEWindowConstantID.PLAYER_ARMOR;
+                pkArmorInv.slots = new PEInventorySlot[4];
+                for (int i = 5; i <= 8; i++) {
+                    pkInventory.slots[i - 5] = new PEInventorySlot((short) (msgWindowContents.items[i].getTypeId() & 0xFFFF), (byte) (msgWindowContents.items[i].getAmount() & 0xFF), msgWindowContents.items[i].getData().getData());
+                }
+                return new PEPacket[]{pkInventory, pkArmorInv};
+            }
             //TODO
+            //switch(this.getSession().getPlayer().)
             System.out.println("Updating window content for " + msgWindowContents.id + ", which has " + msgWindowContents.items.length + " slots. ");
         }
 
