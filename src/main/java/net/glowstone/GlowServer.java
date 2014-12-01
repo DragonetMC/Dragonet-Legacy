@@ -50,6 +50,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
+import net.glowstone.constants.GlowEnchantment;
 import org.dragonet.DragonetServer;
 import org.dragonet.utilities.DragonetVersioning;
 
