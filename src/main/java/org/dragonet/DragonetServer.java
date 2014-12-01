@@ -46,9 +46,10 @@ public class DragonetServer {
      * Only called by Glowstone main class. 
      */
     public void initialize(){
-        this.logger.info("Sending statistic... ");
-        StatisticSender statSender = new StatisticSender(DragonetVersioning.DRAGONET_VERSION, System.currentTimeMillis());
-        statSender.sendStatistic();
+        /* Uncomment following 3 lines when release */
+        //this.logger.info("Sending statistic... ");
+        //StatisticSender statSender = new StatisticSender(DragonetVersioning.DRAGONET_VERSION, System.currentTimeMillis());
+        //statSender.sendStatistic();
         Configuration config = YamlConfiguration.loadConfiguration(new File(this.server.getConfigDir() + File.separator + "dragonet.yml"));
         this.threadPool = Executors.newFixedThreadPool(64);
         String ip = config.getString("server-ip", "0.0.0.0");

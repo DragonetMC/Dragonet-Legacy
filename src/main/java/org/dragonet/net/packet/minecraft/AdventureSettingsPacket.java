@@ -12,29 +12,26 @@
  */
 package org.dragonet.net.packet.minecraft;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.dragonet.utilities.io.PEBinaryReader;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
-public class ChatPacket extends PEPacket {
+public class AdventureSettingsPacket extends PEPacket {
 
-    public String message;
+    public int flags;
 
     @Override
     public int pid() {
-        return PEPacketIDs.CHAT_PACKET;
+        return PEPacketIDs.ADVENTURE_SETTINGS_PACKET;
     }
 
     @Override
     public void encode() {
-
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PEBinaryWriter writer = new PEBinaryWriter(bos);
             writer.writeByte((byte) (this.pid() & 0xFF));
-            writer.writeString(this.message);
+            writer.writeInt(this.flags);
             this.setData(bos.toByteArray());
         } catch (IOException e) {
         }
@@ -42,12 +39,6 @@ public class ChatPacket extends PEPacket {
 
     @Override
     public void decode() {
-        try {
-            PEBinaryReader reader = new PEBinaryReader(new ByteArrayInputStream(this.getData()));
-            reader.readByte(); //PID
-            this.message = reader.readString();
-        } catch (IOException e) {
-        }
     }
 
 }
