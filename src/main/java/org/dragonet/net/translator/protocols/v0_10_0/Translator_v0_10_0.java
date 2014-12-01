@@ -92,26 +92,6 @@ public class Translator_v0_10_0 extends BaseTranslator {
 
         /* ==================================================================================== */
         /**
-         * Chunk Bulk Message
-         */
-        /*
-         if (message instanceof ChunkBulkMessage) {
-         for (ChunkDataMessage dataMsg : ((ChunkBulkMessage) message).getEntries()) {
-         this.getSession().getChunkManager().prepareChunk(new ChunkLocation(dataMsg.x, dataMsg.z));
-         }
-         return null;
-         }
-         */
-        /**
-         * Chunk Data Message
-         */
-        /*
-         if (message instanceof ChunkDataMessage) {
-         ChunkDataMessage dataMsg = (ChunkDataMessage)message;
-         this.getSession().getChunkManager().prepareChunk(new ChunkLocation(dataMsg.x, dataMsg.z));
-         }
-         */
-        /**
          * Chat Message
          */
         if (message instanceof ChatMessage) {
