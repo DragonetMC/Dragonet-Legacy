@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -143,7 +144,7 @@ public class DragonetSession extends GlowSession {
             this.fireQueue();
         }
         this.chunkManager.onTick();
-        if(this.sentAndReceivedChunks >= 56){
+        if (this.sentAndReceivedChunks >= 56) {
             this.sentAndReceivedChunks = -1;
             this.sendSettings();
         }
@@ -296,8 +297,8 @@ public class DragonetSession extends GlowSession {
                 if (this.cachedOutgoingPacket.containsKey(seq)) {
                     this.cachedOutgoingPacket.remove(seq);
                 }
-                if(this.chunkPacketIDS.contains(seq)){
-                    this.sentAndReceivedChunks ++;
+                if (this.chunkPacketIDS.contains(seq)) {
+                    this.sentAndReceivedChunks++;
                     this.chunkPacketIDS.remove(new Integer(seq));
                 }
             }
@@ -499,7 +500,8 @@ public class DragonetSession extends GlowSession {
                     }
 
                     this.loginStage = 3;
-                    this.setPlayer(new PlayerProfile(this.username, UUID.nameUUIDFromBytes(MD5Encrypt.encryptString(this.username))));
+                    this.setPlayer(new PlayerProfile(this.username, UUID.nameUUIDFromBytes(("OfflinePlayer:" + this.username).getBytes(StandardCharsets.UTF_8));
+                    ));
                     break;
                 default:
                     if (this.loginStage != 3) {
@@ -611,7 +613,7 @@ public class DragonetSession extends GlowSession {
         SetDifficultyPacket pkDifficulty = new SetDifficultyPacket();
         pkDifficulty.difficulty = this.getServer().getDifficulty().getValue();
         this.send(pkDifficulty);
-        
+
         //Preprare chunks
         this.chunkManager.autoPrepareChunks();
 

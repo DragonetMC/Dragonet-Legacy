@@ -34,17 +34,17 @@ public class WindowItemsPacket extends PEPacket {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PEBinaryWriter writer = new PEBinaryWriter(bos);
             writer.writeByte((byte) (this.pid() & 0xFF));
-            writer.writeShort((short)(this.slots.length & 0xFFFF));
-            for(PEInventorySlot slot : this.slots){
+            writer.writeShort((short) (this.slots.length & 0xFFFF));
+            for (PEInventorySlot slot : this.slots) {
                 PEInventorySlot.writeSlot(writer, slot);
             }
-            if(windowID == (byte)0x00){
-                writer.writeShort((short)(this.hotbar.length & 0xFFFF));
-                for(PEInventorySlot slot : this.hotbar){
-                PEInventorySlot.writeSlot(writer, slot);
-            }
-            }else{
-                writer.writeShort((short)0);
+            if (windowID == (byte) 0x00) {
+                writer.writeShort((short) (this.hotbar.length & 0xFFFF));
+                for (PEInventorySlot slot : this.hotbar) {
+                    PEInventorySlot.writeSlot(writer, slot);
+                }
+            } else {
+                writer.writeShort((short) 0);
             }
             this.setData(bos.toByteArray());
         } catch (IOException e) {

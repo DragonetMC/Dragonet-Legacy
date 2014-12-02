@@ -13,7 +13,6 @@
 package org.dragonet.net.translator.protocols.v0_10_0;
 
 import com.flowpowered.networking.Message;
-import java.util.HashMap;
 import net.glowstone.entity.GlowPlayer;
 import net.glowstone.net.message.play.entity.RelativeEntityPositionMessage;
 import net.glowstone.net.message.play.entity.SpawnPlayerMessage;
@@ -153,32 +152,41 @@ public class Translator_v0_10_0 extends BaseTranslator {
                 pkInventory.windowID = PEWindowConstantID.PLAYER_INVENTORY;
                 pkInventory.slots = new PEInventorySlot[PEInventoryType.SlotSize.PLAYER];
                 for (int i = 9; i <= 44; i++) {
-                    if (pkInventory.slots[i - 9] != null) {
+                    if (msgWindowContents.items[i] != null) {
                         pkInventory.slots[i - 9] = new PEInventorySlot((short) (msgWindowContents.items[i].getTypeId() & 0xFFFF), (byte) (msgWindowContents.items[i].getAmount() & 0xFF), msgWindowContents.items[i].getData().getData());
                     } else {
-                        pkInventory.slots[i - 9] = new PEInventorySlot((short) 0, (byte) 0, (short) 0);
+                        pkInventory.slots[i - 9] = new PEInventorySlot();
+                    }
+                }
+                for (int i = 5; i <= 8; i++) {
+                    if (msgWindowContents.items[i] != null) {
+                        pkInventory.slots[i + 31] = new PEInventorySlot((short) (msgWindowContents.items[i].getTypeId() & 0xFFFF), (byte) (msgWindowContents.items[i].getAmount() & 0xFF), msgWindowContents.items[i].getData().getData());
+                    } else {
+                        pkInventory.slots[i + 31] = new PEInventorySlot();
                     }
                 }
                 pkInventory.hotbar = new PEInventorySlot[9];
                 for (int i = 36; i <= 44; i++) {
-                    if (pkInventory.slots[i - 36] != null) {
-                        pkInventory.slots[i - 36] = new PEInventorySlot((short) (msgWindowContents.items[i].getTypeId() & 0xFFFF), (byte) (msgWindowContents.items[i].getAmount() & 0xFF), msgWindowContents.items[i].getData().getData());
+                    if (msgWindowContents.items[i] != null) {
+                        pkInventory.hotbar[i - 36] = new PEInventorySlot((short) (msgWindowContents.items[i].getTypeId() & 0xFFFF), (byte) (msgWindowContents.items[i].getAmount() & 0xFF), msgWindowContents.items[i].getData().getData());
                     } else {
-                        pkInventory.slots[i - 36] = new PEInventorySlot((short) 0, (byte) 0, (short) 0);
+                        pkInventory.hotbar[i - 36] = new PEInventorySlot();
                     }
                 }
                 //Armor
+                /*
                 WindowItemsPacket pkArmorInv = new WindowItemsPacket();
                 pkArmorInv.windowID = PEWindowConstantID.PLAYER_ARMOR;
                 pkArmorInv.slots = new PEInventorySlot[4];
                 for (int i = 5; i <= 8; i++) {
-                    if (pkInventory.slots[i - 5] != null) {
+                    if (msgWindowContents.items[i] != null) {
                         pkInventory.slots[i - 5] = new PEInventorySlot((short) (msgWindowContents.items[i].getTypeId() & 0xFFFF), (byte) (msgWindowContents.items[i].getAmount() & 0xFF), msgWindowContents.items[i].getData().getData());
                     } else {
-                        pkInventory.slots[i - 5] = new PEInventorySlot((short) 0, (byte) 0, (short) 0);
+                        pkInventory.slots[i - 5] = new PEInventorySlot();
                     }
                 }
-                return new PEPacket[]{pkInventory, pkArmorInv};
+                */
+                return new PEPacket[]{pkInventory/*, pkArmorInv*/};
             }
             //TODO
             //switch(this.getSession().getPlayer().)

@@ -6,6 +6,8 @@ net.glowstone.scheduler.GlowScheduler: Added tick trigger
 
 net.glowstone.entity.GlowPlayer: Removed final
 
+net.glowstone.net.handler.login: Change PlayerProfile to generate as same as offline players
+
 net.glowstone.net.GlowSession: Removed final
 net.glowstone.net.GlowSession: Changed player variable into protected
 net.glowstone.net.GlowSession: Added @Getter at hostname variable
