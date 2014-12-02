@@ -44,4 +44,9 @@ public class PEInventorySlot {
         writer.writeByte(slot.count);
         writer.writeShort(slot.meta);
     }
+
+    @Override
+    public String toString() {
+        return "{PE Item: ID=" + this.id + ", Count=" + (this.count & 0xFF) + ", Data=" + this.meta + "}";
+    }
 }

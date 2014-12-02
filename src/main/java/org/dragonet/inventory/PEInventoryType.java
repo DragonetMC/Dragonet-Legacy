@@ -25,7 +25,7 @@ public final class PEInventoryType {
     public final static class SlotSize {
         public final static int CHEST = 27;
         public final static int DOUBLE_CHEST = 27 + 27;
-        public final static int PLAYER = 40;
+        public final static int PLAYER = 36;
         public final static int FURNACE = 3;
         public final static int CRAFTING = 5;
         public final static int WORKBENCH = 10;

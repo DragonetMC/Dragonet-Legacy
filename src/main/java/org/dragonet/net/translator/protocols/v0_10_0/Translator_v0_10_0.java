@@ -158,13 +158,6 @@ public class Translator_v0_10_0 extends BaseTranslator {
                         pkInventory.slots[i - 9] = new PEInventorySlot();
                     }
                 }
-                for (int i = 5; i <= 8; i++) {
-                    if (msgWindowContents.items[i] != null) {
-                        pkInventory.slots[i + 31] = new PEInventorySlot((short) (msgWindowContents.items[i].getTypeId() & 0xFFFF), (byte) (msgWindowContents.items[i].getAmount() & 0xFF), msgWindowContents.items[i].getData().getData());
-                    } else {
-                        pkInventory.slots[i + 31] = new PEInventorySlot();
-                    }
-                }
                 pkInventory.hotbar = new PEInventorySlot[9];
                 for (int i = 36; i <= 44; i++) {
                     if (msgWindowContents.items[i] != null) {
@@ -174,19 +167,24 @@ public class Translator_v0_10_0 extends BaseTranslator {
                     }
                 }
                 //Armor
-                /*
                 WindowItemsPacket pkArmorInv = new WindowItemsPacket();
                 pkArmorInv.windowID = PEWindowConstantID.PLAYER_ARMOR;
                 pkArmorInv.slots = new PEInventorySlot[4];
                 for (int i = 5; i <= 8; i++) {
                     if (msgWindowContents.items[i] != null) {
-                        pkInventory.slots[i - 5] = new PEInventorySlot((short) (msgWindowContents.items[i].getTypeId() & 0xFFFF), (byte) (msgWindowContents.items[i].getAmount() & 0xFF), msgWindowContents.items[i].getData().getData());
+                        pkArmorInv.slots[i - 5] = new PEInventorySlot((short) (msgWindowContents.items[i].getTypeId() & 0xFFFF), (byte) (msgWindowContents.items[i].getAmount() & 0xFF), msgWindowContents.items[i].getData().getData());
                     } else {
-                        pkInventory.slots[i - 5] = new PEInventorySlot();
+                        pkArmorInv.slots[i - 5] = new PEInventorySlot();
                     }
                 }
-                */
-                return new PEPacket[]{pkInventory/*, pkArmorInv*/};
+                if (this.getSession().getSentAndReceivedChunks() != -1) {
+                    //Not fully loaded
+                    this.getSession().getQueueAfterChunkSent().add(pkInventory);
+                    this.getSession().getQueueAfterChunkSent().add(pkArmorInv);
+                } else {
+                    return new PEPacket[]{pkInventory, pkArmorInv};
+                }
+                return null;
             }
             //TODO
             //switch(this.getSession().getPlayer().)

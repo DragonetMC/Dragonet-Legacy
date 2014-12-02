@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -117,8 +118,11 @@ public class DragonetSession extends GlowSession {
 
     private boolean statusActive = true;
 
-    private int sentAndReceivedChunks = 0;
+    private @Getter int sentAndReceivedChunks = 0;
     private ArrayList<Integer> chunkPacketIDS = new ArrayList<>();
+
+    private @Getter
+    ArrayDeque<PEPacket> queueAfterChunkSent = new ArrayDeque<>();
 
     public DragonetSession(DragonetServer dServer, SocketAddress remoteAddress, long clientID, short clientMTU) {
         super(dServer.getServer());
@@ -147,6 +151,11 @@ public class DragonetSession extends GlowSession {
         if (this.sentAndReceivedChunks >= 56) {
             this.sentAndReceivedChunks = -1;
             this.sendSettings();
+            PEPacket pk;
+            while ((pk = this.queueAfterChunkSent.poll()) != null) {
+                this.getLogger().info("Sending queued: " + pk.getClass().getSimpleName());
+                this.send(pk);
+            }
         }
     }
 
