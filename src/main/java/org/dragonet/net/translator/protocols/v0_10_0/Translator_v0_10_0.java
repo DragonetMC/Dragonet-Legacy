@@ -39,30 +39,24 @@ import org.dragonet.net.packet.minecraft.PEPacket;
 import org.dragonet.net.packet.minecraft.PEPacketIDs;
 import org.dragonet.net.packet.minecraft.WindowItemsPacket;
 import org.dragonet.net.translator.BaseTranslator;
+import org.dragonet.net.translator.ItemTranslator;
 
 public class Translator_v0_10_0 extends BaseTranslator {
-
-    private HashMap<Integer, Integer> blockMap = new HashMap<>();
-
     /**
      * Cached Window Types for Window Item Translating If the value equals
      * Integer.MAX_VALUE then the window doesn't exist
      */
     private int[] chachedWindowType;
+    
+    private ItemTranslator itemTranslator;
 
     public Translator_v0_10_0(DragonetSession session) {
         super(session);
-        for (int i = 0; i <= 24; i++) {
-            blockMap.put(i, i);
-        }
-        blockMap.put(26, 26);
-        blockMap.put(27, 27);
-        blockMap.put(31, 31);
-        blockMap.put(50, 50);
         this.chachedWindowType = new int[256];
         for (int i = 0; i < 256; i++) {
             this.chachedWindowType[i] = Integer.MAX_VALUE;
         }
+        this.itemTranslator = new ItemTranslator_v0_10_0();
     }
 
     /* ===== TO PC ===== */
@@ -152,6 +146,7 @@ public class Translator_v0_10_0 extends BaseTranslator {
         if (message instanceof SetWindowContentsMessage) {
             SetWindowContentsMessage msgWindowContents = (SetWindowContentsMessage) message;
             if (msgWindowContents.id == 0) {
+                //Inventory Items(Included hotbar)
                 WindowItemsPacket pkInventory = new WindowItemsPacket();
                 pkInventory.windowID = PEWindowConstantID.PLAYER_INVENTORY;
                 pkInventory.slots = new PEInventorySlot[PEInventoryType.SlotSize.PLAYER];
@@ -162,7 +157,7 @@ public class Translator_v0_10_0 extends BaseTranslator {
                 for (int i = 36; i <= 44; i++) {
                     pkInventory.slots[i - 36] = new PEInventorySlot((short) (msgWindowContents.items[i].getTypeId() & 0xFFFF), (byte) (msgWindowContents.items[i].getAmount() & 0xFF), msgWindowContents.items[i].getData().getData());
                 }
-
+                //Armor
                 WindowItemsPacket pkArmorInv = new WindowItemsPacket();
                 pkArmorInv.windowID = PEWindowConstantID.PLAYER_ARMOR;
                 pkArmorInv.slots = new PEInventorySlot[4];
@@ -198,11 +193,8 @@ public class Translator_v0_10_0 extends BaseTranslator {
     }
 
     @Override
-    public int translateBlockToPE(int pcBlock) {
-        if (this.blockMap.containsKey(pcBlock)) {
-            return this.blockMap.get(pcBlock);
-        }
-        return 7;
+    public ItemTranslator getItemTranslator() {
+        return this.itemTranslator;
     }
 
 }

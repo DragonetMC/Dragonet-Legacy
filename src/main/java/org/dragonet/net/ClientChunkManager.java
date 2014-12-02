@@ -169,7 +169,7 @@ public class ClientChunkManager {
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
                     for (int y = 0; y < 128; y++) {
-                        writer.writeByte((byte) (this.getSession().getTranslator().translateBlockToPE(chunk.getBlockTypeId(x, y, z)) & 0xFF));
+                        writer.writeByte((byte) (this.getSession().getTranslator().getItemTranslator().translateToPE(chunk.getBlockTypeId(x, y, z)) & 0xFF));
                     }
                 }
             }

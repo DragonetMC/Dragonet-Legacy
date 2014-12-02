@@ -41,9 +41,8 @@ public abstract class BaseTranslator {
     public abstract PEPacket[] translateToPE(Message message);
     
     /**
-     * Translate a Minecraft PC Block ID into Minecraft PE block ID
-     * @param pcBlock Minecraft PC Block ID
-     * @return Translated Minecraft PE Block ID
+     * Get the specific ItemTranslator for current protocol
+     * @return ItemTranslator for current protocol
      */
-    public abstract int translateBlockToPE(int pcBlock);
+    public abstract ItemTranslator getItemTranslator();
 }
