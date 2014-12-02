@@ -500,8 +500,7 @@ public class DragonetSession extends GlowSession {
                     }
 
                     this.loginStage = 3;
-                    this.setPlayer(new PlayerProfile(this.username, UUID.nameUUIDFromBytes(("OfflinePlayer:" + this.username).getBytes(StandardCharsets.UTF_8));
-                    ));
+                    this.setPlayer(new PlayerProfile(this.username, UUID.nameUUIDFromBytes(("OfflinePlayer:" + this.username).getBytes(StandardCharsets.UTF_8))));
                     break;
                 default:
                     if (this.loginStage != 3) {
