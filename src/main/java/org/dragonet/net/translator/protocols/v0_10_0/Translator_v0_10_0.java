@@ -37,17 +37,19 @@ import org.dragonet.net.packet.minecraft.MessagePacket;
 import org.dragonet.net.packet.minecraft.MovePlayerPacket;
 import org.dragonet.net.packet.minecraft.PEPacket;
 import org.dragonet.net.packet.minecraft.PEPacketIDs;
+import org.dragonet.net.packet.minecraft.WindowClosePacket;
 import org.dragonet.net.packet.minecraft.WindowItemsPacket;
 import org.dragonet.net.translator.BaseTranslator;
 import org.dragonet.net.translator.ItemTranslator;
 
 public class Translator_v0_10_0 extends BaseTranslator {
+
     /**
      * Cached Window Types for Window Item Translating If the value equals
      * Integer.MAX_VALUE then the window doesn't exist
      */
     private int[] chachedWindowType;
-    
+
     private ItemTranslator itemTranslator;
 
     public Translator_v0_10_0(DragonetSession session) {
@@ -151,18 +153,30 @@ public class Translator_v0_10_0 extends BaseTranslator {
                 pkInventory.windowID = PEWindowConstantID.PLAYER_INVENTORY;
                 pkInventory.slots = new PEInventorySlot[PEInventoryType.SlotSize.PLAYER];
                 for (int i = 9; i <= 44; i++) {
-                    pkInventory.slots[i - 9] = new PEInventorySlot((short) (msgWindowContents.items[i].getTypeId() & 0xFFFF), (byte) (msgWindowContents.items[i].getAmount() & 0xFF), msgWindowContents.items[i].getData().getData());
+                    if (pkInventory.slots[i - 9] != null) {
+                        pkInventory.slots[i - 9] = new PEInventorySlot((short) (msgWindowContents.items[i].getTypeId() & 0xFFFF), (byte) (msgWindowContents.items[i].getAmount() & 0xFF), msgWindowContents.items[i].getData().getData());
+                    } else {
+                        pkInventory.slots[i - 9] = new PEInventorySlot((short) 0, (byte) 0, (short) 0);
+                    }
                 }
                 pkInventory.hotbar = new PEInventorySlot[9];
                 for (int i = 36; i <= 44; i++) {
-                    pkInventory.slots[i - 36] = new PEInventorySlot((short) (msgWindowContents.items[i].getTypeId() & 0xFFFF), (byte) (msgWindowContents.items[i].getAmount() & 0xFF), msgWindowContents.items[i].getData().getData());
+                    if (pkInventory.slots[i - 36] != null) {
+                        pkInventory.slots[i - 36] = new PEInventorySlot((short) (msgWindowContents.items[i].getTypeId() & 0xFFFF), (byte) (msgWindowContents.items[i].getAmount() & 0xFF), msgWindowContents.items[i].getData().getData());
+                    } else {
+                        pkInventory.slots[i - 36] = new PEInventorySlot((short) 0, (byte) 0, (short) 0);
+                    }
                 }
                 //Armor
                 WindowItemsPacket pkArmorInv = new WindowItemsPacket();
                 pkArmorInv.windowID = PEWindowConstantID.PLAYER_ARMOR;
                 pkArmorInv.slots = new PEInventorySlot[4];
                 for (int i = 5; i <= 8; i++) {
-                    pkInventory.slots[i - 5] = new PEInventorySlot((short) (msgWindowContents.items[i].getTypeId() & 0xFFFF), (byte) (msgWindowContents.items[i].getAmount() & 0xFF), msgWindowContents.items[i].getData().getData());
+                    if (pkInventory.slots[i - 5] != null) {
+                        pkInventory.slots[i - 5] = new PEInventorySlot((short) (msgWindowContents.items[i].getTypeId() & 0xFFFF), (byte) (msgWindowContents.items[i].getAmount() & 0xFF), msgWindowContents.items[i].getData().getData());
+                    } else {
+                        pkInventory.slots[i - 5] = new PEInventorySlot((short) 0, (byte) 0, (short) 0);
+                    }
                 }
                 return new PEPacket[]{pkInventory, pkArmorInv};
             }
@@ -185,7 +199,9 @@ public class Translator_v0_10_0 extends BaseTranslator {
          */
         if (message instanceof CloseWindowMessage) {
             CloseWindowMessage msgCloseWindow = (CloseWindowMessage) message;
-            //TODO
+            WindowClosePacket pkCloseWindow = new WindowClosePacket();
+            pkCloseWindow.windowID = (byte) (msgCloseWindow.id & 0xFF);
+            return new PEPacket[]{pkCloseWindow};
         }
 
         /* ==================================================================================== */
