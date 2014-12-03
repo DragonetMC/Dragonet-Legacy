@@ -165,7 +165,7 @@ public class DragonetSession extends GlowSession {
                 this.send(pk);
             }
         }
-        if(System.currentTimeMillis() - this.lastPacketReceived > 15000){
+        if (System.currentTimeMillis() - this.lastPacketReceived > 15000) {
             this.disconnect("Timeout! ");
         }
     }
@@ -545,13 +545,6 @@ public class DragonetSession extends GlowSession {
     }
 
     @Override
-    public void disconnect(String reason) {
-        super.disconnect(reason);
-        this.statusActive = false;
-        this.dServer.getNetworkHandler().removeSession(this);
-    }
-
-    @Override
     public boolean isActive() {
         return this.statusActive;
     }
@@ -713,6 +706,9 @@ public class DragonetSession extends GlowSession {
         }
 
         this.send(new KickMessage(reason));
+        this.statusActive = false;
+        this.getServer().getSessionRegistry().remove(this);
+        this.dServer.getNetworkHandler().removeSession(this);
     }
 
     @Override
