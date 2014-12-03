@@ -46,6 +46,9 @@ public abstract class PEPacket extends BinaryPacket{
             case PEPacketIDs.MOVE_PLAYER_PACKET:
                 packet = new MovePlayerPacket(buffer);
                 break;
+            case PEPacketIDs.CLIENT_DISCONNECT:
+                packet = new DisconnectPacket();
+                break;
             default:
                 return null;
         }

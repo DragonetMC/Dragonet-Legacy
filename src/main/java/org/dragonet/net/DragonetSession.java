@@ -128,6 +128,9 @@ public class DragonetSession extends GlowSession {
     private @Getter
     ArrayDeque<PEPacket> queueAfterChunkSent = new ArrayDeque<>();
 
+    private @Getter
+    long lastPacketReceived;
+
     public DragonetSession(DragonetServer dServer, SocketAddress remoteAddress, long clientID, short clientMTU) {
         super(dServer.getServer());
         this.dServer = dServer;
@@ -140,6 +143,7 @@ public class DragonetSession extends GlowSession {
         this.queue = new RaknetDataPacket(this.sequenceNum);
         this.chunkManager = new ClientChunkManager(this);
         this.loginStage = 0;
+        this.lastPacketReceived = System.currentTimeMillis();
     }
 
     /**
@@ -161,6 +165,14 @@ public class DragonetSession extends GlowSession {
                 this.send(pk);
             }
         }
+        if(System.currentTimeMillis() - this.lastPacketReceived > 15000){
+            this.disconnect("Timeout! ");
+        }
+    }
+
+    @Override
+    public void onDisconnect() {
+        super.onDisconnect(); //To change body of generated methods, choose Tools | Templates.
     }
 
     private synchronized void sendAllACK() {
@@ -445,6 +457,7 @@ public class DragonetSession extends GlowSession {
     }
 
     public void processDataPacket(RaknetDataPacket dataPacket) {
+        this.lastPacketReceived = System.currentTimeMillis();
         if (dataPacket.getSequenceNumber() - this.lastSequenceNum > 1) {
             for (int i = this.lastSequenceNum + 1; i < dataPacket.getSequenceNumber(); i++) {
                 this.queueNACK.add(i);
@@ -515,6 +528,9 @@ public class DragonetSession extends GlowSession {
                     this.loginStage = 3;
                     this.setPlayer(new PlayerProfile(this.username, UUID.nameUUIDFromBytes(("OfflinePlayer:" + this.username).getBytes(StandardCharsets.UTF_8))));
                     break;
+                case PEPacketIDs.CLIENT_DISCONNECT:
+                    this.statusActive = false;
+                    break;
                 default:
                     if (this.loginStage != 3) {
                         break;
@@ -531,6 +547,7 @@ public class DragonetSession extends GlowSession {
     @Override
     public void disconnect(String reason) {
         super.disconnect(reason);
+        this.statusActive = false;
         this.dServer.getNetworkHandler().removeSession(this);
     }
 
@@ -622,9 +639,9 @@ public class DragonetSession extends GlowSession {
         this.send(pkStartGame);
 
         //Send Time
-        SetTimePacket pkTime = new SetTimePacket((int)(this.getPlayer().getWorld().getTime() & 0xFFFFFFFF));
+        SetTimePacket pkTime = new SetTimePacket((int) (this.getPlayer().getWorld().getTime() & 0xFFFFFFFF));
         this.send(pkTime);
-        
+
         //Send Spawn Position
         SetSpawnPositionPacket pkSpawnPos = new SetSpawnPositionPacket();
         pkSpawnPos.x = this.player.getLocation().getBlockX();
@@ -633,9 +650,9 @@ public class DragonetSession extends GlowSession {
         this.send(pkSpawnPos);
 
         //Send Health
-        SetHealthPacket pkHealth = new SetHealthPacket((int)Math.floor(this.getPlayer().getHealth()));
+        SetHealthPacket pkHealth = new SetHealthPacket((int) Math.floor(this.getPlayer().getHealth()));
         this.send(pkHealth);
-        
+
         //Send Difficulty Packet
         SetDifficultyPacket pkDifficulty = new SetDifficultyPacket();
         pkDifficulty.difficulty = this.getServer().getDifficulty().getValue();
