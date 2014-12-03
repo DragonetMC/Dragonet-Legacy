@@ -101,8 +101,10 @@ public class ClientChunkManager {
         if (!(this.getSession().getPlayer() instanceof GlowPlayer)) {
             return;
         }
-        for (int x = this.getSession().getPlayer().getLocation().getChunk().getX() - 8; x < this.getSession().getPlayer().getLocation().getChunk().getX() + 8; x++) {
-            for (int z = this.getSession().getPlayer().getLocation().getChunk().getZ() - 8; z < this.getSession().getPlayer().getLocation().getChunk().getZ() + 8; z++) {
+        int chunkX = this.getSession().getPlayer().getLocation().getChunk().getX();
+        int chunkZ = this.getSession().getPlayer().getLocation().getChunk().getZ();
+        for (int x = chunkX - 8; x < chunkX + 8; x++) {
+            for (int z = chunkZ - 8; z < chunkZ + 8; z++) {
                 this.prepareChunk(new ChunkLocation(x, z));
             }
         }

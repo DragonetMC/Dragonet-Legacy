@@ -60,6 +60,9 @@ import org.dragonet.net.packet.minecraft.PEPacketIDs;
 import org.dragonet.net.packet.minecraft.PingPongPacket;
 import org.dragonet.net.packet.minecraft.ServerHandshakePacket;
 import org.dragonet.net.packet.minecraft.SetDifficultyPacket;
+import org.dragonet.net.packet.minecraft.SetHealthPacket;
+import org.dragonet.net.packet.minecraft.SetSpawnPositionPacket;
+import org.dragonet.net.packet.minecraft.SetTimePacket;
 import org.dragonet.net.packet.minecraft.StartGamePacket;
 import org.dragonet.net.translator.BaseTranslator;
 import org.dragonet.net.translator.TranslatorProvider;
@@ -118,7 +121,8 @@ public class DragonetSession extends GlowSession {
 
     private boolean statusActive = true;
 
-    private @Getter int sentAndReceivedChunks = 0;
+    private @Getter
+    int sentAndReceivedChunks = 0;
     private ArrayList<Integer> chunkPacketIDS = new ArrayList<>();
 
     private @Getter
@@ -617,6 +621,21 @@ public class DragonetSession extends GlowSession {
         pkStartGame.z = (float) this.player.getLocation().getZ();
         this.send(pkStartGame);
 
+        //Send Time
+        SetTimePacket pkTime = new SetTimePacket((int)(this.getPlayer().getWorld().getTime() & 0xFFFFFFFF));
+        this.send(pkTime);
+        
+        //Send Spawn Position
+        SetSpawnPositionPacket pkSpawnPos = new SetSpawnPositionPacket();
+        pkSpawnPos.x = this.player.getLocation().getBlockX();
+        pkSpawnPos.y = this.player.getLocation().getBlockY();
+        pkSpawnPos.z = this.player.getLocation().getBlockZ();
+        this.send(pkSpawnPos);
+
+        //Send Health
+        SetHealthPacket pkHealth = new SetHealthPacket((int)Math.floor(this.getPlayer().getHealth()));
+        this.send(pkHealth);
+        
         //Send Difficulty Packet
         SetDifficultyPacket pkDifficulty = new SetDifficultyPacket();
         pkDifficulty.difficulty = this.getServer().getDifficulty().getValue();

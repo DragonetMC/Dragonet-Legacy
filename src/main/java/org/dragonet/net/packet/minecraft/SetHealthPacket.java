@@ -14,18 +14,22 @@ package org.dragonet.net.packet.minecraft;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.dragonet.inventory.PEInventorySlot;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
-public class WindowItemsPacket extends PEPacket {
+public class SetHealthPacket extends PEPacket {
 
-    public byte windowID;
-    public PEInventorySlot[] slots;
-    public PEInventorySlot[] hotbar;
+    public int health;
+
+    public SetHealthPacket() {
+    }
+
+    public SetHealthPacket(int health) {
+        this.health = health;
+    }
 
     @Override
     public int pid() {
-        return PEPacketIDs.WINDOW_ITEMS_PACKET;
+        return PEPacketIDs.SET_HEALTH_PACKET;
     }
 
     @Override
@@ -34,19 +38,7 @@ public class WindowItemsPacket extends PEPacket {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PEBinaryWriter writer = new PEBinaryWriter(bos);
             writer.writeByte((byte) (this.pid() & 0xFF));
-            writer.writeByte(this.windowID);
-            writer.writeShort((short) (this.slots.length & 0xFFFF));
-            for (PEInventorySlot slot : this.slots) {
-                PEInventorySlot.writeSlot(writer, slot);
-            }
-            if ((windowID == (byte) 0x00) && (this.hotbar.length > 0)) {
-                writer.writeShort((short) (this.hotbar.length & 0xFFFF));
-                for (PEInventorySlot slot : this.hotbar) {
-                    PEInventorySlot.writeSlot(writer, slot);
-                }
-            } else {
-                writer.writeShort((short) 0);
-            }
+            writer.writeByte((byte) (this.health & 0xFF));
             this.setData(bos.toByteArray());
         } catch (IOException e) {
         }
