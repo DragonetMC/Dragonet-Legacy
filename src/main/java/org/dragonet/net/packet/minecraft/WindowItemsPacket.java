@@ -15,6 +15,7 @@ package org.dragonet.net.packet.minecraft;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.dragonet.inventory.PEInventorySlot;
+import org.dragonet.inventory.PEWindowConstantID;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class WindowItemsPacket extends PEPacket {
@@ -39,7 +40,7 @@ public class WindowItemsPacket extends PEPacket {
             for (PEInventorySlot slot : this.slots) {
                 PEInventorySlot.writeSlot(writer, slot);
             }
-            if ((windowID == (byte) 0x00) && (this.hotbar.length > 0)) {
+            if (windowID == PEWindowConstantID.PLAYER_INVENTORY && this.hotbar.length > 0) {
                 writer.writeShort((short) (this.hotbar.length & 0xFFFF));
                 for (PEInventorySlot slot : this.hotbar) {
                     PEInventorySlot.writeSlot(writer, slot);
