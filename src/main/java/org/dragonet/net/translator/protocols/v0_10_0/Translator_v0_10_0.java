@@ -57,7 +57,7 @@ public class Translator_v0_10_0 extends BaseTranslator {
     public Translator_v0_10_0(DragonetSession session) {
         super(session);
         this.cachedWindowType = new int[256];
-        for (int i = 0; i < 256; i++) {
+        for (int i = 1; i < 256; i++) {
             this.cachedWindowType[i] = -1;
         }
         this.itemTranslator = new ItemTranslator_v0_10_0();
@@ -214,7 +214,8 @@ public class Translator_v0_10_0 extends BaseTranslator {
          */
         if (message instanceof SetWindowSlotMessage) {
             SetWindowSlotMessage msgSetSlot = (SetWindowSlotMessage) message;
-            byte typePE = (byte) (this.cachedWindowType[msgSetSlot.id] & 0xFF);
+            if(this.cachedWindowType[msgSetSlot.id & 0xFF] == -1) return null;
+            //byte typePE = (byte) (this.cachedWindowType[msgSetSlot.id & 0xFF] & 0xFF);
             int targetSlot = msgSetSlot.slot; //For now the slot ids are same so we use this directly. 
             WindowSetSlotPacket pkSetSlot = new WindowSetSlotPacket();
             pkSetSlot.windowID = (byte) (msgSetSlot.id & 0xFF);
@@ -228,7 +229,7 @@ public class Translator_v0_10_0 extends BaseTranslator {
          */
         if (message instanceof CloseWindowMessage) {
             CloseWindowMessage msgCloseWindow = (CloseWindowMessage) message;
-            this.cachedWindowType[msgCloseWindow.id & 0xFF] = -1;
+            if(msgCloseWindow.id != 0) this.cachedWindowType[msgCloseWindow.id & 0xFF] = -1;
             WindowClosePacket pkCloseWindow = new WindowClosePacket();
             pkCloseWindow.windowID = (byte) (msgCloseWindow.id & 0xFF);
             return new PEPacket[]{pkCloseWindow};
