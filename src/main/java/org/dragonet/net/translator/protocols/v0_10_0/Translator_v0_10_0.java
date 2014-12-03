@@ -140,7 +140,7 @@ public class Translator_v0_10_0 extends BaseTranslator {
          */
         if (message instanceof OpenWindowMessage) {
             OpenWindowMessage msgOpenWindow = (OpenWindowMessage) message;
-            byte typePE = InventoryType.PEInventory.toPEInventory(InventoryType.PCInventory.fromString(msgOpenWindow.type));
+            byte typePE = InventoryType.PEInventory.toPEInventory(InventoryType.PCInventory.fromString(msgOpenWindow.type), msgOpenWindow.slots);
             if (typePE == (byte) 0xFF) {
                 //Not supported, close it
                 CloseWindowMessage msgCloseWindow = new CloseWindowMessage(msgOpenWindow.id);

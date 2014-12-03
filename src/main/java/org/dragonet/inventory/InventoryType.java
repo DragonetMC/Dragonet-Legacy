@@ -24,10 +24,15 @@ public final class InventoryType {
         public final static byte WORKBENCH = (byte) 0x5;
         public final static byte STONECUTTER = (byte) 0x6;
 
-        public final static byte toPEInventory(byte bytePC) {
+        public final static byte toPEInventory(byte bytePC, int slots) {
             switch (bytePC) {
                 case PCInventory.CHEST:
-                    return PEInventory.CHEST;
+                    if (slots > 64) //Large
+                    {
+                        return PEInventory.DOUBLE_CHEST;
+                    } else {
+                        return PEInventory.CHEST;
+                    }
                 case PCInventory.WORKBENCH:
                     return PEInventory.WORKBENCH;
                 case PCInventory.FURNANCE:
@@ -45,6 +50,7 @@ public final class InventoryType {
                     return (byte) 0xFF;
             }
         }
+
     }
 
     public final static class PCInventory {
