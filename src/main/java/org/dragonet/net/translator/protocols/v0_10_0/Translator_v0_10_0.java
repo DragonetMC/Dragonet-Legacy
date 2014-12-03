@@ -40,6 +40,7 @@ import org.dragonet.net.packet.minecraft.PEPacketIDs;
 import org.dragonet.net.packet.minecraft.WindowClosePacket;
 import org.dragonet.net.packet.minecraft.WindowItemsPacket;
 import org.dragonet.net.packet.minecraft.WindowOpenPacket;
+import org.dragonet.net.packet.minecraft.WindowSetSlotPacket;
 import org.dragonet.net.translator.BaseTranslator;
 import org.dragonet.net.translator.ItemTranslator;
 
@@ -150,7 +151,7 @@ public class Translator_v0_10_0 extends BaseTranslator {
             WindowOpenPacket pkOpenWindow = new WindowOpenPacket();
             pkOpenWindow.windowID = (byte) (msgOpenWindow.id & 0xFF);
             pkOpenWindow.type = typePE;
-            pkOpenWindow.slots = (byte)(msgOpenWindow.slots & 0xFFFF);
+            pkOpenWindow.slots = (byte) (msgOpenWindow.slots & 0xFFFF);
             pkOpenWindow.x = this.getSession().getPlayer().getLocation().getBlockX();
             pkOpenWindow.y = this.getSession().getPlayer().getLocation().getBlockY();
             pkOpenWindow.z = this.getSession().getPlayer().getLocation().getBlockZ();
@@ -170,7 +171,7 @@ public class Translator_v0_10_0 extends BaseTranslator {
                 pkInventory.slots = new PEInventorySlot[InventoryType.SlotSize.PLAYER];
                 for (int i = 9; i <= 44; i++) {
                     if (msgWindowContents.items[i] != null) {
-                        pkInventory.slots[i - 9] = new PEInventorySlot((short) (msgWindowContents.items[i].getTypeId() & 0xFFFF), (byte) (msgWindowContents.items[i].getAmount() & 0xFF), msgWindowContents.items[i].getData().getData());
+                        pkInventory.slots[i - 9] = new PEInventorySlot((short) (msgWindowContents.items[i].getTypeId() & 0xFFFF), (byte) (msgWindowContents.items[i].getAmount() & 0xFF), msgWindowContents.items[i].getDurability());
                     } else {
                         pkInventory.slots[i - 9] = new PEInventorySlot();
                     }
@@ -178,7 +179,7 @@ public class Translator_v0_10_0 extends BaseTranslator {
                 pkInventory.hotbar = new PEInventorySlot[9];
                 for (int i = 36; i <= 44; i++) {
                     if (msgWindowContents.items[i] != null) {
-                        pkInventory.hotbar[i - 36] = new PEInventorySlot((short) (msgWindowContents.items[i].getTypeId() & 0xFFFF), (byte) (msgWindowContents.items[i].getAmount() & 0xFF), msgWindowContents.items[i].getData().getData());
+                        pkInventory.hotbar[i - 36] = new PEInventorySlot((short) (msgWindowContents.items[i].getTypeId() & 0xFFFF), (byte) (msgWindowContents.items[i].getAmount() & 0xFF), msgWindowContents.items[i].getDurability());
                     } else {
                         pkInventory.hotbar[i - 36] = new PEInventorySlot();
                     }
@@ -189,7 +190,7 @@ public class Translator_v0_10_0 extends BaseTranslator {
                 pkArmorInv.slots = new PEInventorySlot[4];
                 for (int i = 5; i <= 8; i++) {
                     if (msgWindowContents.items[i] != null) {
-                        pkArmorInv.slots[i - 5] = new PEInventorySlot((short) (msgWindowContents.items[i].getTypeId() & 0xFFFF), (byte) (msgWindowContents.items[i].getAmount() & 0xFF), msgWindowContents.items[i].getData().getData());
+                        pkArmorInv.slots[i - 5] = new PEInventorySlot((short) (msgWindowContents.items[i].getTypeId() & 0xFFFF), (byte) (msgWindowContents.items[i].getAmount() & 0xFF), msgWindowContents.items[i].getDurability());
                     } else {
                         pkArmorInv.slots[i - 5] = new PEInventorySlot();
                     }
@@ -213,8 +214,13 @@ public class Translator_v0_10_0 extends BaseTranslator {
          */
         if (message instanceof SetWindowSlotMessage) {
             SetWindowSlotMessage msgSetSlot = (SetWindowSlotMessage) message;
-            //TODO
-            System.out.println("Updating item for " + msgSetSlot.id + ", at slot " + msgSetSlot.slot + ". ");
+            byte typePE = (byte) (this.cachedWindowType[msgSetSlot.id] & 0xFF);
+            int targetSlot = msgSetSlot.slot; //For now the slot ids are same so we use this directly. 
+            WindowSetSlotPacket pkSetSlot = new WindowSetSlotPacket();
+            pkSetSlot.windowID = (byte) (msgSetSlot.id & 0xFF);
+            pkSetSlot.slot = (short) (targetSlot & 0xFFFF);
+            pkSetSlot.item = new PEInventorySlot((short) (msgSetSlot.item.getTypeId() & 0xFFFF), (byte) (msgSetSlot.item.getAmount() & 0xFF), msgSetSlot.item.getDurability());
+            return new PEPacket[]{pkSetSlot};
         }
 
         /**

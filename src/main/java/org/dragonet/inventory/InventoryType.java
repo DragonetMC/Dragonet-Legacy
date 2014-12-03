@@ -97,7 +97,6 @@ public final class InventoryType {
     }
 
     public final static class SlotSize {
-
         public final static int CHEST = 27;
         public final static int DOUBLE_CHEST = 27 + 27;
         public final static int PLAYER = 36;
