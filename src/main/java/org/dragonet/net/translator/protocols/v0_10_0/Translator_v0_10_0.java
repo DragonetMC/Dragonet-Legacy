@@ -49,15 +49,15 @@ public class Translator_v0_10_0 extends BaseTranslator {
      * Cached Window Types for Window Item Translating If the value equals
      * Integer.MAX_VALUE then the window doesn't exist
      */
-    private int[] chachedWindowType;
+    private int[] cachedWindowType;
 
     private ItemTranslator itemTranslator;
 
     public Translator_v0_10_0(DragonetSession session) {
         super(session);
-        this.chachedWindowType = new int[256];
+        this.cachedWindowType = new int[256];
         for (int i = 0; i < 256; i++) {
-            this.chachedWindowType[i] = Integer.MAX_VALUE;
+            this.cachedWindowType[i] = -1;
         }
         this.itemTranslator = new ItemTranslator_v0_10_0();
     }
@@ -140,16 +140,22 @@ public class Translator_v0_10_0 extends BaseTranslator {
          */
         if (message instanceof OpenWindowMessage) {
             OpenWindowMessage msgOpenWindow = (OpenWindowMessage) message;
-            WindowOpenPacket pkOpenWindow = new WindowOpenPacket();
-            pkOpenWindow.windowID = (byte)(msgOpenWindow.id & 0xFF);
             byte typePE = InventoryType.PEInventory.toPEInventory(InventoryType.PCInventory.fromString(msgOpenWindow.type));
-            if(typePE == (byte)0xFF){
+            if (typePE == (byte) 0xFF) {
                 //Not supported, close it
                 CloseWindowMessage msgCloseWindow = new CloseWindowMessage(msgOpenWindow.id);
                 this.getSession().messageReceived(msgCloseWindow);
                 return null;
             }
-            //TODO: Open window
+            WindowOpenPacket pkOpenWindow = new WindowOpenPacket();
+            pkOpenWindow.windowID = (byte) (msgOpenWindow.id & 0xFF);
+            pkOpenWindow.type = typePE;
+            pkOpenWindow.slots = (byte)(msgOpenWindow.slots & 0xFFFF);
+            pkOpenWindow.x = this.getSession().getPlayer().getLocation().getBlockX();
+            pkOpenWindow.y = this.getSession().getPlayer().getLocation().getBlockY();
+            pkOpenWindow.z = this.getSession().getPlayer().getLocation().getBlockZ();
+            this.cachedWindowType[msgOpenWindow.id & 0xFF] = typePE;
+            return new PEPacket[]{pkOpenWindow};
         }
 
         /**
@@ -216,6 +222,7 @@ public class Translator_v0_10_0 extends BaseTranslator {
          */
         if (message instanceof CloseWindowMessage) {
             CloseWindowMessage msgCloseWindow = (CloseWindowMessage) message;
+            this.cachedWindowType[msgCloseWindow.id & 0xFF] = -1;
             WindowClosePacket pkCloseWindow = new WindowClosePacket();
             pkCloseWindow.windowID = (byte) (msgCloseWindow.id & 0xFF);
             return new PEPacket[]{pkCloseWindow};
