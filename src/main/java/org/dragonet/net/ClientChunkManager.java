@@ -103,9 +103,11 @@ public class ClientChunkManager {
         }
         int chunkX = this.getSession().getPlayer().getLocation().getChunk().getX();
         int chunkZ = this.getSession().getPlayer().getLocation().getChunk().getZ();
-        for (int x = chunkX - 8; x < chunkX + 8; x++) {
-            for (int z = chunkZ - 8; z < chunkZ + 8; z++) {
-                this.prepareChunk(new ChunkLocation(x, z));
+        for (int distance = 0; distance < 8; distance++) {
+            for (int x = chunkX - distance; x < chunkX + distance; x++) {
+                for (int z = chunkZ - distance; z < chunkZ + distance; z++) {
+                    this.prepareChunk(new ChunkLocation(x, z));
+                }
             }
         }
     }
