@@ -25,10 +25,11 @@ import net.glowstone.net.message.play.inv.SetWindowSlotMessage;
 import net.glowstone.net.message.play.player.PlayerPositionLookMessage;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.inventory.InventoryView;
 import org.dragonet.entity.DragonetPlayer;
 import org.dragonet.entity.metadata.EntityMetaData;
 import org.dragonet.inventory.PEInventorySlot;
-import org.dragonet.inventory.PEInventoryType;
+import org.dragonet.inventory.InventoryType;
 import org.dragonet.inventory.PEWindowConstantID;
 import org.dragonet.net.DragonetSession;
 import org.dragonet.net.packet.minecraft.AddPlayerPacket;
@@ -38,6 +39,7 @@ import org.dragonet.net.packet.minecraft.PEPacket;
 import org.dragonet.net.packet.minecraft.PEPacketIDs;
 import org.dragonet.net.packet.minecraft.WindowClosePacket;
 import org.dragonet.net.packet.minecraft.WindowItemsPacket;
+import org.dragonet.net.packet.minecraft.WindowOpenPacket;
 import org.dragonet.net.translator.BaseTranslator;
 import org.dragonet.net.translator.ItemTranslator;
 
@@ -138,7 +140,16 @@ public class Translator_v0_10_0 extends BaseTranslator {
          */
         if (message instanceof OpenWindowMessage) {
             OpenWindowMessage msgOpenWindow = (OpenWindowMessage) message;
-            //TODO
+            WindowOpenPacket pkOpenWindow = new WindowOpenPacket();
+            pkOpenWindow.windowID = (byte)(msgOpenWindow.id & 0xFF);
+            byte typePE = InventoryType.PEInventory.toPEInventory(InventoryType.PCInventory.fromString(msgOpenWindow.type));
+            if(typePE == (byte)0xFF){
+                //Not supported, close it
+                CloseWindowMessage msgCloseWindow = new CloseWindowMessage(msgOpenWindow.id);
+                this.getSession().messageReceived(msgCloseWindow);
+                return null;
+            }
+            //TODO: Open window
         }
 
         /**
@@ -150,7 +161,7 @@ public class Translator_v0_10_0 extends BaseTranslator {
                 //Inventory Items(Included hotbar)
                 WindowItemsPacket pkInventory = new WindowItemsPacket();
                 pkInventory.windowID = PEWindowConstantID.PLAYER_INVENTORY;
-                pkInventory.slots = new PEInventorySlot[PEInventoryType.SlotSize.PLAYER];
+                pkInventory.slots = new PEInventorySlot[InventoryType.SlotSize.PLAYER];
                 for (int i = 9; i <= 44; i++) {
                     if (msgWindowContents.items[i] != null) {
                         pkInventory.slots[i - 9] = new PEInventorySlot((short) (msgWindowContents.items[i].getTypeId() & 0xFFFF), (byte) (msgWindowContents.items[i].getAmount() & 0xFF), msgWindowContents.items[i].getData().getData());
@@ -186,7 +197,7 @@ public class Translator_v0_10_0 extends BaseTranslator {
                 }
                 return null;
             }
-            //TODO
+            //TODO: Implement other types of inventory
             //switch(this.getSession().getPlayer().)
             System.out.println("Updating window content for " + msgWindowContents.id + ", which has " + msgWindowContents.items.length + " slots. ");
         }
