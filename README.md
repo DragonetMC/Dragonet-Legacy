@@ -14,3 +14,9 @@ We are hosting files on MEGA.go.nz so it is very stable and secure. <br>
 ###Credits
 Dragonet software: A universal Minecraft server that supports both Minecraft for PC and Minecraft: Pocket Edition. 
 GlowStone software: A Minecraft server that written from zero and no Mojang code included. 
+
+###Try it out!
+
+Try out the test server!<br>
+PC Clients join here: DragonetPC.s0ncraft.com<br>
+PE Clients join here: DragonetPE.s0ncraft.com (:19132)
