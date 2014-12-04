@@ -47,7 +47,7 @@ public class ClientChunkManager {
      */
     public void onTick() {
         this.autoPrepareChunks();
-        //this.unloadFarChunks();
+        this.unloadFarChunks();
         this.sendChunks();
     }
 
@@ -103,7 +103,7 @@ public class ClientChunkManager {
         }
         int chunkX = this.getSession().getPlayer().getLocation().getChunk().getX();
         int chunkZ = this.getSession().getPlayer().getLocation().getChunk().getZ();
-        for (int distance = 0; distance < 8; distance++) {
+        for (int distance = 7; distance >= 0; distance--) {
             for (int x = chunkX - distance; x < chunkX + distance; x++) {
                 for (int z = chunkZ - distance; z < chunkZ + distance; z++) {
                     this.prepareChunk(new ChunkLocation(x, z));
