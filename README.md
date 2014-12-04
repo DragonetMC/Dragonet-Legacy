@@ -17,6 +17,6 @@ GlowStone software: A Minecraft server that written from zero and no Mojang code
 
 ###Try it out!
 
-Try out the test server!<br>
-PC Clients join here: DragonetPC.s0ncraft.com<br>
-PE Clients join here: DragonetPE.s0ncraft.com (:19132)
+Try out the test server!
++PC Clients join here: DragonetPC.s0ncraft.com
++PE Clients join here: DragonetPE.s0ncraft.com (:19132)
