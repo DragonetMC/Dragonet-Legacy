@@ -59,10 +59,17 @@ public class ItemTranslator_v0_10_0 implements ItemTranslator{
      */
     @Override
     public int translateToPE(int itemPC) {
+        if(itemPC >= 8 && itemPC <= 11){
+            return itemPC;
+        }else{
+            return DEFAULT_BLOCK_TO_PE;
+        }
+        /*
         if (itemMap_PC_to_PE.containsKey(itemPC)) {
             return itemMap_PC_to_PE.get(itemPC);
         } else {
             return DEFAULT_BLOCK_TO_PE;
         }
+        */
     }
 }

@@ -18,6 +18,7 @@ import net.glowstone.net.message.play.entity.RelativeEntityPositionMessage;
 import net.glowstone.net.message.play.entity.SpawnPlayerMessage;
 import net.glowstone.net.message.play.game.ChatMessage;
 import net.glowstone.net.message.play.game.IncomingChatMessage;
+import net.glowstone.net.message.play.game.StateChangeMessage;
 import net.glowstone.net.message.play.inv.CloseWindowMessage;
 import net.glowstone.net.message.play.inv.OpenWindowMessage;
 import net.glowstone.net.message.play.inv.SetWindowContentsMessage;
@@ -37,6 +38,7 @@ import org.dragonet.net.packet.minecraft.MessagePacket;
 import org.dragonet.net.packet.minecraft.MovePlayerPacket;
 import org.dragonet.net.packet.minecraft.PEPacket;
 import org.dragonet.net.packet.minecraft.PEPacketIDs;
+import org.dragonet.net.packet.minecraft.StartGamePacket;
 import org.dragonet.net.packet.minecraft.WindowClosePacket;
 import org.dragonet.net.packet.minecraft.WindowItemsPacket;
 import org.dragonet.net.packet.minecraft.WindowOpenPacket;
@@ -137,6 +139,26 @@ public class Translator_v0_10_0 extends BaseTranslator {
         }
 
         /**
+         * Gamemode Change
+         */
+        if (message instanceof StateChangeMessage) {
+            if (((StateChangeMessage) message).reason == StateChangeMessage.Reason.GAMEMODE.ordinal()) {
+                StartGamePacket pkStartGame = new StartGamePacket();
+                pkStartGame.eid = this.getSession().getPlayer().getEntityId();
+                pkStartGame.gamemode = ((int) ((StateChangeMessage) message).value) & 0x3;
+                pkStartGame.seed = 0;
+                pkStartGame.generator = 1;
+                pkStartGame.spawnX = this.getSession().getPlayer().getWorld().getSpawnLocation().getBlockX();
+                pkStartGame.spawnY = this.getSession().getPlayer().getWorld().getSpawnLocation().getBlockY();
+                pkStartGame.spawnZ = this.getSession().getPlayer().getWorld().getSpawnLocation().getBlockZ();
+                pkStartGame.x = (float) this.getSession().getPlayer().getLocation().getX();
+                pkStartGame.y = (float) this.getSession().getPlayer().getLocation().getY();
+                pkStartGame.z = (float) this.getSession().getPlayer().getLocation().getZ();
+                return new PEPacket[]{pkStartGame};
+            }
+        }
+
+        /**
          * Open Window
          */
         if (message instanceof OpenWindowMessage) {
@@ -214,7 +236,9 @@ public class Translator_v0_10_0 extends BaseTranslator {
          */
         if (message instanceof SetWindowSlotMessage) {
             SetWindowSlotMessage msgSetSlot = (SetWindowSlotMessage) message;
-            if(this.cachedWindowType[msgSetSlot.id & 0xFF] == -1) return null;
+            if (this.cachedWindowType[msgSetSlot.id & 0xFF] == -1) {
+                return null;
+            }
             //byte typePE = (byte) (this.cachedWindowType[msgSetSlot.id & 0xFF] & 0xFF);
             int targetSlot = msgSetSlot.slot; //For now the slot ids are same so we use this directly. 
             WindowSetSlotPacket pkSetSlot = new WindowSetSlotPacket();
@@ -229,7 +253,9 @@ public class Translator_v0_10_0 extends BaseTranslator {
          */
         if (message instanceof CloseWindowMessage) {
             CloseWindowMessage msgCloseWindow = (CloseWindowMessage) message;
-            if(msgCloseWindow.id != 0) this.cachedWindowType[msgCloseWindow.id & 0xFF] = -1;
+            if (msgCloseWindow.id != 0) {
+                this.cachedWindowType[msgCloseWindow.id & 0xFF] = -1;
+            }
             WindowClosePacket pkCloseWindow = new WindowClosePacket();
             pkCloseWindow.windowID = (byte) (msgCloseWindow.id & 0xFF);
             return new PEPacket[]{pkCloseWindow};
