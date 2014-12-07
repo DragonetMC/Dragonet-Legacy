@@ -145,7 +145,7 @@ public class Translator_v0_10_0 extends BaseTranslator {
             if (((StateChangeMessage) message).reason == StateChangeMessage.Reason.GAMEMODE.ordinal()) {
                 StartGamePacket pkStartGame = new StartGamePacket();
                 pkStartGame.eid = this.getSession().getPlayer().getEntityId();
-                pkStartGame.gamemode = ((int) ((StateChangeMessage) message).value) & 0x3;
+                pkStartGame.gamemode = ((int) ((StateChangeMessage) message).value) & 0x1;
                 pkStartGame.seed = 0;
                 pkStartGame.generator = 1;
                 pkStartGame.spawnX = this.getSession().getPlayer().getWorld().getSpawnLocation().getBlockX();
