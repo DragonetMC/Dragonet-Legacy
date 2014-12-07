@@ -25,6 +25,7 @@ import net.glowstone.GlowServer;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.dragonet.net.NetworkHandler;
+import org.dragonet.statistic.StatisticSender;
 import org.dragonet.utilities.DragonetVersioning;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,9 +55,9 @@ public class DragonetServer {
      */
     public void initialize() {
         /* Uncomment following 3 lines when release */
-        //this.logger.info("Sending statistic... ");
-        //StatisticSender statSender = new StatisticSender(DragonetVersioning.DRAGONET_VERSION, System.currentTimeMillis());
-        //statSender.sendStatistic();
+        this.logger.info("Sending statistic... ");
+        StatisticSender statSender = new StatisticSender(DragonetVersioning.DRAGONET_VERSION, System.currentTimeMillis());
+        statSender.sendStatistic();
         File fileConfig = new File(this.server.getConfigDir() + File.separator + "dragonet.yml");
         if (!fileConfig.exists()) {
             try {
