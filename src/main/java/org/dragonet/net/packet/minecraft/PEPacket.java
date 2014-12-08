@@ -49,6 +49,9 @@ public abstract class PEPacket extends BinaryPacket{
             case PEPacketIDs.CLIENT_DISCONNECT:
                 packet = new DisconnectPacket();
                 break;
+            case PEPacketIDs.USE_ITEM_PACKET:
+                packet = new UseItemPacket(buffer);
+                break;
             default:
                 return null;
         }
