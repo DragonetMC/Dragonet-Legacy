@@ -170,11 +170,6 @@ public class DragonetSession extends GlowSession {
         }
     }
 
-    @Override
-    public void onDisconnect() {
-        this.disconnect();
-    }
-
     private synchronized void sendAllACK() {
         if (this.queueACK.isEmpty()) {
             return;
