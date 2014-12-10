@@ -60,6 +60,7 @@ public class ClientChunkManager {
             }
             this.chunksLoaded.clear();
             this.chunksQueue.clear();
+            this.lastWorld = this.getSession().getPlayer().getWorld().getName();
         }
         this.autoPrepareChunks();
         this.unloadFarChunks();
