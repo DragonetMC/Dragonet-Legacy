@@ -33,6 +33,8 @@ public class ClientChunkManager {
     private final @Getter
     DragonetSession session;
 
+    private String lastWorld;
+
     private final ArrayList<ChunkLocation> chunksLoaded; //Already sent
     private final Deque<ChunkLocation> chunksQueue;  //Awaiting sending
 
@@ -46,6 +48,19 @@ public class ClientChunkManager {
      * Trigger a chunk tick update
      */
     public void onTick() {
+        if (this.getSession().getPlayer() == null) {
+            return;
+        }
+        if (this.lastWorld == null) {
+            this.lastWorld = this.getSession().getPlayer().getWorld().getName();
+        }
+        if (!this.lastWorld.equalsIgnoreCase(this.getSession().getPlayer().getWorld().getName())) {
+            for(ChunkLocation loc : this.chunksLoaded){
+                this.unloadChunk(loc.getX(), loc.getZ());
+            }
+            this.chunksLoaded.clear();
+            this.chunksQueue.clear();
+        }
         this.autoPrepareChunks();
         this.unloadFarChunks();
         this.sendChunks();
@@ -141,12 +156,8 @@ public class ClientChunkManager {
                 System.out.println("Chunk Distance " + playerChunk.toString() + " TO " + loc.toString() + " DISTANCE = " + loc.distanceTo(playerChunk));
             }
         }
-        UnloadChunkPacket pkUnloadChunk;
         for (ChunkLocation locUnload : toUnload) {
-            pkUnloadChunk = new UnloadChunkPacket();
-            pkUnloadChunk.x = locUnload.getX();
-            pkUnloadChunk.z = locUnload.getZ();
-            this.getSession().send(pkUnloadChunk);
+            this.unloadChunk(locUnload.getX(), locUnload.getZ());
         }
         this.chunksLoaded.removeAll(toUnload);
     }
@@ -207,7 +218,18 @@ public class ClientChunkManager {
             packet.compressedData = ArrayUtils.subarray(bufferDeflate, 0, deflatedSize);
             this.getSession().send(packet);
         } catch (IOException e) {
-            e.printStackTrace();
         }
+    }
+
+    /**
+     * Unload a chunk. THIS DOES NOT REMOVE FROM THE CHUNKSLOADED ARRAYLIST! 
+     * @param x Chunk X position
+     * @param z Chunk Z position
+     */
+    private void unloadChunk(int x, int z) {
+        UnloadChunkPacket pkUnloadChunk = new UnloadChunkPacket();
+        pkUnloadChunk.x = x;
+        pkUnloadChunk.z = z;
+        this.getSession().send(pkUnloadChunk);
     }
 }

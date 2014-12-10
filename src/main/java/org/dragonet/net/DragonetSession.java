@@ -66,7 +66,6 @@ import org.dragonet.net.packet.minecraft.SetTimePacket;
 import org.dragonet.net.packet.minecraft.StartGamePacket;
 import org.dragonet.net.translator.BaseTranslator;
 import org.dragonet.net.translator.TranslatorProvider;
-import org.dragonet.utilities.MD5Encrypt;
 import org.dragonet.utilities.io.PEBinaryReader;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
@@ -524,7 +523,7 @@ public class DragonetSession extends GlowSession {
                     this.setPlayer(new PlayerProfile(this.username, UUID.nameUUIDFromBytes(("OfflinePlayer:" + this.username).getBytes(StandardCharsets.UTF_8))));
                     break;
                 case PEPacketIDs.CLIENT_DISCONNECT:
-                    this.statusActive = false;
+                    this.onDisconnect();
                     break;
                 default:
                     if (this.loginStage != 3) {
@@ -557,7 +556,7 @@ public class DragonetSession extends GlowSession {
         pkAdventure.flags = flags;
         this.send(pkAdventure);
     }
-
+    
     /**
      * Sets the player associated with this session.
      *
@@ -671,6 +670,17 @@ public class DragonetSession extends GlowSession {
     }
 
     @Override
+    public void onDisconnect() {
+        this.statusActive = false;
+        this.dServer.getNetworkHandler().removeSession(this);
+        this.getServer().getSessionRegistry().remove((GlowSession)this);
+        if(this.player != null){
+            this.player.getWorld().getRawPlayers().remove(this.player);
+        }
+        super.onDisconnect();
+    }
+    
+    @Override
     public void disconnect() {
         this.disconnect("Kicked by the server! ");
     }
@@ -701,14 +711,19 @@ public class DragonetSession extends GlowSession {
         // log that the player was kicked
         if (player != null) {
             GlowServer.logger.info(player.getName() + " kicked: " + reason);
+            this.player.remove();
         } else {
             GlowServer.logger.info("[" + this.remoteIP + ":" + this.remotePort + "] kicked: " + reason);
         }
 
         this.send(new KickMessage(reason));
         this.statusActive = false;
-        this.getServer().getSessionRegistry().remove(this);
         this.dServer.getNetworkHandler().removeSession(this);
+        this.getServer().getSessionRegistry().remove((GlowSession)this);
+        if(this.player != null){
+            this.player.getWorld().getRawPlayers().remove(this.player);
+        }
+        this.player = null;
     }
 
     @Override

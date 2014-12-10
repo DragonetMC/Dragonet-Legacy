@@ -14,6 +14,7 @@ package org.dragonet.net.translator.protocols.v0_10_0;
 
 import com.flowpowered.networking.Message;
 import net.glowstone.entity.GlowPlayer;
+import net.glowstone.net.message.KickMessage;
 import net.glowstone.net.message.play.entity.RelativeEntityPositionMessage;
 import net.glowstone.net.message.play.entity.SpawnPlayerMessage;
 import net.glowstone.net.message.play.game.ChatMessage;
@@ -26,7 +27,6 @@ import net.glowstone.net.message.play.inv.SetWindowSlotMessage;
 import net.glowstone.net.message.play.player.PlayerPositionLookMessage;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
-import org.bukkit.inventory.InventoryView;
 import org.dragonet.entity.DragonetPlayer;
 import org.dragonet.entity.metadata.EntityMetaData;
 import org.dragonet.inventory.PEInventorySlot;
@@ -34,6 +34,7 @@ import org.dragonet.inventory.InventoryType;
 import org.dragonet.inventory.PEWindowConstantID;
 import org.dragonet.net.DragonetSession;
 import org.dragonet.net.packet.minecraft.AddPlayerPacket;
+import org.dragonet.net.packet.minecraft.DisconnectPacket;
 import org.dragonet.net.packet.minecraft.MessagePacket;
 import org.dragonet.net.packet.minecraft.MovePlayerPacket;
 import org.dragonet.net.packet.minecraft.PEPacket;
@@ -91,6 +92,13 @@ public class Translator_v0_10_0 extends BaseTranslator {
         }
 
         /* ==================================================================================== */
+        /**
+         * Kick Message
+         */
+        if (message instanceof KickMessage) {
+            return new PEPacket[]{new DisconnectPacket()};
+        }
+
         /**
          * Chat Message
          */

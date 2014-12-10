@@ -26,10 +26,6 @@ public class ItemTranslator_v0_10_0 implements ItemTranslator{
         for (int i = 0; i <= 24; i++) {
             itemMap_PC_to_PE.put(i, i);
         }
-        itemMap_PC_to_PE.put(26, 26);
-        itemMap_PC_to_PE.put(27, 27);
-        itemMap_PC_to_PE.put(31, 31);
-        itemMap_PC_to_PE.put(50, 50);
         //TODO: More blocks/items
 
         /* ===== PE to PC ===== */
@@ -59,17 +55,10 @@ public class ItemTranslator_v0_10_0 implements ItemTranslator{
      */
     @Override
     public int translateToPE(int itemPC) {
-        if(itemPC >= 8 && itemPC <= 11){
-            return itemPC;
-        }else{
-            return DEFAULT_BLOCK_TO_PE;
-        }
-        /*
         if (itemMap_PC_to_PE.containsKey(itemPC)) {
             return itemMap_PC_to_PE.get(itemPC);
         } else {
             return DEFAULT_BLOCK_TO_PE;
         }
-        */
     }
 }

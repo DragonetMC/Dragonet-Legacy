@@ -133,6 +133,6 @@ public class NetworkHandler {
     }
 
     public synchronized void removeSession(DragonetSession session) {
-        this.sessions.remove(session);
+        this.sessions.remove(session.getAddress().toString());
     }
 }
