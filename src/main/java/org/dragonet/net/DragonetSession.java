@@ -172,7 +172,7 @@ public class DragonetSession extends GlowSession {
 
     @Override
     public void onDisconnect() {
-        super.onDisconnect(); //To change body of generated methods, choose Tools | Templates.
+        this.disconnect();
     }
 
     private synchronized void sendAllACK() {
