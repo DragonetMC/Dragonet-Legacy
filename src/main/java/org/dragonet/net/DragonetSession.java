@@ -675,6 +675,11 @@ public class DragonetSession extends GlowSession {
         send(new UserListItemMessage(UserListItemMessage.Action.ADD_PLAYER, entries));
     }
 
+    @Override
+    public void disconnect() {
+        this.disconnect("Kicked by the server! ");
+    }
+    
     /**
      * Disconnects the session with the specified reason. This causes a
      * KickMessage to be sent. When it has been delivered, the channel is
