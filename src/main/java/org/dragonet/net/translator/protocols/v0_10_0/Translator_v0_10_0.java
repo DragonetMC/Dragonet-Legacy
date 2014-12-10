@@ -86,10 +86,12 @@ public class Translator_v0_10_0 extends BaseTranslator {
     /* ===== TO PE ===== */
     @Override
     public PEPacket[] translateToPE(Message message) {
+        /*
         if (message.getClass().getSimpleName().contains("Player") || message.getClass().getSimpleName().contains("Window")
                 || message.getClass().getSimpleName().contains("Chunk")) {
             System.out.print("Trnaslating to PE: " + message.getClass().getSimpleName());
         }
+        */
 
         /* ==================================================================================== */
         /**
