@@ -55,7 +55,7 @@ public class ClientChunkManager {
             this.lastWorld = this.getSession().getPlayer().getWorld().getName();
         }
         if (!this.lastWorld.equalsIgnoreCase(this.getSession().getPlayer().getWorld().getName())) {
-            for(ChunkLocation loc : this.chunksLoaded){
+            for (ChunkLocation loc : this.chunksLoaded) {
                 this.unloadChunk(loc.getX(), loc.getZ());
             }
             this.chunksLoaded.clear();
@@ -193,16 +193,49 @@ public class ClientChunkManager {
                     }
                 }
             }
-            writer.write(new byte[16384]);
-            for (int i = 0; i < 16384; i++) {
-                writer.writeByte((byte) 0xF0);
+            //Block Meta
+            //writer.write(new byte[16384]); 
+            for (int x = 0; x < 16; x++) {
+                for (int z = 0; z < 16; z++) {
+                    for (int y = 0; y < 128; y += 2) {
+                        byte data = 0;
+                        data |= (byte) ((chunk.getBlockData(x, y, z) & 0xF) << 4);
+                        data |= (byte) (chunk.getBlockData(x, y + 1, z) & 0xF);
+                        writer.writeByte(data);
+                    }
+                }
             }
-            for (int i = 0; i < 16384; i++) {
-                writer.writeByte((byte) 0x11);
+
+            //Sky Light
+            for (int x = 0; x < 16; x++) {
+                for (int z = 0; z < 16; z++) {
+                    for (int y = 0; y < 128; y += 2) {
+                        byte data = 0;
+                        data |= (byte) ((chunk.getBlockSkyLight(x, y, z) & 0xF) << 4);
+                        data |= (byte) (chunk.getBlockSkyLight(x, y + 1, z) & 0xF);
+                        writer.writeByte(data);
+                    }
+                }
             }
+
+            //Block Light (Emitted Light)
+            for (int x = 0; x < 16; x++) {
+                for (int z = 0; z < 16; z++) {
+                    for (int y = 0; y < 128; y += 2) {
+                        byte data = 0;
+                        data |= (byte) ((chunk.getBlockEmittedLight(x, y, z) & 0xF) << 4);
+                        data |= (byte) (chunk.getBlockEmittedLight(x, y + 1, z) & 0xF);
+                        writer.writeByte(data);
+                    }
+                }
+            }
+
+            //Biome IDs
             for (int i = 0; i < 256; i++) {
-                writer.writeByte((byte) 0x00);
+                writer.writeByte((byte) 0x01);
             }
+
+            //Biome Colors
             for (int i = 0; i < 256; i++) {
                 writer.writeByte((byte) 0x00);
                 writer.writeByte((byte) 0x85);
@@ -223,7 +256,8 @@ public class ClientChunkManager {
     }
 
     /**
-     * Unload a chunk. THIS DOES NOT REMOVE FROM THE CHUNKSLOADED ARRAYLIST! 
+     * Unload a chunk. THIS DOES NOT REMOVE FROM THE CHUNKSLOADED ARRAYLIST!
+     *
      * @param x Chunk X position
      * @param z Chunk Z position
      */
