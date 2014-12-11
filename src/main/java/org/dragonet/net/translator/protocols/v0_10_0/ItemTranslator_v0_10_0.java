@@ -29,6 +29,9 @@ public class ItemTranslator_v0_10_0 implements ItemTranslator{
         for (int i = 8; i <= 11; i++) {
             itemMap_PC_to_PE.put(i, i);
         }
+        //for (int i = 1; i <= 12; i++) {
+        //    itemMap_PC_to_PE.put(i, i);
+        //}
         //TODO: More blocks/items
 
         /* ===== PE to PC ===== */
