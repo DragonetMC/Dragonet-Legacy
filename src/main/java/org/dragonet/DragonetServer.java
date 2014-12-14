@@ -76,8 +76,7 @@ public class DragonetServer {
         this.threadPool = Executors.newFixedThreadPool(64);
         String ip = config.getString("server-ip", "0.0.0.0");
         int port = config.getInt("server-port", 19132);
-        //this.logger.info("Trying to bind on UDP address " + ip + ":" + port + "... ");
-        this.logger.info("Starting Dragonet Server on " + ip + ":" + port + "... ");
+        this.logger.info("Trying to bind on UDP address " + ip + ":" + port + "... ");
         this.networkHandler = new NetworkHandler(this, new InetSocketAddress(ip, port));
         this.logger.info("Dragonet successfully initialized! ");
     }
