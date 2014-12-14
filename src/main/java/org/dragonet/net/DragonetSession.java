@@ -48,6 +48,7 @@ import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.dragonet.DragonetServer;
 import org.dragonet.entity.DragonetPlayer;
+import org.dragonet.net.NetworkHandler;
 import org.dragonet.net.packet.EncapsulatedPacket;
 import org.dragonet.net.packet.RaknetDataPacket;
 import org.dragonet.net.packet.minecraft.AdventureSettingsPacket;
@@ -57,7 +58,8 @@ import org.dragonet.net.packet.minecraft.LoginPacket;
 import org.dragonet.net.packet.minecraft.LoginStatusPacket;
 import org.dragonet.net.packet.minecraft.PEPacket;
 import org.dragonet.net.packet.minecraft.PEPacketIDs;
-import org.dragonet.net.packet.minecraft.PingPongPacket;
+import org.dragonet.net.packet.minecraft.PingPacket;
+import org.dragonet.net.packet.minecraft.PongPacket;
 import org.dragonet.net.packet.minecraft.ServerHandshakePacket;
 import org.dragonet.net.packet.minecraft.SetDifficultyPacket;
 import org.dragonet.net.packet.minecraft.SetHealthPacket;
@@ -88,6 +90,9 @@ public class DragonetSession extends GlowSession {
     private @Getter
     short clientMTU;
 
+    private @Getter
+    long pingID;
+    
     private @Getter
     long clientSessionID;
 
@@ -469,8 +474,13 @@ public class DragonetSession extends GlowSession {
             }
             switch (packet.pid()) {
                 case PEPacketIDs.PING:
-                    PingPongPacket pkPong = new PingPongPacket();
-                    pkPong.pingID = ((PingPongPacket) packet).pingID;
+                    //this.pingID = ((PingPacket) packet).pingID;
+                    this.getLogger().info("Get PING! ");
+                    PongPacket pkPong = new PongPacket();
+                    //PingPacket pkPong = new PingPacket();
+                    pkPong.pingID = ((PingPacket) packet).pingID;
+                    pkPong.ServerID = NetworkHandler.serverID;
+                    pkPong.MOTD = "MCCPP;Demo;Dragonet Server For Minecraft: PE";
                     this.send(pkPong, 0);
                     break;
                 case PEPacketIDs.CLIENT_CONNECT:
