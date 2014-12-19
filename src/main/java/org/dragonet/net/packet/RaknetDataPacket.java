@@ -49,9 +49,9 @@ public class RaknetDataPacket extends BinaryPacket {
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PEBinaryWriter writer = new PEBinaryWriter(bos);
-            writer.writeByte((byte) 0x80);
+            writer.writeByte((byte) 0x84);
             writer.writeTriad(this.sequenceNumber);
-            for (EncapsulatedPacket packet : this.encapsulatedPackets.toArray(new EncapsulatedPacket[0])) {
+            for (EncapsulatedPacket packet : this.encapsulatedPackets.toArray(new EncapsulatedPacket[this.encapsulatedPackets.size()])) {
                 writer.write(EncapsulatedPacket.toBinary(packet));
             }
             this.setData(bos.toByteArray());

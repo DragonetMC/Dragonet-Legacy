@@ -38,14 +38,13 @@ public class ClientChunkManager {
 
     private String lastWorld;
 
-    private boolean sentLoginChunks;
-    private int sentLoginChunkTicks;
-    
+    private int ticksCountDown;
+
     private final ArrayList<ChunkLocation> chunksLoaded; //Already sent
     private final Deque<ChunkLocation> chunksQueue;  //Awaiting sending
 
     public ClientChunkManager(DragonetSession session) {
-        this.sentLoginChunks = false;
+        this.ticksCountDown = 20;
         this.session = session;
         this.chunksLoaded = new ArrayList<>();
         this.chunksQueue = new ArrayDeque<>();
@@ -58,6 +57,12 @@ public class ClientChunkManager {
         if (this.getSession().getPlayer() == null) {
             return;
         }
+        if (this.ticksCountDown > 0) {
+            this.ticksCountDown--;
+            return;
+        } else {
+            this.ticksCountDown = 200;
+        }
         if (this.lastWorld == null) {
             this.lastWorld = this.getSession().getPlayer().getWorld().getName();
         }
@@ -68,10 +73,6 @@ public class ClientChunkManager {
             this.chunksLoaded.clear();
             this.chunksQueue.clear();
             this.lastWorld = this.getSession().getPlayer().getWorld().getName();
-        }
-        if(this.sentLoginChunks == true && this.sentLoginChunkTicks < 20 * 2){
-            this.sentLoginChunkTicks ++;
-            return;
         }
         this.autoPrepareChunks();
         this.unloadFarChunks();
@@ -173,7 +174,6 @@ public class ClientChunkManager {
             this.sendChunk(chunkLocation.getX(), chunkLocation.getZ());
             this.chunksLoaded.add(chunkLocation);
         }
-        if(!this.sentLoginChunks) this.sentLoginChunks = true;
     }
 
     /**
