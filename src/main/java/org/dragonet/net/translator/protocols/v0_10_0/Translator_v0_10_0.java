@@ -20,6 +20,7 @@ import net.glowstone.net.message.play.entity.SpawnPlayerMessage;
 import net.glowstone.net.message.play.game.ChatMessage;
 import net.glowstone.net.message.play.game.IncomingChatMessage;
 import net.glowstone.net.message.play.game.StateChangeMessage;
+import net.glowstone.net.message.play.game.TimeMessage;
 import net.glowstone.net.message.play.inv.CloseWindowMessage;
 import net.glowstone.net.message.play.inv.OpenWindowMessage;
 import net.glowstone.net.message.play.inv.SetWindowContentsMessage;
@@ -39,6 +40,7 @@ import org.dragonet.net.packet.minecraft.MessagePacket;
 import org.dragonet.net.packet.minecraft.MovePlayerPacket;
 import org.dragonet.net.packet.minecraft.PEPacket;
 import org.dragonet.net.packet.minecraft.PEPacketIDs;
+import org.dragonet.net.packet.minecraft.SetTimePacket;
 import org.dragonet.net.packet.minecraft.StartGamePacket;
 import org.dragonet.net.packet.minecraft.WindowClosePacket;
 import org.dragonet.net.packet.minecraft.WindowItemsPacket;
@@ -271,6 +273,14 @@ public class Translator_v0_10_0 extends BaseTranslator {
             return new PEPacket[]{pkCloseWindow};
         }
 
+        /**
+         * Set time
+         */
+        if (message instanceof TimeMessage){
+            SetTimePacket pkTime = new SetTimePacket(0); //Because of the hack, we use 0 here. 
+            return new PEPacket[] {pkTime};
+        }
+        
         /* ==================================================================================== */
         return null;
     }

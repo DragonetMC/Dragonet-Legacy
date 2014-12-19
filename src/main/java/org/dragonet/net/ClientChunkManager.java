@@ -13,6 +13,9 @@
 package org.dragonet.net;
 
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -35,10 +38,14 @@ public class ClientChunkManager {
 
     private String lastWorld;
 
+    private boolean sentLoginChunks;
+    private int sentLoginChunkTicks;
+    
     private final ArrayList<ChunkLocation> chunksLoaded; //Already sent
     private final Deque<ChunkLocation> chunksQueue;  //Awaiting sending
 
     public ClientChunkManager(DragonetSession session) {
+        this.sentLoginChunks = false;
         this.session = session;
         this.chunksLoaded = new ArrayList<>();
         this.chunksQueue = new ArrayDeque<>();
@@ -61,6 +68,10 @@ public class ClientChunkManager {
             this.chunksLoaded.clear();
             this.chunksQueue.clear();
             this.lastWorld = this.getSession().getPlayer().getWorld().getName();
+        }
+        if(this.sentLoginChunks == true && this.sentLoginChunkTicks < 20 * 2){
+            this.sentLoginChunkTicks ++;
+            return;
         }
         this.autoPrepareChunks();
         this.unloadFarChunks();
@@ -113,16 +124,38 @@ public class ClientChunkManager {
     /**
      * Automatically prepare chunks
      */
+    public void prepareLoginChunks() {
+        if (!(this.getSession().getPlayer() instanceof GlowPlayer)) {
+            return;
+        }
+        int chunkX = this.getSession().getPlayer().getLocation().getChunk().getX();
+        int chunkZ = this.getSession().getPlayer().getLocation().getChunk().getZ();
+        for (int distance = 5; distance >= 0; distance--) {
+            for (int x = chunkX - distance; x < chunkX + distance; x++) {
+                for (int z = chunkZ - distance; z < chunkZ + distance; z++) {
+                    if (Math.sqrt((chunkX - x) * (chunkX - x) + (chunkZ - z) * (chunkZ - z)) < 5) {
+                        this.prepareChunk(new ChunkLocation(x, z));
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Automatically prepare chunks
+     */
     public void autoPrepareChunks() {
         if (!(this.getSession().getPlayer() instanceof GlowPlayer)) {
             return;
         }
         int chunkX = this.getSession().getPlayer().getLocation().getChunk().getX();
         int chunkZ = this.getSession().getPlayer().getLocation().getChunk().getZ();
-        for (int distance = 7; distance >= 0; distance--) {
+        for (int distance = 6; distance >= 0; distance--) {
             for (int x = chunkX - distance; x < chunkX + distance; x++) {
                 for (int z = chunkZ - distance; z < chunkZ + distance; z++) {
-                    this.prepareChunk(new ChunkLocation(x, z));
+                    if (Math.sqrt((chunkX - x) * (chunkX - x) + (chunkZ - z) * (chunkZ - z)) < 8) {
+                        this.prepareChunk(new ChunkLocation(x, z));
+                    }
                 }
             }
         }
@@ -140,6 +173,7 @@ public class ClientChunkManager {
             this.sendChunk(chunkLocation.getX(), chunkLocation.getZ());
             this.chunksLoaded.add(chunkLocation);
         }
+        if(!this.sentLoginChunks) this.sentLoginChunks = true;
     }
 
     /**
@@ -152,7 +186,7 @@ public class ClientChunkManager {
         ChunkLocation playerChunk = new ChunkLocation(this.getSession().getPlayer().getLocation().getBlockX() / 16, this.getSession().getPlayer().getLocation().getBlockZ() / 16);
         ArrayList<ChunkLocation> toUnload = new ArrayList<>();
         for (ChunkLocation loc : this.chunksLoaded) {
-            if (loc.distanceTo(playerChunk) > 16) {
+            if (loc.distanceTo(playerChunk) > 8) {
                 toUnload.add(loc);
                 System.out.println("Chunk Distance " + playerChunk.toString() + " TO " + loc.toString() + " DISTANCE = " + loc.distanceTo(playerChunk));
             }
@@ -194,7 +228,6 @@ public class ClientChunkManager {
                 }
             }
             //Block Meta
-            /*
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
                     for (int y = 0; y < 128; y += 2) {
@@ -205,39 +238,16 @@ public class ClientChunkManager {
                     }
                 }
             }
-            */
 
             //Sky Light
-            for(int i = 0; i < 16384; i++){
-                writer.writeByte((byte)0xFF);
+            for (int i = 0; i < 16384; i++) {
+                writer.writeByte((byte) 0x00);
             }
-            /*
-            for (int x = 0; x < 16; x++) {
-                for (int z = 0; z < 16; z++) {
-                    for (int y = 0; y < 128; y += 2) {
-                        byte data = 0;
-                        data = (byte) ((chunk.getBlockSkyLight(x, y, z) & 0xF) << 4);
-                        data |= chunk.getBlockSkyLight(x, y + 1, z) & 0xF;
-                        writer.writeByte(data);
-                    }
-                }
-            }
-            */
 
             //Block Light (Emitted Light)
-            writer.write(new byte[16384]);
-            /*
-            for (int x = 0; x < 16; x++) {
-                for (int z = 0; z < 16; z++) {
-                    for (int y = 0; y < 128; y += 2) {
-                        byte data = 0;
-                        data = (byte) ((chunk.getBlockEmittedLight(x, y, z) & 0xF) << 4);
-                        data |= chunk.getBlockEmittedLight(x, y + 1, z) & 0xF;
-                        writer.writeByte(data);
-                    }
-                }
+            for (int i = 0; i < 16384; i++) {
+                writer.writeByte((byte) 0x00);
             }
-            */
 
             //Biome IDs
             for (int i = 0; i < 256; i++) {
@@ -251,6 +261,12 @@ public class ClientChunkManager {
                 writer.writeByte((byte) 0xB2);
                 writer.writeByte((byte) 0x4A);
             }
+
+            //Output the data we created
+            DataOutputStream aaa = new DataOutputStream(new FileOutputStream(new File("D:\\temp\\dragonet-configs\\chunks\\c_" + chunkX + "." + chunkZ + "_.bin")));
+            aaa.write(totalData.toByteArray());
+            aaa.close();
+
             Deflater deflater = new Deflater(2);
             deflater.reset();
             deflater.setInput(totalData.toByteArray());

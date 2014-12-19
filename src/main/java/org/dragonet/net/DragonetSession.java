@@ -511,7 +511,7 @@ public class DragonetSession extends GlowSession {
                     pkLoginStatus.status = 0;
                     this.send(pkLoginStatus);
 
-                    this.getLogger().info("Sent LoginStatusPacket! ");
+                    this.getLogger().info("Accepted connection by [" + this.username + "]. ");
 
                     Matcher matcher = patternUsername.matcher(this.username);
                     if (!matcher.matches()) {
@@ -646,7 +646,7 @@ public class DragonetSession extends GlowSession {
         this.send(pkDifficulty);
 
         //Preprare chunks
-        this.chunkManager.autoPrepareChunks();
+        this.chunkManager.prepareLoginChunks();
 
         // message and user list
         String message = EventFactory.onPlayerJoin(player).getJoinMessage();

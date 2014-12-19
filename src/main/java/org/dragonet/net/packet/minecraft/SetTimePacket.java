@@ -39,7 +39,9 @@ public class SetTimePacket extends PEPacket {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PEBinaryWriter writer = new PEBinaryWriter(bos);
             writer.writeByte((byte) (this.pid() & 0xFF));
-            writer.writeInt((int)(((this.time / GlowWorld.DAY_LENGTH) * 19200) & 0xFFFFFFFF));
+            //writer.writeInt((int)(((this.time / GlowWorld.DAY_LENGTH) * 19200) & 0xFFFFFFFF));
+            //We hack for now :P
+            writer.writeInt(20 * 60);
             writer.writeByte((byte) 0x80);
             this.setData(bos.toByteArray());
         } catch (IOException e) {
