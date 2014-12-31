@@ -14,18 +14,19 @@ package org.dragonet.net.packet.minecraft;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import net.glowstone.GlowWorld;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class SetTimePacket extends PEPacket {
 
     public int time;
+    public boolean isTimeFreezed;
 
     public SetTimePacket() {
     }
 
-    public SetTimePacket(int time) {
+    public SetTimePacket(int time, boolean isTimeFreezed) {
         this.time = time;
+        this.isTimeFreezed = isTimeFreezed;
     }
 
     @Override
@@ -42,7 +43,11 @@ public class SetTimePacket extends PEPacket {
             //writer.writeInt((int)(((this.time / GlowWorld.DAY_LENGTH) * 19200) & 0xFFFFFFFF));
             //We hack for now :P
             writer.writeInt(20 * 60);
-            writer.writeByte((byte) 0x80);
+            if ( this.isTimeFreezed){
+                writer.writeByte((byte) 0x00);
+            }else{
+                writer.writeByte((byte) 0x80);
+            }
             this.setData(bos.toByteArray());
         } catch (IOException e) {
         }

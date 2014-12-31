@@ -44,6 +44,7 @@ import net.glowstone.net.message.play.game.UserListItemMessage;
 import net.glowstone.net.protocol.ProtocolType;
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.GameMode;
+import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.dragonet.DragonetServer;
@@ -155,9 +156,12 @@ public class DragonetSession extends GlowSession {
             this.fireQueue();
         }
         this.chunkManager.onTick();
-        if (this.sentAndReceivedChunks >= 56) {
+        if (this.sentAndReceivedChunks >= 56 && (this.player instanceof Player)) {
+            this.getLogger().info("PE player ["  + this.player.getName() + "] has spawned. ");
             this.sentAndReceivedChunks = -1;
             this.sendSettings();
+            SetTimePacket pkTime = new SetTimePacket((int) (this.getPlayer().getWorld().getTime() & 0xFFFFFFFF), true);
+            this.send(pkTime);
             PEPacket pk;
             while ((pk = this.queueAfterChunkSent.poll()) != null) {
                 this.getLogger().info("Sending queued: " + pk.getClass().getSimpleName());
@@ -369,6 +373,11 @@ public class DragonetSession extends GlowSession {
         if (!(packet instanceof PEPacket)) {
             return;
         }
+        if(!(packet instanceof FullChunkPacket) && !(packet instanceof StartGamePacket) && !(packet instanceof SetTimePacket) && !(packet instanceof SetDifficultyPacket) &&
+                !(packet instanceof LoginStatusPacket) && !(packet instanceof ServerHandshakePacket) && this.sentAndReceivedChunks != -1){
+            this.queueAfterChunkSent.add(packet);
+            return;
+        }
         packet.encode();
         this.fireQueue();
         EncapsulatedPacket[] encapsulatedPacket = EncapsulatedPacket.fromPEPacket(this, packet, reliability);
@@ -380,7 +389,7 @@ public class DragonetSession extends GlowSession {
              }
              */
             this.queue.getEncapsulatedPackets().add(ePacket);
-            if (this.sentAndReceivedChunks != -1 && (packet instanceof FullChunkPacket)) {
+            if (this.sentAndReceivedChunks != -1 && (packet instanceof FullChunkPacket) && !this.chunkPacketIDS.contains(this.queue.getSequenceNumber())) {
                 this.chunkPacketIDS.add(this.queue.getSequenceNumber());
             }
             this.fireQueue();
@@ -556,7 +565,7 @@ public class DragonetSession extends GlowSession {
         pkAdventure.flags = flags;
         this.send(pkAdventure);
     }
-    
+
     /**
      * Sets the player associated with this session.
      *
@@ -626,7 +635,7 @@ public class DragonetSession extends GlowSession {
         this.send(pkStartGame);
 
         //Send Time
-        SetTimePacket pkTime = new SetTimePacket((int) (this.getPlayer().getWorld().getTime() & 0xFFFFFFFF));
+        SetTimePacket pkTime = new SetTimePacket((int) (this.getPlayer().getWorld().getTime() & 0xFFFFFFFF), false);
         this.send(pkTime);
 
         //Send Spawn Position
@@ -673,18 +682,18 @@ public class DragonetSession extends GlowSession {
     public void onDisconnect() {
         this.statusActive = false;
         this.dServer.getNetworkHandler().removeSession(this);
-        this.getServer().getSessionRegistry().remove((GlowSession)this);
-        if(this.player != null){
+        this.getServer().getSessionRegistry().remove((GlowSession) this);
+        if (this.player != null) {
             this.player.getWorld().getRawPlayers().remove(this.player);
         }
         super.onDisconnect();
     }
-    
+
     @Override
     public void disconnect() {
         this.disconnect("Kicked by the server! ");
     }
-    
+
     /**
      * Disconnects the session with the specified reason. This causes a
      * KickMessage to be sent. When it has been delivered, the channel is
@@ -719,8 +728,8 @@ public class DragonetSession extends GlowSession {
         this.send(new KickMessage(reason));
         this.statusActive = false;
         this.dServer.getNetworkHandler().removeSession(this);
-        this.getServer().getSessionRegistry().remove((GlowSession)this);
-        if(this.player != null){
+        this.getServer().getSessionRegistry().remove((GlowSession) this);
+        if (this.player != null) {
             this.player.getWorld().getRawPlayers().remove(this.player);
         }
         this.player = null;

@@ -277,7 +277,7 @@ public class Translator_v0_10_0 extends BaseTranslator {
          * Set time
          */
         if (message instanceof TimeMessage){
-            SetTimePacket pkTime = new SetTimePacket(0); //Because of the hack, we use 0 here. 
+            SetTimePacket pkTime = new SetTimePacket(0, (this.getSession().getSentAndReceivedChunks() == -1)); //Because of the hack, we use 0 here. 
             return new PEPacket[] {pkTime};
         }
         
