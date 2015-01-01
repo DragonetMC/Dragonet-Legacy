@@ -23,6 +23,7 @@ import lombok.Getter;
 import org.apache.commons.lang.ArrayUtils;
 import org.dragonet.DragonetServer;
 import org.dragonet.net.packet.RaknetDataPacket;
+import org.dragonet.net.packet.ServerInfoPacket;
 import org.dragonet.utilities.io.PEBinaryReader;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
@@ -59,6 +60,14 @@ public class NetworkHandler {
             PEBinaryReader reader = new PEBinaryReader(new ByteArrayInputStream(packet.getData()));
             int raknetPID = reader.readByte() & 0xFF;
             switch (raknetPID) {
+                case RaknetConstants.ID_PING_OPEN_CONNECTIONS:
+                    ServerInfoPacket pkReply = new ServerInfoPacket();
+                    pkReply.time = reader.readLong();
+                    pkReply.serverID = serverID;
+                    pkReply.serverName = this.getServer().getServer().getName();
+                    pkReply.encode();
+                    this.udp.send(pkReply.getData(), packet.getSocketAddress());
+                    break;
                 case RaknetConstants.ID_OPEN_CONNECTION_REQUEST_1:
                     reader.read(16); //MAGIC
                     reader.readByte(); //RakNet Protocol

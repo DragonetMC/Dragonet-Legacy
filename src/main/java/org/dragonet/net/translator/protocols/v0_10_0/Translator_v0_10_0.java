@@ -15,6 +15,7 @@ package org.dragonet.net.translator.protocols.v0_10_0;
 import com.flowpowered.networking.Message;
 import net.glowstone.entity.GlowPlayer;
 import net.glowstone.net.message.KickMessage;
+import net.glowstone.net.message.play.entity.DestroyEntitiesMessage;
 import net.glowstone.net.message.play.entity.RelativeEntityPositionMessage;
 import net.glowstone.net.message.play.entity.SpawnPlayerMessage;
 import net.glowstone.net.message.play.game.ChatMessage;
@@ -26,6 +27,7 @@ import net.glowstone.net.message.play.inv.OpenWindowMessage;
 import net.glowstone.net.message.play.inv.SetWindowContentsMessage;
 import net.glowstone.net.message.play.inv.SetWindowSlotMessage;
 import net.glowstone.net.message.play.player.PlayerPositionLookMessage;
+import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.dragonet.entity.DragonetPlayer;
@@ -40,6 +42,8 @@ import org.dragonet.net.packet.minecraft.MessagePacket;
 import org.dragonet.net.packet.minecraft.MovePlayerPacket;
 import org.dragonet.net.packet.minecraft.PEPacket;
 import org.dragonet.net.packet.minecraft.PEPacketIDs;
+import org.dragonet.net.packet.minecraft.RemoveEntityPacket;
+import org.dragonet.net.packet.minecraft.RemovePlayerPacket;
 import org.dragonet.net.packet.minecraft.SetTimePacket;
 import org.dragonet.net.packet.minecraft.StartGamePacket;
 import org.dragonet.net.packet.minecraft.WindowClosePacket;
@@ -89,8 +93,7 @@ public class Translator_v0_10_0 extends BaseTranslator {
     @Override
     public PEPacket[] translateToPE(Message message) {
         /*
-        if (message.getClass().getSimpleName().contains("Player") || message.getClass().getSimpleName().contains("Window")
-                || message.getClass().getSimpleName().contains("Chunk")) {
+        if (!message.getClass().getSimpleName().contains("Time") && !message.getClass().getSimpleName().contains("Chunk")) {
             System.out.print("Trnaslating to PE: " + message.getClass().getSimpleName());
         }
         */
@@ -150,6 +153,17 @@ public class Translator_v0_10_0 extends BaseTranslator {
             return new PEPacket[]{pkAddPlayer};
         }
 
+        if(message instanceof DestroyEntitiesMessage){
+            DestroyEntitiesMessage pkDestroy = (DestroyEntitiesMessage)message;
+            int[] ids = ArrayUtils.toPrimitive(pkDestroy.ids.toArray(new Integer[0]));
+            RemoveEntityPacket[] pkRemoveEntity = new RemoveEntityPacket[ids.length];
+            for(int i = 0; i < ids.length; i++){
+                pkRemoveEntity[i] = new RemoveEntityPacket();
+                pkRemoveEntity[i].eid = ids[i];
+            }
+            return pkRemoveEntity;
+        }
+        
         /**
          * Gamemode Change
          */

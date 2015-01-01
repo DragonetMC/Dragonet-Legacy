@@ -13,9 +13,6 @@
 package org.dragonet.net;
 
 import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -73,6 +70,7 @@ public class ClientChunkManager {
             this.chunksLoaded.clear();
             this.chunksQueue.clear();
             this.lastWorld = this.getSession().getPlayer().getWorld().getName();
+            return;
         }
         this.autoPrepareChunks();
         this.unloadFarChunks();
@@ -186,9 +184,8 @@ public class ClientChunkManager {
         ChunkLocation playerChunk = new ChunkLocation(this.getSession().getPlayer().getLocation().getBlockX() / 16, this.getSession().getPlayer().getLocation().getBlockZ() / 16);
         ArrayList<ChunkLocation> toUnload = new ArrayList<>();
         for (ChunkLocation loc : this.chunksLoaded) {
-            if (loc.distanceTo(playerChunk) > 8) {
+            if (loc.distanceTo(playerChunk) > 7) {
                 toUnload.add(loc);
-                System.out.println("Chunk Distance " + playerChunk.toString() + " TO " + loc.toString() + " DISTANCE = " + loc.distanceTo(playerChunk));
             }
         }
         for (ChunkLocation locUnload : toUnload) {
@@ -262,12 +259,7 @@ public class ClientChunkManager {
                 writer.writeByte((byte) 0x4A);
             }
 
-            //Output the data we created
-            DataOutputStream aaa = new DataOutputStream(new FileOutputStream(new File("D:\\temp\\dragonet-configs\\chunks\\c_" + chunkX + "." + chunkZ + "_.bin")));
-            aaa.write(totalData.toByteArray());
-            aaa.close();
-
-            Deflater deflater = new Deflater(2);
+            Deflater deflater = new Deflater(7);
             deflater.reset();
             deflater.setInput(totalData.toByteArray());
             deflater.finish();

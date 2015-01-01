@@ -50,7 +50,7 @@ def getVersionName() {
 
 // Basic project information
 group = 'org.dragonet'
-version = '0.0.1-preR8'
+version = '0.0.1-preR9'
 description = "Dragonet"
 mainClassName = "net.glowstone.GlowServer"
 
