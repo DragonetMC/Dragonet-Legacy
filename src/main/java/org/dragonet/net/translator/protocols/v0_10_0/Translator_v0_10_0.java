@@ -66,6 +66,7 @@ public class Translator_v0_10_0 extends BaseTranslator {
     public Translator_v0_10_0(DragonetSession session) {
         super(session);
         this.cachedWindowType = new int[256];
+        this.cachedWindowType[0] = 0;
         for (int i = 1; i < 256; i++) {
             this.cachedWindowType[i] = -1;
         }
@@ -93,10 +94,10 @@ public class Translator_v0_10_0 extends BaseTranslator {
     @Override
     public PEPacket[] translateToPE(Message message) {
         /*
-        if (!message.getClass().getSimpleName().contains("Time") && !message.getClass().getSimpleName().contains("Chunk")) {
-            System.out.print("Trnaslating to PE: " + message.getClass().getSimpleName());
-        }
-        */
+         if (!message.getClass().getSimpleName().contains("Time") && !message.getClass().getSimpleName().contains("Chunk")) {
+         System.out.print("Trnaslating to PE: " + message.getClass().getSimpleName());
+         }
+         */
 
         /* ==================================================================================== */
         /**
@@ -153,17 +154,17 @@ public class Translator_v0_10_0 extends BaseTranslator {
             return new PEPacket[]{pkAddPlayer};
         }
 
-        if(message instanceof DestroyEntitiesMessage){
-            DestroyEntitiesMessage pkDestroy = (DestroyEntitiesMessage)message;
+        if (message instanceof DestroyEntitiesMessage) {
+            DestroyEntitiesMessage pkDestroy = (DestroyEntitiesMessage) message;
             int[] ids = ArrayUtils.toPrimitive(pkDestroy.ids.toArray(new Integer[0]));
             RemoveEntityPacket[] pkRemoveEntity = new RemoveEntityPacket[ids.length];
-            for(int i = 0; i < ids.length; i++){
+            for (int i = 0; i < ids.length; i++) {
                 pkRemoveEntity[i] = new RemoveEntityPacket();
                 pkRemoveEntity[i].eid = ids[i];
             }
             return pkRemoveEntity;
         }
-        
+
         /**
          * Gamemode Change
          */
@@ -266,9 +267,21 @@ public class Translator_v0_10_0 extends BaseTranslator {
                 return null;
             }
             //byte typePE = (byte) (this.cachedWindowType[msgSetSlot.id & 0xFF] & 0xFF);
-            int targetSlot = msgSetSlot.slot; //For now the slot ids are same so we use this directly. 
+            int targetSlot = 0; //For now the slot ids are same so we use this directly. 
             WindowSetSlotPacket pkSetSlot = new WindowSetSlotPacket();
             pkSetSlot.windowID = (byte) (msgSetSlot.id & 0xFF);
+            if (msgSetSlot.id == 0) {
+                if (msgSetSlot.slot >= 9 && msgSetSlot.slot <= 35) {
+                    targetSlot = (short) (msgSetSlot.slot - 9);
+                } else if (msgSetSlot.slot >= 36 && msgSetSlot.slot <= 44) {
+                    targetSlot = (short) (msgSetSlot.slot - 36);
+                } else {
+                    targetSlot = (short) (msgSetSlot.slot & 0xFFFF);
+                }
+            } else {
+                targetSlot = (short) (msgSetSlot.slot & 0xFFFF);
+            }
+            pkSetSlot.windowID = (byte)(msgSetSlot.id & 0xFF);
             pkSetSlot.slot = (short) (targetSlot & 0xFFFF);
             pkSetSlot.item = new PEInventorySlot((short) (msgSetSlot.item.getTypeId() & 0xFFFF), (byte) (msgSetSlot.item.getAmount() & 0xFF), msgSetSlot.item.getDurability());
             return new PEPacket[]{pkSetSlot};
@@ -290,11 +303,11 @@ public class Translator_v0_10_0 extends BaseTranslator {
         /**
          * Set time
          */
-        if (message instanceof TimeMessage){
+        if (message instanceof TimeMessage) {
             SetTimePacket pkTime = new SetTimePacket(0, (this.getSession().getSentAndReceivedChunks() == -1)); //Because of the hack, we use 0 here. 
-            return new PEPacket[] {pkTime};
+            return new PEPacket[]{pkTime};
         }
-        
+
         /* ==================================================================================== */
         return null;
     }
