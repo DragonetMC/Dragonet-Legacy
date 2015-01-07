@@ -4,11 +4,11 @@ import net.glowstone.block.GlowBlock;
 import net.glowstone.block.GlowBlockState;
 import net.glowstone.block.state.GlowSign;
 import net.glowstone.entity.GlowPlayer;
+import net.glowstone.util.TextMessage;
 import net.glowstone.util.nbt.CompoundTag;
 import org.bukkit.Material;
 
 import java.util.Arrays;
-import net.glowstone.util.TextMessage;
 
 public class TESign extends TileEntity {
 
@@ -56,10 +56,8 @@ public class TESign extends TileEntity {
 
     /**
      * Set the lines of text on the sign.
-     *
      * @param text The lines of text.
-     * @throws IllegalArgumentException If the wrong number of lines is
-     * provided.
+     * @throws IllegalArgumentException If the wrong number of lines is provided.
      */
     public void setLines(String[] text) {
         if (text.length != lines.length) {
@@ -73,7 +71,6 @@ public class TESign extends TileEntity {
 
     /**
      * Get the lines of text on the sign.
-     *
      * @return The sign's lines.
      */
     public String[] getLines() {

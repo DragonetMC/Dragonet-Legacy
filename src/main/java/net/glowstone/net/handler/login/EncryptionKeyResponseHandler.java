@@ -22,7 +22,6 @@ import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -167,9 +166,7 @@ public final class EncryptionKeyResponseHandler implements MessageHandler<GlowSe
                 session.getServer().getScheduler().runTask(null, new Runnable() {
                     @Override
                     public void run() {
-                        //DRAGONET
-                        //session.setPlayer(new PlayerProfile(name, uuid, properties));
-                        session.setPlayer(new PlayerProfile(name, UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(StandardCharsets.UTF_8)), properties));
+                        session.setPlayer(new PlayerProfile(name, uuid, properties));
                     }
                 });
             } catch (Exception e) {

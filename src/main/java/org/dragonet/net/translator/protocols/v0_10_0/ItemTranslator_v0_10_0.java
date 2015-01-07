@@ -23,7 +23,7 @@ public class ItemTranslator_v0_10_0 implements ItemTranslator{
 
     public ItemTranslator_v0_10_0() {
         /* ===== PC to PE ===== */
-        for (int i = 1; i <= 22; i++) {
+        for (int i = 0; i <= 22; i++) {
             itemMap_PC_to_PE.put(i, i);
         }
         itemMap_PC_to_PE.put(24, 24);

@@ -4,7 +4,9 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import net.glowstone.command.ColorCommand;
 import net.glowstone.command.TellrawCommand;
+import net.glowstone.constants.GlowEnchantment;
 import net.glowstone.constants.GlowPotionEffect;
+import net.glowstone.entity.EntityIdManager;
 import net.glowstone.entity.GlowPlayer;
 import net.glowstone.inventory.CraftingManager;
 import net.glowstone.inventory.GlowInventory;
@@ -43,20 +45,21 @@ import org.bukkit.util.permissions.DefaultPermissions;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.security.KeyPair;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
-import net.glowstone.constants.GlowEnchantment;
 import org.dragonet.DragonetServer;
 import org.dragonet.utilities.DragonetVersioning;
 
 /**
  * The core class of the Glowstone server.
- *
  * @author Graham Edgecombe
  */
 public final class GlowServer implements Server {
@@ -75,25 +78,24 @@ public final class GlowServer implements Server {
      * The protocol version supported by the server.
      */
     public static final int PROTOCOL_VERSION = 47;
-
+    
     //DRAGONET-Start
     private @Getter
     DragonetServer dragonetServer;
     //DRAGONET-End
-
+    
     /**
      * Creates a new server on TCP port 25565 and starts listening for
      * connections.
-     *
      * @param args The command-line arguments.
      */
     public static void main(String[] args) {
         try {
             // check for console
             /*if (System.console() == null) {
-             ConsoleMissing.display();
-             return;
-             }*/
+                ConsoleMissing.display();
+                return;
+            }*/
 
             ConfigurationSerialization.registerClass(GlowOfflinePlayer.class);
             GlowPotionEffect.register();
@@ -291,6 +293,11 @@ public final class GlowServer implements Server {
     private final GlowBanList ipBans;
 
     /**
+     * The EntityIdManager for this server.
+     */
+    private final EntityIdManager entityIdManager = new EntityIdManager();
+
+    /**
      * The world this server is managing.
      */
     private final WorldScheduler worlds = new WorldScheduler();
@@ -336,8 +343,7 @@ public final class GlowServer implements Server {
     private int spawnRadius;
 
     /**
-     * The ticks until a player who has not played the game has been kicked, or
-     * 0.
+     * The ticks until a player who has not played the game has been kicked, or 0.
      */
     private int idleTimeout;
 
@@ -365,6 +371,11 @@ public final class GlowServer implements Server {
      * The default icon, usually blank, used for the server list.
      */
     private GlowServerIcon defaultIcon;
+
+    /**
+     * The server port.
+     */
+    private int port;
 
     /**
      * Creates a new server.
@@ -409,8 +420,9 @@ public final class GlowServer implements Server {
         this.dragonetServer = new DragonetServer(this);
         this.dragonetServer.initialize();
         //DRAGONET-End
-
+        
         // Start loading plugins
+        new LibraryManager(this).run();
         loadPlugins();
         enablePlugins(PluginLoadOrder.STARTUP);
 
@@ -437,9 +449,11 @@ public final class GlowServer implements Server {
 
         createWorld(WorldCreator.name(name).environment(Environment.NORMAL).seed(seed).type(type).generateStructures(structs));
         if (getAllowNether()) {
+            checkTransfer(name, "_nether", Environment.NETHER);
             createWorld(WorldCreator.name(name + "_nether").environment(Environment.NETHER).seed(seed).type(type).generateStructures(structs));
         }
         if (getAllowEnd()) {
+            checkTransfer(name, "_the_end", Environment.THE_END);
             createWorld(WorldCreator.name(name + "_the_end").environment(Environment.THE_END).seed(seed).type(type).generateStructures(structs));
         }
 
@@ -447,6 +461,47 @@ public final class GlowServer implements Server {
         enablePlugins(PluginLoadOrder.POSTWORLD);
         commandMap.registerServerAliases();
         scheduler.start();
+    }
+
+    private void checkTransfer(String name, String suffix, Environment environment) {
+        // todo: import things like per-dimension villages.dat when those are implemented
+        final Path srcPath = new File(new File(getWorldContainer(), name), "DIM" + environment.getId()).toPath();
+        final Path destPath = new File(getWorldContainer(), name + suffix).toPath();
+        if (Files.exists(srcPath) && !Files.exists(destPath)) {
+            logger.info("Importing " + destPath + " from " + srcPath);
+            try {
+                Files.walkFileTree(srcPath, new FileVisitor<Path>() {
+                    @Override
+                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                        Path target = destPath.resolve(srcPath.relativize(dir));
+                        if (!Files.exists(target)) {
+                            Files.createDirectory(target);
+                        }
+                        return FileVisitResult.CONTINUE;
+                    }
+
+                    @Override
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                        Files.copy(file, destPath.resolve(srcPath.relativize(file)), StandardCopyOption.COPY_ATTRIBUTES);
+                        return FileVisitResult.CONTINUE;
+                    }
+
+                    @Override
+                    public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                        logger.warning("Importing file " + srcPath.relativize(file) + " + failed: " + exc);
+                        return FileVisitResult.CONTINUE;
+                    }
+
+                    @Override
+                    public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                        return FileVisitResult.CONTINUE;
+                    }
+                });
+                Files.copy(srcPath.resolve("../level.dat"), destPath.resolve("level.dat"));
+            } catch (IOException e) {
+                logger.log(Level.WARNING, "Import of " + srcPath + " failed", e);
+            }
+        }
     }
 
     /**
@@ -461,6 +516,9 @@ public final class GlowServer implements Server {
         if (!channel.isActive()) {
             throw new RuntimeException("Failed to bind to address. Maybe it is already in use?");
         }
+
+        logger.info("Successfully bound to: " + channel.localAddress());
+        port = ((InetSocketAddress) channel.localAddress()).getPort();
     }
 
     /**
@@ -503,7 +561,6 @@ public final class GlowServer implements Server {
 
     /**
      * Get the SocketAddress to bind to for a specified service.
-     *
      * @param portKey The configuration key for the port to use.
      * @return The SocketAddress
      */
@@ -546,6 +603,10 @@ public final class GlowServer implements Server {
         if (rconServer != null) {
             rconServer.shutdown();
         }
+        
+        //DRAGONET-ADD: Shutdown Dragonet Server
+        this.dragonetServer.networkHandler.getUdp().end();
+        //DRAGONET-END
 
         // Save worlds
         for (World world : getWorlds()) {
@@ -624,7 +685,6 @@ public final class GlowServer implements Server {
 
     /**
      * Enable all plugins of the given load order type.
-     *
      * @param type The type of plugin to enable.
      */
     private void enablePlugins(PluginLoadOrder type) {
@@ -705,9 +765,9 @@ public final class GlowServer implements Server {
 
     ////////////////////////////////////////////////////////////////////////////
     // Access to internals
+
     /**
      * Gets the command map.
-     *
      * @return The {@link SimpleCommandMap}.
      */
     public SimpleCommandMap getCommandMap() {
@@ -716,11 +776,18 @@ public final class GlowServer implements Server {
 
     /**
      * Gets the session registry.
-     *
      * @return The {@link SessionRegistry}.
      */
     public SessionRegistry getSessionRegistry() {
         return sessions;
+    }
+
+    /**
+     * Gets the entity id manager.
+     * @return The {@link EntityIdManager}.
+     */
+    public EntityIdManager getEntityIdManager() {
+        return entityIdManager;
     }
 
     /**
@@ -746,7 +813,6 @@ public final class GlowServer implements Server {
 
     /**
      * Return the crafting manager.
-     *
      * @return The server's crafting manager.
      */
     public CraftingManager getCraftingManager() {
@@ -755,7 +821,6 @@ public final class GlowServer implements Server {
 
     /**
      * The key pair generated at server start up
-     *
      * @return The key pair generated at server start up
      */
     public KeyPair getKeyPair() {
@@ -764,7 +829,6 @@ public final class GlowServer implements Server {
 
     /**
      * Returns the player data service attached to the first world.
-     *
      * @return The server's player data service.
      */
     public PlayerDataService getPlayerDataService() {
@@ -773,7 +837,6 @@ public final class GlowServer implements Server {
 
     /**
      * Get the threshold to use for network compression defined in the config.
-     *
      * @return The compression threshold, or -1 for no compression.
      */
     public int getCompressionThreshold() {
@@ -782,7 +845,6 @@ public final class GlowServer implements Server {
 
     /**
      * Get the default game difficulty defined in the config.
-     *
      * @return The default difficulty.
      */
     public Difficulty getDifficulty() {
@@ -795,7 +857,6 @@ public final class GlowServer implements Server {
 
     /**
      * Get whether worlds should keep their spawns loaded by default.
-     *
      * @return Whether to keep spawns loaded by default.
      */
     public boolean keepSpawnLoaded() {
@@ -804,7 +865,6 @@ public final class GlowServer implements Server {
 
     /**
      * Get whether parsing of data provided by a proxy is enabled.
-     *
      * @return True if a proxy is providing data to use.
      */
     public boolean getProxySupport() {
@@ -813,7 +873,6 @@ public final class GlowServer implements Server {
 
     /**
      * Get whether to use color codes in Rcon responses.
-     *
      * @return True if color codes will be present in Rcon responses
      */
     public boolean useRconColors() {
@@ -822,7 +881,6 @@ public final class GlowServer implements Server {
 
     /**
      * Get the resource pack url for this server, or {@code null} if not set.
-     *
      * @return The url of the resource pack to use, or {@code null}
      */
     public String getResourcePackURL() {
@@ -830,9 +888,7 @@ public final class GlowServer implements Server {
     }
 
     /**
-     * Get the resource pack hash for this server, or the empty string if not
-     * set.
-     *
+     * Get the resource pack hash for this server, or the empty string if not set.
      * @return The hash of the resource pack, or the empty string
      */
     public String getResourcePackHash() {
@@ -841,7 +897,6 @@ public final class GlowServer implements Server {
 
     /**
      * Get whether achievements should be announced.
-     *
      * @return True if achievements should be announced in chat.
      */
     public boolean getAnnounceAchievements() {
@@ -850,6 +905,7 @@ public final class GlowServer implements Server {
 
     ////////////////////////////////////////////////////////////////////////////
     // Static server properties
+
     @Override
     public String getName() {
         return "Dragonet";
@@ -881,6 +937,7 @@ public final class GlowServer implements Server {
 
     ////////////////////////////////////////////////////////////////////////////
     // Access to Bukkit API
+
     @Override
     public PluginManager getPluginManager() {
         return pluginManager;
@@ -936,6 +993,7 @@ public final class GlowServer implements Server {
 
     ////////////////////////////////////////////////////////////////////////////
     // Commands and console
+
     @Override
     public ConsoleCommandSender getConsoleSender() {
         return consoleManager.getSender();
@@ -982,6 +1040,7 @@ public final class GlowServer implements Server {
 
     ////////////////////////////////////////////////////////////////////////////
     // Player management
+
     @Override
     public Set<OfflinePlayer> getOperators() {
         Set<OfflinePlayer> offlinePlayers = new HashSet<>();
@@ -1174,6 +1233,7 @@ public final class GlowServer implements Server {
 
     ////////////////////////////////////////////////////////////////////////////
     // World management
+
     @Override
     public GlowWorld getWorld(String name) {
         return worlds.getWorld(name);
@@ -1198,7 +1258,6 @@ public final class GlowServer implements Server {
 
     /**
      * Gets the default ChunkGenerator for the given environment and type.
-     *
      * @return The ChunkGenerator.
      */
     private ChunkGenerator getGenerator(String name, Environment environment, WorldType type) {
@@ -1239,7 +1298,6 @@ public final class GlowServer implements Server {
 
     /**
      * Add a world to the internal world collection.
-     *
      * @param world The world to add.
      */
     void addWorld(GlowWorld world) {
@@ -1281,6 +1339,7 @@ public final class GlowServer implements Server {
 
     ////////////////////////////////////////////////////////////////////////////
     // Inventory and crafting
+
     @Override
     public List<Recipe> getRecipesFor(ItemStack result) {
         return craftingManager.getRecipesFor(result);
@@ -1328,6 +1387,7 @@ public final class GlowServer implements Server {
 
     ////////////////////////////////////////////////////////////////////////////
     // Server icons
+
     @Override
     public GlowServerIcon getServerIcon() {
         return defaultIcon;
@@ -1345,6 +1405,7 @@ public final class GlowServer implements Server {
 
     ////////////////////////////////////////////////////////////////////////////
     // Plugin messages
+
     @Override
     public void sendPluginMessage(Plugin source, String channel, byte[] message) {
         StandardMessenger.validatePluginMessage(getMessenger(), source, channel, message);
@@ -1364,6 +1425,7 @@ public final class GlowServer implements Server {
 
     ////////////////////////////////////////////////////////////////////////////
     // Configuration with special handling
+
     @Override
     public GameMode getDefaultGameMode() {
         return defaultGameMode;
@@ -1430,6 +1492,7 @@ public final class GlowServer implements Server {
 
     ////////////////////////////////////////////////////////////////////////////
     // Configuration
+
     @Override
     public String getIp() {
         return config.getString(ServerConfig.Key.SERVER_IP);
@@ -1437,7 +1500,7 @@ public final class GlowServer implements Server {
 
     @Override
     public int getPort() {
-        return config.getInt(ServerConfig.Key.SERVER_PORT);
+        return port;
     }
 
     @Override

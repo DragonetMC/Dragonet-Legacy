@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 public final class LoginStartMessage implements Message {
 
-    private final String username;
+    public final String username;
 
 }

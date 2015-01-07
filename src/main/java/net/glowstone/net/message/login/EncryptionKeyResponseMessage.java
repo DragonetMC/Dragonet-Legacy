@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public final class EncryptionKeyResponseMessage implements Message {
 
-    private final byte[] sharedSecret;
-    private final byte[] verifyToken;
+    public final byte[] sharedSecret;
+    public final byte[] verifyToken;
 
 }

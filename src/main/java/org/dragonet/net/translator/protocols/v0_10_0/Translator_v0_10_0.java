@@ -18,8 +18,10 @@ import net.glowstone.net.message.KickMessage;
 import net.glowstone.net.message.play.entity.DestroyEntitiesMessage;
 import net.glowstone.net.message.play.entity.RelativeEntityPositionMessage;
 import net.glowstone.net.message.play.entity.SpawnPlayerMessage;
+import net.glowstone.net.message.play.game.BlockChangeMessage;
 import net.glowstone.net.message.play.game.ChatMessage;
 import net.glowstone.net.message.play.game.IncomingChatMessage;
+import net.glowstone.net.message.play.game.MultiBlockChangeMessage;
 import net.glowstone.net.message.play.game.StateChangeMessage;
 import net.glowstone.net.message.play.game.TimeMessage;
 import net.glowstone.net.message.play.inv.CloseWindowMessage;
@@ -43,9 +45,9 @@ import org.dragonet.net.packet.minecraft.MovePlayerPacket;
 import org.dragonet.net.packet.minecraft.PEPacket;
 import org.dragonet.net.packet.minecraft.PEPacketIDs;
 import org.dragonet.net.packet.minecraft.RemoveEntityPacket;
-import org.dragonet.net.packet.minecraft.RemovePlayerPacket;
 import org.dragonet.net.packet.minecraft.SetTimePacket;
 import org.dragonet.net.packet.minecraft.StartGamePacket;
+import org.dragonet.net.packet.minecraft.UpdateBlockPacket;
 import org.dragonet.net.packet.minecraft.WindowClosePacket;
 import org.dragonet.net.packet.minecraft.WindowItemsPacket;
 import org.dragonet.net.packet.minecraft.WindowOpenPacket;
@@ -94,10 +96,11 @@ public class Translator_v0_10_0 extends BaseTranslator {
     @Override
     public PEPacket[] translateToPE(Message message) {
         /*
-         if (!message.getClass().getSimpleName().contains("Time") && !message.getClass().getSimpleName().contains("Chunk")) {
-         System.out.print("Trnaslating to PE: " + message.getClass().getSimpleName());
-         }
-         */
+        if (!message.getClass().getSimpleName().contains("Time") && !message.getClass().getSimpleName().contains("Chunk")
+                && !message.getClass().getSimpleName().contains("Entity")) {
+            System.out.print("Trnaslating to PE: " + message.getClass().getSimpleName());
+        }
+        */
 
         /* ==================================================================================== */
         /**
@@ -264,12 +267,12 @@ public class Translator_v0_10_0 extends BaseTranslator {
         if (message instanceof SetWindowSlotMessage) {
             SetWindowSlotMessage msgSetSlot = (SetWindowSlotMessage) message;
             if (this.cachedWindowType[msgSetSlot.id & 0xFF] == -1) {
+                System.out.println("Cancelled transitioning due to no cached window type! ");
                 return null;
             }
+            //System.out.println("Updating slot: WID=" + msgSetSlot.id + ", ITEM=" + msgSetSlot.item + ", SLOTID=" + msgSetSlot.slot);
             //byte typePE = (byte) (this.cachedWindowType[msgSetSlot.id & 0xFF] & 0xFF);
-            int targetSlot = 0; //For now the slot ids are same so we use this directly. 
-            WindowSetSlotPacket pkSetSlot = new WindowSetSlotPacket();
-            pkSetSlot.windowID = (byte) (msgSetSlot.id & 0xFF);
+            int targetSlot = 0;
             if (msgSetSlot.id == 0) {
                 if (msgSetSlot.slot >= 9 && msgSetSlot.slot <= 35) {
                     targetSlot = (short) (msgSetSlot.slot - 9);
@@ -281,7 +284,8 @@ public class Translator_v0_10_0 extends BaseTranslator {
             } else {
                 targetSlot = (short) (msgSetSlot.slot & 0xFFFF);
             }
-            pkSetSlot.windowID = (byte)(msgSetSlot.id & 0xFF);
+            WindowSetSlotPacket pkSetSlot = new WindowSetSlotPacket();
+            pkSetSlot.windowID = (byte) (msgSetSlot.id & 0xFF);
             pkSetSlot.slot = (short) (targetSlot & 0xFFFF);
             pkSetSlot.item = new PEInventorySlot((short) (msgSetSlot.item.getTypeId() & 0xFFFF), (byte) (msgSetSlot.item.getAmount() & 0xFF), msgSetSlot.item.getDurability());
             return new PEPacket[]{pkSetSlot};
@@ -306,6 +310,34 @@ public class Translator_v0_10_0 extends BaseTranslator {
         if (message instanceof TimeMessage) {
             SetTimePacket pkTime = new SetTimePacket(0, (this.getSession().getSentAndReceivedChunks() == -1)); //Because of the hack, we use 0 here. 
             return new PEPacket[]{pkTime};
+        }
+
+        /**
+         * Block Change
+         */
+        if (message instanceof BlockChangeMessage) {
+            BlockChangeMessage msgBC = (BlockChangeMessage) message;
+            UpdateBlockPacket pkBC = new UpdateBlockPacket();
+            pkBC.x = msgBC.x;
+            pkBC.z = msgBC.z;
+            pkBC.y = (byte) (msgBC.y & 0xFF);
+            pkBC.block = (byte) (this.itemTranslator.translateToPE(msgBC.type >> 4) & 0xFF);
+            pkBC.meta = (byte)(msgBC.type & 0xFF);
+            return new PEPacket[]{pkBC};
+        }
+
+        /**
+         * Multi Block Change
+         */
+        if(message instanceof MultiBlockChangeMessage){
+            MultiBlockChangeMessage msgMBC = (MultiBlockChangeMessage)message;
+            PEPacket[] packets = new PEPacket[msgMBC.records.size()];
+            int i = 0;
+            for(BlockChangeMessage msgBC : msgMBC.records){
+                packets[i] = this.translateToPE(msgBC)[0];
+                i++;
+            }
+            return packets;
         }
 
         /* ==================================================================================== */

@@ -49,7 +49,6 @@ public class NonBlockUDPSocket extends Thread {
                 this.dragonetServer.getLogger().error("Unable to bind to %s!", addr.toString());
                 throw new RuntimeException(e);
             }
-            socket.setSoTimeout(0);
             running = true;
             while (running) {
                 DatagramPacket pk = new DatagramPacket(new byte[1024 * 1024], 1024 * 1024);
@@ -60,10 +59,10 @@ public class NonBlockUDPSocket extends Thread {
             }
             socket.close();
         } catch (IOException e) {
-            e.printStackTrace();
         }
     }
-
+    
+    
     public DatagramPacket receive() {
         if (receivedPacketQueue.isEmpty()) {
             return null;
@@ -75,10 +74,10 @@ public class NonBlockUDPSocket extends Thread {
 
     public boolean send(byte[] buffer, SocketAddress addr) {
         /*
-        if(buffer.length > 1 && (buffer[0] == (byte)0xC0 || buffer[0] == (byte)0xA0)){
-            System.out.println("ACK/NACK: " + ByteUtility.bytesToHexString(buffer));
-        }
-        */
+         if(buffer.length > 1 && (buffer[0] == (byte)0xC0 || buffer[0] == (byte)0xA0)){
+         System.out.println("ACK/NACK: " + ByteUtility.bytesToHexString(buffer));
+         }
+         */
         try {
             socket.send(new DatagramPacket(buffer, buffer.length, addr));
             return true;
@@ -92,14 +91,10 @@ public class NonBlockUDPSocket extends Thread {
         return this.dragonetServer;
     }
 
-    public void stop(boolean join) {
+    public void end() {
+        this.dragonetServer.getLogger().info("Stopping Minecraft: Pocket Edition server... ");
         running = false;
-        if (join) {
-            try {
-                join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        //this.socket.close();
+        this.interrupt();
     }
 }

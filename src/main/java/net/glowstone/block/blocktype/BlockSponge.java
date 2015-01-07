@@ -52,4 +52,3 @@ public class BlockSponge extends BlockType {
         state.setData(sponge);
     }
 }
-

@@ -186,4 +186,3 @@ public final class GlowEnchantment extends Enchantment {
         }
     }
 }
-

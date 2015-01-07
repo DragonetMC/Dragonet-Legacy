@@ -10,6 +10,7 @@ import net.glowstone.entity.meta.ClientSettings;
 import net.glowstone.entity.meta.MetadataIndex;
 import net.glowstone.entity.meta.MetadataMap;
 import net.glowstone.entity.meta.profile.PlayerProfile;
+import net.glowstone.entity.objects.GlowItem;
 import net.glowstone.inventory.GlowInventory;
 import net.glowstone.inventory.InventoryMonitor;
 import net.glowstone.io.PlayerDataService;
@@ -54,7 +55,6 @@ import java.util.logging.Level;
 
 /**
  * Represents an in-game player.
- *
  * @author Graham Edgecombe
  */
 @DelegateDeserialization(GlowOfflinePlayer.class)
@@ -92,9 +92,8 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
     private final List<BlockChangeMessage> blockChanges = new LinkedList<>();
 
     /**
-     * A queue of messages that should be sent after block changes are
-     * processed. Used for sign updates and other situations where the block
-     * must be sent first.
+     * A queue of messages that should be sent after block changes are processed.
+     * Used for sign updates and other situations where the block must be sent first.
      */
     private final List<Message> afterBlockChanges = new LinkedList<>();
 
@@ -250,13 +249,13 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     /**
      * Creates a new player and adds it to the world.
-     *
      * @param session The player's session.
      * @param profile The player's profile with name and UUID information.
      * @param reader The PlayerReader to be used to initialize the player.
      */
     public GlowPlayer(GlowSession session, PlayerProfile profile, PlayerDataService.PlayerReader reader) {
         super(initLocation(session, reader), profile);
+        setBoundingBox(0.6, 1.8);
         this.session = session;
 
         chunkLock = world.newChunkLock(getName());
@@ -324,7 +323,6 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
     /**
      * Read the location from a PlayerReader for entity initialization. Will
      * fall back to a reasonable default rather than returning null.
-     *
      * @param session The player's session.
      * @param reader The PlayerReader to get the location from.
      * @return The location to spawn the player.
@@ -346,9 +344,9 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     ////////////////////////////////////////////////////////////////////////////
     // Internals
+
     /**
      * Get the network session attached to this player.
-     *
      * @return The GlowSession of the player.
      */
     public GlowSession getSession() {
@@ -357,7 +355,6 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     /**
      * Get the join time in milliseconds, to be saved as last played time.
-     *
      * @return The player's join time.
      */
     public long getJoinTime() {
@@ -408,7 +405,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
         // update or remove entities
         List<Integer> destroyIds = new LinkedList<>();
-        for (Iterator<GlowEntity> it = knownEntities.iterator(); it.hasNext();) {
+        for (Iterator<GlowEntity> it = knownEntities.iterator(); it.hasNext(); ) {
             GlowEntity entity = it.next();
             if (isWithinDistance(entity)) {
                 for (Message msg : entity.createUpdateMessage()) {
@@ -425,8 +422,8 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
         // add entities
         for (GlowEntity entity : world.getEntityManager()) {
-            if (entity != this && isWithinDistance(entity)
-                    && !knownEntities.contains(entity) && !hiddenEntities.contains(entity.getUniqueId())) {
+            if (entity != this && isWithinDistance(entity) &&
+                    !knownEntities.contains(entity) && !hiddenEntities.contains(entity.getUniqueId())) {
                 knownEntities.add(entity);
                 for (Message msg : entity.createSpawnMessage()) {
                     session.send(msg);
@@ -520,6 +517,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
         // done in two steps so that all the new chunks are finalized before any of them are sent
         // this prevents sending a chunk then immediately sending block changes in it because
         // one of its neighbors has populated
+
         // first step: force population then acquire lock on each chunk
         for (GlowChunk.Key key : newChunks) {
             world.getChunkManager().forcePopulation(key.getX(), key.getZ());
@@ -579,15 +577,14 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
     /**
      * Spawn the player at the given location after they have already joined.
      * Used for changing worlds and respawning after death.
-     *
      * @param location The location to place the player.
      */
     private void spawnAt(Location location) {
         // switch worlds
         GlowWorld oldWorld = world;
-        world.getEntityManager().deallocate(this);
+        world.getEntityManager().unregister(this);
         world = (GlowWorld) location.getWorld();
-        world.getEntityManager().allocate(this);
+        world.getEntityManager().register(this);
 
         // switch chunk set
         // no need to send chunk unload messages - respawn unloads all chunks
@@ -635,6 +632,15 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
         // fire event and perform spawn
         PlayerRespawnEvent event = new PlayerRespawnEvent(this, dest, spawnAtBed);
         EventFactory.callEvent(event);
+        if (event.getRespawnLocation().getWorld().equals(getWorld()) && knownEntities.size() > 0) {
+            // we need to manually reset all known entities if the player respawns in the same world
+            List<Integer> entityIds = new ArrayList<>(knownEntities.size());
+            for (GlowEntity e : knownEntities) {
+                entityIds.add(e.getEntityId());
+            }
+            session.send(new DestroyEntitiesMessage(entityIds));
+            knownEntities.clear();
+        }
         spawnAt(event.getRespawnLocation());
 
         // just in case any items are left in their inventory after they respawn
@@ -643,7 +649,6 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     /**
      * Checks whether the player can see the given chunk.
-     *
      * @return If the chunk is known to the player's client.
      */
     public boolean canSeeChunk(GlowChunk.Key chunk) {
@@ -652,7 +657,6 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     /**
      * Checks whether the player can see the given entity.
-     *
      * @return If the entity is known to the player's client.
      */
     public boolean canSeeEntity(GlowEntity entity) {
@@ -661,7 +665,6 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     /**
      * Open the sign editor interface at the specified location.
-     *
      * @param loc The location to open the editor at
      */
     public void openSignEditor(Location loc) {
@@ -675,7 +678,6 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
     /**
      * Check that the specified location matches that of the last opened sign
      * editor, and if so, clears the last opened sign editor.
-     *
      * @param loc The location to check
      * @return Whether the location matched.
      */
@@ -690,7 +692,6 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     /**
      * Get a UserListItemMessage entry representing adding this player.
-     *
      * @return The entry (action ADD_PLAYER) with this player's information.
      */
     public UserListItemMessage.Entry getUserListEntry() {
@@ -703,7 +704,6 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     /**
      * Send a UserListItemMessage to every player that can see this player.
-     *
      * @param updateMessage The message to send.
      */
     private void updateUserListEntries(UserListItemMessage updateMessage) {
@@ -726,7 +726,6 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     /**
      * Set the client settings for this player.
-     *
      * @param settings The new client settings.
      */
     public void setSettings(ClientSettings settings) {
@@ -736,7 +735,6 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     /**
      * Get this player's client settings.
-     *
      * @return The player's client settings.
      */
     public ClientSettings getSettings() {
@@ -752,6 +750,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     ////////////////////////////////////////////////////////////////////////////
     // Basic stuff
+
     @Override
     public EntityType getType() {
         return EntityType.PLAYER;
@@ -814,6 +813,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     ////////////////////////////////////////////////////////////////////////////
     // HumanEntity overrides
+
     @Override
     public boolean isOp() {
         return getServer().getOpsList().containsUUID(getUniqueId());
@@ -831,6 +831,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     ////////////////////////////////////////////////////////////////////////////
     // Editable properties
+
     @Override
     public String getDisplayName() {
         return displayName == null ? getName() : displayName;
@@ -918,6 +919,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     ////////////////////////////////////////////////////////////////////////////
     // Entity status
+
     @Override
     public boolean isSneaking() {
         return metadata.getBit(MetadataIndex.STATUS, MetadataIndex.StatusFlags.SNEAKING);
@@ -963,6 +965,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     ////////////////////////////////////////////////////////////////////////////
     // Player capabilities
+
     @Override
     public boolean getAllowFlight() {
         return canFly;
@@ -971,9 +974,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
     @Override
     public void setAllowFlight(boolean flight) {
         canFly = flight;
-        if (!canFly) {
-            flying = false;
-        }
+        if (!canFly) flying = false;
         sendAbilities();
     }
 
@@ -1019,6 +1020,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     ////////////////////////////////////////////////////////////////////////////
     // Experience and levelling
+
     @Override
     public int getLevel() {
         return level;
@@ -1094,6 +1096,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     ////////////////////////////////////////////////////////////////////////////
     // Health and food handling
+
     @Override
     public void setHealth(double health) {
         super.setHealth(health);
@@ -1162,12 +1165,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     ////////////////////////////////////////////////////////////////////////////
     // Actions
-    /**
-     * Teleport the player.
-     *
-     * @param location The destination to teleport to.
-     * @return Whether the teleport was a success.
-     */
+
     @Override
     public boolean teleport(Location location) {
         return teleport(location, TeleportCause.UNKNOWN);
@@ -1261,7 +1259,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     @Override
     public void sendRawMessage(String message) {
-        // todo: convert old-style formatting to json
+        // old-style formatting to json conversion is in TextMessage
         session.send(new ChatMessage(message));
     }
 
@@ -1282,7 +1280,6 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     /**
      * Says a message (or runs a command).
-     *
      * @param text message sent by the player.
      * @param async whether the message was received asynchronously.
      */
@@ -1366,6 +1363,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     ////////////////////////////////////////////////////////////////////////////
     // Effect and data transmission
+
     @Override
     public void playNote(Location loc, Instrument instrument, Note note) {
         playNote(loc, instrument.getType(), note.getId());
@@ -1395,9 +1393,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     @Override
     public void playSound(Location location, String sound, float volume, float pitch) {
-        if (location == null || sound == null) {
-            return;
-        }
+        if (location == null || sound == null) return;
         // the loss of precision here is a bit unfortunate but it's what CraftBukkit does
         double x = location.getBlockX() + 0.5;
         double y = location.getBlockY() + 0.5;
@@ -1412,9 +1408,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     @Override
     public void showParticle(Location loc, Particle particle, MaterialData material, float offsetX, float offsetY, float offsetZ, float speed, int amount) {
-        if (location == null || particle == null) {
-            return;
-        }
+        if (location == null || particle == null) return;
 
         int id = GlowParticle.getId(particle);
         boolean longDistance = GlowParticle.isLongDistance(particle);
@@ -1458,15 +1452,12 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
     }
 
     /**
-     * Send a sign change, similar to
-     * {@link #sendSignChange(Location, String[])}, but using complete
-     * TextMessages instead of strings.
-     *
+     * Send a sign change, similar to {@link #sendSignChange(Location, String[])},
+     * but using complete TextMessages instead of strings.
      * @param location the location of the sign
      * @param lines the new text on the sign or null to clear it
      * @throws IllegalArgumentException if location is null
-     * @throws IllegalArgumentException if lines is non-null and has a length
-     * less than 4
+     * @throws IllegalArgumentException if lines is non-null and has a length less than 4
      */
     public void sendSignChange(Location location, TextMessage[] lines) {
         Validate.notNull(location, "location cannot be null");
@@ -1478,7 +1469,6 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     /**
      * Send a block entity change to the given location.
-     *
      * @param location The location of the block entity.
      * @param type The type of block entity being sent.
      * @param nbt The NBT structure to send to the client.
@@ -1498,6 +1488,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     ////////////////////////////////////////////////////////////////////////////
     // Achievements and statistics
+
     @Override
     public boolean hasAchievement(Achievement achievement) {
         return stats.hasAchievement(achievement);
@@ -1509,20 +1500,16 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
     }
 
     /**
-     * Awards the given achievement if the player already has the parent
-     * achievement, otherwise does nothing. If {@code awardParents} is true,
-     * award the player all parent achievements and the given achievement,
-     * making this method equivalent to {@link #awardAchievement(Achievement)}.
-     *
+     * Awards the given achievement if the player already has the parent achievement,
+     * otherwise does nothing. If {@code awardParents} is true, award the player all
+     * parent achievements and the given achievement, making this method equivalent
+     * to {@link #awardAchievement(Achievement)}.
      * @param achievement the achievement to award.
      * @param awardParents whether parent achievements should be awarded.
-     * @return {@code true} if the achievement was awarded, {@code false}
-     * otherwise
+     * @return {@code true} if the achievement was awarded, {@code false} otherwise
      */
     public boolean awardAchievement(Achievement achievement, boolean awardParents) {
-        if (hasAchievement(achievement)) {
-            return false;
-        }
+        if (hasAchievement(achievement)) return false;
 
         Achievement parent = achievement.getParent();
         if (parent != null && !hasAchievement(parent)) {
@@ -1549,9 +1536,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     @Override
     public void removeAchievement(Achievement achievement) {
-        if (!hasAchievement(achievement)) {
-            return;
-        }
+        if (!hasAchievement(achievement)) return;
 
         stats.setAchievement(achievement, false);
         sendAchievement(achievement, false);
@@ -1659,6 +1644,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     ////////////////////////////////////////////////////////////////////////////
     // Inventory
+
     @Override
     public void updateInventory() {
         session.send(new SetWindowContentsMessage(invMonitor.getId(), invMonitor.getContents()));
@@ -1676,9 +1662,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     @Override
     public boolean setWindowProperty(InventoryView.Property prop, int value) {
-        if (!super.setWindowProperty(prop, value)) {
-            return false;
-        }
+        if (!super.setWindowProperty(prop, value)) return false;
         session.send(new WindowPropertyMessage(invMonitor.getId(), prop.getId(), value));
         return true;
     }
@@ -1704,8 +1688,23 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
         updateInventory();
     }
 
+    @Override
+    public GlowItem drop(ItemStack stack) {
+        GlowItem dropping = super.drop(stack);
+        if (dropping != null) {
+            PlayerDropItemEvent event = new PlayerDropItemEvent(this, dropping);
+            EventFactory.callEvent(event);
+            if (event.isCancelled()) {
+                dropping.remove();
+                dropping = null;
+            }
+        }
+        return dropping;
+    }
+
     ////////////////////////////////////////////////////////////////////////////
     // Player-specific time and weather
+
     @Override
     public void setPlayerTime(long time, boolean relative) {
         timeOffset = (time % GlowWorld.DAY_LENGTH + GlowWorld.DAY_LENGTH) % GlowWorld.DAY_LENGTH;
@@ -1781,15 +1780,12 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     ////////////////////////////////////////////////////////////////////////////
     // Player visibility
+
     @Override
     public void hidePlayer(Player player) {
         Validate.notNull(player, "player cannot be null");
-        if (equals(player) || !player.isOnline() || !session.isActive()) {
-            return;
-        }
-        if (hiddenEntities.contains(player.getUniqueId())) {
-            return;
-        }
+        if (equals(player) || !player.isOnline() || !session.isActive()) return;
+        if (hiddenEntities.contains(player.getUniqueId())) return;
 
         hiddenEntities.add(player.getUniqueId());
         if (knownEntities.remove(player)) {
@@ -1801,12 +1797,8 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
     @Override
     public void showPlayer(Player player) {
         Validate.notNull(player, "player cannot be null");
-        if (equals(player) || !player.isOnline() || !session.isActive()) {
-            return;
-        }
-        if (!hiddenEntities.contains(player.getUniqueId())) {
-            return;
-        }
+        if (equals(player) || !player.isOnline() || !session.isActive()) return;
+        if (!hiddenEntities.contains(player.getUniqueId())) return;
 
         hiddenEntities.remove(player.getUniqueId());
         session.send(new UserListItemMessage(UserListItemMessage.Action.ADD_PLAYER, ((GlowPlayer) player).getUserListEntry()));
@@ -1818,9 +1810,8 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
     }
 
     /**
-     * Called when a player hidden to this player disconnects. This is necessary
-     * so the player is visible again after they reconnected.
-     *
+     * Called when a player hidden to this player disconnects.
+     * This is necessary so the player is visible again after they reconnected.
      * @param player The disconnected player
      */
     public void stopHidingDisconnectedPlayer(Player player) {
@@ -1829,6 +1820,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     ////////////////////////////////////////////////////////////////////////////
     // Scoreboard
+
     @Override
     public Scoreboard getScoreboard() {
         return null;
@@ -1841,6 +1833,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     ////////////////////////////////////////////////////////////////////////////
     // Conversable
+
     @Override
     public boolean isConversing() {
         return false;
@@ -1868,6 +1861,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     ////////////////////////////////////////////////////////////////////////////
     // Plugin messages
+
     @Override
     public void sendPluginMessage(Plugin source, String channel, byte[] message) {
         StandardMessenger.validatePluginMessage(getServer().getMessenger(), source, channel, message);
@@ -1884,7 +1878,6 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     /**
      * Add a listening channel to this player.
-     *
      * @param channel The channel to add.
      */
     public void addChannel(String channel) {
@@ -1895,7 +1888,6 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     /**
      * Remove a listening channel from this player.
-     *
      * @param channel The channel to remove.
      */
     public void removeChannel(String channel) {

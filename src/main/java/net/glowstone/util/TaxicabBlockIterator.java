@@ -100,4 +100,3 @@ public class TaxicabBlockIterator implements Iterator<Block> {
 
     }
 }
-

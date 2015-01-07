@@ -129,6 +129,7 @@ public class EncapsulatedPacket extends BinaryPacket {
      * @return Wrapped EncapsulatedPacket
      */
     public static EncapsulatedPacket[] fromPEPacket(DragonetSession session, PEPacket packet, int reliability) {
+        if(session == null) return null;
         packet.encode();
         byte[] data = packet.getData();
         if (data.length + 34 < session.getClientMTU()) {

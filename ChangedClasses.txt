@@ -1,12 +1,11 @@
 ====[The Class We Edited/Changed]====
 net.glowstone.GlowServer: Added dragonet instance getter, set dragonet instance to a private variable. 
 net.glowstone.GlowServer: Changed getVersion() and getBukkitVersion()
+net.glowstone.GlowServer: Added stopping MCPE server call into shutdown() method
 
 net.glowstone.scheduler.GlowScheduler: Added tick trigger
 
 net.glowstone.entity.GlowPlayer: Removed final
-
-net.glowstone.net.handler.login: Change PlayerProfile to generate as same as offline players
 
 net.glowstone.net.GlowSession: Removed final
 net.glowstone.net.GlowSession: Changed player variable into protected
