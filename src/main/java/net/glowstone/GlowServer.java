@@ -605,7 +605,7 @@ public final class GlowServer implements Server {
         }
         
         //DRAGONET-ADD: Shutdown Dragonet Server
-        this.dragonetServer.networkHandler.getUdp().end();
+        this.dragonetServer.shutdown();
         //DRAGONET-END
 
         // Save worlds

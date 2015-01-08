@@ -92,7 +92,6 @@ public class NonBlockUDPSocket extends Thread {
     }
 
     public void end() {
-        this.dragonetServer.getLogger().info("Stopping Minecraft: Pocket Edition server... ");
         running = false;
         //this.socket.close();
         this.interrupt();
