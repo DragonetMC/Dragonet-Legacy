@@ -61,13 +61,19 @@ public class DragonetServer {
         if (!fileConfig.exists()) {
             try {
                 InputStream inp = DragonetServer.class.getResourceAsStream("/defaults/dragonet.yml");
-                FileOutputStream oup = new FileOutputStream(fileConfig);
-                int data = -1;
-                while ((data = inp.read()) != -1) {
-                    oup.write(data);
+                try {
+                    FileOutputStream oup = new FileOutputStream(fileConfig);
+                    try {
+                        int data = -1;
+                        while ((data = inp.read()) != -1) {
+                            oup.write(data);
+                        }
+                    } finally {
+                        oup.close();
+                    }
+                } finally {
+                    inp.close();
                 }
-                oup.close();
-                inp.close();
             } catch (IOException e) {
             }
         }
