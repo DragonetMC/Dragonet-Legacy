@@ -52,6 +52,18 @@ public abstract class PEPacket extends BinaryPacket{
             case PEPacketIDs.USE_ITEM_PACKET:
                 packet = new UseItemPacket(buffer);
                 break;
+            case PEPacketIDs.REMOVE_BLOCK_PACKET:
+                packet = new RemoveBlockPacket(buffer);
+                break;
+            case PEPacketIDs.ANIMATE_PACKET:
+                packet = new AnimatePacket();
+                break;
+            case PEPacketIDs.PLAYER_EQUIPMENT_PACKET:
+                packet = new PlayerEquipmentPacket(buffer);
+                break;
+            case PEPacketIDs.WINDOW_SET_SLOT_PACKET:
+                packet = new WindowSetSlotPacket(buffer);
+                break;
             default:
                 return null;
         }

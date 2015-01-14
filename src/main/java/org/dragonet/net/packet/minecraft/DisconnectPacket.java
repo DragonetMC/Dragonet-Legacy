@@ -10,10 +10,13 @@
  *
  * @author The Dragonet Team
  */
-
 package org.dragonet.net.packet.minecraft;
 
-public class DisconnectPacket extends PEPacket{
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import org.dragonet.utilities.io.PEBinaryWriter;
+
+public class DisconnectPacket extends PEPacket {
 
     @Override
     public int pid() {
@@ -22,6 +25,13 @@ public class DisconnectPacket extends PEPacket{
 
     @Override
     public void encode() {
+        try {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            PEBinaryWriter writer = new PEBinaryWriter(bos);
+            writer.writeByte((byte) (this.pid() & 0xFF));
+            this.setData(bos.toByteArray());
+        } catch (IOException e) {
+        }
     }
 
     @Override

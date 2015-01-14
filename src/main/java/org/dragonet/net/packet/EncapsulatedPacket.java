@@ -126,10 +126,13 @@ public class EncapsulatedPacket extends BinaryPacket {
      *
      * @param session The DragonetSession context
      * @param packet The PEPacket you want to encapsulate.
+     * @param reliability Packet Reliability
      * @return Wrapped EncapsulatedPacket
      */
     public static EncapsulatedPacket[] fromPEPacket(DragonetSession session, PEPacket packet, int reliability) {
         if(session == null) return null;
+        if(packet == null) return null;
+        if(packet.getData() == null) return null;
         packet.encode();
         byte[] data = packet.getData();
         if (data.length + 34 < session.getClientMTU()) {

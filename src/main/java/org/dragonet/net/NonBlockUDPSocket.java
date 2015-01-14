@@ -82,7 +82,6 @@ public class NonBlockUDPSocket extends Thread {
             socket.send(new DatagramPacket(buffer, buffer.length, addr));
             return true;
         } catch (IOException e) {
-            e.printStackTrace();
             return false;
         }
     }

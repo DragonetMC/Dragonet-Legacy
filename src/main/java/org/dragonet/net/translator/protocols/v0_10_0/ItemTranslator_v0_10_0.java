@@ -30,7 +30,6 @@ public class ItemTranslator_v0_10_0 implements ItemTranslator{
         for (int i = 26; i <= 27; i++) {
             itemMap_PC_to_PE.put(i, i);
         }
-        /*
         for (int i = 30; i <= 68; i++) {
             itemMap_PC_to_PE.put(i, i);
         }
@@ -40,7 +39,6 @@ public class ItemTranslator_v0_10_0 implements ItemTranslator{
         for (int i = 78; i <= 83; i++) {
             itemMap_PC_to_PE.put(i, i);
         }
-        */
         for (int i = 85; i <= 87; i++) {
             itemMap_PC_to_PE.put(i, i);
         }

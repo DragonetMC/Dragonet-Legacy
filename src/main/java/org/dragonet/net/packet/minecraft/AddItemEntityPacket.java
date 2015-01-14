@@ -10,23 +10,28 @@
  *
  * @author The Dragonet Team
  */
+
 package org.dragonet.net.packet.minecraft;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.dragonet.inventory.PEInventorySlot;
-import org.dragonet.inventory.PEWindowConstantID;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
-public class WindowItemsPacket extends PEPacket {
+public class AddItemEntityPacket extends PEPacket {
 
-    public byte windowID;
-    public PEInventorySlot[] slots;
-    public int[] hotbar;
-
+    public int eid;
+    public PEInventorySlot item;
+    public float x;
+    public float y;
+    public float z;
+    public byte yaw;
+    public byte pitch;
+    public byte roll;
+    
     @Override
     public int pid() {
-        return PEPacketIDs.WINDOW_ITEMS_PACKET;
+        return PEPacketIDs.ADD_ITEM_ENTITY_PACKET;
     }
 
     @Override
@@ -35,19 +40,14 @@ public class WindowItemsPacket extends PEPacket {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PEBinaryWriter writer = new PEBinaryWriter(bos);
             writer.writeByte((byte) (this.pid() & 0xFF));
-            writer.writeByte(this.windowID);
-            writer.writeShort((short) (this.slots.length & 0xFFFF));
-            for (PEInventorySlot slot : this.slots) {
-                PEInventorySlot.writeSlot(writer, slot);
-            }
-            if (windowID == PEWindowConstantID.PLAYER_INVENTORY && this.hotbar.length > 0) {
-                writer.writeShort((short) (this.hotbar.length & 0xFFFF));
-                for (int slot : this.hotbar) {
-                    writer.writeInt(slot);
-                }
-            } else {
-                writer.writeShort((short) 0);
-            }
+            writer.writeInt(eid);
+            PEInventorySlot.writeSlot(writer, item);
+            writer.writeFloat(x);
+            writer.writeFloat(y);
+            writer.writeFloat(z);
+            writer.writeByte(yaw);
+            writer.writeByte(pitch);
+            writer.writeByte(roll);
             this.setData(bos.toByteArray());
         } catch (IOException e) {
         }

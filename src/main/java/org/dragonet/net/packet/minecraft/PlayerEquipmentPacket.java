@@ -12,21 +12,29 @@
  */
 package org.dragonet.net.packet.minecraft;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.dragonet.inventory.PEInventorySlot;
-import org.dragonet.inventory.PEWindowConstantID;
+import org.dragonet.utilities.io.PEBinaryReader;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
-public class WindowItemsPacket extends PEPacket {
+public class PlayerEquipmentPacket extends PEPacket {
 
-    public byte windowID;
-    public PEInventorySlot[] slots;
-    public int[] hotbar;
+    public int eid;
+    public short item;
+    public short meta;
+    public int slot;
 
+    public PlayerEquipmentPacket() {
+    }
+    
+    public PlayerEquipmentPacket(byte[] data) {
+        this.setData(data);
+    }
+    
     @Override
     public int pid() {
-        return PEPacketIDs.WINDOW_ITEMS_PACKET;
+        return PEPacketIDs.PLAYER_EQUIPMENT_PACKET;
     }
 
     @Override
@@ -35,26 +43,27 @@ public class WindowItemsPacket extends PEPacket {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PEBinaryWriter writer = new PEBinaryWriter(bos);
             writer.writeByte((byte) (this.pid() & 0xFF));
-            writer.writeByte(this.windowID);
-            writer.writeShort((short) (this.slots.length & 0xFFFF));
-            for (PEInventorySlot slot : this.slots) {
-                PEInventorySlot.writeSlot(writer, slot);
-            }
-            if (windowID == PEWindowConstantID.PLAYER_INVENTORY && this.hotbar.length > 0) {
-                writer.writeShort((short) (this.hotbar.length & 0xFFFF));
-                for (int slot : this.hotbar) {
-                    writer.writeInt(slot);
-                }
-            } else {
-                writer.writeShort((short) 0);
-            }
+            writer.writeInt(eid);
+            writer.writeShort(item);
+            writer.writeShort(meta);
+            writer.writeByte((byte)(slot & 0xFF));
             this.setData(bos.toByteArray());
         } catch (IOException e) {
+
         }
     }
 
     @Override
     public void decode() {
+        try {
+            PEBinaryReader reader = new PEBinaryReader(new ByteArrayInputStream(this.getData()));
+            reader.readByte();
+            this.eid = reader.readInt();
+            this.item = reader.readShort();
+            this.meta = reader.readShort();
+            this.slot = reader.readByte() & 0xFF;
+        } catch (IOException e) {
+        }
     }
 
 }

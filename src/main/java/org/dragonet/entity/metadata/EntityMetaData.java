@@ -56,7 +56,7 @@ public class EntityMetaData {
         data.set(0, new ByteMeta(flags));
         data.set(1, new ShortMeta((short) 0));
         data.set(16, new ByteMeta((byte) 0x00));
-        data.set(17, new CoordinateMeta(0, 0, 0));
+        data.set(17, new CoordinateMeta(player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ()));
         return data;
     }
 }

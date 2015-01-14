@@ -32,6 +32,9 @@ public class MovePlayerPacket extends PEPacket {
         this.setData(data);
     }
 
+    public MovePlayerPacket() {
+    }
+    
     public MovePlayerPacket(int eid, float x, float y, float z, float yaw, float pitch, float bodyYaw, boolean teleport) {
         this.eid = eid;
         this.x = x;
@@ -61,6 +64,7 @@ public class MovePlayerPacket extends PEPacket {
             writer.writeFloat(this.yaw);
             writer.writeFloat(this.pitch);
             writer.writeFloat(this.bodyYaw);
+            //writer.writeByte((byte)0x80);
             writer.writeByte((byte)(this.teleport ? 0x80 : 0x00));
             this.setData(bos.toByteArray());
         } catch (IOException e) {

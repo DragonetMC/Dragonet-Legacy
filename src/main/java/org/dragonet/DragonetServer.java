@@ -54,9 +54,9 @@ public class DragonetServer {
      */
     public void initialize() {
         /* Uncomment following 3 lines when release */
-        //this.logger.info("Sending statistic... ");
-        //StatisticSender statSender = new StatisticSender(DragonetVersioning.DRAGONET_VERSION, System.currentTimeMillis());
-        //statSender.sendStatistic();
+        this.logger.info("Sending statistic... ");
+        StatisticSender statSender = new StatisticSender(DragonetVersioning.DRAGONET_VERSION, System.currentTimeMillis());
+        statSender.sendStatistic();
         File fileConfig = new File(this.server.getConfigDir() + File.separator + "dragonet.yml");
         if (!fileConfig.exists()) {
             try {
@@ -78,6 +78,8 @@ public class DragonetServer {
             }
         }
         Configuration config = YamlConfiguration.loadConfiguration(fileConfig);
+        this.logger.info("Current Minecraft PC Version: " + DragonetVersioning.MINECRAFT_PC_VERSION);
+        this.logger.info("Current Minecraft: Pocket Edition Version: " + DragonetVersioning.MINECRAFT_PE_VERSION);
         this.threadPool = Executors.newFixedThreadPool(64);
         String ip = config.getString("server-ip", "0.0.0.0");
         int port = config.getInt("server-port", 19132);
@@ -92,8 +94,8 @@ public class DragonetServer {
     public void tickUpdate() {
         this.networkHandler.onTick();
     }
-    
-    public void shutdown(){
+
+    public void shutdown() {
         this.logger.info("Stopping Dragonet server... ");
         this.networkHandler.getUdp().end();
         this.threadPool.shutdown();

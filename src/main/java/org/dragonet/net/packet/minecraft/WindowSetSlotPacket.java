@@ -12,9 +12,11 @@
  */
 package org.dragonet.net.packet.minecraft;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.dragonet.inventory.PEInventorySlot;
+import org.dragonet.utilities.io.PEBinaryReader;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class WindowSetSlotPacket extends PEPacket {
@@ -22,6 +24,10 @@ public class WindowSetSlotPacket extends PEPacket {
     public byte windowID;
     public short slot;
     public PEInventorySlot item;
+    
+    public WindowSetSlotPacket(byte[] data) {
+        this.setData(data);
+    }
     
     @Override
     public int pid() {
@@ -44,6 +50,14 @@ public class WindowSetSlotPacket extends PEPacket {
 
     @Override
     public void decode() {
+        try {
+            PEBinaryReader reader = new PEBinaryReader(new ByteArrayInputStream(this.getData()));
+            reader.readByte();
+            this.windowID = reader.readByte();
+            this.slot = reader.readShort();
+            this.item = PEInventorySlot.readSlot(reader);
+        } catch (IOException e) {
+        }
     }
 
 }

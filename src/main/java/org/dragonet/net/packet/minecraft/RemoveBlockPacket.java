@@ -16,35 +16,36 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.dragonet.utilities.io.PEBinaryReader;
-import org.dragonet.utilities.io.PEBinaryWriter;
 
-public class ChatPacket extends PEPacket {
+public class RemoveBlockPacket extends PEPacket {
 
-    public String message;
+    public int eid;
+    public int x;
+    public int z;
+    public int y;
+
+    public RemoveBlockPacket(byte[] data) {
+        this.setData(data);
+    }
 
     @Override
     public int pid() {
-        return PEPacketIDs.CHAT_PACKET;
+        return PEPacketIDs.REMOVE_BLOCK_PACKET;
     }
 
     @Override
     public void encode() {
-        try {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            PEBinaryWriter writer = new PEBinaryWriter(bos);
-            writer.writeByte((byte) (this.pid() & 0xFF));
-            writer.writeString(this.message);
-            this.setData(bos.toByteArray());
-        } catch (IOException e) {
-        }
     }
 
     @Override
     public void decode() {
         try {
             PEBinaryReader reader = new PEBinaryReader(new ByteArrayInputStream(this.getData()));
-            reader.readByte(); //PID
-            this.message = reader.readString();
+            reader.readByte();
+            this.eid = reader.readInt();
+            this.x = reader.readInt();
+            this.z = reader.readInt();
+            this.y = reader.readByte();
         } catch (IOException e) {
         }
     }

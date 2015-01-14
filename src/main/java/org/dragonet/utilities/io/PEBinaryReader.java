@@ -54,7 +54,7 @@ public class PEBinaryReader implements Closeable {
         falloc(lenLen);
         int length = (int) readNat(lenLen);
         falloc(length);
-        return new String(read(length));
+        return new String(read(length), "UTF-8");
     }
 
     public byte readByte() throws IOException {

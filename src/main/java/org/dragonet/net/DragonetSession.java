@@ -39,7 +39,6 @@ import net.glowstone.entity.GlowPlayer;
 import net.glowstone.entity.meta.profile.PlayerProfile;
 import net.glowstone.io.PlayerDataService;
 import net.glowstone.net.GlowSession;
-import net.glowstone.net.message.KickMessage;
 import net.glowstone.net.message.play.game.UserListItemMessage;
 import net.glowstone.net.protocol.ProtocolType;
 import org.apache.commons.lang.ArrayUtils;
@@ -49,10 +48,14 @@ import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.dragonet.DragonetServer;
 import org.dragonet.entity.DragonetPlayer;
+import org.dragonet.inventory.InventoryType;
+import org.dragonet.inventory.PEInventorySlot;
+import org.dragonet.inventory.PEWindowConstantID;
 import org.dragonet.net.packet.EncapsulatedPacket;
 import org.dragonet.net.packet.RaknetDataPacket;
 import org.dragonet.net.packet.minecraft.AdventureSettingsPacket;
 import org.dragonet.net.packet.minecraft.ClientConnectPacket;
+import org.dragonet.net.packet.minecraft.DisconnectPacket;
 import org.dragonet.net.packet.minecraft.FullChunkPacket;
 import org.dragonet.net.packet.minecraft.LoginPacket;
 import org.dragonet.net.packet.minecraft.LoginStatusPacket;
@@ -65,6 +68,7 @@ import org.dragonet.net.packet.minecraft.SetHealthPacket;
 import org.dragonet.net.packet.minecraft.SetSpawnPositionPacket;
 import org.dragonet.net.packet.minecraft.SetTimePacket;
 import org.dragonet.net.packet.minecraft.StartGamePacket;
+import org.dragonet.net.packet.minecraft.WindowItemsPacket;
 import org.dragonet.net.translator.BaseTranslator;
 import org.dragonet.net.translator.TranslatorProvider;
 import org.dragonet.utilities.io.PEBinaryReader;
@@ -157,7 +161,7 @@ public class DragonetSession extends GlowSession {
         }
         this.chunkManager.onTick();
         if (this.sentAndReceivedChunks >= 56 && (this.player instanceof Player)) {
-            this.getLogger().info("PE player ["  + this.player.getName() + "] has spawned. ");
+            this.getLogger().info("PE player [" + this.player.getName() + "] has spawned. ");
             this.sentAndReceivedChunks = -1;
             this.sendSettings();
             SetTimePacket pkTime = new SetTimePacket((int) (this.getPlayer().getWorld().getTime() & 0xFFFFFFFF), true);
@@ -373,8 +377,8 @@ public class DragonetSession extends GlowSession {
         if (!(packet instanceof PEPacket)) {
             return;
         }
-        if(!(packet instanceof FullChunkPacket) && !(packet instanceof StartGamePacket) && !(packet instanceof SetTimePacket) && !(packet instanceof SetDifficultyPacket) &&
-                !(packet instanceof LoginStatusPacket) && !(packet instanceof ServerHandshakePacket) && this.sentAndReceivedChunks != -1){
+        if (!(packet instanceof FullChunkPacket) && !(packet instanceof StartGamePacket) && !(packet instanceof SetTimePacket) && !(packet instanceof SetDifficultyPacket)
+                && !(packet instanceof LoginStatusPacket) && !(packet instanceof ServerHandshakePacket) && this.sentAndReceivedChunks != -1) {
             this.queueAfterChunkSent.add(packet);
             return;
         }
@@ -725,7 +729,7 @@ public class DragonetSession extends GlowSession {
             GlowServer.logger.info("[" + this.remoteIP + ":" + this.remotePort + "] kicked: " + reason);
         }
 
-        this.send(new KickMessage(reason));
+        this.send(new DisconnectPacket());
         this.statusActive = false;
         this.dServer.getNetworkHandler().removeSession(this);
         this.getServer().getSessionRegistry().remove((GlowSession) this);
@@ -733,6 +737,33 @@ public class DragonetSession extends GlowSession {
             this.player.getWorld().getRawPlayers().remove(this.player);
         }
         this.player = null;
+    }
+
+    public void sendInventory() {
+        if(this.getPlayer() == null) return;
+        if(this.getPlayer().getGameMode().equals(GameMode.CREATIVE)) return;
+        WindowItemsPacket pkItems = new WindowItemsPacket();
+        pkItems.windowID = PEWindowConstantID.PLAYER_INVENTORY;
+        pkItems.slots = new PEInventorySlot[InventoryType.SlotSize.PLAYER];
+        pkItems.hotbar = new int[9];
+        for (int i = 9; i <= 35; i++) {
+            if (this.getPlayer().getInventory().getContents()[i] != null) {
+                pkItems.slots[i - 9] = new PEInventorySlot((short) (this.getPlayer().getInventory().getContents()[i].getTypeId() & 0xFFFF), (byte) (this.getPlayer().getInventory().getContents()[i].getAmount() & 0xFF), this.getPlayer().getInventory().getContents()[i].getDurability());
+            } else {
+                pkItems.slots[i - 9] = new PEInventorySlot();
+            }
+        }
+        for (int i = 0; i <= 8; i++) {
+            if (this.getPlayer().getInventory().getContents()[i] != null) {
+                pkItems.slots[i + 27] = new PEInventorySlot((short) (this.getPlayer().getInventory().getContents()[i].getTypeId() & 0xFFFF), (byte) (this.getPlayer().getInventory().getContents()[i].getAmount() & 0xFF), this.getPlayer().getInventory().getContents()[i].getDurability());
+            } else {
+                pkItems.slots[i + 27] = new PEInventorySlot();
+            }
+        }
+        for (int i = 0; i <= 8; i++) {
+            pkItems.hotbar[i] = 44 - 8 + i;
+        }
+        this.send(pkItems);
     }
 
     @Override
@@ -758,4 +789,9 @@ public class DragonetSession extends GlowSession {
         //GlowProtocol proto = protocol.getProtocol();
         //super.setProtocol(proto);
     }
+
+    public SocketAddress getRemoteAddress() {
+        return remoteAddress;
+    }
+
 }

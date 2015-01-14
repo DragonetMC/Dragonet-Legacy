@@ -45,13 +45,15 @@ public class NetworkHandler {
         this.udp.start();
     }
 
-    public synchronized void onTick() {
+    public void onTick() {
         DatagramPacket packet = null;
         while ((packet = this.udp.receive()) != null) {
             this.processPacket(packet);
         }
-        for (DragonetSession session : this.sessions.values()) {
-            session.onTick();
+        synchronized (this.sessions) {
+            for (DragonetSession session : this.sessions.values()) {
+                session.onTick();
+            }
         }
     }
 
@@ -141,7 +143,9 @@ public class NetworkHandler {
         this.udp.send(buffer, remoteAddr);
     }
 
-    public synchronized void removeSession(DragonetSession session) {
-        this.sessions.remove(session.getAddress().toString());
+    public void removeSession(DragonetSession session) {
+        synchronized (this.sessions) {
+            this.sessions.remove(session.getRemoteAddress().toString());
+        }
     }
 }
