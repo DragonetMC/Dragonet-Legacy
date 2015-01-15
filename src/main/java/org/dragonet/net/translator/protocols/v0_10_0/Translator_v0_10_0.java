@@ -39,6 +39,7 @@ import net.glowstone.net.message.play.game.BlockChangeMessage;
 import net.glowstone.net.message.play.game.ChatMessage;
 import net.glowstone.net.message.play.game.IncomingChatMessage;
 import net.glowstone.net.message.play.game.MultiBlockChangeMessage;
+import net.glowstone.net.message.play.game.PositionRotationMessage;
 import net.glowstone.net.message.play.game.StateChangeMessage;
 import net.glowstone.net.message.play.game.TimeMessage;
 import net.glowstone.net.message.play.inv.CloseWindowMessage;
@@ -75,6 +76,7 @@ import org.dragonet.net.packet.minecraft.AddPlayerPacket;
 import org.dragonet.net.packet.minecraft.AnimatePacket;
 import org.dragonet.net.packet.minecraft.DisconnectPacket;
 import org.dragonet.net.packet.minecraft.MessagePacket;
+import org.dragonet.net.packet.minecraft.MoveEntitiesPacket;
 import org.dragonet.net.packet.minecraft.MovePlayerPacket;
 import org.dragonet.net.packet.minecraft.PEPacket;
 import org.dragonet.net.packet.minecraft.PEPacketIDs;
@@ -326,12 +328,12 @@ public class Translator_v0_10_0 extends BaseTranslator {
     /* ===== TO PE ===== */
     @Override
     public PEPacket[] translateToPE(Message message) {
-        /*
+        
          if (!message.getClass().getSimpleName().contains("Time") && !message.getClass().getSimpleName().contains("Chunk")
          && !message.getClass().getSimpleName().contains("Move")) {
          System.out.print("Trnaslating to PE: " + message.getClass().getSimpleName() + "\nDetail: " + message.toString());
          }
-         */
+         
 
         /* ==================================================================================== */
         /**
@@ -370,6 +372,9 @@ public class Translator_v0_10_0 extends BaseTranslator {
         if (message instanceof RelativeEntityPositionMessage) {
             RelativeEntityPositionMessage msgRelativeEntityPosition = ((RelativeEntityPositionMessage) message);
             Entity entity = this.getSession().getPlayer().getWorld().getEntityManager().getEntity(msgRelativeEntityPosition.id);
+            if (entity == null) {
+                return null;
+            }
             if (entity instanceof GlowPlayer) {
                 boolean isTeleport = Math.sqrt(msgRelativeEntityPosition.deltaX ^ 2 + msgRelativeEntityPosition.deltaY ^ 2 + msgRelativeEntityPosition.deltaZ ^ 2) > 2;
                 MovePlayerPacket pkMovePlayer = new MovePlayerPacket(msgRelativeEntityPosition.id, (float) entity.getLocation().getX(), (float) entity.getLocation().getY(), (float) entity.getLocation().getZ(), entity.getLocation().getYaw(), entity.getLocation().getPitch(), entity.getLocation().getYaw(), isTeleport);
@@ -378,6 +383,27 @@ public class Translator_v0_10_0 extends BaseTranslator {
                 //TODO: Handle other entities
                 return null;
             }
+        }
+        
+        /**
+         * Force Update Client Position & Rotation TODO: WHY THE FUCK DOESN'T IT
+         * WORK!
+         */
+        if (message instanceof PositionRotationMessage) {
+            if (this.getSession().getPlayer() == null) {
+                return null;
+            }
+            PositionRotationMessage msgPosRot = (PositionRotationMessage) message;
+            //Hack: Yaw and pitch set to 0.0f
+            //MovePlayerPacket pkMovePlayer = new MovePlayerPacket(this.getSession().getPlayer().getEntityId(), (float) msgPosRot.x, (float) msgPosRot.y, (float) msgPosRot.z, 0.0f, 0.0f, 0.0f, true);
+            MoveEntitiesPacket.MoveEntityData d = new MoveEntitiesPacket.MoveEntityData();
+            d.x = (float) msgPosRot.x;
+            d.y = (float) msgPosRot.y;
+            d.z = (float) msgPosRot.z;
+            d.yaw = 0.0f;
+            d.pitch = 0.0f;
+            MoveEntitiesPacket pkMoveEntity = new MoveEntitiesPacket(new MoveEntitiesPacket.MoveEntityData[]{d});
+            return new PEPacket[]{pkMoveEntity};
         }
 
         /**

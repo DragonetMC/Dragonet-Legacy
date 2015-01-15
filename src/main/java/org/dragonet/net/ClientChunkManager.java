@@ -64,9 +64,11 @@ public class ClientChunkManager {
             this.lastWorld = this.getSession().getPlayer().getWorld().getName();
         }
         if (!this.lastWorld.equalsIgnoreCase(this.getSession().getPlayer().getWorld().getName())) {
+            /*
             for (ChunkLocation loc : this.chunksLoaded) {
                 this.unloadChunk(loc.getX(), loc.getZ());
             }
+            */
             this.chunksLoaded.clear();
             this.chunksQueue.clear();
             this.lastWorld = this.getSession().getPlayer().getWorld().getName();
