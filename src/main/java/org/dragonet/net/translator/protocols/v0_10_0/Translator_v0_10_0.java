@@ -149,6 +149,13 @@ public class Translator_v0_10_0 extends BaseTranslator {
                 return new Message[]{msgMessage};
             case PEPacketIDs.MOVE_PLAYER_PACKET:
                 MovePlayerPacket pkMovePlayer = (MovePlayerPacket) packet;
+                //Check the position
+                Location loc = new Location(this.getSession().getPlayer().getWorld(), pkMovePlayer.x, pkMovePlayer.y, pkMovePlayer.z);
+                if(!this.getSession().validateMovement(loc)){ //Revert
+                    this.getSession().sendPosition();
+                    System.out.println("Reverted movement! ");
+                    return null;
+                }
                 //Hack ;P
                 ((DragonetPlayer) this.getSession().getPlayer()).setLocation(new Location(((DragonetPlayer) this.getSession().getPlayer()).getWorld(), pkMovePlayer.x, pkMovePlayer.y, pkMovePlayer.z, pkMovePlayer.yaw, pkMovePlayer.pitch));
                 return new Message[]{new PlayerPositionLookMessage(false, (double) pkMovePlayer.x, (double) pkMovePlayer.y, (double) pkMovePlayer.z, pkMovePlayer.yaw, pkMovePlayer.pitch)};
@@ -328,14 +335,14 @@ public class Translator_v0_10_0 extends BaseTranslator {
     /* ===== TO PE ===== */
     @Override
     public PEPacket[] translateToPE(Message message) {
-        
+        /*
          if (!message.getClass().getSimpleName().contains("Time") && !message.getClass().getSimpleName().contains("Chunk")
          && !message.getClass().getSimpleName().contains("Move")) {
          System.out.print("Trnaslating to PE: " + message.getClass().getSimpleName() + "\nDetail: " + message.toString());
          }
-         
+         /*
 
-        /* ==================================================================================== */
+         /* ==================================================================================== */
         /**
          * Kick Message
          */

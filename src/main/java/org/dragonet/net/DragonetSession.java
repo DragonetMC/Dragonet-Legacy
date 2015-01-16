@@ -43,9 +43,13 @@ import net.glowstone.net.message.play.game.UserListItemMessage;
 import net.glowstone.net.protocol.ProtocolType;
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.util.Vector;
 import org.dragonet.DragonetServer;
 import org.dragonet.entity.DragonetPlayer;
 import org.dragonet.inventory.InventoryType;
@@ -59,6 +63,7 @@ import org.dragonet.net.packet.minecraft.DisconnectPacket;
 import org.dragonet.net.packet.minecraft.FullChunkPacket;
 import org.dragonet.net.packet.minecraft.LoginPacket;
 import org.dragonet.net.packet.minecraft.LoginStatusPacket;
+import org.dragonet.net.packet.minecraft.MoveEntitiesPacket;
 import org.dragonet.net.packet.minecraft.PEPacket;
 import org.dragonet.net.packet.minecraft.PEPacketIDs;
 import org.dragonet.net.packet.minecraft.PingPongPacket;
@@ -764,6 +769,52 @@ public class DragonetSession extends GlowSession {
             pkItems.hotbar[i] = 44 - 8 + i;
         }
         this.send(pkItems);
+    }
+    
+    /**
+     * Send the server side position to the client, used to correct the position
+     */
+    public void sendPosition() {
+        if (this.getPlayer() == null) {
+            return;
+        }
+        MoveEntitiesPacket.MoveEntityData d = new MoveEntitiesPacket.MoveEntityData();
+        d.eid = this.getPlayer().getEntityId();
+        d.x = (float) this.getPlayer().getLocation().getX();
+        d.y = (float) this.getPlayer().getLocation().getY();
+        d.z = (float) this.getPlayer().getLocation().getZ();
+        d.yaw = this.getPlayer().getLocation().getYaw();
+        d.pitch = this.getPlayer().getLocation().getPitch();
+        MoveEntitiesPacket pkMovePlayer = new MoveEntitiesPacket(new MoveEntitiesPacket.MoveEntityData[]{d});
+        this.send(pkMovePlayer);
+    }
+    
+    /**
+     * Check wether a player can go to the new location
+     * @param newLoc The New location
+     * @return New location is okay or not
+     */
+    public boolean validateMovement(Location newLoc) {
+        if (this.getPlayer() == null) {
+            return false;
+        }
+        //Check block stucking
+        if (!newLoc.getWorld().getName().equals(this.getPlayer().getLocation().getWorld())) {
+            newLoc.setWorld(this.getPlayer().getLocation().getWorld());
+        }
+        Block block = this.getPlayer().getWorld().getBlockAt(newLoc);
+        Block blockUp = this.getPlayer().getWorld().getBlockAt(newLoc.clone().add(new Vector(0, 1, 0)));
+        if (block != null) {
+            if (block.getType().isSolid()) {
+                return false;
+            }
+        }
+        if (blockUp != null) {
+            if (blockUp.getType().isSolid()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

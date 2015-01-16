@@ -8,7 +8,7 @@ YES, mostly! But you may expirence some bugs and issues because this software is
 
 ##Download
 You may download pre-compiled binaries at our website:
-[http://is.gd/BfGs2D](http://is.gd/BfGs2D)<br>
+[http://dragonet.org/download.html](http://dragonet.org/download.html)<br>
 We are hosting files on MEGA.go.nz so it is very stable and secure. <br>
 
 ###Credits
