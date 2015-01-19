@@ -38,7 +38,6 @@ public class DragonetPEAddonServer {
      */
     public void initialize() {
         int addonPort = this.server.getNetworkHandler().getUdp().getServerPort();
-        addonPort++; //Add one for the PEAddon port. 
         //TODO
     }
 }
