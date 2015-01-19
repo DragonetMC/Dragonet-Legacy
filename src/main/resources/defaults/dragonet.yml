@@ -5,3 +5,7 @@
 # If you set to 0.0.0.0, server will listen on all IP addresses that exist on the current system. 
 server-ip: '0.0.0.0'
 server-port: 19132
+
+# Should we enable DragonetPE support? 
+# It may cost a little bit more CPU usage
+enable-addon: true
