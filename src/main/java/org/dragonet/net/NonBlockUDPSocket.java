@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.net.BindException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.SocketAddress;
 import java.util.ArrayDeque;
 import java.util.Queue;
@@ -61,8 +62,7 @@ public class NonBlockUDPSocket extends Thread {
         } catch (IOException e) {
         }
     }
-    
-    
+
     public DatagramPacket receive() {
         if (receivedPacketQueue.isEmpty()) {
             return null;
@@ -94,5 +94,13 @@ public class NonBlockUDPSocket extends Thread {
         running = false;
         //this.socket.close();
         this.interrupt();
+    }
+
+    public InetAddress getServerAddress() {
+        return this.socket.getLocalAddress();
+    }
+    
+    public int getServerPort(){
+        return this.socket.getLocalPort();
     }
 }

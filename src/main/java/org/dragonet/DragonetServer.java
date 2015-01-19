@@ -24,6 +24,7 @@ import net.glowstone.GlowServer;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.dragonet.net.NetworkHandler;
+import org.dragonet.peaddon.DragonetPEAddonServer;
 import org.dragonet.statistic.StatisticSender;
 import org.dragonet.utilities.DragonetVersioning;
 import org.slf4j.Logger;
@@ -31,16 +32,22 @@ import org.slf4j.LoggerFactory;
 
 public class DragonetServer {
 
-    public @Getter
+    private @Getter
     GlowServer server;
-    public @Getter
+    private @Getter
     Logger logger;
 
-    public @Getter
+    private @Getter
     NetworkHandler networkHandler;
 
-    public @Getter
+    private @Getter
     ExecutorService threadPool;
+
+    private @Getter
+    DragonetPEAddonServer addonServer;
+
+    private @Getter
+    boolean addonSupported;
 
     public DragonetServer(GlowServer server) {
         this.server = server;
@@ -85,6 +92,13 @@ public class DragonetServer {
         int port = config.getInt("server-port", 19132);
         this.logger.info("Trying to bind on UDP address " + ip + ":" + port + "... ");
         this.networkHandler = new NetworkHandler(this, new InetSocketAddress(ip, port));
+        if (config.getBoolean("enable-addon", true)) {
+            this.addonServer = new DragonetPEAddonServer(this);
+            this.addonServer.initialize();
+            this.addonSupported = true;
+        } else {
+            this.addonSupported = false;
+        }
         this.logger.info("Dragonet successfully initialized! ");
     }
 
