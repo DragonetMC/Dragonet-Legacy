@@ -365,7 +365,7 @@ public class DragonetSession extends GlowSession {
             int[] seqNums = ArrayUtils.toPrimitive(packets.toArray(new Integer[0]));
             for (int seq : seqNums) {
                 if (this.cachedOutgoingPacket.containsKey(seq)) {
-                    this.dServer.getNetworkHandler().getUdp().send(this.cachedOutgoingPacket.get(seq).getData(), this.remoteAddress);
+                    this.dServer.networkHandler.getUdp().send(this.cachedOutgoingPacket.get(seq).getData(), this.remoteAddress);
                 }
             }
         } catch (IOException e) {
