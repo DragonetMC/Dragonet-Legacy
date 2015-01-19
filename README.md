@@ -3,6 +3,8 @@ Dragonet
 
 The universal Minecraft server, supports both `Minecraft PC` and `Minecraft PE` clients. 
 
+#### [https://github.com/GlowstoneMC/Glowstone/wiki/Plugin-Compatibility](Plugin Compatibility)
+
 ##Is this fully working now?
 YES, mostly! But you may expirence some bugs and issues because this software is still in heavy development stage. 
 
