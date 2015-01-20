@@ -26,7 +26,6 @@ package net.glowstone.io.anvil;
 /*
  * Some changes have been made as part of the Glowstone project.
  */
-
 import net.glowstone.GlowServer;
 
 import java.io.DataInputStream;
@@ -39,7 +38,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A simple cache and wrapper for efficiently accessing multiple RegionFiles simultaneously.
+ * A simple cache and wrapper for efficiently accessing multiple RegionFiles
+ * simultaneously.
  */
 public class RegionFileCache {
 

@@ -32,12 +32,14 @@ public class SetEntityMotionPacket extends PEPacket {
             PEBinaryWriter writer = new PEBinaryWriter(bos);
             writer.writeByte((byte) (this.pid() & 0xFF));
             writer.writeInt(this.motions.length);
-            for(EntityMotionData d : this.motions){
-                if(d == null) continue;
+            for (EntityMotionData d : this.motions) {
+                if (d == null) {
+                    continue;
+                }
                 writer.writeInt(d.eid);
-                writer.writeShort((short)((d.motionX * 8000) & 0xFFFF));
-                writer.writeShort((short)((d.motionY * 8000) & 0xFFFF));
-                writer.writeShort((short)((d.motionZ * 8000) & 0xFFFF));
+                writer.writeShort((short) ((d.motionX * 8000) & 0xFFFF));
+                writer.writeShort((short) ((d.motionY * 8000) & 0xFFFF));
+                writer.writeShort((short) ((d.motionZ * 8000) & 0xFFFF));
             }
             this.setData(bos.toByteArray());
         } catch (IOException e) {

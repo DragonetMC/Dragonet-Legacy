@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
 import lombok.Getter;
 import net.glowstone.GlowServer;
 import org.bukkit.configuration.Configuration;
@@ -91,13 +92,29 @@ public class DragonetServer {
         String ip = config.getString("server-ip", "0.0.0.0");
         int port = config.getInt("server-port", 19132);
         this.logger.info("Trying to bind on UDP address " + ip + ":" + port + "... ");
-        this.networkHandler = new NetworkHandler(this, new InetSocketAddress(ip, port));
+        try {
+            this.networkHandler = new NetworkHandler(this, new InetSocketAddress(ip, port));
+        } catch (Exception ex) {
+            this.getLogger().error("FAILD TO BIND ON THE Minecraft: Pocket Edition PORT " + port + "(UDP)! ");
+            this.getLogger().error("CLOSE THE PROGRAM USING THAT PORT OR CHANGE THE PORT TO SOLVE THIS PROBLEM! ");
+            this.getServer().shutdown();
+            return;
+        }
         if (config.getBoolean("enable-addon", true)) {
+            this.getLogger().info("Enabling DragonetPE Android Addon server... ");
             this.addonServer = new DragonetPEAddonServer(this);
-            this.addonServer.initialize();
+            try {
+                this.addonServer.initialize();
+            } catch (IOException ex) {
+                this.getLogger().error("FAILD TO BIND ON THE PEAddon PORT " + this.getNetworkHandler().getUdp().getServerPort() + "(TCP), OTHER PROGRAM MAY USING IT. ");
+                this.getLogger().error("CLOSE THE PROGRAM USING THAT PORT OR DISABLE PEAddon SUPPORT TO FIX THIS PROBLEM! ");
+                this.getServer().shutdown();
+                return;
+            }
             this.addonSupported = true;
         } else {
             this.addonSupported = false;
+            this.getLogger().info("DragonetPE Android Addon support is disabled! ");
         }
         this.logger.info("Dragonet successfully initialized! ");
     }

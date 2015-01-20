@@ -9,6 +9,7 @@ import net.glowstone.util.TextMessage;
 import java.io.IOException;
 
 public final class ChatCodec implements Codec<ChatMessage> {
+
     @Override
     public ChatMessage decode(ByteBuf buf) throws IOException {
         TextMessage message = GlowBufUtils.readChat(buf);

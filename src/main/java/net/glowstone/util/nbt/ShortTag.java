@@ -12,6 +12,7 @@ final class ShortTag extends Tag<Short> {
 
     /**
      * Creates the tag.
+     *
      * @param value The value.
      */
     public ShortTag(short value) {
@@ -25,4 +26,3 @@ final class ShortTag extends Tag<Short> {
     }
 
 }
-

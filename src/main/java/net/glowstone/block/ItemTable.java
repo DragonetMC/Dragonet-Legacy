@@ -28,14 +28,12 @@ public final class ItemTable {
 
     ////////////////////////////////////////////////////////////////////////////
     // Data
-
     private final Map<Integer, ItemType> idToType = new HashMap<>(512);
 
     private int nextBlockId, nextItemId;
 
     ////////////////////////////////////////////////////////////////////////////
     // Registration
-
     private void registerBuiltins() {
         reg(Material.NOTE_BLOCK, new BlockNote());
         reg(Material.MOB_SPAWNER, new BlockMobSpawner());
@@ -233,7 +231,8 @@ public final class ItemTable {
     }
 
     /**
-     * Register a new, non-Vanilla ItemType. It will be assigned an ID automatically.
+     * Register a new, non-Vanilla ItemType. It will be assigned an ID
+     * automatically.
      *
      * @param type the ItemType to register.
      */
@@ -277,7 +276,6 @@ public final class ItemTable {
 
     ////////////////////////////////////////////////////////////////////////////
     // Type access
-
     public ItemType getItem(int id) {
         ItemType type = idToType.get(id);
         if (type == null) {

@@ -21,7 +21,6 @@ class ItemStore extends EntityStore<GlowItem> {
     // - "Health"
     // - "Owner"
     // - "Thrower"
-
     @Override
     public void load(GlowItem entity, CompoundTag tag) {
         super.load(entity, tag);

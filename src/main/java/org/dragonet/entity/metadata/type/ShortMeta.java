@@ -10,7 +10,6 @@
  *
  * @author The Dragonet Team
  */
-
 package org.dragonet.entity.metadata.type;
 
 import java.nio.ByteBuffer;
@@ -24,7 +23,7 @@ public class ShortMeta implements EntityMetaDataObject {
     public ShortMeta(short data) {
         this.data = data;
     }
-    
+
     @Override
     public int type() {
         return 1;

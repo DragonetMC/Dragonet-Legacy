@@ -52,7 +52,7 @@ public final class LibraryManager {
             try {
                 URL downloadUrl = new URL(repository + group.replace('.', '/') + "/" + library + "/" + version + "/" + library + "-" + version + ".jar");
                 try (ReadableByteChannel input = Channels.newChannel(downloadUrl.openStream());
-                     FileOutputStream output = new FileOutputStream(file)) {
+                        FileOutputStream output = new FileOutputStream(file)) {
                     output.getChannel().transferFrom(input, 0, Long.MAX_VALUE);
                 }
             } catch (IOException e) {

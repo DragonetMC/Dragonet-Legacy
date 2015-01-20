@@ -16,6 +16,7 @@ import net.glowstone.net.message.login.LoginStartMessage;
 import net.glowstone.net.message.login.LoginSuccessMessage;
 
 public final class LoginProtocol extends GlowProtocol {
+
     public LoginProtocol() {
         super("LOGIN", 5);
 

@@ -29,8 +29,9 @@ public final class GlowOfflinePlayer implements OfflinePlayer {
     private Location bedSpawn;
 
     /**
-     * Create a new offline player for the given name. If possible, the
-     * player's UUID will be found and then their data.
+     * Create a new offline player for the given name. If possible, the player's
+     * UUID will be found and then their data.
+     *
      * @param server The server of the offline player. Must not be null.
      * @param name The name of the player. Must not be null.
      */
@@ -44,8 +45,9 @@ public final class GlowOfflinePlayer implements OfflinePlayer {
     }
 
     /**
-     * Create a new offline player for the given UUID. If possible, the
-     * player's data (including name) will be loaded based on the UUID.
+     * Create a new offline player for the given UUID. If possible, the player's
+     * data (including name) will be loaded based on the UUID.
+     *
      * @param server The server of the offline player. Must not be null.
      * @param uuid The UUID of the player. Must not be null.
      */
@@ -75,7 +77,6 @@ public final class GlowOfflinePlayer implements OfflinePlayer {
 
     ////////////////////////////////////////////////////////////////////////////
     // Core properties
-
     @Override
     public String getName() {
         return name;
@@ -102,7 +103,6 @@ public final class GlowOfflinePlayer implements OfflinePlayer {
 
     ////////////////////////////////////////////////////////////////////////////
     // Player properties
-
     @Override
     public boolean hasPlayedBefore() {
         return hasPlayed;
@@ -125,7 +125,6 @@ public final class GlowOfflinePlayer implements OfflinePlayer {
 
     ////////////////////////////////////////////////////////////////////////////
     // Ban, op, whitelist
-
     @Override
     public boolean isBanned() {
         return server.getBanList(BanList.Type.NAME).isBanned(name);
@@ -167,7 +166,6 @@ public final class GlowOfflinePlayer implements OfflinePlayer {
 
     ////////////////////////////////////////////////////////////////////////////
     // Serialization
-
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> ret = new HashMap<>();
@@ -186,8 +184,12 @@ public final class GlowOfflinePlayer implements OfflinePlayer {
     }
 
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         GlowOfflinePlayer that = (GlowOfflinePlayer) o;
 
@@ -200,9 +202,9 @@ public final class GlowOfflinePlayer implements OfflinePlayer {
 
     @Override
     public String toString() {
-        return "GlowOfflinePlayer{" +
-                "name='" + name + '\'' +
-                ", uuid=" + uuid +
-                '}';
+        return "GlowOfflinePlayer{"
+                + "name='" + name + '\''
+                + ", uuid=" + uuid
+                + '}';
     }
 }

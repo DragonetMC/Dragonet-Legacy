@@ -26,6 +26,7 @@ public final class NbtSerialization {
 
     /**
      * Read an item stack in from an NBT tag. Returns null if no item exists.
+     *
      * @param tag The tag to read from.
      * @return The resulting ItemStack, or null.
      */
@@ -52,8 +53,9 @@ public final class NbtSerialization {
     }
 
     /**
-     * Write an item stack to an NBT tag. Null stacks produce an empty tag,
-     * and if slot is negative it is omitted from the result.
+     * Write an item stack to an NBT tag. Null stacks produce an empty tag, and
+     * if slot is negative it is omitted from the result.
+     *
      * @param stack The stack to write, or null.
      * @param slot The slot, or negative to omit.
      * @return The resulting tag.
@@ -78,6 +80,7 @@ public final class NbtSerialization {
 
     /**
      * Read a full inventory (players, chests, etc.) from a compound list.
+     *
      * @param tagList The list of CompoundTags to read from.
      * @param start The slot number to consider the inventory's start.
      * @param size The desired size of the inventory.
@@ -96,6 +99,7 @@ public final class NbtSerialization {
 
     /**
      * Write a full inventory (players, chests, etc.) to a compound list.
+     *
      * @param items An array with the contents of the inventory.
      * @param start The slot number to consider the inventory's start.
      * @return The list of CompoundTags.
@@ -113,6 +117,7 @@ public final class NbtSerialization {
 
     /**
      * Attempt to resolve a world based on the contents of a compound tag.
+     *
      * @param server The server to look up worlds in.
      * @param compound The tag to read the world from.
      * @return The world, or null if none could be found.
@@ -140,8 +145,9 @@ public final class NbtSerialization {
     }
 
     /**
-     * Save world identifiers (UUID and dimension) to a compound tag for
-     * later lookup.
+     * Save world identifiers (UUID and dimension) to a compound tag for later
+     * lookup.
+     *
      * @param world The world to identify.
      * @param compound The tag to write to.
      */
@@ -155,9 +161,10 @@ public final class NbtSerialization {
     }
 
     /**
-     * Read a Location from the "Pos" and "Rotation" children of a tag. If
-     * "Pos" is absent or invalid, null is returned. If "Rotation" is absent
-     * or invalid, it is skipped and a location without rotation is returned.
+     * Read a Location from the "Pos" and "Rotation" children of a tag. If "Pos"
+     * is absent or invalid, null is returned. If "Rotation" is absent or
+     * invalid, it is skipped and a location without rotation is returned.
+     *
      * @param world The world of the location (see readWorld).
      * @param tag The tag to read from.
      * @return The location, or null.
@@ -186,8 +193,9 @@ public final class NbtSerialization {
     }
 
     /**
-     * Write a Location to the "Pos" and "Rotation" children of a tag. Does
-     * not save world information, use writeWorld instead.
+     * Write a Location to the "Pos" and "Rotation" children of a tag. Does not
+     * save world information, use writeWorld instead.
+     *
      * @param loc The location to write.
      * @param tag The tag to write to.
      */
@@ -197,8 +205,9 @@ public final class NbtSerialization {
     }
 
     /**
-     * Create a Vector from a list of doubles. If the list is invalid, a
-     * zero vector is returned.
+     * Create a Vector from a list of doubles. If the list is invalid, a zero
+     * vector is returned.
+     *
      * @param list The list to read from.
      * @return The Vector.
      */
@@ -211,6 +220,7 @@ public final class NbtSerialization {
 
     /**
      * Create a list of doubles from a Vector.
+     *
      * @param vec The vector to write.
      * @return The list.
      */

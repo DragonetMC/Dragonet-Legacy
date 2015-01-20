@@ -10,6 +10,7 @@ import org.bukkit.util.BlockVector;
 import java.io.IOException;
 
 public final class BlockChangeCodec implements Codec<BlockChangeMessage> {
+
     @Override
     public BlockChangeMessage decode(ByteBuf buffer) throws IOException {
         BlockVector pos = GlowBufUtils.readBlockPosition(buffer);

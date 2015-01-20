@@ -27,11 +27,11 @@ public class PlayerEquipmentPacket extends PEPacket {
 
     public PlayerEquipmentPacket() {
     }
-    
+
     public PlayerEquipmentPacket(byte[] data) {
         this.setData(data);
     }
-    
+
     @Override
     public int pid() {
         return PEPacketIDs.PLAYER_EQUIPMENT_PACKET;
@@ -46,7 +46,7 @@ public class PlayerEquipmentPacket extends PEPacket {
             writer.writeInt(eid);
             writer.writeShort(item);
             writer.writeShort(meta);
-            writer.writeByte((byte)(slot & 0xFF));
+            writer.writeByte((byte) (slot & 0xFF));
             this.setData(bos.toByteArray());
         } catch (IOException e) {
 

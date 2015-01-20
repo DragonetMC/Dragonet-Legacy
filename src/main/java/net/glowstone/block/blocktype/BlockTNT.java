@@ -11,6 +11,7 @@ public class BlockTNT extends BlockType {
 
     /**
      * Convert a TNT block into a primed TNT entity.
+     *
      * @param tntBlock The block to ignite.
      * @param ignitedByExplosion True if another explosion caused this ignition.
      */

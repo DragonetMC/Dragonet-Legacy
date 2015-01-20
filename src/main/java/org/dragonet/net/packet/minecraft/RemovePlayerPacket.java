@@ -20,7 +20,7 @@ public class RemovePlayerPacket extends PEPacket {
 
     public int eid;
     public long clientID;
-    
+
     @Override
     public int pid() {
         return PEPacketIDs.REMOVE_PLAYER_PACKET;

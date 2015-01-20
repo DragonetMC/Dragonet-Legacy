@@ -13,8 +13,8 @@ import java.util.zip.GZIPInputStream;
  * This class reads NBT, or Named Binary Tag streams, and produces an object
  * graph of subclasses of the {@link Tag} object.
  * <p/>
- * The NBT format was created by Markus Persson, and the specification may
- * be found at <a href="http://www.minecraft.net/docs/NBT.txt">
+ * The NBT format was created by Markus Persson, and the specification may be
+ * found at <a href="http://www.minecraft.net/docs/NBT.txt">
  * http://www.minecraft.net/docs/NBT.txt</a>.
  */
 public final class NBTInputStream implements Closeable {
@@ -25,8 +25,9 @@ public final class NBTInputStream implements Closeable {
     private final DataInputStream is;
 
     /**
-     * Creates a new NBTInputStream, which will source its data
-     * from the specified input stream. This assumes the stream is compressed.
+     * Creates a new NBTInputStream, which will source its data from the
+     * specified input stream. This assumes the stream is compressed.
+     *
      * @param is The input stream.
      * @throws IOException if an I/O error occurs.
      */
@@ -35,9 +36,10 @@ public final class NBTInputStream implements Closeable {
     }
 
     /**
-     * Creates a new NBTInputStream, which sources its data from the
-     * specified input stream. A flag must be passed which indicates if the
-     * stream is compressed with GZIP or not.
+     * Creates a new NBTInputStream, which sources its data from the specified
+     * input stream. A flag must be passed which indicates if the stream is
+     * compressed with GZIP or not.
+     *
      * @param is The input stream.
      * @param compressed A flag indicating if the stream is compressed.
      * @throws IOException if an I/O error occurs.
@@ -48,6 +50,7 @@ public final class NBTInputStream implements Closeable {
 
     /**
      * Reads the root NBT {@link CompoundTag} from the stream.
+     *
      * @return The tag that was read.
      * @throws IOException if an I/O error occurs.
      */
@@ -93,6 +96,7 @@ public final class NBTInputStream implements Closeable {
 
     /**
      * Reads the payload of a {@link Tag}, given the name and type.
+     *
      * @param type The type.
      * @param depth The depth.
      * @return The tag.
@@ -164,4 +168,3 @@ public final class NBTInputStream implements Closeable {
     }
 
 }
-

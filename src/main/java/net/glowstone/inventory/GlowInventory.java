@@ -70,9 +70,9 @@ public class GlowInventory implements Inventory {
 
     ////////////////////////////////////////////////////////////////////////////
     // Internals
-
     /**
      * Add a viewer to the inventory.
+     *
      * @param viewer The HumanEntity to add.
      */
     public void addViewer(HumanEntity viewer) {
@@ -83,6 +83,7 @@ public class GlowInventory implements Inventory {
 
     /**
      * Remove a viewer from the inventory.
+     *
      * @param viewer The HumanEntity to remove.
      */
     public void removeViewer(HumanEntity viewer) {
@@ -93,19 +94,23 @@ public class GlowInventory implements Inventory {
 
     /**
      * Get the type of the specified slot.
+     *
      * @param slot The slot number.
      * @return The SlotType of the slot.
      */
     public SlotType getSlotType(int slot) {
-        if (slot < 0) return SlotType.OUTSIDE;
+        if (slot < 0) {
+            return SlotType.OUTSIDE;
+        }
         return slotTypes[slot];
     }
 
     /**
-     * Check whether it is allowed for a player to insert the given ItemStack
-     * at the slot, regardless of the slot's current contents. Should return
-     * false for crafting output slots or armor slots which cannot accept
-     * the given item.
+     * Check whether it is allowed for a player to insert the given ItemStack at
+     * the slot, regardless of the slot's current contents. Should return false
+     * for crafting output slots or armor slots which cannot accept the given
+     * item.
+     *
      * @param slot The slot number.
      * @param stack The stack to add.
      * @return Whether the stack can be added there.
@@ -117,6 +122,7 @@ public class GlowInventory implements Inventory {
     /**
      * Check whether, in a shift-click operation, an item of the specified type
      * may be placed in the given slot.
+     *
      * @param slot The slot number.
      * @param stack The stack to add.
      * @return Whether the stack can be added there.
@@ -127,6 +133,7 @@ public class GlowInventory implements Inventory {
 
     /**
      * Set the custom title of this inventory or reset it to the default.
+     *
      * @param title The new title, or null to reset.
      */
     public void setTitle(String title) {
@@ -140,6 +147,7 @@ public class GlowInventory implements Inventory {
     /**
      * Gets the number of slots in this inventory according to the protocol.
      * Some inventories have 0 slots in the protocol, despite having slots.
+     *
      * @return The numbers of slots
      */
     public int getRawSlots() {
@@ -148,7 +156,6 @@ public class GlowInventory implements Inventory {
 
     ////////////////////////////////////////////////////////////////////////////
     // Basic Stuff
-
     @Override
     public final int getSize() {
         return slots.length;
@@ -205,7 +212,6 @@ public class GlowInventory implements Inventory {
 
     ////////////////////////////////////////////////////////////////////////////
     // Get, Set, Add, Remove
-
     @Override
     public ItemStack getItem(int index) {
         return slots[index];
@@ -222,7 +228,9 @@ public class GlowInventory implements Inventory {
 
         for (int i = 0; i < items.length; ++i) {
             ItemStack item = ItemIds.sanitize(items[i]);
-            if (item == null) continue; // invalid items fail silently
+            if (item == null) {
+                continue; // invalid items fail silently
+            }
             int maxStackSize = item.getType() == null ? 64 : item.getType().getMaxStackSize();
             int toAdd = item.getAmount();
 
@@ -230,8 +238,12 @@ public class GlowInventory implements Inventory {
                 // Look for existing stacks to add to
                 if (slots[j] != null && slots[j].isSimilar(item)) {
                     int space = maxStackSize - slots[j].getAmount();
-                    if (space < 0) continue;
-                    if (space > toAdd) space = toAdd;
+                    if (space < 0) {
+                        continue;
+                    }
+                    if (space > toAdd) {
+                        space = toAdd;
+                    }
 
                     slots[j].setAmount(slots[j].getAmount() + space);
                     toAdd -= space;
@@ -308,7 +320,6 @@ public class GlowInventory implements Inventory {
 
     ////////////////////////////////////////////////////////////////////////////
     // Contains
-
     @Override
     public boolean contains(int materialId) {
         return first(materialId) >= 0;
@@ -351,7 +362,6 @@ public class GlowInventory implements Inventory {
 
     ////////////////////////////////////////////////////////////////////////////
     // Find all
-
     @Override
     public HashMap<Integer, ItemStack> all(int materialId) {
         HashMap<Integer, ItemStack> result = new HashMap<>();
@@ -381,11 +391,12 @@ public class GlowInventory implements Inventory {
 
     ////////////////////////////////////////////////////////////////////////////
     // Find first
-
     @Override
     public int first(int materialId) {
         for (int i = 0; i < slots.length; ++i) {
-            if (slots[i] != null && slots[i].getTypeId() == materialId) return i;
+            if (slots[i] != null && slots[i].getTypeId() == materialId) {
+                return i;
+            }
         }
         return -1;
     }
@@ -398,7 +409,9 @@ public class GlowInventory implements Inventory {
     @Override
     public int first(ItemStack item) {
         for (int i = 0; i < slots.length; ++i) {
-            if (slots[i] != null && slots[i].equals(item)) return i;
+            if (slots[i] != null && slots[i].equals(item)) {
+                return i;
+            }
         }
         return -1;
     }
@@ -406,14 +419,15 @@ public class GlowInventory implements Inventory {
     @Override
     public int firstEmpty() {
         for (int i = 0; i < slots.length; ++i) {
-            if (slots[i] == null) return i;
+            if (slots[i] == null) {
+                return i;
+            }
         }
         return -1;
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // Remove
-
     @Override
     public void remove(int materialId) {
         HashMap<Integer, ? extends ItemStack> stacks = all(materialId);
@@ -440,7 +454,6 @@ public class GlowInventory implements Inventory {
 
     ////////////////////////////////////////////////////////////////////////////
     // Clear
-
     @Override
     public void clear(int index) {
         setItem(index, null);

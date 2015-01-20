@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.List;
 
 public final class ChunkBulkCodec implements Codec<ChunkBulkMessage> {
+
     @Override
     public ChunkBulkMessage decode(ByteBuf buffer) throws IOException {
         throw new DecoderException("Cannot decode ChunkBulkMessage");

@@ -13,10 +13,13 @@ import java.util.logging.Level;
 /**
  * Manager for world thread pool.
  * <p/>
- * This is a little magical and finnicky, so tread with caution when messing with the phasers
+ * This is a little magical and finnicky, so tread with caution when messing
+ * with the phasers
  */
 public class WorldScheduler {
+
     private static class WorldEntry {
+
         private final GlowWorld world;
         private WorldThread task;
 
@@ -32,6 +35,7 @@ public class WorldScheduler {
     private volatile int currentTick = -1;
 
     private class WorldThread extends Thread {
+
         private final GlowWorld world;
 
         public WorldThread(GlowWorld world) {

@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Random;
 
 public class BlockMelonStem extends BlockNeedsAttached {
+
     private final Random random = new Random();
 
     @Override

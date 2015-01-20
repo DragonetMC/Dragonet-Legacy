@@ -11,4 +11,3 @@ public final class TabCompleteMessage implements Message {
     public final BlockVector location;
 
 }
-

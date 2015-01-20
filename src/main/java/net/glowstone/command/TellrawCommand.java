@@ -24,7 +24,9 @@ public class TellrawCommand extends BukkitCommand {
 
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!testPermission(sender)) return true;
+        if (!testPermission(sender)) {
+            return true;
+        }
         if (args.length < 2) {
             sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
             return false;
@@ -38,7 +40,9 @@ public class TellrawCommand extends BukkitCommand {
             StringBuilder message = new StringBuilder();
 
             for (int i = 1; i < args.length; i++) {
-                if (i > 1) message.append(" ");
+                if (i > 1) {
+                    message.append(" ");
+                }
                 message.append(args[i]);
             }
 

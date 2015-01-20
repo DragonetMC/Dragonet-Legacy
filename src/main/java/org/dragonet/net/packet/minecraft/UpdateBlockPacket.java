@@ -23,7 +23,7 @@ public class UpdateBlockPacket extends PEPacket {
     public byte y;
     public byte block;
     public byte meta;
-    
+
     @Override
     public int pid() {
         return PEPacketIDs.UPDATE_BLOCK_PACKET;

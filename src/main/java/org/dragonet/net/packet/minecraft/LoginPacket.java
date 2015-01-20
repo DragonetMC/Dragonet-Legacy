@@ -10,7 +10,6 @@
  *
  * @author The Dragonet Team
  */
-
 package org.dragonet.net.packet.minecraft;
 
 import java.io.ByteArrayInputStream;
@@ -28,7 +27,7 @@ public class LoginPacket extends PEPacket {
     public LoginPacket(byte[] data) {
         this.setData(data);
     }
-    
+
     @Override
     public int pid() {
         return PEPacketIDs.LOGIN_PACKET;
@@ -48,7 +47,8 @@ public class LoginPacket extends PEPacket {
             this.protocol2 = reader.readInt();
             this.clientIntID = reader.readInt();
             this.loginData = reader.readString();
-        }catch(IOException e) {}
+        } catch (IOException e) {
+        }
     }
 
 }

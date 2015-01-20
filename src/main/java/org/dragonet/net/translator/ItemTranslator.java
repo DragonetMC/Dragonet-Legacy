@@ -10,10 +10,10 @@
  *
  * @author The Dragonet Team
  */
-
 package org.dragonet.net.translator;
 
 public interface ItemTranslator {
+
     /**
      * Translate a pocket block/item into PC block/item
      *
@@ -21,13 +21,12 @@ public interface ItemTranslator {
      * @return PC Item ID
      */
     public int translateToPC(int itemPE);
-    
-    
+
     /**
      * Translate a PC block/item into PE block/item
      *
      * @param itemPC PC Item ID
      * @return PE Item ID
      */
-     public int translateToPE(int itemPC);
+    public int translateToPE(int itemPC);
 }

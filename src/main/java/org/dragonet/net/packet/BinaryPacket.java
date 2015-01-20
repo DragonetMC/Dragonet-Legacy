@@ -10,14 +10,16 @@
  *
  * @author The Dragonet Team
  */
-
 package org.dragonet.net.packet;
 
 import lombok.Getter;
 import lombok.Setter;
 
 public abstract class BinaryPacket {
-    private @Getter @Setter byte[] data;
+
+    private @Getter
+    @Setter
+    byte[] data;
 
     public BinaryPacket() {
     }
@@ -25,7 +27,8 @@ public abstract class BinaryPacket {
     public BinaryPacket(byte[] data) {
         this.data = data;
     }
-    
+
     public abstract void encode();
+
     public abstract void decode();
 }

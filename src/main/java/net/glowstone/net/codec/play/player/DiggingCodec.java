@@ -9,6 +9,7 @@ import org.bukkit.util.BlockVector;
 import java.io.IOException;
 
 public final class DiggingCodec implements Codec<DiggingMessage> {
+
     @Override
     public DiggingMessage decode(ByteBuf buf) throws IOException {
         int state = buf.readByte();

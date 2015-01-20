@@ -27,7 +27,7 @@ public class CoordinateMeta implements EntityMetaDataObject {
         this.data2 = data2;
         this.data3 = data3;
     }
-    
+
     @Override
     public int type() {
         return 6;

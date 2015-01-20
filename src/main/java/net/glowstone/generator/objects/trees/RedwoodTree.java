@@ -73,8 +73,8 @@ public class RedwoodTree extends GenericTree {
             // leaves are built from top to bottom
             for (int x = loc.getBlockX() - radius; x <= loc.getBlockX() + radius; x++) {
                 for (int z = loc.getBlockZ() - radius; z <= loc.getBlockZ() + radius; z++) {
-                    if ((Math.abs(x - loc.getBlockX()) != radius || Math.abs(z - loc.getBlockZ()) != radius || radius <= 0) &&
-                            delegate.getBlockState(loc.getWorld(), x, y, z).getType() == Material.AIR) {
+                    if ((Math.abs(x - loc.getBlockX()) != radius || Math.abs(z - loc.getBlockZ()) != radius || radius <= 0)
+                            && delegate.getBlockState(loc.getWorld(), x, y, z).getType() == Material.AIR) {
                         delegate.setTypeAndRawData(loc.getWorld(), x, y, z, Material.LEAVES, leavesType);
                     }
                 }

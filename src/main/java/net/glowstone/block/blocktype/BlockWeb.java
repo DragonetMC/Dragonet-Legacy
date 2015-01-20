@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 public class BlockWeb extends BlockType {
+
     private static final Collection<ItemStack> DROP_STRING = Arrays.asList(new ItemStack(Material.STRING));
 
     @Override

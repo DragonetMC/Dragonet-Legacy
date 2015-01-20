@@ -20,11 +20,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
 /**
- * A scheduler for managing server ticks, Bukkit tasks, and other synchronization.
+ * A scheduler for managing server ticks, Bukkit tasks, and other
+ * synchronization.
  */
 public final class GlowScheduler implements BukkitScheduler {
 
     private static class GlowThreadFactory implements ThreadFactory {
+
         public static final GlowThreadFactory INSTANCE = new GlowThreadFactory();
         private final AtomicInteger threadCounter = new AtomicInteger();
 
@@ -137,6 +139,7 @@ public final class GlowScheduler implements BukkitScheduler {
 
     /**
      * Schedules the specified task.
+     *
      * @param task The task.
      */
     private GlowTask schedule(GlowTask task) {
@@ -145,7 +148,8 @@ public final class GlowScheduler implements BukkitScheduler {
     }
 
     /**
-     * Returns true if the current {@link Thread} is the server's primary thread.
+     * Returns true if the current {@link Thread} is the server's primary
+     * thread.
      */
     public boolean isPrimaryThread() {
         return Thread.currentThread() == primaryThread;
@@ -173,12 +177,12 @@ public final class GlowScheduler implements BukkitScheduler {
         //DRAGONET-Start
         this.server.getDragonetServer().tickUpdate();
         //DRAGONET-End
-        
+
         // Process player packets
         server.getSessionRegistry().pulse();
 
         // Run the relevant tasks.
-        for (Iterator<GlowTask> it = tasks.values().iterator(); it.hasNext(); ) {
+        for (Iterator<GlowTask> it = tasks.values().iterator(); it.hasNext();) {
             GlowTask task = it.next();
             switch (task.shouldExecute()) {
                 case RUN:
@@ -358,7 +362,7 @@ public final class GlowScheduler implements BukkitScheduler {
 
     @Override
     public void cancelTasks(Plugin plugin) {
-        for (Iterator<GlowTask> it = tasks.values().iterator(); it.hasNext(); ) {
+        for (Iterator<GlowTask> it = tasks.values().iterator(); it.hasNext();) {
             if (it.next().getOwner() == plugin) {
                 it.remove();
             }
@@ -383,6 +387,7 @@ public final class GlowScheduler implements BukkitScheduler {
 
     /**
      * Returns active async tasks
+     *
      * @return active async tasks
      */
     @Override
@@ -397,6 +402,7 @@ public final class GlowScheduler implements BukkitScheduler {
 
     /**
      * Returns tasks that still have at least one run remaining
+     *
      * @return the tasks to be run
      */
     @Override

@@ -24,11 +24,11 @@ public class WindowSetSlotPacket extends PEPacket {
     public byte windowID;
     public short slot;
     public PEInventorySlot item;
-    
+
     public WindowSetSlotPacket(byte[] data) {
         this.setData(data);
     }
-    
+
     @Override
     public int pid() {
         return PEPacketIDs.WINDOW_SET_SLOT_PACKET;

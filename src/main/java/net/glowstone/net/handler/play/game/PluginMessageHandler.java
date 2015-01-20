@@ -18,12 +18,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 
 public final class PluginMessageHandler implements MessageHandler<GlowSession, PluginMessage> {
+
     @Override
     public void handle(GlowSession session, PluginMessage message) {
         final String channel = message.getChannel();
 
         // register and unregister: NUL-separated list of channels
-
         if (channel.equals("REGISTER")) {
             for (String regChannel : string(message.getData()).split("\0")) {
                 GlowServer.logger.info(session + " registered channel: " + regChannel);
@@ -44,25 +44,25 @@ public final class PluginMessageHandler implements MessageHandler<GlowSession, P
 
     private void handleInternal(GlowSession session, String channel, byte[] data) {
         /*
-        MC|Brand
-            entire data: string of client's brand (e.g. "vanilla")
-        MC|BEdit
-            item stack: new book item (should be verified)
-        MC|BSign
-            item stack: new book item (should be verified)
-        MC|TrSel
-            int: villager trade to select
-        MC|AdvCdm
-            byte: mode
-            if 0:
-                int x, int y, int z (command block in world)
-            if 1:
-                int entity (command block minecart)
-            string: command to set
-        MC|Beacon
-            two ints, presumably the selected enchants
-        MC|ItemName
-            entire data: name to apply to item in anvil
+         MC|Brand
+         entire data: string of client's brand (e.g. "vanilla")
+         MC|BEdit
+         item stack: new book item (should be verified)
+         MC|BSign
+         item stack: new book item (should be verified)
+         MC|TrSel
+         int: villager trade to select
+         MC|AdvCdm
+         byte: mode
+         if 0:
+         int x, int y, int z (command block in world)
+         if 1:
+         int entity (command block minecart)
+         string: command to set
+         MC|Beacon
+         two ints, presumably the selected enchants
+         MC|ItemName
+         entire data: name to apply to item in anvil
          */
 
         ByteBuf buf = Unpooled.wrappedBuffer(data);

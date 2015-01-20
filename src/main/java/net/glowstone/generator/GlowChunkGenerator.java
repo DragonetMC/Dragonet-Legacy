@@ -36,7 +36,8 @@ public abstract class GlowChunkGenerator extends ChunkGenerator {
 
     /**
      * @param world The world to look for in the cache
-     * @return A map of {@link OctaveGenerator}s created by {@link #createWorldOctaves(World, Map)}
+     * @return A map of {@link OctaveGenerator}s created by
+     * {@link #createWorldOctaves(World, Map)}
      */
     protected final Map<String, OctaveGenerator> getWorldOctaves(World world) {
         if (octaveCache.get(world.getName()) == null) {
@@ -50,6 +51,7 @@ public abstract class GlowChunkGenerator extends ChunkGenerator {
 
     /**
      * Create a new byte[] buffer of the proper size.
+     *
      * @param fill The Material to fill with.
      * @return A new filled byte[16 * 16 * 128];
      */
@@ -64,6 +66,7 @@ public abstract class GlowChunkGenerator extends ChunkGenerator {
 
     /**
      * Set the given block to the given type.
+     *
      * @param data The buffer to write to.
      * @param x The chunk X coordinate.
      * @param y The Y coordinate.
@@ -85,6 +88,7 @@ public abstract class GlowChunkGenerator extends ChunkGenerator {
 
     /**
      * Get the given block type.
+     *
      * @param data The buffer to read from.
      * @param x The chunk X coordinate.
      * @param y The Y coordinate.
@@ -111,5 +115,5 @@ public abstract class GlowChunkGenerator extends ChunkGenerator {
         Block block = world.getHighestBlockAt(x, z).getRelative(BlockFace.DOWN);
         return !block.isLiquid() && !block.isEmpty() && !noSpawnFloors.contains(block.getType());
     }
-    
+
 }

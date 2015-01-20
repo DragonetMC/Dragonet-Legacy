@@ -7,6 +7,7 @@ import net.glowstone.net.message.play.player.PlayerPositionLookMessage;
 import java.io.IOException;
 
 public final class PlayerPositionLookCodec implements Codec<PlayerPositionLookMessage> {
+
     @Override
     public PlayerPositionLookMessage decode(ByteBuf buffer) throws IOException {
         double x = buffer.readDouble();

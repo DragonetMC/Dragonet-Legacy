@@ -10,42 +10,49 @@
  *
  * @author The Dragonet Team
  */
-
 package org.dragonet;
 
 import lombok.Getter;
 import lombok.Setter;
 
 public class ChunkLocation {
-    private @Getter @Setter int x;
-    private @Getter @Setter int z;
+
+    private @Getter
+    @Setter
+    int x;
+    private @Getter
+    @Setter
+    int z;
 
     public ChunkLocation() {
         this.x = 0;
         this.z = 0;
     }
-    
+
     public ChunkLocation(int x, int z) {
         this.x = x;
         this.z = z;
     }
 
     /**
-     * Caculate the distance to another ChunkLocation. 
+     * Caculate the distance to another ChunkLocation.
+     *
      * @param loc Another chunk location
-     * @return 
+     * @return
      */
-    public int distanceTo(ChunkLocation loc){
-        return (int)Math.sqrt((double)((loc.getX() - this.getX()) * (loc.getX() - this.getX()) + (loc.getZ() - this.getZ()) * (loc.getZ() - this.getZ())));
+    public int distanceTo(ChunkLocation loc) {
+        return (int) Math.sqrt((double) ((loc.getX() - this.getX()) * (loc.getX() - this.getX()) + (loc.getZ() - this.getZ()) * (loc.getZ() - this.getZ())));
     }
-    
+
     @Override
     public boolean equals(Object obj) {
-        if(!(obj instanceof ChunkLocation)) return false;
-        ChunkLocation loc = (ChunkLocation)obj;
-        if(loc.x == this.x && loc.z == this.z){
+        if (!(obj instanceof ChunkLocation)) {
+            return false;
+        }
+        ChunkLocation loc = (ChunkLocation) obj;
+        if (loc.x == this.x && loc.z == this.z) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }

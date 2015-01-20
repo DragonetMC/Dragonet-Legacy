@@ -8,6 +8,7 @@ import net.glowstone.net.message.play.inv.WindowPropertyMessage;
 import java.io.IOException;
 
 public final class WindowPropertyCodec implements Codec<WindowPropertyMessage> {
+
     @Override
     public WindowPropertyMessage decode(ByteBuf buf) throws IOException {
         throw new DecoderException("Cannot decode WindowPropertyMessage");

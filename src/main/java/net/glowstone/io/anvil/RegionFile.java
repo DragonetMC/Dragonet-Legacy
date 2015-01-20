@@ -24,7 +24,6 @@ package net.glowstone.io.anvil;
 /*
  * Later changes made by the Glowstone project.
  */
-
 // Interfaces with region files on the disk
 
 /*
@@ -61,7 +60,6 @@ package net.glowstone.io.anvil;
  data is the chunk length - 1.
 
  */
-
 import net.glowstone.GlowServer;
 
 import java.io.*;
@@ -215,7 +213,9 @@ public class RegionFile {
     }
 
     public DataOutputStream getChunkDataOutputStream(int x, int z) {
-        if (outOfBounds(x, z)) return null;
+        if (outOfBounds(x, z)) {
+            return null;
+        }
 
         return new DataOutputStream(new DeflaterOutputStream(new ChunkBuffer(x, z)));
     }
@@ -225,6 +225,7 @@ public class RegionFile {
      * chunk is serializing -- only writes when serialization is over
      */
     class ChunkBuffer extends ByteArrayOutputStream {
+
         private final int x, z;
 
         public ChunkBuffer(int x, int z) {
@@ -272,8 +273,11 @@ public class RegionFile {
             if (runStart != -1) {
                 for (int i = runStart; i < sectorFree.size(); ++i) {
                     if (runLength != 0) {
-                        if (sectorFree.get(i)) runLength++;
-                        else runLength = 0;
+                        if (sectorFree.get(i)) {
+                            runLength++;
+                        } else {
+                            runLength = 0;
+                        }
                     } else if (sectorFree.get(i)) {
                         runStart = i;
                         runLength = 1;

@@ -10,7 +10,7 @@ import java.util.Arrays;
  * A built-in command to demonstrate all chat colors.
  */
 public class ColorCommand extends BukkitCommand {
-    
+
     public ColorCommand(String name) {
         super(name, "Display all colors.", "/colors", Arrays.<String>asList());
     }

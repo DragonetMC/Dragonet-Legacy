@@ -72,7 +72,6 @@ public final class GlowHelpMap implements HelpMap {
 
     ////////////////////////////////////////////////////////////////////////////
     // Internals - based on CraftBukkit
-
     /**
      * Reads the general topics from help.yml and adds them to the help index.
      */
@@ -81,7 +80,8 @@ public final class GlowHelpMap implements HelpMap {
     }
 
     /**
-     * Processes all the commands registered in the server and creates help topics for them.
+     * Processes all the commands registered in the server and creates help
+     * topics for them.
      */
     public synchronized void initializeCommands() {
         // ** Load topics from highest to lowest priority order **
@@ -104,12 +104,16 @@ public final class GlowHelpMap implements HelpMap {
             for (Class<?> c : topicFactoryMap.keySet()) {
                 if (c.isAssignableFrom(command.getClass())) {
                     HelpTopic t = topicFactoryMap.get(c).createTopic(command);
-                    if (t != null) addTopic(t);
+                    if (t != null) {
+                        addTopic(t);
+                    }
                     continue outer;
                 }
                 if (command instanceof PluginCommand && c.isAssignableFrom(((PluginCommand) command).getExecutor().getClass())) {
                     HelpTopic t = topicFactoryMap.get(c).createTopic(command);
-                    if (t != null) addTopic(t);
+                    if (t != null) {
+                        addTopic(t);
+                    }
                     continue outer;
                 }
             }
@@ -117,9 +121,7 @@ public final class GlowHelpMap implements HelpMap {
         }
 
         // todo: help on alias topics
-
         // todo: alias sub-index
-
         // Initialize plugin-level sub-topics
         Map<String, Set<HelpTopic>> pluginIndexes = new HashMap<>();
         fillPluginIndexes(pluginIndexes, server.getCommandMap().getCommands());

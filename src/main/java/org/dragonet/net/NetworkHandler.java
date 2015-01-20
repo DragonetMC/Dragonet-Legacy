@@ -38,7 +38,7 @@ public class NetworkHandler {
 
     private HashMap<String, DragonetSession> sessions;
 
-    public NetworkHandler(DragonetServer server, InetSocketAddress address) {
+    public NetworkHandler(DragonetServer server, InetSocketAddress address) throws Exception {
         this.server = server;
         this.sessions = new HashMap<>();
         this.udp = new NonBlockUDPSocket(this.server, address);

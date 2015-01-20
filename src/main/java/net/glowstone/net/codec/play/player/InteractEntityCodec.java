@@ -8,6 +8,7 @@ import net.glowstone.net.message.play.player.InteractEntityMessage;
 import java.io.IOException;
 
 public final class InteractEntityCodec implements Codec<InteractEntityMessage> {
+
     @Override
     public InteractEntityMessage decode(ByteBuf buf) throws IOException {
         int id = ByteBufUtils.readVarInt(buf);

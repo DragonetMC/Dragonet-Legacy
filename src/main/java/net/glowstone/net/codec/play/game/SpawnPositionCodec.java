@@ -9,6 +9,7 @@ import org.bukkit.util.BlockVector;
 import java.io.IOException;
 
 public final class SpawnPositionCodec implements Codec<SpawnPositionMessage> {
+
     @Override
     public SpawnPositionMessage decode(ByteBuf buffer) throws IOException {
         BlockVector pos = GlowBufUtils.readBlockPosition(buffer);

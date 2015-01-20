@@ -43,9 +43,9 @@ public class SetTimePacket extends PEPacket {
             //writer.writeInt((int)(((this.time / GlowWorld.DAY_LENGTH) * 19200) & 0xFFFFFFFF));
             //We hack for now :P
             writer.writeInt(20 * 60);
-            if ( this.isTimeFreezed){
+            if (this.isTimeFreezed) {
                 writer.writeByte((byte) 0x00);
-            }else{
+            } else {
                 writer.writeByte((byte) 0x80);
             }
             this.setData(bos.toByteArray());

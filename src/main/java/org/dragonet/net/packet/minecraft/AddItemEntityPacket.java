@@ -10,7 +10,6 @@
  *
  * @author The Dragonet Team
  */
-
 package org.dragonet.net.packet.minecraft;
 
 import java.io.ByteArrayOutputStream;
@@ -28,7 +27,7 @@ public class AddItemEntityPacket extends PEPacket {
     public byte yaw;
     public byte pitch;
     public byte roll;
-    
+
     @Override
     public int pid() {
         return PEPacketIDs.ADD_ITEM_ENTITY_PACKET;

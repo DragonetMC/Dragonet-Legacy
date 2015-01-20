@@ -10,7 +10,6 @@
  *
  * @author The Dragonet Team
  */
-
 package org.dragonet.utilities;
 
 import java.io.UnsupportedEncodingException;
@@ -18,18 +17,19 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public final class MD5Encrypt {
-    public static byte[] encrypt(byte[] data){
-        MessageDigest md; 
+
+    public static byte[] encrypt(byte[] data) {
+        MessageDigest md;
         try {
             md = MessageDigest.getInstance("MD5");
             md.update(data);
-        return md.digest();
+            return md.digest();
         } catch (NoSuchAlgorithmException ex) {
         }
         return null;
     }
-    
-    public static byte[] encryptString(String str){
+
+    public static byte[] encryptString(String str) {
         try {
             return encrypt(str.getBytes("UTF-8"));
         } catch (UnsupportedEncodingException ex) {

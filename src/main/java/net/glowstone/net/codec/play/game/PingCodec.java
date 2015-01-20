@@ -8,6 +8,7 @@ import net.glowstone.net.message.play.game.PingMessage;
 import java.io.IOException;
 
 public final class PingCodec implements Codec<PingMessage> {
+
     @Override
     public PingMessage decode(ByteBuf buffer) throws IOException {
         return new PingMessage(ByteBufUtils.readVarInt(buffer));

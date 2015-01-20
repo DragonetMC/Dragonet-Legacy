@@ -7,6 +7,7 @@ import net.glowstone.net.message.play.game.TimeMessage;
 import java.io.IOException;
 
 public final class TimeCodec implements Codec<TimeMessage> {
+
     @Override
     public TimeMessage decode(ByteBuf buffer) throws IOException {
         long worldAge = buffer.readLong();

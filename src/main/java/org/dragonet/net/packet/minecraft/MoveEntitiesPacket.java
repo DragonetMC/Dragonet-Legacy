@@ -36,7 +36,7 @@ public class MoveEntitiesPacket extends PEPacket {
             PEBinaryWriter writer = new PEBinaryWriter(bos);
             writer.writeByte((byte) (this.pid() & 0xFF));
             writer.writeInt(this.entities.length);
-            for(MoveEntityData d : this.entities){
+            for (MoveEntityData d : this.entities) {
                 writer.writeInt(d.eid);
                 writer.writeFloat(d.x);
                 writer.writeFloat(d.y);

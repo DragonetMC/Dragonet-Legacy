@@ -7,6 +7,7 @@ import net.glowstone.net.message.play.player.PlayerUpdateMessage;
 import java.io.IOException;
 
 public final class PlayerUpdateCodec implements Codec<PlayerUpdateMessage> {
+
     @Override
     public PlayerUpdateMessage decode(ByteBuf buffer) throws IOException {
         boolean onGround = buffer.readBoolean();

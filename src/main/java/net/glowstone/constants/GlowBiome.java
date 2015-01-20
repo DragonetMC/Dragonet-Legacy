@@ -12,13 +12,15 @@ import static org.bukkit.block.Biome.*;
  */
 public final class GlowBiome {
 
-    private GlowBiome() {}
+    private GlowBiome() {
+    }
 
     private static final int[] ids = new int[Biome.values().length];
     private static final Biome[] biomes = new Biome[256];
 
     /**
      * Get the biome ID for a specified Biome.
+     *
      * @param biome the Biome.
      * @return the biome id, or -1
      */
@@ -29,6 +31,7 @@ public final class GlowBiome {
 
     /**
      * Get the Biome for a specified id.
+     *
      * @param id the id.
      * @return the Biome, or null
      */

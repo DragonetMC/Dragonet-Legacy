@@ -8,6 +8,7 @@ import net.glowstone.net.message.play.game.PluginMessage;
 import java.io.IOException;
 
 public final class PluginMessageCodec implements Codec<PluginMessage> {
+
     @Override
     public PluginMessage decode(ByteBuf buf) throws IOException {
         String channel = ByteBufUtils.readUTF8(buf);

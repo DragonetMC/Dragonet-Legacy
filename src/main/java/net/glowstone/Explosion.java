@@ -46,6 +46,7 @@ public final class Explosion {
 
     /**
      * Creates a new explosion
+     *
      * @param source The entity causing this explosion
      * @param world The world this explosion is in
      * @param x The X location of the explosion
@@ -61,8 +62,10 @@ public final class Explosion {
 
     /**
      * Creates a new explosion
+     *
      * @param source The entity causing this explosion
-     * @param location The location this explosion is occuring at. Must contain a GlowWorld
+     * @param location The location this explosion is occuring at. Must contain
+     * a GlowWorld
      * @param power The power of the explosion
      * @param incendiary Whether or not blocks should be set on fire
      * @param breakBlocks Whether blocks should break through this explosion
@@ -82,13 +85,16 @@ public final class Explosion {
     }
 
     public boolean explodeWithEvent() {
-        if (power < 0.1f)
+        if (power < 0.1f) {
             return true;
+        }
 
         Set<BlockVector> droppedBlocks = calculateBlocks();
 
         EntityExplodeEvent event = EventFactory.callEvent(new EntityExplodeEvent(source, location, toBlockList(droppedBlocks), yield));
-        if (event.isCancelled()) return false;
+        if (event.isCancelled()) {
+            return false;
+        }
 
         this.yield = event.getYield();
 
@@ -116,10 +122,10 @@ public final class Explosion {
 
     ///////////////////////////////////////////////////
     // Calculate all the dropping blocks
-
     private Set<BlockVector> calculateBlocks() {
-        if (!breakBlocks)
+        if (!breakBlocks) {
             return new HashSet<>();
+        }
 
         Set<BlockVector> blocks = new HashSet<>();
 
@@ -195,30 +201,34 @@ public final class Explosion {
 
     private List<Block> toBlockList(Collection<BlockVector> locs) {
         List<Block> blocks = new ArrayList<>(locs.size());
-        for (BlockVector location : locs)
+        for (BlockVector location : locs) {
             blocks.add(world.getBlockAt(location.getBlockX(), location.getBlockY(), location.getBlockZ()));
+        }
         return blocks;
     }
 
     private void setBlockOnFire(GlowBlock block) {
-        if (random.nextInt(3) != 0)
+        if (random.nextInt(3) != 0) {
             return;
+        }
 
         Block below = block.getRelative(BlockFace.DOWN);
         // TODO: check for flammable blocks
         Material belowType = below.getType();
-        if (belowType == Material.AIR || belowType == Material.FIRE) return;
+        if (belowType == Material.AIR || belowType == Material.FIRE) {
+            return;
+        }
 
         BlockIgniteEvent event = EventFactory.callEvent(new BlockIgniteEvent(block, BlockIgniteEvent.IgniteCause.EXPLOSION, source));
-        if (event.isCancelled())
+        if (event.isCancelled()) {
             return;
+        }
 
         block.setType(Material.FIRE);
     }
 
     /////////////////////////////////////////
     // Damage entities
-
     private Collection<GlowPlayer> damageEntities() {
         float power = this.power;
         this.power *= 2f;
@@ -228,10 +238,14 @@ public final class Explosion {
         Collection<GlowLivingEntity> entities = getNearbyEntities();
         for (GlowLivingEntity entity : entities) {
             double disDivPower = distanceTo(entity) / (double) this.power;
-            if (disDivPower > 1.0D) continue;
+            if (disDivPower > 1.0D) {
+                continue;
+            }
 
             Vector vecDistance = distanceToHead(entity);
-            if (vecDistance.length() == 0.0) continue;
+            if (vecDistance.length() == 0.0) {
+                continue;
+            }
 
             vecDistance.normalize();
 

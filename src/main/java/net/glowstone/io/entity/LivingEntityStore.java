@@ -22,7 +22,6 @@ abstract class LivingEntityStore<T extends GlowLivingEntity> extends EntityStore
     // - short "Air"
     // - string "CustomName"
     // - bool "CustomNameVisible"
-
     // todo: the following tags
     // - float "AbsorptionAmount"
     // - short "HurtTime"
@@ -33,7 +32,6 @@ abstract class LivingEntityStore<T extends GlowLivingEntity> extends EntityStore
     // - bool "Leashed"
     // - compound "Leash"
     // on ActiveEffects, bool "ShowParticles"
-
     @Override
     public void load(T entity, CompoundTag compound) {
         super.load(entity, compound);

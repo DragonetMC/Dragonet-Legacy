@@ -51,7 +51,6 @@ public class RconCommandSender implements RemoteConsoleCommandSender {
 
     ////////////////////////////////////////////////////////////////////////
     // Permissible
-
     @Override
     public boolean isPermissionSet(String name) {
         return perm.isPermissionSet(name);

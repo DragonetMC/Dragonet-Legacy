@@ -141,13 +141,14 @@ public class MetadataMap {
 
     @Override
     public String toString() {
-        return "MetadataMap{" +
-                "map=" + map +
-                ", entityClass=" + entityClass +
-                '}';
+        return "MetadataMap{"
+                + "map=" + map
+                + ", entityClass=" + entityClass
+                + '}';
     }
 
     public static class Entry implements Comparable<Entry> {
+
         public final MetadataIndex index;
         public final Object value;
 
@@ -163,13 +164,21 @@ public class MetadataMap {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
 
             Entry entry = (Entry) o;
 
-            if (index != entry.index) return false;
-            if (value != null ? !value.equals(entry.value) : entry.value != null) return false;
+            if (index != entry.index) {
+                return false;
+            }
+            if (value != null ? !value.equals(entry.value) : entry.value != null) {
+                return false;
+            }
 
             return true;
         }

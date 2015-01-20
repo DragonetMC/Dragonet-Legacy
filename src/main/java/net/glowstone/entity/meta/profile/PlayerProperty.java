@@ -1,7 +1,8 @@
 package net.glowstone.entity.meta.profile;
 
 /**
- * Container for global player properties (such as textures) returned by the auth servers.
+ * Container for global player properties (such as textures) returned by the
+ * auth servers.
  */
 public final class PlayerProperty {
 
@@ -22,6 +23,7 @@ public final class PlayerProperty {
 
     /**
      * Construct a property with the given fields.
+     *
      * @param name The name of the property.
      * @param value The property's value.
      * @param signature The signature of the value for validation.
@@ -34,6 +36,7 @@ public final class PlayerProperty {
 
     /**
      * Get the name.
+     *
      * @return The name of the property.
      */
     public String getName() {
@@ -42,6 +45,7 @@ public final class PlayerProperty {
 
     /**
      * Get the value.
+     *
      * @return The property's value.
      */
     public String getValue() {
@@ -50,6 +54,7 @@ public final class PlayerProperty {
 
     /**
      * Get the signature.
+     *
      * @return The signature of the value for validation.
      */
     public String getSignature() {
@@ -58,20 +63,30 @@ public final class PlayerProperty {
 
     @Override
     public String toString() {
-        return "PlayerProperty{" +
-                "name='" + name + '\'' +
-                '}';
+        return "PlayerProperty{"
+                + "name='" + name + '\''
+                + '}';
     }
 
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         PlayerProperty that = (PlayerProperty) o;
 
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        if (signature != null ? !signature.equals(that.signature) : that.signature != null) return false;
-        if (value != null ? !value.equals(that.value) : that.value != null) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) {
+            return false;
+        }
+        if (signature != null ? !signature.equals(that.signature) : that.signature != null) {
+            return false;
+        }
+        if (value != null ? !value.equals(that.value) : that.value != null) {
+            return false;
+        }
 
         return true;
     }

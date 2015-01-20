@@ -21,7 +21,7 @@ public class SetSpawnPositionPacket extends PEPacket {
     public int x;
     public int z;
     public int y;
-    
+
     @Override
     public int pid() {
         return PEPacketIDs.SET_SPAWN_POSITION_PACKET;
@@ -35,7 +35,7 @@ public class SetSpawnPositionPacket extends PEPacket {
             writer.writeByte((byte) (this.pid() & 0xFF));
             writer.writeInt(this.x);
             writer.writeInt(this.z);
-            writer.writeByte((byte)(this.y & 0xFF));
+            writer.writeByte((byte) (this.y & 0xFF));
             this.setData(bos.toByteArray());
         } catch (IOException e) {
         }

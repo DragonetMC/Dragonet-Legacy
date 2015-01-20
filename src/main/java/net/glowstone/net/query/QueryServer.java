@@ -17,9 +17,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Implementation of a server for the minecraft server query protocol.
+ *
  * @see <a href="http://wiki.vg/Query">Protocol Specifications</a>
  */
 public class QueryServer {
+
     /**
      * The {@link EventLoopGroup} used by the query server.
      */
@@ -61,6 +63,7 @@ public class QueryServer {
 
     /**
      * Bind the server on the specified address.
+     *
      * @param address The address.
      * @return Netty channel future for bind operation.
      */
@@ -84,6 +87,7 @@ public class QueryServer {
 
     /**
      * Generate a new token.
+     *
      * @param address The sender address.
      * @return The generated valid token.
      */
@@ -95,6 +99,7 @@ public class QueryServer {
 
     /**
      * Verify that the request is using the correct challenge token.
+     *
      * @param address The sender address.
      * @param token The token.
      * @return {@code true} if the token is valid.
@@ -112,6 +117,7 @@ public class QueryServer {
 
     /**
      * Get the Server whose information are distributed by this query server.
+     *
      * @return The server instance.
      */
     public GlowServer getServer() {
@@ -122,6 +128,7 @@ public class QueryServer {
      * Inner class for resetting the challenge tokens every 30 seconds.
      */
     private class ChallengeTokenFlushTask extends BukkitRunnable {
+
         @Override
         public void run() {
             flushChallengeTokens();

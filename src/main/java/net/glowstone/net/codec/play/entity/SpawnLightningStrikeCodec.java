@@ -9,6 +9,7 @@ import net.glowstone.net.message.play.entity.SpawnLightningStrikeMessage;
 import java.io.IOException;
 
 public final class SpawnLightningStrikeCodec implements Codec<SpawnLightningStrikeMessage> {
+
     @Override
     public SpawnLightningStrikeMessage decode(ByteBuf buf) throws IOException {
         throw new DecoderException("Cannot decode SpawnLightningStrikeMessage");

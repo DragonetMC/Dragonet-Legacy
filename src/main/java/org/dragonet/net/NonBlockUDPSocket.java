@@ -28,39 +28,34 @@ public class NonBlockUDPSocket extends Thread {
     private DragonetServer dragonetServer;
     private SocketAddress addr;
     private DatagramSocket socket;
-    private Queue<DatagramPacket> receivedPacketQueue = new ArrayDeque<DatagramPacket>();
+    private Queue<DatagramPacket> receivedPacketQueue = new ArrayDeque<>();
     private boolean running;
 
-    public NonBlockUDPSocket(DragonetServer udp, SocketAddress address) {
+    public NonBlockUDPSocket(DragonetServer udp, SocketAddress address) throws Exception {
         this.dragonetServer = udp;
         addr = address;
+        socket = new DatagramSocket(null);
+        socket.setBroadcast(true);
+        socket.setSendBufferSize(1024 * 1024 * 8); // from PocketMine
+        socket.setReceiveBufferSize(1024 * 1024); // from PocketMine
+        socket.bind(addr);
     }
 
     @Override
     public void run() {
         setName("UDPSocket");
-        try {
-            socket = new DatagramSocket(null);
-            socket.setBroadcast(true);
-            socket.setSendBufferSize(1024 * 1024 * 8); // from PocketMine
-            socket.setReceiveBufferSize(1024 * 1024); // from PocketMine
+        running = true;
+        while (running) {
             try {
-                socket.bind(addr);
-            } catch (BindException e) {
-                this.dragonetServer.getLogger().error("Unable to bind to %s!", addr.toString());
-                throw new RuntimeException(e);
-            }
-            running = true;
-            while (running) {
                 DatagramPacket pk = new DatagramPacket(new byte[1024 * 1024], 1024 * 1024);
                 socket.receive(pk);
                 synchronized (receivedPacketQueue) {
                     receivedPacketQueue.add(pk);
                 }
+            } catch (IOException e) {
             }
-            socket.close();
-        } catch (IOException e) {
         }
+        socket.close();
     }
 
     public DatagramPacket receive() {
@@ -99,8 +94,8 @@ public class NonBlockUDPSocket extends Thread {
     public InetAddress getServerAddress() {
         return this.socket.getLocalAddress();
     }
-    
-    public int getServerPort(){
+
+    public int getServerPort() {
         return this.socket.getLocalPort();
     }
 }

@@ -14,6 +14,7 @@ import java.util.List;
 
 /**
  * Represents a monster such as a creeper.
+ *
  * @author Graham Edgecombe
  */
 public final class GlowCreature extends GlowLivingEntity implements Creature {
@@ -22,7 +23,7 @@ public final class GlowCreature extends GlowLivingEntity implements Creature {
      * The type of monster.
      */
     private final EntityType type;
-   
+
     /**
      * The monster's target.
      */
@@ -30,6 +31,7 @@ public final class GlowCreature extends GlowLivingEntity implements Creature {
 
     /**
      * Creates a new monster.
+     *
      * @param location The location of the monster.
      * @param type The type of monster.
      */

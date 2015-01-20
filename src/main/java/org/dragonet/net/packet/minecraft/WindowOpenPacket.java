@@ -24,7 +24,7 @@ public class WindowOpenPacket extends PEPacket {
     public int x;
     public int y;
     public int z;
-    
+
     @Override
     public int pid() {
         return PEPacketIDs.WINDOW_OPEN_PACKET;

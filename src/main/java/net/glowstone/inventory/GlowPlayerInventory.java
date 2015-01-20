@@ -54,9 +54,9 @@ public class GlowPlayerInventory extends GlowInventory implements PlayerInventor
 
     ////////////////////////////////////////////////////////////////////////////
     // Internals
-
     /**
      * Get the crafting inventory.
+     *
      * @return The GlowCraftingInventory attached to this player
      */
     public GlowCraftingInventory getCraftingInventory() {
@@ -64,8 +64,9 @@ public class GlowPlayerInventory extends GlowInventory implements PlayerInventor
     }
 
     public void setRawHeldItemSlot(int slot) {
-        if (slot < 0 || slot > 8)
+        if (slot < 0 || slot > 8) {
             throw new IllegalArgumentException(slot + " not in range 0..8");
+        }
         heldSlot = slot;
         setItemInHand(getItemInHand());  // send to player again just in case
     }
@@ -87,6 +88,7 @@ public class GlowPlayerInventory extends GlowInventory implements PlayerInventor
 
     /**
      * Get the DragTracker associated with this player.
+     *
      * @return The DragTracker.
      */
     public DragTracker getDragTracker() {
@@ -95,7 +97,6 @@ public class GlowPlayerInventory extends GlowInventory implements PlayerInventor
 
     ////////////////////////////////////////////////////////////////////////////
     // Overrides
-
     @Override
     public HumanEntity getHolder() {
         return (HumanEntity) super.getHolder();
@@ -121,7 +122,6 @@ public class GlowPlayerInventory extends GlowInventory implements PlayerInventor
 
     ////////////////////////////////////////////////////////////////////////////
     // Interface implementation
-
     @Override
     public ItemStack[] getArmorContents() {
         return armor;
@@ -216,7 +216,6 @@ public class GlowPlayerInventory extends GlowInventory implements PlayerInventor
 
     ////////////////////////////////////////////////////////////////////////////
     // EntityEquipment implementation
-
     @Override
     public float getItemInHandDropChance() {
         return 1;

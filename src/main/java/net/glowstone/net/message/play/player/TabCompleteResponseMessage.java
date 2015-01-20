@@ -11,4 +11,3 @@ public final class TabCompleteResponseMessage implements Message {
     public final List<String> completions;
 
 }
-

@@ -10,11 +10,11 @@
  *
  * @author The Dragonet Team
  */
-
 package org.dragonet.entity.metadata;
 
 public interface EntityMetaDataObject {
+
     public int type();
-    
+
     public byte[] encode();
 }

@@ -9,6 +9,7 @@ import net.glowstone.net.message.play.inv.SetWindowSlotMessage;
 import java.io.IOException;
 
 public final class SetWindowSlotCodec implements Codec<SetWindowSlotMessage> {
+
     @Override
     public SetWindowSlotMessage decode(ByteBuf buffer) throws IOException {
         throw new DecoderException("Cannot decode SetWindowSlotMessage");

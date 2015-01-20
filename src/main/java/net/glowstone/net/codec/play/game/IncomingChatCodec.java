@@ -8,6 +8,7 @@ import net.glowstone.net.message.play.game.IncomingChatMessage;
 import java.io.IOException;
 
 public final class IncomingChatCodec implements Codec<IncomingChatMessage> {
+
     @Override
     public IncomingChatMessage decode(ByteBuf buffer) throws IOException {
         return new IncomingChatMessage(ByteBufUtils.readUTF8(buffer));

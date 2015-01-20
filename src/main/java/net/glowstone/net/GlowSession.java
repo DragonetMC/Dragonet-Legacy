@@ -39,6 +39,7 @@ import lombok.Getter;
 /**
  * A single connection to the server, which may or may not be associated with a
  * player.
+ *
  * @author Graham Edgecombe
  */
 //DRAGONET-Removed final, DragonetSession extends it
@@ -89,7 +90,8 @@ public class GlowSession extends BasicSession {
      * The hostname used to connect.
      */
     //DRAGONET-Added @Getter
-    private @Getter String hostname;
+    private @Getter
+    String hostname;
 
     /**
      * A timeout counter. This is increment once every tick and if it goes above
@@ -98,9 +100,9 @@ public class GlowSession extends BasicSession {
     private int readTimeoutCounter = 0;
 
     /**
-     * Data regarding a user who has connected through a proxy, used to
-     * provide online-mode UUID and properties and other data even if the
-     * server is running in offline mode. Null for non-proxied sessions.
+     * Data regarding a user who has connected through a proxy, used to provide
+     * online-mode UUID and properties and other data even if the server is
+     * running in offline mode. Null for non-proxied sessions.
      */
     private ProxyData proxyData;
 
@@ -116,7 +118,8 @@ public class GlowSession extends BasicSession {
     protected GlowPlayer player;
 
     /**
-     * The ID of the last ping message sent, used to ensure the client responded correctly.
+     * The ID of the last ping message sent, used to ensure the client responded
+     * correctly.
      */
     private int pingMessageId;
 
@@ -132,6 +135,7 @@ public class GlowSession extends BasicSession {
 
     /**
      * Creates a new session.
+     *
      * @param server The server this session belongs to.
      * @param channel The channel associated with this session.
      */
@@ -144,15 +148,17 @@ public class GlowSession extends BasicSession {
     //DRAGONET-Add another constructor
     /**
      * Constructor for Dragonet to use
+     *
      * @param server The GlowStone server instance
      */
     public GlowSession(GlowServer server) {
         super(null, ProtocolType.PLAY.getProtocol());
         this.server = server;
     }
-    
+
     /**
      * Gets the server associated with this session.
+     *
      * @return The server.
      */
     public GlowServer getServer() {
@@ -161,9 +167,9 @@ public class GlowSession extends BasicSession {
 
     ////////////////////////////////////////////////////////////////////////////
     // Auxiliary state
-
     /**
      * Get the randomly-generated verify token for this session.
+     *
      * @return The verify token
      */
     public byte[] getVerifyToken() {
@@ -172,6 +178,7 @@ public class GlowSession extends BasicSession {
 
     /**
      * Sets the verify token of this session.
+     *
      * @param verifyToken The verify token.
      */
     public void setVerifyToken(byte[] verifyToken) {
@@ -180,6 +187,7 @@ public class GlowSession extends BasicSession {
 
     /**
      * Gets the verify username for this session.
+     *
      * @return The verify username.
      */
     public String getVerifyUsername() {
@@ -188,6 +196,7 @@ public class GlowSession extends BasicSession {
 
     /**
      * Sets the verify username for this session.
+     *
      * @param verifyUsername The verify username.
      */
     public void setVerifyUsername(String verifyUsername) {
@@ -196,6 +205,7 @@ public class GlowSession extends BasicSession {
 
     /**
      * Get the {@link ProxyData} for this session if available.
+     *
      * @return The proxy data to use, or null for an unproxied connection.
      */
     public ProxyData getProxyData() {
@@ -204,6 +214,7 @@ public class GlowSession extends BasicSession {
 
     /**
      * Set the {@link ProxyData} for this session.
+     *
      * @param proxyData The proxy data to use.
      */
     public void setProxyData(ProxyData proxyData) {
@@ -214,6 +225,7 @@ public class GlowSession extends BasicSession {
 
     /**
      * Set the hostname the player used to connect to the server.
+     *
      * @param hostname Hostname in "addr:port" format.
      */
     public void setHostname(String hostname) {
@@ -222,6 +234,7 @@ public class GlowSession extends BasicSession {
 
     /**
      * Note that the client has responded to a keep-alive.
+     *
      * @param pingId The pingId to check for validity.
      */
     public void pong(long pingId) {
@@ -233,6 +246,7 @@ public class GlowSession extends BasicSession {
 
     /**
      * Get the saved previous BlockPlacementMessage for this session.
+     *
      * @return The message.
      */
     public BlockPlacementMessage getPreviousPlacement() {
@@ -241,6 +255,7 @@ public class GlowSession extends BasicSession {
 
     /**
      * Set the previous BlockPlacementMessage for this session.
+     *
      * @param message The message.
      */
     public void setPreviousPlacement(BlockPlacementMessage message) {
@@ -255,9 +270,9 @@ public class GlowSession extends BasicSession {
 
     ////////////////////////////////////////////////////////////////////////////
     // Player and state management
-
     /**
      * Gets the player associated with this session.
+     *
      * @return The player, or {@code null} if no player is associated with it.
      */
     public GlowPlayer getPlayer() {
@@ -266,6 +281,7 @@ public class GlowSession extends BasicSession {
 
     /**
      * Sets the player associated with this session.
+     *
      * @param profile The player's profile with name and UUID information.
      * @throws IllegalStateException if there is already a player associated
      * with this session.
@@ -350,8 +366,9 @@ public class GlowSession extends BasicSession {
 
     /**
      * Disconnects the session with the specified reason. This causes a
-     * KickMessage to be sent. When it has been delivered, the channel
-     * is closed.
+     * KickMessage to be sent. When it has been delivered, the channel is
+     * closed.
+     *
      * @param reason The reason for disconnection.
      */
     public void disconnect(String reason) {
@@ -360,8 +377,9 @@ public class GlowSession extends BasicSession {
 
     /**
      * Disconnects the session with the specified reason. This causes a
-     * KickMessage to be sent. When it has been delivered, the channel
-     * is closed.
+     * KickMessage to be sent. When it has been delivered, the channel is
+     * closed.
+     *
      * @param reason The reason for disconnection.
      * @param overrideKick Whether to skip the kick event.
      */
@@ -443,7 +461,6 @@ public class GlowSession extends BasicSession {
 
     ////////////////////////////////////////////////////////////////////////////
     // Pipeline management
-
     public void setProtocol(ProtocolType protocol) {
         getChannel().flush();
 
@@ -472,7 +489,6 @@ public class GlowSession extends BasicSession {
 
     ////////////////////////////////////////////////////////////////////////////
     // Handler overrides
-
     @Override
     public void onDisconnect() {
         if (player == null) {

@@ -32,6 +32,7 @@ public final class EventFactory {
 
     /**
      * Calls an event through the plugin manager.
+     *
      * @param event The event to throw.
      * @return the called event
      */
@@ -65,7 +66,6 @@ public final class EventFactory {
 
     ////////////////////////////////////////////////////////////////////////////
     // Player Events
-
     public static AsyncPlayerPreLoginEvent onPlayerPreLogin(String name, InetSocketAddress address, UUID uuid) {
         // call async event
         final AsyncPlayerPreLoginEvent event = new AsyncPlayerPreLoginEvent(name, address.getAddress(), uuid);

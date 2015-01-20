@@ -15,4 +15,3 @@ public final class PlayParticleMessage implements Message {
     public final int[] extData;
 
 }
-

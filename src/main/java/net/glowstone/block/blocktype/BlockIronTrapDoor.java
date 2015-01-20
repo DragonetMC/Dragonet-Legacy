@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 public class BlockIronTrapDoor extends BlockDirectDrops {
+
     private BlockTrapDoor trapDoor;
 
     public BlockIronTrapDoor() {

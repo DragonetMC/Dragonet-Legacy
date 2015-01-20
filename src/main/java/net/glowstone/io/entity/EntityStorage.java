@@ -11,8 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The class responsible for mapping entity types to their storage methods
- * and reading and writing entity data using those storage methods.
+ * The class responsible for mapping entity types to their storage methods and
+ * reading and writing entity data using those storage methods.
  */
 public final class EntityStorage {
 
@@ -20,8 +20,8 @@ public final class EntityStorage {
     }
 
     /**
-     * A table which maps entity ids to compound readers. This is generally used to map
-     * stored entities to actual entities.
+     * A table which maps entity ids to compound readers. This is generally used
+     * to map stored entities to actual entities.
      */
     private static final Map<String, EntityStore<?>> idTable = new HashMap<>();
 
@@ -42,6 +42,7 @@ public final class EntityStorage {
 
     /**
      * Binds a store by adding entries for it to the tables.
+     *
      * @param store The store object.
      * @param <T> The type of entity.
      */
@@ -52,6 +53,7 @@ public final class EntityStorage {
 
     /**
      * Load a new entity in the given world from the given data tag.
+     *
      * @param world The target world.
      * @param compound The tag to load from.
      * @return The newly constructed entity.
@@ -119,6 +121,7 @@ public final class EntityStorage {
 
     /**
      * Save an entity's data to the given compound tag.
+     *
      * @param entity The entity to save.
      * @param compound The target tag.
      */
@@ -132,6 +135,7 @@ public final class EntityStorage {
 
     /**
      * Load an entity's data from the given compound tag.
+     *
      * @param entity The target entity.
      * @param compound The tag to load from.
      */

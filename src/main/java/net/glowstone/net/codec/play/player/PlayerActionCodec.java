@@ -8,6 +8,7 @@ import net.glowstone.net.message.play.player.PlayerActionMessage;
 import java.io.IOException;
 
 public final class PlayerActionCodec implements Codec<PlayerActionMessage> {
+
     @Override
     public PlayerActionMessage decode(ByteBuf buf) throws IOException {
         int id = ByteBufUtils.readVarInt(buf);

@@ -13,6 +13,7 @@ import java.net.SocketAddress;
 
 /**
  * Implementation of a server for the remote console protocol.
+ *
  * @see <a href="http://wiki.vg/Rcon">Protocol Specifications</a>
  */
 public class RconServer {
@@ -37,14 +38,15 @@ public class RconServer {
                     @Override
                     public void initChannel(SocketChannel ch) throws Exception {
                         ch.pipeline()
-                                .addLast(new RconFramingHandler())
-                                .addLast(new RconHandler(RconServer.this, password));
+                        .addLast(new RconFramingHandler())
+                        .addLast(new RconHandler(RconServer.this, password));
                     }
                 });
     }
 
     /**
      * Bind the server on the specified address.
+     *
      * @param address The address.
      * @return Netty channel future for bind operation.
      */

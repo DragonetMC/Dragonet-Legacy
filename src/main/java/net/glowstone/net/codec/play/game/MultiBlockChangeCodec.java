@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.List;
 
 public final class MultiBlockChangeCodec implements Codec<MultiBlockChangeMessage> {
+
     @Override
     public MultiBlockChangeMessage decode(ByteBuf buf) throws IOException {
         throw new DecoderException("Cannot decode MultiBlockChangeMessage");
@@ -26,9 +27,9 @@ public final class MultiBlockChangeCodec implements Codec<MultiBlockChangeMessag
 
         for (BlockChangeMessage record : records) {
             // XZYY
-            int pos = ((record.getX() & 0xF) << 12) |
-                    ((record.getZ() & 0xF) << 8) |
-                    (record.getY() & 0xFF);
+            int pos = ((record.getX() & 0xF) << 12)
+                    | ((record.getZ() & 0xF) << 8)
+                    | (record.getY() & 0xFF);
             buf.writeShort(pos);
             ByteBufUtils.writeVarInt(buf, record.getType());
         }

@@ -22,7 +22,7 @@ public final class TextMessage {
      * The formatting ChatColors.
      */
     private static final ChatColor[] FORMATTING = {
-            ChatColor.MAGIC, ChatColor.BOLD, ChatColor.STRIKETHROUGH, ChatColor.UNDERLINE, ChatColor.ITALIC
+        ChatColor.MAGIC, ChatColor.BOLD, ChatColor.STRIKETHROUGH, ChatColor.UNDERLINE, ChatColor.ITALIC
     };
 
     /**
@@ -31,8 +31,9 @@ public final class TextMessage {
     private final JSONObject object;
 
     /**
-     * Construct a new chat message from a simple text string. Handles style
-     * and colors in the original string, converting them to the new format.
+     * Construct a new chat message from a simple text string. Handles style and
+     * colors in the original string, converting them to the new format.
+     *
      * @param text The text of the message.
      */
     public TextMessage(String text) {
@@ -41,6 +42,7 @@ public final class TextMessage {
 
     /**
      * Construct a chat message from a JSON structure. No validation occurs.
+     *
      * @param object The JSON structure of the message.
      */
     public TextMessage(JSONObject object) {
@@ -50,6 +52,7 @@ public final class TextMessage {
 
     /**
      * Encode this chat message to its textual JSON representation.
+     *
      * @return The encoded representation.
      */
     public String encode() {
@@ -58,6 +61,7 @@ public final class TextMessage {
 
     /**
      * Attempt to convert the message to its plaintext representation.
+     *
      * @return The plain text, or the empty string on failure.
      */
     public String asPlaintext() {
@@ -72,6 +76,7 @@ public final class TextMessage {
 
     /**
      * Flatten this message to an approximate old-style string representation.
+     *
      * @return The best old-style string representation for this message.
      */
     public String flatten() {
@@ -116,6 +121,7 @@ public final class TextMessage {
 
     /**
      * Decode a chat message from its textual JSON representation if possible.
+     *
      * @param json The encoded representation.
      * @return The decoded TextMessage.
      */
@@ -135,6 +141,7 @@ public final class TextMessage {
 
     /**
      * Convert from an old-style to a new-style chat message.
+     *
      * @param text The The text of the message.
      * @return The converted JSON structure.
      */
@@ -223,8 +230,12 @@ public final class TextMessage {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         TextMessage that = (TextMessage) o;
 

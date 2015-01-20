@@ -7,6 +7,7 @@ import net.glowstone.net.message.play.inv.EnchantItemMessage;
 import java.io.IOException;
 
 public final class EnchantItemCodec implements Codec<EnchantItemMessage> {
+
     @Override
     public EnchantItemMessage decode(ByteBuf buf) throws IOException {
         int window = buf.readByte();

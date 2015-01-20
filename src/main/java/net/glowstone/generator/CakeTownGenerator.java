@@ -20,7 +20,7 @@ public class CakeTownGenerator extends GlowChunkGenerator {
                 // On-ground
                 //new DesertPopulator(), new TreePopulator(), new MushroomPopulator(),
                 new SnowPopulator(), new FlowerPopulator() // Belowground
-                //new CavePopulator()
+        //new CavePopulator()
         );
     }
 

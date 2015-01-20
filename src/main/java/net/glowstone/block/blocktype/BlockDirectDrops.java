@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class BlockDirectDrops extends BlockNeedsTool {
+
     private final Material dropType;
     private final short data;
     private final int amount;

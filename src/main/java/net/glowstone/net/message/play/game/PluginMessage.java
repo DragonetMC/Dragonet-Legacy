@@ -27,4 +27,3 @@ public final class PluginMessage implements Message {
     }
 
 }
-

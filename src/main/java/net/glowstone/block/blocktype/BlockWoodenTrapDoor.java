@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class BlockWoodenTrapDoor extends BlockOpenable {
+
     private static final Collection<ItemStack> DROP = Collections.unmodifiableCollection(Arrays.asList(new ItemStack(Material.TRAP_DOOR)));
     private BlockTrapDoor trapDoor;
 

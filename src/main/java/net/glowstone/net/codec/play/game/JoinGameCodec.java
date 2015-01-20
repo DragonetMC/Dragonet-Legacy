@@ -8,6 +8,7 @@ import net.glowstone.net.message.play.game.JoinGameMessage;
 import java.io.IOException;
 
 public final class JoinGameCodec implements Codec<JoinGameMessage> {
+
     @Override
     public JoinGameMessage decode(ByteBuf buffer) throws IOException {
         int id = buffer.readInt();

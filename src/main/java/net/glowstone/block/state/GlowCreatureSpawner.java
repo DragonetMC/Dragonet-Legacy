@@ -43,13 +43,14 @@ public class GlowCreatureSpawner extends GlowBlockState implements CreatureSpawn
 
     @Override
     public void setDelay(int i) {
-        if (i < 0) i = 0;
+        if (i < 0) {
+            i = 0;
+        }
         delay = i;
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // Spawned Type
-
     @Override
     public EntityType getSpawnedType() {
         return spawned;
@@ -75,7 +76,6 @@ public class GlowCreatureSpawner extends GlowBlockState implements CreatureSpawn
 
     ////////////////////////////////////////////////////////////////////////////
     // Deprecated CreatureType
-
     @Override
     @Deprecated
     public CreatureType getCreatureType() {

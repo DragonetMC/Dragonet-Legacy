@@ -69,7 +69,9 @@ public class RaknetDataPacket extends BinaryPacket {
             EncapsulatedPacket pkEncap;
             while (reader.available() > 3) {
                 pkEncap = EncapsulatedPacket.fromBinary(reader);
-                if(pkEncap == null) return;
+                if (pkEncap == null) {
+                    return;
+                }
                 this.encapsulatedPackets.add(pkEncap);
             }
         } catch (IOException e) {

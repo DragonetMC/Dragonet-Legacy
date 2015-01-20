@@ -35,7 +35,7 @@ public class UseItemPacket extends PEPacket {
     public UseItemPacket(byte[] data) {
         this.setData(data);
     }
-    
+
     @Override
     public int pid() {
         return PEPacketIDs.USE_ITEM_PACKET;

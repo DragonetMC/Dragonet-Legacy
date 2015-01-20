@@ -7,6 +7,7 @@ import java.util.Collection;
 
 @Data
 public class ExplosionMessage implements Message {
+
     public final float x;
     public final float y;
     public final float z;
@@ -18,14 +19,15 @@ public class ExplosionMessage implements Message {
 
     @Override
     public String toString() {
-        return "ExplosionMessage{x=" + x + ",y=" + y + ",z=" + z +
-                ",radius=" + radius +
-                ",motX=" + playerMotionX + ",motY=" + playerMotionY + ",motZ=" + playerMotionZ +
-                ",recordCount=" + records.size() + "}";
+        return "ExplosionMessage{x=" + x + ",y=" + y + ",z=" + z
+                + ",radius=" + radius
+                + ",motX=" + playerMotionX + ",motY=" + playerMotionY + ",motZ=" + playerMotionZ
+                + ",recordCount=" + records.size() + "}";
     }
 
     @Data
     public static class Record {
+
         public final byte x, y, z;
     }
 }

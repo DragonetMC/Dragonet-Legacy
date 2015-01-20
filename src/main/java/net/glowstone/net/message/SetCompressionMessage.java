@@ -9,4 +9,3 @@ public final class SetCompressionMessage implements Message {
     public final int threshold;
 
 }
-

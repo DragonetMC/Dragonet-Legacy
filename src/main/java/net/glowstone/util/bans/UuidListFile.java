@@ -59,6 +59,7 @@ public final class UuidListFile extends JsonListFile {
     }
 
     private class Entry implements BaseEntry {
+
         private final UUID uuid;
         private final String fallbackName;
 

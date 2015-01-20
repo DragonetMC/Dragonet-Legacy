@@ -9,6 +9,7 @@ import net.glowstone.util.TextMessage;
 import java.io.IOException;
 
 public final class KickCodec implements Codec<KickMessage> {
+
     @Override
     public KickMessage decode(ByteBuf buf) throws IOException {
         TextMessage value = GlowBufUtils.readChat(buf);

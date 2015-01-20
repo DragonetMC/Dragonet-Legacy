@@ -41,6 +41,7 @@ public class ItemType {
 
     /**
      * Get the id assigned to this ItemType.
+     *
      * @return The corresponding id.
      */
     public final int getId() {
@@ -49,6 +50,7 @@ public class ItemType {
 
     /**
      * Get the Material assigned to this ItemType.
+     *
      * @return The corresponding Material.
      */
     public final Material getMaterial() {
@@ -57,9 +59,9 @@ public class ItemType {
 
     ////////////////////////////////////////////////////////////////////////////
     // Setters for subclass use
-
     /**
      * Set the maximum stack size of the item.
+     *
      * @param maxStackSize The new maximum stack size.
      */
     protected final void setMaxStackSize(int maxStackSize) {
@@ -68,6 +70,7 @@ public class ItemType {
 
     /**
      * Set this item to act like the given block type when being placed.
+     *
      * @param placeAs The block to place as.
      */
     protected final void setPlaceAs(BlockType placeAs) {
@@ -76,6 +79,7 @@ public class ItemType {
 
     /**
      * Set this item to act like the given block type when being placed.
+     *
      * @param placeAs The material to place as.
      */
     protected final void setPlaceAs(Material placeAs) {
@@ -91,9 +95,9 @@ public class ItemType {
 
     ////////////////////////////////////////////////////////////////////////////
     // Public accessors
-
     /**
      * Get the maximum stack size of the item.
+     *
      * @return The maximum stack size.
      */
     public int getMaxStackSize() {
@@ -102,10 +106,10 @@ public class ItemType {
 
     ////////////////////////////////////////////////////////////////////////////
     // Actions
-
     /**
-     * Called when a player right-clicks in midair while holding this item.
-     * Also called by default if rightClickBlock is not overridden.
+     * Called when a player right-clicks in midair while holding this item. Also
+     * called by default if rightClickBlock is not overridden.
+     *
      * @param player The player
      * @param holding The ItemStack the player was holding
      */
@@ -115,6 +119,7 @@ public class ItemType {
 
     /**
      * Called when a player right-clicks on a block while holding this item.
+     *
      * @param player The player
      * @param target The block the player right-clicked
      * @param face The face on which the click occurred
@@ -131,7 +136,6 @@ public class ItemType {
 
     ////////////////////////////////////////////////////////////////////////////
     // Utility stuff
-
     @Override
     public final String toString() {
         return getClass().getSimpleName() + "{" + getId() + " -> " + getMaterial() + "}";

@@ -10,6 +10,7 @@ import net.glowstone.net.message.status.StatusRequestMessage;
 import net.glowstone.net.message.status.StatusResponseMessage;
 
 public final class StatusProtocol extends GlowProtocol {
+
     public StatusProtocol() {
         super("STATUS", 2);
 

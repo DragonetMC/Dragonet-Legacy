@@ -29,7 +29,6 @@ public final class StatisticMap {
 
     ////////////////////////////////////////////////////////////////////////////
     // Helpers
-
     private int getValue(String key) {
         if (values.containsKey(key)) {
             return values.get(key);
@@ -62,7 +61,6 @@ public final class StatisticMap {
 
     ////////////////////////////////////////////////////////////////////////////
     // Achievement and stat accessors
-
     public boolean hasAchievement(Achievement achievement) {
         return getValue(GlowAchievement.getName(achievement)) != 0;
     }

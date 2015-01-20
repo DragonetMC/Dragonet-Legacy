@@ -22,7 +22,8 @@ import org.bukkit.util.Vector;
 import java.util.*;
 
 /**
- * A GlowLivingEntity is a {@link org.bukkit.entity.Player} or {@link org.bukkit.entity.Monster}.
+ * A GlowLivingEntity is a {@link org.bukkit.entity.Player} or
+ * {@link org.bukkit.entity.Monster}.
  *
  * @author Graham Edgecombe.
  */
@@ -106,7 +107,6 @@ public abstract class GlowLivingEntity extends GlowEntity implements LivingEntit
 
     ////////////////////////////////////////////////////////////////////////////
     // Internals
-
     @Override
     public void pulse() {
         super.pulse();
@@ -166,7 +166,6 @@ public abstract class GlowLivingEntity extends GlowEntity implements LivingEntit
 
     ////////////////////////////////////////////////////////////////////////////
     // Properties
-
     @Override
     public double getEyeHeight() {
         return 0;
@@ -199,7 +198,6 @@ public abstract class GlowLivingEntity extends GlowEntity implements LivingEntit
 
     ////////////////////////////////////////////////////////////////////////////
     // Properties
-
     @Override
     public int getNoDamageTicks() {
         return noDamageTicks;
@@ -262,6 +260,7 @@ public abstract class GlowLivingEntity extends GlowEntity implements LivingEntit
 
     /**
      * Get the hurt sound of this entity, or null for silence.
+     *
      * @return the hurt sound if available
      */
     protected Sound getHurtSound() {
@@ -270,6 +269,7 @@ public abstract class GlowLivingEntity extends GlowEntity implements LivingEntit
 
     /**
      * Get the death sound of this entity, or null for silence.
+     *
      * @return the death sound if available
      */
     protected Sound getDeathSound() {
@@ -278,6 +278,7 @@ public abstract class GlowLivingEntity extends GlowEntity implements LivingEntit
 
     /**
      * Get whether this entity should take drowning damage.
+     *
      * @return whether this entity can drown
      */
     protected boolean canDrown() {
@@ -286,7 +287,6 @@ public abstract class GlowLivingEntity extends GlowEntity implements LivingEntit
 
     ////////////////////////////////////////////////////////////////////////////
     // Line of Sight
-
     private List<Block> getLineOfSight(HashSet<Byte> transparent, int maxDistance, int maxLength) {
         // same limit as CraftBukkit
         if (maxDistance > 120) {
@@ -332,7 +332,6 @@ public abstract class GlowLivingEntity extends GlowEntity implements LivingEntit
 
     ////////////////////////////////////////////////////////////////////////////
     // Projectiles
-
     @Override
     public Egg throwEgg() {
         return launchProjectile(Egg.class);
@@ -362,7 +361,6 @@ public abstract class GlowLivingEntity extends GlowEntity implements LivingEntit
 
     ////////////////////////////////////////////////////////////////////////////
     // Health
-
     @Override
     public double getHealth() {
         return health;
@@ -370,8 +368,12 @@ public abstract class GlowLivingEntity extends GlowEntity implements LivingEntit
 
     @Override
     public void setHealth(double health) {
-        if (health < 0) health = 0;
-        if (health > maxHealth) health = maxHealth;
+        if (health < 0) {
+            health = 0;
+        }
+        if (health > maxHealth) {
+            health = maxHealth;
+        }
         this.health = health;
     }
 
@@ -472,7 +474,6 @@ public abstract class GlowLivingEntity extends GlowEntity implements LivingEntit
 
     ////////////////////////////////////////////////////////////////////////////
     // Invalid health methods
-
     @Override
     public void _INVALID_damage(int amount) {
         damage(amount);
@@ -515,7 +516,6 @@ public abstract class GlowLivingEntity extends GlowEntity implements LivingEntit
 
     ////////////////////////////////////////////////////////////////////////////
     // Potion effects
-
     @Override
     public boolean addPotionEffect(PotionEffect effect) {
         return addPotionEffect(effect, false);
@@ -535,9 +535,9 @@ public abstract class GlowLivingEntity extends GlowEntity implements LivingEntit
 
         // todo: this, updated, only players in range
         /*EntityEffectMessage msg = new EntityEffectMessage(getEntityId(), effect.getType().getId(), effect.getAmplifier(), effect.getDuration());
-        for (Player player : server.getOnlinePlayers()) {
-            ((GlowPlayer) player).getSession().send(msg);
-        }*/
+         for (Player player : server.getOnlinePlayers()) {
+         ((GlowPlayer) player).getSession().send(msg);
+         }*/
         return true;
     }
 
@@ -559,14 +559,16 @@ public abstract class GlowLivingEntity extends GlowEntity implements LivingEntit
 
     @Override
     public void removePotionEffect(PotionEffectType type) {
-        if (!hasPotionEffect(type)) return;
+        if (!hasPotionEffect(type)) {
+            return;
+        }
         potionEffects.remove(type);
 
         // todo: this, improved, for players in range
         /*EntityRemoveEffectMessage msg = new EntityRemoveEffectMessage(getEntityId(), type.getId());
-        for (Player player : server.getOnlinePlayers()) {
-            ((GlowPlayer) player).getSession().send(msg);
-        }*/
+         for (Player player : server.getOnlinePlayers()) {
+         ((GlowPlayer) player).getSession().send(msg);
+         }*/
     }
 
     @Override
@@ -576,7 +578,6 @@ public abstract class GlowLivingEntity extends GlowEntity implements LivingEntit
 
     ////////////////////////////////////////////////////////////////////////////
     // Custom name
-
     @Override
     public void setCustomName(String name) {
         customName = name;
@@ -599,7 +600,6 @@ public abstract class GlowLivingEntity extends GlowEntity implements LivingEntit
 
     ////////////////////////////////////////////////////////////////////////////
     // Leashes
-
     @Override
     public boolean isLeashed() {
         return false;

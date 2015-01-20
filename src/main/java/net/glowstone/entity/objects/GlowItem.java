@@ -20,13 +20,16 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Represents an item that is also an {@link net.glowstone.entity.GlowEntity} within the world.
+ * Represents an item that is also an {@link net.glowstone.entity.GlowEntity}
+ * within the world.
+ *
  * @author Graham Edgecombe
  */
 public final class GlowItem extends GlowEntity implements Item {
 
     /**
-     * The number of ticks (equal to 5 minutes) that item entities should live for.
+     * The number of ticks (equal to 5 minutes) that item entities should live
+     * for.
      */
     private static final int LIFETIME = 5 * 60 * 20;
 
@@ -42,6 +45,7 @@ public final class GlowItem extends GlowEntity implements Item {
 
     /**
      * Creates a new item entity.
+     *
      * @param location The location of the entity.
      * @param item The item stack the entity is carrying.
      */
@@ -79,7 +83,6 @@ public final class GlowItem extends GlowEntity implements Item {
 
     ////////////////////////////////////////////////////////////////////////////
     // Overrides
-
     @Override
     public EntityType getType() {
         return EntityType.DROPPED_ITEM;
@@ -165,7 +168,6 @@ public final class GlowItem extends GlowEntity implements Item {
 
     ////////////////////////////////////////////////////////////////////////////
     // Item stuff
-
     @Override
     public int getPickupDelay() {
         return pickupDelay;

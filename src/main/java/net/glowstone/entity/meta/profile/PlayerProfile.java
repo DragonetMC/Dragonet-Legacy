@@ -27,6 +27,7 @@ public final class PlayerProfile {
 
     /**
      * Construct a new profile with only a name and UUID.
+     *
      * @param name The player's name.
      * @param uuid The player's UUID.
      */
@@ -36,6 +37,7 @@ public final class PlayerProfile {
 
     /**
      * Construct a new profile with additional properties.
+     *
      * @param name The player's name.
      * @param uuid The player's UUID.
      * @param properties A list of extra properties.
@@ -52,6 +54,7 @@ public final class PlayerProfile {
 
     /**
      * Get the profile for a username.
+     *
      * @param name The username to lookup.
      * @return The profile.
      */
@@ -75,6 +78,7 @@ public final class PlayerProfile {
 
     /**
      * Get the profile's name.
+     *
      * @return The name.
      */
     public String getName() {
@@ -83,6 +87,7 @@ public final class PlayerProfile {
 
     /**
      * Get the profile's unique identifier.
+     *
      * @return The UUID.
      */
     public UUID getUniqueId() {
@@ -91,6 +96,7 @@ public final class PlayerProfile {
 
     /**
      * Get a list of the profile's extra properties. May be empty.
+     *
      * @return The property list.
      */
     public List<PlayerProperty> getProperties() {
@@ -98,11 +104,11 @@ public final class PlayerProfile {
     }
 
     public String toString() {
-        return "PlayerProfile{" +
-                "name='" + name + '\'' +
-                ", uuid=" + uuid +
-                ", " + properties.size() + " properties" +
-                '}';
+        return "PlayerProfile{"
+                + "name='" + name + '\''
+                + ", uuid=" + uuid
+                + ", " + properties.size() + " properties"
+                + '}';
     }
 
     public CompoundTag toNBT() {
@@ -168,14 +174,24 @@ public final class PlayerProfile {
     }
 
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         PlayerProfile that = (PlayerProfile) o;
 
-        if (!name.equals(that.name)) return false;
-        if (!properties.equals(that.properties)) return false;
-        if (!uuid.equals(that.uuid)) return false;
+        if (!name.equals(that.name)) {
+            return false;
+        }
+        if (!properties.equals(that.properties)) {
+            return false;
+        }
+        if (!uuid.equals(that.uuid)) {
+            return false;
+        }
 
         return true;
     }

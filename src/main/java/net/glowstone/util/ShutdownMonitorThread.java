@@ -6,7 +6,8 @@ import java.util.Map;
 import java.util.logging.Level;
 
 /**
- * Thread started on shutdown that monitors for and kills rogue non-daemon threads.
+ * Thread started on shutdown that monitors for and kills rogue non-daemon
+ * threads.
  */
 public class ShutdownMonitorThread extends Thread {
 

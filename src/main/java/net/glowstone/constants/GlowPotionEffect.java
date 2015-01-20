@@ -33,9 +33,10 @@ public final class GlowPotionEffect extends PotionEffectType {
     }
 
     /**
-     * Pulse this potion effect on a specified entity. If the potion effect
-     * is not applicable, nothing happens. For instant effects, will only
-     * have an effect if 'ticks' is 0.
+     * Pulse this potion effect on a specified entity. If the potion effect is
+     * not applicable, nothing happens. For instant effects, will only have an
+     * effect if 'ticks' is 0.
+     *
      * @param entity The entity to pulse on.
      * @param effect Information on the effect's state.
      */
@@ -58,6 +59,7 @@ public final class GlowPotionEffect extends PotionEffectType {
     }
 
     private static enum Impl {
+
         SPEED(1, false, 1.0),
         SLOW(2, false, 0.5),
         FAST_DIGGING(3, false, 1.5),

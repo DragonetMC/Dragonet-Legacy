@@ -10,6 +10,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 
 public final class UpdateSignHandler implements MessageHandler<GlowSession, UpdateSignMessage> {
+
     @Override
     public void handle(GlowSession session, UpdateSignMessage message) {
         final GlowPlayer player = session.getPlayer();

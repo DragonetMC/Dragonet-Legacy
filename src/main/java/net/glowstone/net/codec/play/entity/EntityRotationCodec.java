@@ -9,6 +9,7 @@ import net.glowstone.net.message.play.entity.EntityRotationMessage;
 import java.io.IOException;
 
 public final class EntityRotationCodec implements Codec<EntityRotationMessage> {
+
     @Override
     public EntityRotationMessage decode(ByteBuf buf) throws IOException {
         throw new DecoderException("Cannot decode EntityRotationMessage");

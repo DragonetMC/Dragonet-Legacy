@@ -10,14 +10,14 @@
  *
  * @author The Dragonet Team
  */
-
 package org.dragonet.utilities.io;
 
 import org.apache.commons.lang.ArrayUtils;
 
 public final class ArraySplitter {
-    public static byte[][] splitArray(byte[] array, int singleSlice){
-        if(array.length <= singleSlice){
+
+    public static byte[][] splitArray(byte[] array, int singleSlice) {
+        if (array.length <= singleSlice) {
             byte[][] singleRet = new byte[1][];
             singleRet[0] = array;
             return singleRet;
@@ -25,12 +25,12 @@ public final class ArraySplitter {
         byte[][] ret = new byte[(array.length / singleSlice + (array.length % singleSlice == 0 ? 0 : 1))][];
         int pos = 0;
         int slice = 0;
-        while(slice < ret.length){
-            if(pos + singleSlice < array.length){
+        while (slice < ret.length) {
+            if (pos + singleSlice < array.length) {
                 ret[slice] = ArrayUtils.subarray(array, pos, singleSlice);
                 pos += singleSlice;
                 slice++;
-            }else{
+            } else {
                 ret[slice] = ArrayUtils.subarray(array, pos, array.length);
                 pos += array.length - pos;
                 slice++;

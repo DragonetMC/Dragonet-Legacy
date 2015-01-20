@@ -92,8 +92,8 @@ public class SwampTree extends CocoaTree {
         // generate the trunk
         for (int y = 0; y < height; y++) {
             final Material material = delegate.getBlockState(l.getWorld(), l.getBlockX(), l.getBlockY() + y, l.getBlockZ()).getType();
-            if (material == Material.AIR || material == Material.LEAVES ||
-                    material == Material.WATER || material == Material.STATIONARY_WATER) {
+            if (material == Material.AIR || material == Material.LEAVES
+                    || material == Material.WATER || material == Material.STATIONARY_WATER) {
                 delegate.setTypeAndRawData(l.getWorld(), l.getBlockX(), l.getBlockY() + y, l.getBlockZ(), Material.LOG, logType);
             }
         }

@@ -10,6 +10,7 @@ import net.glowstone.net.message.play.entity.EntityMetadataMessage;
 import java.io.IOException;
 
 public final class EntityMetadataCodec implements Codec<EntityMetadataMessage> {
+
     @Override
     public EntityMetadataMessage decode(ByteBuf buf) throws IOException {
         throw new DecoderException("Cannot decode EntityMetadataMessage");

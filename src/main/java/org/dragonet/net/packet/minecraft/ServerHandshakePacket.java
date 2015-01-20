@@ -32,7 +32,7 @@ public class ServerHandshakePacket extends PEPacket {
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PEBinaryWriter writer = new PEBinaryWriter(bos);
-            writer.writeByte((byte)(this.pid() & 0xFF));
+            writer.writeByte((byte) (this.pid() & 0xFF));
             writer.write(new byte[]{(byte) 0x04, (byte) 0x3F, (byte) 0x57, (byte) 0xFE}); //Cookie
             writer.writeByte((byte) 0xCD);
             writer.writeShort(this.port);
@@ -49,7 +49,7 @@ public class ServerHandshakePacket extends PEPacket {
                 {(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff}
             };
             writeDataArray(array, writer);
-            writer.write(new byte[]{(byte)0x00, (byte)0x00});
+            writer.write(new byte[]{(byte) 0x00, (byte) 0x00});
             writer.writeLong(this.session);
             writer.writeLong(this.session2);
             this.setData(bos.toByteArray());

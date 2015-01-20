@@ -17,15 +17,14 @@ public final class PEPacketIDs {
     /**
      * Actual Minecraft: PE protocol version
      */
-
     public final static byte PING = (byte) 0x00;
     public final static byte PONG = (byte) 0x00;
-    
+
     public final static byte CLIENT_CONNECT = (byte) 0x09;
     public final static byte SERVER_HANDSHAKE = (byte) 0x10;
     public final static byte CLIENT_HANDSHAKE = (byte) 0x13;
     public final static byte CLIENT_DISCONNECT = (byte) 0x15;
-    
+
     public final static byte LOGIN_PACKET = (byte) 0x82;
     public final static byte LOGIN_STATUS_PACKET = (byte) 0x83;
 

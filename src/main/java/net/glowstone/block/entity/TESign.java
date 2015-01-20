@@ -56,8 +56,10 @@ public class TESign extends TileEntity {
 
     /**
      * Set the lines of text on the sign.
+     *
      * @param text The lines of text.
-     * @throws IllegalArgumentException If the wrong number of lines is provided.
+     * @throws IllegalArgumentException If the wrong number of lines is
+     * provided.
      */
     public void setLines(String[] text) {
         if (text.length != lines.length) {
@@ -71,6 +73,7 @@ public class TESign extends TileEntity {
 
     /**
      * Get the lines of text on the sign.
+     *
      * @return The sign's lines.
      */
     public String[] getLines() {

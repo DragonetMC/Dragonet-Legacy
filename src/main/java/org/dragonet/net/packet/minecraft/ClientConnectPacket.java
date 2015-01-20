@@ -10,7 +10,6 @@
  *
  * @author The Dragonet Team
  */
-
 package org.dragonet.net.packet.minecraft;
 
 import java.io.ByteArrayInputStream;
@@ -26,7 +25,7 @@ public class ClientConnectPacket extends PEPacket {
     public ClientConnectPacket(byte[] data) {
         this.setData(data);
     }
-    
+
     @Override
     public int pid() {
         return PEPacketIDs.CLIENT_CONNECT;
@@ -38,13 +37,13 @@ public class ClientConnectPacket extends PEPacket {
 
     @Override
     public void decode() {
-        try{
+        try {
             PEBinaryReader reader = new PEBinaryReader(new ByteArrayInputStream(this.getData()));
             reader.readByte(); //PID
             this.clientID = reader.readLong();
             this.sessionID = reader.readLong();
             this.unknown1 = reader.readByte();
-        }catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

@@ -37,7 +37,6 @@ public class ServerShim implements Server {
     }
 
     // actual implementations
-
     public String getName() {
         return "Glowstone";
     }
@@ -59,7 +58,6 @@ public class ServerShim implements Server {
     }
 
     // do nothing stubs
-
     @Override
     public Player[] _INVALID_getOnlinePlayers() {
         return new Player[0];

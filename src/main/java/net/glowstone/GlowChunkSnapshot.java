@@ -72,7 +72,9 @@ public class GlowChunkSnapshot implements ChunkSnapshot {
     }
 
     /**
-     * Get the ChunkSection array backing this snapshot. In general, it should not be modified.
+     * Get the ChunkSection array backing this snapshot. In general, it should
+     * not be modified.
+     *
      * @return The array of ChunkSections.
      */
     public ChunkSection[] getRawSections() {
@@ -157,8 +159,9 @@ public class GlowChunkSnapshot implements ChunkSnapshot {
     }
 
     private int coordToIndex(int x, int z) {
-        if (x < 0 || z < 0 || x >= GlowChunk.WIDTH || z >= GlowChunk.HEIGHT)
+        if (x < 0 || z < 0 || x >= GlowChunk.WIDTH || z >= GlowChunk.HEIGHT) {
             throw new IndexOutOfBoundsException();
+        }
 
         return z * GlowChunk.WIDTH + x;
     }

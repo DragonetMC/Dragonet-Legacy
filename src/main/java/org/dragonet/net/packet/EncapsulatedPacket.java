@@ -76,7 +76,9 @@ public class EncapsulatedPacket extends BinaryPacket {
                 packet.splitID = reader.readShort();
                 packet.splitIndex = reader.readInt();
             }
-            if(reader.available() < length) return null;
+            if (reader.available() < length) {
+                return null;
+            }
             packet.buffer = reader.read(length);
 
             return packet;
@@ -130,9 +132,15 @@ public class EncapsulatedPacket extends BinaryPacket {
      * @return Wrapped EncapsulatedPacket
      */
     public static EncapsulatedPacket[] fromPEPacket(DragonetSession session, PEPacket packet, int reliability) {
-        if(session == null) return null;
-        if(packet == null) return null;
-        if(packet.getData() == null) return null;
+        if (session == null) {
+            return null;
+        }
+        if (packet == null) {
+            return null;
+        }
+        if (packet.getData() == null) {
+            return null;
+        }
         packet.encode();
         byte[] data = packet.getData();
         if (data.length + 34 < session.getClientMTU()) {
@@ -165,7 +173,7 @@ public class EncapsulatedPacket extends BinaryPacket {
                 encapsulatedPackets[slice].buffer = sliceData;
                 slice++;
             }
-            
+
             session.setSplitID((session.getSplitID() + 1) % 65535);
             return encapsulatedPackets;
         }

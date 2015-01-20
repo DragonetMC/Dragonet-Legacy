@@ -7,6 +7,7 @@ import org.bukkit.util.Vector;
  * The types of values that entity metadata can contain.
  */
 public enum MetadataType {
+
     BYTE(Byte.class),
     SHORT(Short.class),
     INT(Integer.class),

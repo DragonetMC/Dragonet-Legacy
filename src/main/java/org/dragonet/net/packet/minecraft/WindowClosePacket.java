@@ -19,7 +19,7 @@ import org.dragonet.utilities.io.PEBinaryWriter;
 public class WindowClosePacket extends PEPacket {
 
     public byte windowID;
-    
+
     @Override
     public int pid() {
         return PEPacketIDs.WINDOW_CLOSE_PACKET;

@@ -28,7 +28,7 @@ public class StartGamePacket extends PEPacket {
     public float x;
     public float y;
     public float z;
-    
+
     @Override
     public int pid() {
         return PEPacketIDs.START_GAME_PACKET;
@@ -39,7 +39,7 @@ public class StartGamePacket extends PEPacket {
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PEBinaryWriter writer = new PEBinaryWriter(bos);
-            writer.writeByte((byte)(this.pid() & 0xFF));
+            writer.writeByte((byte) (this.pid() & 0xFF));
             writer.writeInt(this.seed);
             writer.writeInt(this.generator);
             writer.writeInt(this.gamemode);
@@ -51,7 +51,8 @@ public class StartGamePacket extends PEPacket {
             writer.writeFloat(this.y);
             writer.writeFloat(this.z);
             this.setData(bos.toByteArray());
-        }catch(IOException e) {}
+        } catch (IOException e) {
+        }
     }
 
     @Override

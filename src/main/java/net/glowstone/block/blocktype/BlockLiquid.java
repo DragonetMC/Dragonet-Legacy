@@ -17,10 +17,10 @@ public abstract class BlockLiquid extends BlockType {
 
     ////////////////////////////////////////////////////////////////////////////
     // Public accessors
-
     /**
-     * Get the bucket type to replace the empty bucket when the liquid has
-     * been collected.
+     * Get the bucket type to replace the empty bucket when the liquid has been
+     * collected.
+     *
      * @return The associated bucket types material
      */
     public Material getBucketType() {
@@ -29,6 +29,7 @@ public abstract class BlockLiquid extends BlockType {
 
     /**
      * Check if the BlockState block is collectible by a bucket.
+     *
      * @param block The block state to check
      * @return Boolean representing if its collectible
      */
@@ -36,7 +37,6 @@ public abstract class BlockLiquid extends BlockType {
 
     ////////////////////////////////////////////////////////////////////////////
     // Overrides
-
     @Override
     public void placeBlock(GlowPlayer player, GlowBlockState state, BlockFace face, ItemStack holding, Vector clickedLoc) {
         state.setType(getMaterial());

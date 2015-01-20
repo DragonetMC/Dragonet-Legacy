@@ -7,6 +7,7 @@ import net.glowstone.net.message.play.game.StateChangeMessage;
 import java.io.IOException;
 
 public final class StateChangeCodec implements Codec<StateChangeMessage> {
+
     @Override
     public StateChangeMessage decode(ByteBuf buffer) throws IOException {
         int reason = buffer.readByte();

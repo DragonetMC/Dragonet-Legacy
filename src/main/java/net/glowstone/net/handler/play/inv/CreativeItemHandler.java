@@ -8,6 +8,7 @@ import net.glowstone.net.message.play.inv.CreativeItemMessage;
 import org.bukkit.GameMode;
 
 public final class CreativeItemHandler implements MessageHandler<GlowSession, CreativeItemMessage> {
+
     @Override
     public void handle(GlowSession session, CreativeItemMessage message) {
         final GlowPlayer player = session.getPlayer();
@@ -31,7 +32,6 @@ public final class CreativeItemHandler implements MessageHandler<GlowSession, Cr
         }
 
         // todo: filter item for validity
-
         // in the creative inventory everything is handled client side
         player.getOpenInventory().setItem(message.getSlot(), message.getItem());
     }

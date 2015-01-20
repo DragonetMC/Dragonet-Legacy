@@ -24,15 +24,16 @@ public final class CraftingManager implements Iterable<Recipe> {
         resetRecipes();
 
         // Report stats
-        GlowServer.logger.info("Recipes: " +
-                shapedRecipes.size() + " shaped, " +
-                shapelessRecipes.size() + " shapeless, " +
-                furnaceRecipes.size() + " furnace, " +
-                furnaceFuels.size() + " fuels.");
+        GlowServer.logger.info("Recipes: "
+                + shapedRecipes.size() + " shaped, "
+                + shapelessRecipes.size() + " shapeless, "
+                + furnaceRecipes.size() + " furnace, "
+                + furnaceFuels.size() + " fuels.");
     }
 
     /**
      * Adds a recipe to the crafting manager.
+     *
      * @param recipe The recipe to add.
      * @return Whether adding the recipe was successful.
      */
@@ -53,6 +54,7 @@ public final class CraftingManager implements Iterable<Recipe> {
 
     /**
      * Get a furnace recipe from the crafting manager.
+     *
      * @param input The furnace input.
      * @return The FurnaceRecipe, or null if none is found.
      */
@@ -67,6 +69,7 @@ public final class CraftingManager implements Iterable<Recipe> {
 
     /**
      * Get how long a given fuel material will burn for.
+     *
      * @param material The fuel material.
      * @return The time in ticks, or 0 if that material does not burn.
      */
@@ -80,6 +83,7 @@ public final class CraftingManager implements Iterable<Recipe> {
 
     /**
      * Remove enough items from the given item list to form the given recipe.
+     *
      * @param items The items to remove the ingredients from.
      * @param recipe A recipe known to match the items.
      */
@@ -89,8 +93,11 @@ public final class CraftingManager implements Iterable<Recipe> {
 
     /**
      * Get a shaped or shapeless recipe from the crafting manager.
-     * @param items An array of items with null being empty slots. Length should be a perfect square.
-     * @return The ShapedRecipe or ShapelessRecipe that matches the input, or null if none match.
+     *
+     * @param items An array of items with null being empty slots. Length should
+     * be a perfect square.
+     * @return The ShapedRecipe or ShapelessRecipe that matches the input, or
+     * null if none match.
      */
     public Recipe getCraftingRecipe(ItemStack[] items) {
         int size = (int) Math.sqrt(items.length);
@@ -135,7 +142,9 @@ public final class CraftingManager implements Iterable<Recipe> {
                 }
             }
 
-            if (rows == 0 || cols == 0) continue;
+            if (rows == 0 || cols == 0) {
+                continue;
+            }
 
             // outer loop: try at each possible starting position
             for (int rStart = 0; rStart <= size - rows; ++rStart) {
@@ -170,8 +179,8 @@ public final class CraftingManager implements Iterable<Recipe> {
                     for (int row = 0; row < size; row++) {
                         for (int col = 0; col < size; col++) {
                             // if this position is outside the recipe and non-null, fail
-                            if ((row < rStart || row >= rStart + rows || col < cStart || col >= cStart + cols) &&
-                                    items[row * size + col] != null) {
+                            if ((row < rStart || row >= rStart + rows || col < cStart || col >= cStart + cols)
+                                    && items[row * size + col] != null) {
                                 continue position;
                             }
                         }
@@ -239,8 +248,9 @@ public final class CraftingManager implements Iterable<Recipe> {
     }
 
     /**
-     * Get a list of all recipes for a given item. The stack size is ignored
-     * in comparisons. If the durability is -1, it will match any data value.
+     * Get a list of all recipes for a given item. The stack size is ignored in
+     * comparisons. If the durability is -1, it will match any data value.
+     *
      * @param result The item whose recipes you want
      * @return The list of recipes
      */

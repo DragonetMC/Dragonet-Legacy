@@ -38,6 +38,7 @@ public final class TitleMessage implements Message {
     }
 
     public enum Action {
+
         TITLE,
         SUBTITLE,
         TIMES,

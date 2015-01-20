@@ -50,11 +50,11 @@ public class BlockSlab extends BlockType {
         byte blockData = block.getData();
         byte holdingData = (byte) holding.getDurability();
         Material blockType = block.getType();
-        return (blockType == Material.STEP || blockType == Material.WOOD_STEP || blockType == Material.STEP_2) &&
-                blockType == holding.getType() &&
-                ((face == BlockFace.UP && blockData == holdingData) ||
-                        (face == BlockFace.DOWN && blockData - 8 == holdingData) ||
-                        (ignoreFace && blockData % 8 == holdingData));
+        return (blockType == Material.STEP || blockType == Material.WOOD_STEP || blockType == Material.STEP_2)
+                && blockType == holding.getType()
+                && ((face == BlockFace.UP && blockData == holdingData)
+                || (face == BlockFace.DOWN && blockData - 8 == holdingData)
+                || (ignoreFace && blockData % 8 == holdingData));
     }
 
     @Override
@@ -69,8 +69,8 @@ public class BlockSlab extends BlockType {
 
     @Override
     public Collection<ItemStack> getDrops(GlowBlock block, ItemStack tool) {
-        if (block.getType() == Material.WOOD_STEP ||
-                (tool != null && ToolType.PICKAXE.matches(tool.getType()))) {
+        if (block.getType() == Material.WOOD_STEP
+                || (tool != null && ToolType.PICKAXE.matches(tool.getType()))) {
             return Arrays.asList(new ItemStack(block.getType(), 1, (short) (block.getData() % 8)));
         }
         return BlockDropless.EMPTY_STACK;

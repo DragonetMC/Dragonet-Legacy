@@ -22,6 +22,7 @@ public final class GlowParticle {
 
     /**
      * Get the particle id for a specified Particle.
+     *
      * @param particle the Particle.
      * @return the particle id.
      */
@@ -32,6 +33,7 @@ public final class GlowParticle {
 
     /**
      * Convert a MaterialData to an extData array if possible for a particle.
+     *
      * @param particle the Particle to validate.
      * @param material the MaterialData to convert.
      * @return The extData array for the particle effect.
@@ -58,16 +60,17 @@ public final class GlowParticle {
     }
 
     /**
-     * Determine whether a particle type is considered long distance, meaning
-     * it has a higher visible range than normal.
+     * Determine whether a particle type is considered long distance, meaning it
+     * has a higher visible range than normal.
+     *
      * @param particle the Particle.
      * @return True if the particle is long distance.
      */
     public static boolean isLongDistance(Particle particle) {
-        return particle == SMOKE_SMALL ||
-                particle == EXPLOSION_LARGE ||
-                particle == EXPLOSION_HUGE ||
-                particle == MOB_APPEARANCE;
+        return particle == SMOKE_SMALL
+                || particle == EXPLOSION_LARGE
+                || particle == EXPLOSION_HUGE
+                || particle == MOB_APPEARANCE;
     }
 
     private static void set(Particle particle, int id) {

@@ -120,10 +120,11 @@ public class Translator_v0_10_0 extends BaseTranslator {
     private ArrayList<Integer> cachedEntityIDs;
 
     /**
-     * Client's special behavior to players, can not be treated like a normal entity
+     * Client's special behavior to players, can not be treated like a normal
+     * entity
      */
     private ArrayList<Integer> cachedPlayerEntities;
-    
+
     private ItemTranslator itemTranslator;
 
     public Translator_v0_10_0(DragonetSession session) {
@@ -151,7 +152,7 @@ public class Translator_v0_10_0 extends BaseTranslator {
                 MovePlayerPacket pkMovePlayer = (MovePlayerPacket) packet;
                 //Check the position
                 Location loc = new Location(this.getSession().getPlayer().getWorld(), pkMovePlayer.x, pkMovePlayer.y, pkMovePlayer.z);
-                if(!this.getSession().validateMovement(loc)){ //Revert
+                if (!this.getSession().validateMovement(loc)) { //Revert
                     this.getSession().sendPosition();
                     System.out.println("Reverted movement! ");
                     return null;
@@ -207,7 +208,7 @@ public class Translator_v0_10_0 extends BaseTranslator {
                     }
                     return null;
                 }
-                if(this.getSession().getPlayer().getGameMode().equals(GameMode.CREATIVE)){
+                if (this.getSession().getPlayer().getGameMode().equals(GameMode.CREATIVE)) {
                     this.getSession().getPlayer().getInventory().setItemInHand(new ItemStack(pkEquipment.item, 1, pkEquipment.meta, (byte) 0));
                     return null;
                 }
@@ -217,7 +218,7 @@ public class Translator_v0_10_0 extends BaseTranslator {
                     ItemStack item = this.getSession().getPlayer().getInventory().getItem(slot + 9);
                     this.getSession().getPlayer().getInventory().setItem(slot + 9, this.getSession().getPlayer().getInventory().getItem(0));
                     this.getSession().getPlayer().getInventory().setItem(0, item);
-                    if(item.getAmount() <= 0){
+                    if (item.getAmount() <= 0) {
                         this.getSession().getPlayer().getInventory().setItem(slot + 9, null);
                         this.getSession().sendInventory();
                         return null;
@@ -228,7 +229,7 @@ public class Translator_v0_10_0 extends BaseTranslator {
                     this.getSession().sendInventory();
                 } else if (slot >= 27) { //Hotbar
                     ItemStack item = this.getSession().getPlayer().getInventory().getItem(slot - 27);
-                    if(item.getAmount() <= 0){
+                    if (item.getAmount() <= 0) {
                         this.getSession().getPlayer().getInventory().setItem(slot - 27, null);
                         this.getSession().sendInventory();
                         return null;
@@ -391,7 +392,7 @@ public class Translator_v0_10_0 extends BaseTranslator {
                 return null;
             }
         }
-        
+
         /**
          * Force Update Client Position & Rotation TODO: WHY THE FUCK DOESN'T IT
          * WORK!
@@ -479,7 +480,7 @@ public class Translator_v0_10_0 extends BaseTranslator {
             pkMotion.motions = new SetEntityMotionPacket.EntityMotionData[]{data};
             return new PEPacket[]{pkMotion};
         }
-        
+
         /**
          * Gamemode Change
          */
@@ -707,13 +708,13 @@ public class Translator_v0_10_0 extends BaseTranslator {
             int[] ids = ArrayUtils.toPrimitive(pkDestroy.ids.toArray(new Integer[0]));
             PEPacket[] pkRemoveEntity = new PEPacket[ids.length];
             for (int i = 0; i < ids.length; i++) {
-                if(!this.cachedPlayerEntities.contains(ids[i])){
+                if (!this.cachedPlayerEntities.contains(ids[i])) {
                     pkRemoveEntity[i] = new RemoveEntityPacket();
-                    ((RemoveEntityPacket)pkRemoveEntity[i]).eid = ids[i];
-                }else{
+                    ((RemoveEntityPacket) pkRemoveEntity[i]).eid = ids[i];
+                } else {
                     pkRemoveEntity[i] = new RemovePlayerPacket();
-                    ((RemovePlayerPacket)pkRemoveEntity[i]).clientID = 0;
-                    ((RemovePlayerPacket)pkRemoveEntity[i]).eid = ids[i];
+                    ((RemovePlayerPacket) pkRemoveEntity[i]).clientID = 0;
+                    ((RemovePlayerPacket) pkRemoveEntity[i]).eid = ids[i];
                     this.cachedPlayerEntities.remove(new Integer(ids[i]));
                 }
             }
@@ -812,12 +813,12 @@ public class Translator_v0_10_0 extends BaseTranslator {
         ItemStack item = this.getSession().getPlayer().getInventory().getItem(realSlot);
         if (item == null) {
             item = new ItemStack(Material.AIR);
-        }else if(item.getAmount() <= 0){
+        } else if (item.getAmount() <= 0) {
             this.getSession().getPlayer().getInventory().setItem(realSlot, null);
             return;
         }
         System.out.println("FROM " + item.toString() + "to (ITEM=" + packet.item.id + ",CNT=" + packet.item.count + ")");
-        if(packet.item.count < 0){
+        if (packet.item.count < 0) {
             this.getSession().sendInventory();
             return;
         }
@@ -836,7 +837,9 @@ public class Translator_v0_10_0 extends BaseTranslator {
         int amount = packet.item.count - (item.getTypeId() == 0 ? 0 : item.getAmount());
         ItemStack result = new ItemStack(packet.item.id, amount, packet.item.meta);
         List<Recipe> recipes = this.getSession().getServer().getCraftingManager().getRecipesFor(result);
-        if(recipes.size() <= 0) return;
+        if (recipes.size() <= 0) {
+            return;
+        }
         //System.out.println("CRAFTING FOR: " + result.toString() + ", recipes count: " + recipes.size());
         if (packet.windowID == PEWindowConstantID.PLAYER_INVENTORY && recipes.size() > 4) {
             //Can not craft more than 4 recipes in a player inventory

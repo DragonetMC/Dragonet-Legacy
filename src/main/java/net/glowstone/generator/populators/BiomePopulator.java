@@ -18,11 +18,9 @@ public class BiomePopulator extends BlockPopulator {
     public BiomePopulator() {
 
         // the order is important
-
         addDecorator(new FlowerDecorator()
                 .setDefaultFlowerWeight(2, FlowerDecorator.Flower.DANDELION)
                 .setDefaultFlowerWeight(1, FlowerDecorator.Flower.POPPY)
-
                 .setFlowerWeight(4, FlowerDecorator.Flower.DANDELION, Biome.OCEAN) // fix for lack of biomes
                 .setFlowerWeight(2, FlowerDecorator.Flower.POPPY, Biome.OCEAN) // fix for lack of biomes
                 .setFlowerWeight(1, FlowerDecorator.Flower.LILAC, Biome.OCEAN) // fix for lack of biomes
@@ -35,7 +33,6 @@ public class BiomePopulator extends BlockPopulator {
                 .setFernDensity(0.8D, Biome.JUNGLE, Biome.JUNGLE_HILLS, Biome.JUNGLE_EDGE)
                 .setFernDensity(0.25D, Biome.TAIGA, Biome.TAIGA_HILLS, Biome.COLD_TAIGA,
                         Biome.COLD_TAIGA_HILLS, Biome.MEGA_TAIGA, Biome.MEGA_TAIGA_HILLS)
-
                 .setDefaultAmount(1)
                 .setBiomeAmount(2, Biome.OCEAN) // fix for lack of biomes
                 .setBiomeAmount(2, Biome.FOREST, Biome.FOREST_HILLS, Biome.BIRCH_FOREST,

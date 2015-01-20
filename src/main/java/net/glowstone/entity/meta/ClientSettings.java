@@ -28,6 +28,7 @@ public final class ClientSettings {
 
     /**
      * Construct the ClientSettings from a ClientSettingsMessage.
+     *
      * @param msg The message sent by the client.
      */
     public ClientSettings(ClientSettingsMessage msg) {
@@ -36,6 +37,7 @@ public final class ClientSettings {
 
     /**
      * Construct a ClientSettings.
+     *
      * @param locale The locale, in a form like "en_US".
      * @param viewDistance The view distance, in chunks.
      * @param chatFlags The client's chat flags.
@@ -52,6 +54,7 @@ public final class ClientSettings {
 
     /**
      * Get the locale, in a form like "en_US".
+     *
      * @return The locale.
      */
     public String getLocale() {
@@ -60,6 +63,7 @@ public final class ClientSettings {
 
     /**
      * Get the client's view distance, in chunks.
+     *
      * @return The view distance.
      */
     public int getViewDistance() {
@@ -68,6 +72,7 @@ public final class ClientSettings {
 
     /**
      * Get the client's chat flags.
+     *
      * @return The chat flags.
      */
     public int getChatFlags() {
@@ -76,6 +81,7 @@ public final class ClientSettings {
 
     /**
      * Get whether player chat should be shown based on chat flags.
+     *
      * @return Whether player chat is shown.
      */
     public boolean showChat() {
@@ -84,6 +90,7 @@ public final class ClientSettings {
 
     /**
      * Get whether command output should be shown based on chat flags.
+     *
      * @return Whether command output is shown.
      */
     public boolean showCommands() {
@@ -92,6 +99,7 @@ public final class ClientSettings {
 
     /**
      * Get if the client has chat colors enabled.
+     *
      * @return Whether chat colors are enabled.
      */
     public boolean showChatColors() {
@@ -100,6 +108,7 @@ public final class ClientSettings {
 
     /**
      * Get the client's skin flags.
+     *
      * @return The skin flags.
      */
     public int getSkinFlags() {
@@ -108,12 +117,12 @@ public final class ClientSettings {
 
     @Override
     public String toString() {
-        return "ClientSettings{" +
-                "locale='" + locale + '\'' +
-                ", viewDistance=" + viewDistance +
-                ", chatFlags=" + chatFlags +
-                ", chatColors=" + chatColors +
-                ", skinFlags=" + skinFlags +
-                '}';
+        return "ClientSettings{"
+                + "locale='" + locale + '\''
+                + ", viewDistance=" + viewDistance
+                + ", chatFlags=" + chatFlags
+                + ", chatColors=" + chatColors
+                + ", skinFlags=" + skinFlags
+                + '}';
     }
 }

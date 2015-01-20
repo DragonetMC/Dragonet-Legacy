@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BlockEnderPortalFrame extends BlockDropless {
+
     private static final BlockFace[] DIRECTION = new BlockFace[]{BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
 
     @Override

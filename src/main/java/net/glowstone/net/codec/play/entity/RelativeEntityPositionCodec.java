@@ -8,6 +8,7 @@ import net.glowstone.net.message.play.entity.RelativeEntityPositionMessage;
 import java.io.IOException;
 
 public final class RelativeEntityPositionCodec implements Codec<RelativeEntityPositionMessage> {
+
     @Override
     public RelativeEntityPositionMessage decode(ByteBuf buf) throws IOException {
         int id = ByteBufUtils.readVarInt(buf);

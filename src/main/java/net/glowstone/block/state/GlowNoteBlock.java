@@ -41,7 +41,6 @@ public class GlowNoteBlock extends GlowBlockState implements NoteBlock {
 
     ////////////////////////////////////////////////////////////////////////////
     // Implementation
-
     @Override
     public Note getNote() {
         return note;
@@ -93,7 +92,6 @@ public class GlowNoteBlock extends GlowBlockState implements NoteBlock {
 
     ////////////////////////////////////////////////////////////////////////////
     // Internals
-
     private static Instrument instrumentOf(Material mat) {
         // todo: check more blocks.
         switch (mat) {

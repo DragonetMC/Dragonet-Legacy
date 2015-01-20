@@ -18,6 +18,7 @@ public class GlowInventoryView extends InventoryView {
 
     /**
      * Create the default inventory view for this player.
+     *
      * @param player The player.
      */
     public GlowInventoryView(GlowHumanEntity player) {
@@ -25,9 +26,11 @@ public class GlowInventoryView extends InventoryView {
     }
 
     /**
-     * Create an inventory view for this player looking at a given top inventory.
+     * Create an inventory view for this player looking at a given top
+     * inventory.
+     *
      * @param player The player.
-     * @param top    The top inventory.
+     * @param top The top inventory.
      */
     public GlowInventoryView(HumanEntity player, Inventory top) {
         this(player, top.getType(), top, player.getInventory());
@@ -35,9 +38,10 @@ public class GlowInventoryView extends InventoryView {
 
     /**
      * Create an inventory view for a player.
+     *
      * @param player The player.
-     * @param type   The inventory type.
-     * @param top    The top inventory.
+     * @param type The inventory type.
+     * @param top The top inventory.
      * @param bottom The bottom inventory.
      */
     public GlowInventoryView(HumanEntity player, InventoryType type, Inventory top, Inventory bottom) {
@@ -61,13 +65,18 @@ public class GlowInventoryView extends InventoryView {
 
     /**
      * Verify that the given slot is within the bounds of this inventory view.
+     *
      * @param slot The slot to check.
      */
     private void checkSlot(int slot) {
-        if (slot == OUTSIDE) return;
+        if (slot == OUTSIDE) {
+            return;
+        }
 
         int size = countSlots();
-        if (isDefault(this)) size += 4; // armor slots
+        if (isDefault(this)) {
+            size += 4; // armor slots
+        }
         if (slot < 0 || slot >= size) {
             throw new IllegalArgumentException("Slot out of range [0," + size + "): " + slot);
         }
@@ -98,6 +107,7 @@ public class GlowInventoryView extends InventoryView {
 
     /**
      * Check if an inventory view is the player's default inventory view.
+     *
      * @param view The view to check.
      * @return Whether it is a player's default inventory view.
      */

@@ -23,6 +23,7 @@ public final class InventoryMonitor {
 
     /**
      * Create a new monitor for the given inventory view.
+     *
      * @param view The view to monitor.
      */
     public InventoryMonitor(InventoryView view) {
@@ -48,6 +49,7 @@ public final class InventoryMonitor {
 
     /**
      * Update the given slot with the current value from the view.
+     *
      * @param slot The slot to update.
      */
     private void updateItem(int slot) {
@@ -59,6 +61,7 @@ public final class InventoryMonitor {
 
     /**
      * Check for changes in the inventory view.
+     *
      * @return The list of changed items.
      */
     public List<Entry> getChanges() {
@@ -74,6 +77,7 @@ public final class InventoryMonitor {
 
     /**
      * Get the current contents of the viewed inventory.
+     *
      * @return The contents.
      */
     public ItemStack[] getContents() {
@@ -82,6 +86,7 @@ public final class InventoryMonitor {
 
     /**
      * Get the number of slots in this inventory view.
+     *
      * @return The number of slots.
      */
     public int getSize() {
@@ -90,6 +95,7 @@ public final class InventoryMonitor {
 
     /**
      * Get the network ID of this inventory view.
+     *
      * @return The id.
      */
     public int getId() {
@@ -98,6 +104,7 @@ public final class InventoryMonitor {
 
     /**
      * Get the network type ID of this inventory view.
+     *
      * @return The type id.
      */
     public String getType() {
@@ -108,6 +115,7 @@ public final class InventoryMonitor {
      * An entry which has been changed.
      */
     public static class Entry {
+
         public final int slot;
         public final ItemStack item;
 
@@ -119,6 +127,7 @@ public final class InventoryMonitor {
 
     /**
      * Get the network ID for the given inventory type.
+     *
      * @param type The type.
      * @return The id.
      */

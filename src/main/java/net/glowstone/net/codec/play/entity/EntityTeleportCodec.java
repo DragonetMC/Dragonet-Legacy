@@ -9,6 +9,7 @@ import net.glowstone.net.message.play.entity.EntityTeleportMessage;
 import java.io.IOException;
 
 public final class EntityTeleportCodec implements Codec<EntityTeleportMessage> {
+
     @Override
     public EntityTeleportMessage decode(ByteBuf buf) throws IOException {
         throw new DecoderException("Cannot decode EntityTeleportMessage");

@@ -11,8 +11,8 @@ import org.bukkit.generator.BlockPopulator;
 import java.util.Random;
 
 /**
- * BlockPopulator that generates giant mushrooms in tundra
- * and {@link Biome#TAIGA taiga}, a la Minecraft 1.8.
+ * BlockPopulator that generates giant mushrooms in tundra and
+ * {@link Biome#TAIGA taiga}, a la Minecraft 1.8.
  */
 public class MushroomPopulator extends BlockPopulator {
 
@@ -54,5 +54,5 @@ public class MushroomPopulator extends BlockPopulator {
             }
         }
     }
-    
+
 }

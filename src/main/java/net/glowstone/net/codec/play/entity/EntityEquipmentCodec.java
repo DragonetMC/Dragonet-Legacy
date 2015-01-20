@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import java.io.IOException;
 
 public final class EntityEquipmentCodec implements Codec<EntityEquipmentMessage> {
+
     @Override
     public EntityEquipmentMessage decode(ByteBuf buf) throws IOException {
         int id = ByteBufUtils.readVarInt(buf);

@@ -10,7 +10,6 @@
  *
  * @author The Dragonet Team
  */
-
 package org.dragonet.net.translator;
 
 import com.flowpowered.networking.Message;
@@ -20,28 +19,32 @@ import org.dragonet.net.packet.minecraft.PEPacket;
 
 public abstract class BaseTranslator {
 
-    private @Getter DragonetSession session;
+    private @Getter
+    DragonetSession session;
 
     public BaseTranslator(DragonetSession session) {
         this.session = session;
     }
-    
+
     /**
-     * Translate a Minecraft PE packet into Minecraft PC message. 
+     * Translate a Minecraft PE packet into Minecraft PC message.
+     *
      * @param packet The PEPacket
      * @return Single/Multiple message(s)
      */
     public abstract Message[] translateToPC(PEPacket packet);
 
     /**
-     * Translate a Minecraft PC packet into Minecraft PE message. 
+     * Translate a Minecraft PC packet into Minecraft PE message.
+     *
      * @param message
      * @return Single/Multiple packet(s)
      */
     public abstract PEPacket[] translateToPE(Message message);
-    
+
     /**
      * Get the specific ItemTranslator for current protocol
+     *
      * @return ItemTranslator for current protocol
      */
     public abstract ItemTranslator getItemTranslator();

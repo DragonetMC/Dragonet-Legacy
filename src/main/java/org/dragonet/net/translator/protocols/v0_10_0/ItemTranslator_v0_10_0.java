@@ -15,7 +15,7 @@ package org.dragonet.net.translator.protocols.v0_10_0;
 import java.util.HashMap;
 import org.dragonet.net.translator.ItemTranslator;
 
-public class ItemTranslator_v0_10_0 implements ItemTranslator{
+public class ItemTranslator_v0_10_0 implements ItemTranslator {
 
     private final HashMap<Integer, Integer> itemMap_PE_to_PC = new HashMap<>();
     private final HashMap<Integer, Integer> itemMap_PC_to_PE = new HashMap<>();
@@ -47,39 +47,39 @@ public class ItemTranslator_v0_10_0 implements ItemTranslator{
             itemMap_PC_to_PE.put(i, i);
         }
         /*
-        for (int i = 95; i <= 96; i++) {
-            itemMap_PC_to_PE.put(i, i);
-        }
-        for (int i = 99; i <= 112; i++) {
-            itemMap_PC_to_PE.put(i, i);
-        }
-        itemMap_PC_to_PE.put(114, 114);
-        for (int i = 120; i <= 121; i++) {
-            itemMap_PC_to_PE.put(i, i);
-        }
-        for (int i = 127; i <= 129; i++) {
-            itemMap_PC_to_PE.put(i, i);
-        }
-        for (int i = 133; i <= 136; i++) {
-            itemMap_PC_to_PE.put(i, i);
-        }
-        itemMap_PC_to_PE.put(139, 139);
-        for (int i = 141; i <= 142; i++) {
-            itemMap_PC_to_PE.put(i, i);
-        }
-        for (int i = 155; i <= 159; i++) {
-            itemMap_PC_to_PE.put(i, i);
-        }
-        for (int i = 163; i <= 164; i++) {
-            itemMap_PC_to_PE.put(i, i);
-        }
-        for (int i = 170; i <= 174; i++) {
-            itemMap_PC_to_PE.put(i, i);
-        }
-        for (int i = 243; i <= 249; i++) {
-            itemMap_PC_to_PE.put(i, i);
-        }
-        */
+         for (int i = 95; i <= 96; i++) {
+         itemMap_PC_to_PE.put(i, i);
+         }
+         for (int i = 99; i <= 112; i++) {
+         itemMap_PC_to_PE.put(i, i);
+         }
+         itemMap_PC_to_PE.put(114, 114);
+         for (int i = 120; i <= 121; i++) {
+         itemMap_PC_to_PE.put(i, i);
+         }
+         for (int i = 127; i <= 129; i++) {
+         itemMap_PC_to_PE.put(i, i);
+         }
+         for (int i = 133; i <= 136; i++) {
+         itemMap_PC_to_PE.put(i, i);
+         }
+         itemMap_PC_to_PE.put(139, 139);
+         for (int i = 141; i <= 142; i++) {
+         itemMap_PC_to_PE.put(i, i);
+         }
+         for (int i = 155; i <= 159; i++) {
+         itemMap_PC_to_PE.put(i, i);
+         }
+         for (int i = 163; i <= 164; i++) {
+         itemMap_PC_to_PE.put(i, i);
+         }
+         for (int i = 170; i <= 174; i++) {
+         itemMap_PC_to_PE.put(i, i);
+         }
+         for (int i = 243; i <= 249; i++) {
+         itemMap_PC_to_PE.put(i, i);
+         }
+         */
         //itemMap_PC_to_PE.put(8, 8);
         //itemMap_PC_to_PE.put(9, 9);
         //itemMap_PC_to_PE.put(10, 10);

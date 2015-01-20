@@ -16,6 +16,7 @@ public final class ResourcePackStatus {
 
     /**
      * Get the status ID for a specified Status.
+     *
      * @param status the Status.
      * @return the status code
      */
@@ -26,6 +27,7 @@ public final class ResourcePackStatus {
 
     /**
      * Get the status for a specified id.
+     *
      * @param code the code.
      * @return the Status, or null
      */

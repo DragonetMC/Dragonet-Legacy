@@ -745,8 +745,12 @@ public class DragonetSession extends GlowSession {
     }
 
     public void sendInventory() {
-        if(this.getPlayer() == null) return;
-        if(this.getPlayer().getGameMode().equals(GameMode.CREATIVE)) return;
+        if (this.getPlayer() == null) {
+            return;
+        }
+        if (this.getPlayer().getGameMode().equals(GameMode.CREATIVE)) {
+            return;
+        }
         WindowItemsPacket pkItems = new WindowItemsPacket();
         pkItems.windowID = PEWindowConstantID.PLAYER_INVENTORY;
         pkItems.slots = new PEInventorySlot[InventoryType.SlotSize.PLAYER];
@@ -770,7 +774,7 @@ public class DragonetSession extends GlowSession {
         }
         this.send(pkItems);
     }
-    
+
     /**
      * Send the server side position to the client, used to correct the position
      */
@@ -788,9 +792,10 @@ public class DragonetSession extends GlowSession {
         MoveEntitiesPacket pkMovePlayer = new MoveEntitiesPacket(new MoveEntitiesPacket.MoveEntityData[]{d});
         this.send(pkMovePlayer);
     }
-    
+
     /**
      * Check wether a player can go to the new location
+     *
      * @param newLoc The New location
      * @return New location is okay or not
      */

@@ -135,6 +135,7 @@ public class NbtPlayerDataService implements PlayerDataService {
     }
 
     private class NbtPlayerReader implements PlayerReader {
+
         private CompoundTag tag = new CompoundTag();
         private boolean hasPlayed = false;
 

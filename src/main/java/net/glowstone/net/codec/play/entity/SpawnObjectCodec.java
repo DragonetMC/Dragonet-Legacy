@@ -8,6 +8,7 @@ import net.glowstone.net.message.play.entity.SpawnObjectMessage;
 import java.io.IOException;
 
 public final class SpawnObjectCodec implements Codec<SpawnObjectMessage> {
+
     @Override
     public SpawnObjectMessage decode(ByteBuf buf) throws IOException {
         int id = ByteBufUtils.readVarInt(buf);

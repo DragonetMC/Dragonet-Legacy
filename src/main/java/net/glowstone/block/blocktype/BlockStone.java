@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 public class BlockStone extends BlockNeedsTool {
+
     @Override
     protected MaterialMatcher getNeededMiningTool(GlowBlock block) {
         return ToolType.PICKAXE;

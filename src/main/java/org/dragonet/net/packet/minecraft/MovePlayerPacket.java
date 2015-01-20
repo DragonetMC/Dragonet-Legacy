@@ -19,6 +19,7 @@ import org.dragonet.utilities.io.PEBinaryReader;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class MovePlayerPacket extends PEPacket {
+
     public int eid;
     public float x;
     public float y;
@@ -34,7 +35,7 @@ public class MovePlayerPacket extends PEPacket {
 
     public MovePlayerPacket() {
     }
-    
+
     public MovePlayerPacket(int eid, float x, float y, float z, float yaw, float pitch, float bodyYaw, boolean teleport) {
         this.eid = eid;
         this.x = x;
@@ -45,7 +46,7 @@ public class MovePlayerPacket extends PEPacket {
         this.bodyYaw = bodyYaw;
         this.teleport = teleport;
     }
-    
+
     @Override
     public int pid() {
         return PEPacketIDs.MOVE_PLAYER_PACKET;
@@ -65,7 +66,7 @@ public class MovePlayerPacket extends PEPacket {
             writer.writeFloat(this.pitch);
             writer.writeFloat(this.bodyYaw);
             //writer.writeByte((byte)0x80);
-            writer.writeByte((byte)(this.teleport ? 0x80 : 0x00));
+            writer.writeByte((byte) (this.teleport ? 0x80 : 0x00));
             this.setData(bos.toByteArray());
         } catch (IOException e) {
         }

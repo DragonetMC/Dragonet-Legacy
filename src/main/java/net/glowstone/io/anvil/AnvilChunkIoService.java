@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.logging.Level;
 
 /**
- * An implementation of the {@link ChunkIoService} which reads and writes Anvil maps,
- * an improvement on the McRegion file format.
+ * An implementation of the {@link ChunkIoService} which reads and writes Anvil
+ * maps, an improvement on the McRegion file format.
  */
 public final class AnvilChunkIoService implements ChunkIoService {
 
@@ -43,13 +43,13 @@ public final class AnvilChunkIoService implements ChunkIoService {
     private final RegionFileCache cache = new RegionFileCache(".mca");
 
     // todo: consider the session.lock file
-
     public AnvilChunkIoService(File dir) {
         this.dir = dir;
     }
 
     /**
      * Reads a chunk from its region file.
+     *
      * @param chunk The GlowChunk to read into.
      * @return Whether the
      * @throws IOException if an I/O error occurs.
@@ -117,7 +117,6 @@ public final class AnvilChunkIoService implements ChunkIoService {
         }
 
         // read "HeightMap" if we need to
-
         // read tile entities
         List<CompoundTag> storedTileEntities = levelTag.getCompoundList("TileEntities");
         for (CompoundTag tileEntityTag : storedTileEntities) {
@@ -143,6 +142,7 @@ public final class AnvilChunkIoService implements ChunkIoService {
 
     /**
      * Writes a chunk to its region file.
+     *
      * @param chunk The {@link GlowChunk} to write from.
      * @throws IOException if an I/O error occurs.
      */
@@ -167,7 +167,9 @@ public final class AnvilChunkIoService implements ChunkIoService {
         ChunkSection[] sections = snapshot.getRawSections();
         for (byte i = 0; i < sections.length; ++i) {
             ChunkSection sec = sections[i];
-            if (sec == null) continue;
+            if (sec == null) {
+                continue;
+            }
 
             CompoundTag sectionTag = new CompoundTag();
             sectionTag.putByte("Y", i);

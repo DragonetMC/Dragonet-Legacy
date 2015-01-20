@@ -26,12 +26,12 @@ public final class PlayerPositionMessage extends PlayerUpdateMessage {
 
     @Override
     public String toString() {
-        return "PlayerPositionMessage(" +
-                "onGround=" + isOnGround() +
-                ", x=" + x +
-                ", y=" + y +
-                ", z=" + z +
-                ')';
+        return "PlayerPositionMessage("
+                + "onGround=" + isOnGround()
+                + ", x=" + x
+                + ", y=" + y
+                + ", z=" + z
+                + ')';
     }
 
 }

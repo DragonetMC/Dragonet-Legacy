@@ -29,6 +29,7 @@ public abstract class JsonListFile {
 
     /**
      * Initialize the list from the given file.
+     *
      * @param file The file to use for this list.
      */
     public JsonListFile(File file) {
@@ -86,6 +87,7 @@ public abstract class JsonListFile {
 
     /**
      * Deserialize an entry from JSON format.
+     *
      * @param object The JSON object to read from.
      * @return The finished Entry.
      */
@@ -95,13 +97,14 @@ public abstract class JsonListFile {
      * Import data from a legacy format if possible.
      */
     //protected abstract void importLegacy();
-
     /**
      * Base interface for entries in JSON list files.
      */
     protected interface BaseEntry {
+
         /**
          * Serialize this entry to JSON format.
+         *
          * @return The resulting JSON object.
          */
         Map<String, String> write();

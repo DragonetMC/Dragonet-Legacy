@@ -7,6 +7,7 @@ import net.glowstone.net.message.play.game.PositionRotationMessage;
 import java.io.IOException;
 
 public final class PositionRotationCodec implements Codec<PositionRotationMessage> {
+
     @Override
     public PositionRotationMessage decode(ByteBuf buffer) throws IOException {
         double x = buffer.readDouble();

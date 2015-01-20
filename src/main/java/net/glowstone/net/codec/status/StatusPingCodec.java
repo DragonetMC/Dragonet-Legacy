@@ -7,6 +7,7 @@ import net.glowstone.net.message.status.StatusPingMessage;
 import java.io.IOException;
 
 public final class StatusPingCodec implements Codec<StatusPingMessage> {
+
     @Override
     public StatusPingMessage decode(ByteBuf byteBuf) throws IOException {
         return new StatusPingMessage(byteBuf.readLong());

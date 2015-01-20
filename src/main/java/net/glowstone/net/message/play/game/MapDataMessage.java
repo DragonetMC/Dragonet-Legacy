@@ -16,10 +16,12 @@ public final class MapDataMessage implements Message {
 
     @RequiredArgsConstructor
     public static class Icon {
+
         public final int type, facing, x, y;
     }
 
     public static class Section {
+
         public final int width, height, x, y;
         public final byte[] data;
 

@@ -17,8 +17,8 @@ public class BlockVine extends BlockClimbable {
 
     @Override
     public boolean canPlaceAt(GlowBlock block, BlockFace against) {
-        return super.canPlaceAt(block, against) ||
-                against == BlockFace.UP && isTargetOccluding(block, BlockFace.UP);
+        return super.canPlaceAt(block, against)
+                || against == BlockFace.UP && isTargetOccluding(block, BlockFace.UP);
     }
 
     @Override
@@ -50,8 +50,9 @@ public class BlockVine extends BlockClimbable {
 
     @Override
     public Collection<ItemStack> getDrops(GlowBlock block, ItemStack tool) {
-        if (tool != null && tool.getType() == Material.SHEARS)
+        if (tool != null && tool.getType() == Material.SHEARS) {
             return Arrays.asList(new ItemStack(Material.VINE));
+        }
 
         return BlockDropless.EMPTY_STACK;
     }

@@ -10,6 +10,7 @@ import java.util.*;
 
 /**
  * A class which manages all of the entities within a world.
+ *
  * @author Graham Edgecombe
  */
 public final class EntityManager implements Iterable<GlowEntity> {
@@ -26,6 +27,7 @@ public final class EntityManager implements Iterable<GlowEntity> {
 
     /**
      * Gets all entities with the specified type.
+     *
      * @param type The {@link Class} for the type.
      * @param <T> The type of entity.
      * @return A collection of entities with the specified type.
@@ -42,6 +44,7 @@ public final class EntityManager implements Iterable<GlowEntity> {
 
     /**
      * Gets all entities.
+     *
      * @return A collection of entities.
      */
     public Collection<GlowEntity> getAll() {
@@ -50,6 +53,7 @@ public final class EntityManager implements Iterable<GlowEntity> {
 
     /**
      * Gets an entity by its id.
+     *
      * @param id The id.
      * @return The entity, or {@code null} if it could not be found.
      */
@@ -59,6 +63,7 @@ public final class EntityManager implements Iterable<GlowEntity> {
 
     /**
      * Registers the entity to this world.
+     *
      * @param entity The entity.
      */
     @SuppressWarnings("unchecked")
@@ -73,6 +78,7 @@ public final class EntityManager implements Iterable<GlowEntity> {
 
     /**
      * Unregister the entity to this world.
+     *
      * @param entity The entity.
      */
     void unregister(GlowEntity entity) {
@@ -82,8 +88,9 @@ public final class EntityManager implements Iterable<GlowEntity> {
     }
 
     /**
-     * Notes that an entity has moved from one location to another for
-     * physics and storage purposes.
+     * Notes that an entity has moved from one location to another for physics
+     * and storage purposes.
+     *
      * @param entity The entity.
      * @param newLocation The new location.
      */

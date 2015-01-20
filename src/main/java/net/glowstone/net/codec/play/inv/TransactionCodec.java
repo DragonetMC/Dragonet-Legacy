@@ -7,6 +7,7 @@ import net.glowstone.net.message.play.inv.TransactionMessage;
 import java.io.IOException;
 
 public final class TransactionCodec implements Codec<TransactionMessage> {
+
     @Override
     public TransactionMessage decode(ByteBuf buf) throws IOException {
         int id = buf.readUnsignedByte();

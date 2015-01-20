@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public final class WindowClickHandler implements MessageHandler<GlowSession, WindowClickMessage> {
+
     @Override
     public void handle(GlowSession session, WindowClickMessage message) {
         boolean result = false;
@@ -151,7 +152,6 @@ public final class WindowClickHandler implements MessageHandler<GlowSession, Win
         }
 
         // todo: restrict sets to certain slots and do crafting as needed
-
         boolean handled = true;
         switch (action) {
             case NOTHING:
@@ -276,7 +276,6 @@ public final class WindowClickHandler implements MessageHandler<GlowSession, Win
                 ItemStack destItem = inv.getItem(hotbarSlot);
 
                 // todo: agree with MC better
-
                 if (slotItem == null) {
                     // nothing in current slot
                     if (destItem == null) {
@@ -358,7 +357,9 @@ public final class WindowClickHandler implements MessageHandler<GlowSession, Win
     }
 
     private ItemStack shiftClick(ItemStack stack, GlowInventory target, int start, int end) {
-        if (stack == null) return null;
+        if (stack == null) {
+            return null;
+        }
 
         int delta = (end < start) ? -1 : 1;
 

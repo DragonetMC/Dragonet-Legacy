@@ -31,7 +31,6 @@ public final class UserListItemMessage implements Message {
     }
 
     // add
-
     public static Entry add(PlayerProfile profile) {
         return add(profile, 0, 0, null);
     }
@@ -45,7 +44,6 @@ public final class UserListItemMessage implements Message {
     }
 
     // gamemode
-
     public static Entry gameMode(UUID uuid, int gameMode) {
         return new Entry(Action.UPDATE_GAMEMODE, uuid, null, gameMode, 0, null);
     }
@@ -55,7 +53,6 @@ public final class UserListItemMessage implements Message {
     }
 
     // latency
-
     public static Entry latency(UUID uuid, int ping) {
         return new Entry(Action.UPDATE_LATENCY, uuid, null, 0, ping, null);
     }
@@ -65,7 +62,6 @@ public final class UserListItemMessage implements Message {
     }
 
     // display name
-
     public static Entry displayName(UUID uuid, TextMessage displayName) {
         return new Entry(Action.UPDATE_DISPLAY_NAME, uuid, null, 0, 0, displayName);
     }
@@ -75,7 +71,6 @@ public final class UserListItemMessage implements Message {
     }
 
     // remove
-
     public static Entry remove(UUID uuid) {
         return new Entry(Action.REMOVE_PLAYER, uuid, null, 0, 0, null);
     }
@@ -85,8 +80,8 @@ public final class UserListItemMessage implements Message {
     }
 
     // inner classes
-
     public static enum Action {
+
         ADD_PLAYER,
         UPDATE_GAMEMODE,
         UPDATE_LATENCY,
@@ -96,6 +91,7 @@ public final class UserListItemMessage implements Message {
 
     @Data
     public static final class Entry {
+
         public final Action action;
         public final UUID uuid;
         public final PlayerProfile profile;

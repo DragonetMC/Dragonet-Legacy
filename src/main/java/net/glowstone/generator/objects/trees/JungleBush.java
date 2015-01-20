@@ -42,8 +42,8 @@ public class JungleBush extends GenericTree {
 
             for (int x = l.getBlockX() - radius; x <= l.getBlockX() + radius; x++) {
                 for (int z = l.getBlockZ() - radius; z <= l.getBlockZ() + radius; z++) {
-                    if ((Math.abs(x - l.getBlockX()) != radius || Math.abs(z - l.getBlockZ()) != radius || random.nextBoolean()) &&
-                            !delegate.getBlockState(l.getWorld(), x, y, z).getType().isSolid()) {
+                    if ((Math.abs(x - l.getBlockX()) != radius || Math.abs(z - l.getBlockZ()) != radius || random.nextBoolean())
+                            && !delegate.getBlockState(l.getWorld(), x, y, z).getType().isSolid()) {
                         delegate.setTypeAndRawData(l.getWorld(), x, y, z, Material.LEAVES, leavesType);
                     }
                 }

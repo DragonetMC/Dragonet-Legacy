@@ -19,7 +19,7 @@ import org.dragonet.utilities.io.PEBinaryWriter;
 public class RemoveEntityPacket extends PEPacket {
 
     public int eid;
-    
+
     @Override
     public int pid() {
         return PEPacketIDs.REMOVE_ENTITY_PACKET;

@@ -10,7 +10,6 @@
  *
  * @author The Dragonet Team
  */
-
 package org.dragonet.net.packet;
 
 import java.io.ByteArrayOutputStream;
@@ -18,12 +17,12 @@ import java.io.IOException;
 import org.dragonet.net.RaknetConstants;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
-public class ServerInfoPacket extends BinaryPacket{
+public class ServerInfoPacket extends BinaryPacket {
 
     public long time;
     public long serverID;
     public String serverName;
-    
+
     @Override
     public void encode() {
         try {

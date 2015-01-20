@@ -9,6 +9,7 @@ import org.bukkit.block.BlockState;
 import java.util.Random;
 
 public class HugeMushroom extends GenericTree {
+
     private Material type;
 
     public HugeMushroom(Random random, Location location, Material type, BlockStateDelegate delegate) {

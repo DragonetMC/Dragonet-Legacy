@@ -23,7 +23,7 @@ public class IntegerMeta implements EntityMetaDataObject {
     public IntegerMeta(int data) {
         this.data = data;
     }
-    
+
     @Override
     public int type() {
         return 2;

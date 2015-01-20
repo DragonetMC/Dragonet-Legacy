@@ -23,8 +23,8 @@ public class DragonetPlayer extends GlowPlayer {
     public DragonetPlayer(DragonetSession session, PlayerProfile profile, PlayerDataService.PlayerReader reader) {
         super(session, profile, reader);
     }
-    
-    public void setLocation(Location location){
+
+    public void setLocation(Location location) {
         this.location.setWorld(location.getWorld());
         this.location.setX(location.getX());
         this.location.setY(location.getY());

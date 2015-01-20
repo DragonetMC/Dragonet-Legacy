@@ -17,6 +17,7 @@ import net.glowstone.net.message.play.inv.*;
 import net.glowstone.net.message.play.player.*;
 
 public final class PlayProtocol extends GlowProtocol {
+
     public PlayProtocol() {
         super("PLAY", 0x49);
 
