@@ -12,12 +12,17 @@
  */
 package org.dragonet.peaddon.net;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lombok.Getter;
 import org.dragonet.net.DragonetSession;
 import org.dragonet.peaddon.DragonetPEAddonServer;
+import org.dragonet.utilities.io.DataIOPair;
 
 public class PEAddonClient implements Runnable {
 
@@ -32,9 +37,20 @@ public class PEAddonClient implements Runnable {
     private @Getter
     DragonetSession peSession;
 
+    private DataIOPair io;
+
+    private PEAddonClientStatus status;
+
     public PEAddonClient(Socket clientSocket, DragonetPEAddonServer addonServer) {
         this.clientSocket = clientSocket;
         this.addonServer = addonServer;
+        try {
+            this.io = new DataIOPair(new DataInputStream(this.clientSocket.getInputStream()), new DataOutputStream(this.clientSocket.getOutputStream()));
+        } catch (IOException ex) {
+            this.disconnect();
+            return;
+        }
+        this.status = new PEAddonClientStatus();
         this.running = true;
     }
 
@@ -47,7 +63,25 @@ public class PEAddonClient implements Runnable {
             }
             throw new RejectedExecutionException("PEAddon client disconnected! ");
         }
-        //TODO
+        try {
+            if (!this.status.isReadingHeader) {
+                if (this.io.getInput().available() < 2) {
+                    return; //Waiting for the length
+                }
+                this.status.packetLength = this.io.getInput().readShort();
+                this.status.isReadingHeader = false;
+            } else {
+                //Reading packet body
+                if (this.io.getInput().available() < this.status.packetLength) {
+                    return;
+                }
+                byte[] packetData = new byte[this.status.packetLength];
+                this.io.getInput().read(packetData);
+                //TODO
+            }
+        } catch (IOException e) {
+            this.disconnect();
+        }
     }
 
     public void disconnect() {
