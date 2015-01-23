@@ -12,6 +12,8 @@ net.glowstone.net.GlowSession: Changed player variable into protected
 net.glowstone.net.GlowSession: Added @Getter at hostname variable
 net.glowstone.net.GlowSession: Added another constructor
 
+net.glowstone.net.handler.login: Added checker for custom items for MCPE
+
 net.glowstone.net.message.*: Changed every variable to public in order to read/write
 
 net.glowstone.net.io.entity.EntityStorage: Added checking parent class on EntityStore<?> find(Class<? extends GlowEntity> clazz, String type)

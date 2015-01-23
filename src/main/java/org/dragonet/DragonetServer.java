@@ -33,8 +33,15 @@ import org.slf4j.LoggerFactory;
 
 public class DragonetServer {
 
+    private static DragonetServer INSTANCE;
+
+    public static DragonetServer instance() {
+        return INSTANCE;
+    }
+
     private @Getter
     GlowServer server;
+
     private @Getter
     Logger logger;
 
@@ -50,9 +57,14 @@ public class DragonetServer {
     private @Getter
     boolean addonSupported;
 
+    private @Getter
+    CustomItemManager customMaterialManager;
+
     public DragonetServer(GlowServer server) {
+        INSTANCE = this;
         this.server = server;
         this.logger = LoggerFactory.getLogger("DragonetServer");
+        this.customMaterialManager = new CustomItemManager(this);
         this.logger.info("Starting Dragonet Server version " + DragonetVersioning.DRAGONET_VERSION + "... ");
     }
 
