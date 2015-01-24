@@ -1,8 +1,3 @@
-PROJECT DISCONTINUED! 
-=====================
-We suggest you using [PocketMine-MP](http://pocketmine.net),
-it is an awesome server software by @shoghicp ! :) 
-
 Dragonet
 ========
 
