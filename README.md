@@ -12,7 +12,8 @@ Yes, mostly! But you may expirence some bugs and issues because this software is
 Right now, The Dragonet Team is working on a GUI wrapper for the server, it will hopefully be released soon!
 
 ##Where is the GitHub Dragonet Wiki?
-[Here!](https://github.com/TheMCPEGamer/Dragonet/wiki)<br)
+[Here!](https://github.com/TheMCPEGamer/Dragonet/wiki)<br>
+
 It is currently under some construction, please bear with us for the moment...
 
 ##Download
