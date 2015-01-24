@@ -6,7 +6,14 @@ The universal Minecraft server, supports both `Minecraft PC` and `Minecraft PE` 
 #### [Plugin Compatibility](https://github.com/GlowstoneMC/Glowstone/wiki/Plugin-Compatibility)
 
 ##Is this fully working now?
-YES, mostly! But you may expirence some bugs and issues because this software is still in heavy development stage. 
+Yes, mostly! But you may expirence some bugs and issues because this software is still in heavy development stage. 
+
+##Where do I grab the GUI version?
+Right now, The Dragonet Team is working on a GUI wrapper for the server, it will hopefully be released soon!
+
+##Where is the GitHub Dragonet Wiki?
+[Here!](https://github.com/TheMCPEGamer/Dragonet/wiki)<br)
+It is currently under some construction, please bear with us for the moment...
 
 ##Download
 You may download pre-compiled binaries at our website:
