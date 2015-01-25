@@ -18,8 +18,7 @@ It is currently under some construction, please bear with us for the moment...
 
 ##Download
 You may download pre-compiled binaries at our website:
-[http://dragonet.org/download.html](http://dragonet.org/download.html)<br>
-We are hosting files on MEGA.go.nz so it is very stable and secure. <br>
+[http://dragonet.org/](http://dragonet.org/)<br>
 
 ###Credits
 Dragonet software: `A universal Minecraft server that supports both Minecraft for PC and Minecraft: Pocket Edition. `
