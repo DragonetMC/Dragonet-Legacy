@@ -27,5 +27,4 @@ Dragonet software: `A universal Minecraft server that supports both Minecraft fo
 Dragonet's code is under `org.dragonet` package and they are under LGPL v3. <br>
 
 GlowStone software: `A Minecraft server that written from zero and no Mojang code included. `<br>
-Glowstone's code is under `net.glowstone` package and they are under MIT Licence. <br>
-You can grab a copy of the licence [here](https://github.com/GlowstoneMC/Glowstone/blob/master/LICENSE)<br>
+Glowstone's code is under `net.glowstone` package and they are under MIT Licence. <br><br>
