@@ -33,7 +33,7 @@ public class Rhino
         
         for(Script s : Scripts)
         {
-            System.out.println("Loaded: " + s.name + " and contains \'" + s.fileContents + "\'");
+            System.out.println("Loaded DragonetAPI Script " + s.name);
         }     
     }
     

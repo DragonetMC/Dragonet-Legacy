@@ -98,7 +98,10 @@ public class Script
             
             Function fct = (Function)scope.get(func, scope);
             Object result = fct.call(context, scope, scope, new Object[] {2, 3});
-            System.out.println(Context.jsToJava(result, int.class));
+            
+            /*if(result != null) {
+                System.out.println(Context.jsToJava(result, String.class));
+            }*/
 	} 
 	
         finally {
