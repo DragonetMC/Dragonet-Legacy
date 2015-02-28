@@ -26,8 +26,10 @@ import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.dragonet.net.NetworkHandler;
 import org.dragonet.peaddon.DragonetPEAddonServer;
+import org.dragonet.rhino.Rhino;
 import org.dragonet.statistic.StatisticSender;
 import org.dragonet.utilities.DragonetVersioning;
+import org.dragonet.rhino.Rhino;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +48,9 @@ public class DragonetServer {
     Logger logger;
 
     private @Getter
+    Rhino rhino;
+    
+    private @Getter
     NetworkHandler networkHandler;
 
     private @Getter
@@ -59,13 +64,14 @@ public class DragonetServer {
 
     private @Getter
     CustomItemManager customMaterialManager;
-
+    
     public DragonetServer(GlowServer server) {
         INSTANCE = this;
         this.server = server;
         this.logger = LoggerFactory.getLogger("DragonetServer");
         this.customMaterialManager = new CustomItemManager(this);
         this.logger.info("Starting Dragonet Server version " + DragonetVersioning.DRAGONET_VERSION + "... ");
+        this.rhino = new Rhino();
     }
 
     /**
@@ -136,6 +142,7 @@ public class DragonetServer {
      */
     public void tickUpdate() {
         this.networkHandler.onTick();
+        this.rhino.Tick();
     }
 
     public void shutdown() {
