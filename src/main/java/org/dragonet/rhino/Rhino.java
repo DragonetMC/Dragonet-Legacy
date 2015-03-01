@@ -30,11 +30,6 @@ public class Rhino
     public void startJSInterpreter()
     {
         Scripts = loadJSFiles();
-        
-        for(Script s : Scripts)
-        {
-            System.out.println("Loaded DragonetAPI Script " + s.name);
-        }     
     }
     
     public List<Script> loadJSFiles()
@@ -46,7 +41,9 @@ public class Rhino
         {
            if(f.getName().endsWith((".js")) && !fileList.contains(f))
            {
-            fileList.add(new Script(f));           
+            Script script = new Script(f);
+            fileList.add(script);
+            System.out.println("Loaded DragonetAPI Script " + script.name);
            }
         }
         
