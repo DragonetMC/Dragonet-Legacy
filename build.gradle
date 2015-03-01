@@ -97,15 +97,16 @@ repositories {
 
 // Dependencies used by our project
 dependencies {
-    compile group: 'net.glowstone', name: 'glowkit', version: project.ext.bukkitVersion
-    compile 'com.flowpowered:flow-networking:1.0.0-SNAPSHOT'
-    compile 'jline:jline:2.11'
-    compile 'org.mozilla:rhino:1.7R4'
+    compile group: 'net.glowstone', name: 'glowkit', version: project.ext.bukkitVersion    
+    compile 'com.flowpowered:flow-networking:1.0.0-SNAPSHOT'   
+    compile 'jline:jline:2.11'   
+    compile 'org.mozilla:rhino:1.7R4'   
     compile 'commons-io:commons-io:2.4'
+    //Unused dependencies:
     //compile 'mysql:mysql-connector-java:5.1.14'
-    //compile 'org.xerial:sqlite-jdbc:3.7.2'
-    compile 'org.slf4j:slf4j-jdk14:1.7.7'
-    compile lombok
+    //compile 'org.xerial:sqlite-jdbc:3.7.2'   
+    compile 'org.slf4j:slf4j-jdk14:1.7.7'   
+    compile lombok  
     testCompile 'junit:junit:4.8.1'
 }
 
