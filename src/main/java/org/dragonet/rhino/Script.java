@@ -9,6 +9,8 @@ import java.io.*;
 import com.google.common.io.Files;
 import java.nio.charset.Charset;
 import org.mozilla.javascript.*;
+import org.dragonet.rhino.api.functions.*;
+import org.mozilla.javascript.annotations.JSStaticFunction;
 
 /**
  *
@@ -56,42 +58,52 @@ public class Script
         
         String scriptContents = new String();
         
-        try {            
+        try 
+        {
             scriptContentList = Files.readLines(f, Charset.defaultCharset());          
         }
         
-        catch(IOException IOe) {
+        catch(IOException IOe)
+        {
             System.out.println(IOe.getMessage());
         }
             
-        for(String str : scriptContentList) {
+        for(String str : scriptContentList)
+        {
             scriptContents += " " + str;
         }
         
             return scriptContents;
     }
     
-    public void runFunction(String func) {  
+    public void runFunction(String func)
+    {  
         BufferedReader script = null;
         
-        try {
+        try
+        {
             script = new BufferedReader(new FileReader(this.getFile()));
         }
         
-        catch(IOException IOe) {
+        catch(IOException IOe)
+        {
             System.out.println(Arrays.toString(IOe.getStackTrace()));
         }
         
         Context context = Context.enter();
         
-	try {
+	try
+        {
             ScriptableObject scope = context.initStandardObjects();
             
-            try {
+            try
+            {
+                Functions.defineFunctions(scope);
                 context.evaluateReader(scope, script, "script", 1, null);
             }
             
-            catch(IOException IOe) {
+            catch(IOException IOe)
+            {
                 System.out.println(Arrays.toString(IOe.getStackTrace()));
             }
             
@@ -100,7 +112,8 @@ public class Script
             Object result = fct.call(context, scope, scope, new Object[] {2, 3});
 	} 
 	
-        finally {
+        finally
+        {
             Context.exit();
 	}
     }
