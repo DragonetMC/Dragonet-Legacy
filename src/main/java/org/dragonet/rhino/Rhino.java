@@ -5,8 +5,8 @@
 package org.dragonet.rhino;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
-import org.mozilla.javascript.*;
 import org.dragonet.rhino.api.*;
 
 /**
@@ -19,7 +19,7 @@ public class Rhino
     
     public Rhino()
     {
-        this.startJSInterpreter();
+        this.startScriptInterpreter();
     }
     
     public void Tick()
@@ -27,26 +27,49 @@ public class Rhino
         Tick.Tick();
     }
     
-    public void startJSInterpreter()
+    private void startScriptInterpreter()
     {
-        Scripts = loadJSFiles();
+        Scripts = loadScripts();
     }
     
-    public List<Script> loadJSFiles()
+    private List<Script> loadScripts()
     {
         List<Script> fileList = new ArrayList<>();
         File dir = new File("./plugins");
         
-        for(File f : dir.listFiles())
+        if(!dir.isDirectory())
         {
-           if(f.getName().endsWith((".js")) && !fileList.contains(f))
-           {
-            Script script = new Script(f);
-            fileList.add(script);
-            System.out.println("Loaded DragonetAPI Script " + script.name);
-           }
+            try
+            {
+                if(dir.mkdir()) {}
+                else
+                {
+                    System.err.println("Could not create plugins file...");
+                    System.err.println("Please create it yourself");
+                    org.dragonet.DragonetServer.instance().shutdown();
+                }
+            }
+            
+            catch(Exception e)
+            {
+                System.out.println(Arrays.toString(e.getStackTrace()));
+            }
+        }
+        else
+        {
+            for(File f : dir.listFiles())
+            {
+               if(f.getName().endsWith((".js")) && !fileList.contains(f))
+               {
+                Script script = new Script(f);
+                fileList.add(script);
+                System.out.println("Loaded DragonetAPI Script " + script.name);
+               }
+            }
+
+            return fileList;
         }
         
-        return fileList;
+        return new ArrayList<>();
     }
 }
