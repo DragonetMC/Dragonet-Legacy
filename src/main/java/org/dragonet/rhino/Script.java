@@ -10,7 +10,6 @@ import com.google.common.io.Files;
 import java.nio.charset.Charset;
 import org.mozilla.javascript.*;
 import org.dragonet.rhino.api.functions.*;
-import org.mozilla.javascript.annotations.JSStaticFunction;
 
 /**
  *
