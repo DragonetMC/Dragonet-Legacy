@@ -17,11 +17,11 @@ import org.dragonet.rhino.api.functions.*;
  */
 public class Script
 {
-    public String name = "script.js";
+    public String name = "";
     
-    public String fullFilePath = "filepath";
+    public String fullFilePath = "";
     
-    public String fileContents = "System.out.println(\"File is empty!\")";
+    public String fileContents = "";
     
     public File file;
     
