@@ -27,6 +27,11 @@ public class Rhino
         Tick.Tick();
     }
     
+    public void useItem(int blockX, int blockY, int blockZ, String blockFace, String blockName, String playerName)
+    {
+        useItem.useItem(blockX, blockY, blockZ, blockFace, blockName, playerName);
+    }
+    
     private void startScriptInterpreter()
     {
         Scripts = loadScripts();

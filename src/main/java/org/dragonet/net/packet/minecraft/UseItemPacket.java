@@ -63,6 +63,8 @@ public class UseItemPacket extends PEPacket {
             this.posX = reader.readFloat();
             this.posY = reader.readFloat();
             this.posZ = reader.readFloat();
+            
+            org.dragonet.DragonetServer.instance().getRhino().useItem(x, y, z, "RIGHT_CLICK_BLOCK", "", "PEPlayer");
         } catch (IOException e) {
         }
     }

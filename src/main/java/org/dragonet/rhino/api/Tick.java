@@ -16,7 +16,7 @@ public class Tick
     {
         for(Script s : org.dragonet.DragonetServer.instance().getRhino().Scripts)
         {
-            s.runFunction("Tick");
+            s.runFunction("Tick", new Object[] {});
         }
     }
 }

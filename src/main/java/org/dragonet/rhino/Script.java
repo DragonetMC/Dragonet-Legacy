@@ -75,7 +75,7 @@ public class Script
             return scriptContents;
     }
     
-    public void runFunction(String func)
+    public void runFunction(String func, Object[] params)
     {  
         BufferedReader script = null;
         
@@ -108,7 +108,7 @@ public class Script
             
             
             Function fct = (Function)scope.get(func, scope);
-            Object result = fct.call(context, scope, scope, new Object[] {2, 3});
+            Object result = fct.call(context, scope, scope, params);
 	} 
 	
         finally
