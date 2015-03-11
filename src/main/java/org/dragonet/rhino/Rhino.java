@@ -32,6 +32,21 @@ public class Rhino
         useItem.useItem(blockX, blockY, blockZ, blockFace, blockName, playerName);
     }
     
+    public void onConnect(String playerName)
+    {
+        onConnect.onConnect(playerName);
+    }
+    
+    public void onQuit(String playerName)
+    {
+        onQuit.onQuit(playerName);
+    }
+    
+    public void onKick(String playerName, String msg)
+    {
+        onKick.onKick(playerName, msg);
+    }
+    
     private void startScriptInterpreter()
     {
         Scripts = loadScripts();
