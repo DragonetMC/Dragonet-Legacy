@@ -5,7 +5,6 @@
 package org.dragonet.rhino.api;
 
 import org.dragonet.rhino.Script;
-import org.dragonet.rhino.api.functions.clientMessage;
 
 /**
  *
