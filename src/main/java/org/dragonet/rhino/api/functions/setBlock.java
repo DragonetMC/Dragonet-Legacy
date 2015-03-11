@@ -12,8 +12,8 @@ import org.bukkit.Material;
  */
 public class setBlock
 {
-    public static void setBlock(String WORLD_NAME, int x, int y, int z, String TILE_NAME, int TILE_DATA)
+    public static void setBlock(String worldName, int x, int y, int z, String tileName, int tileData)
     {
-        org.dragonet.DragonetServer.instance().getServer().getWorld(WORLD_NAME).getBlockAt(x, y, z).setType(Material.getMaterial(TILE_NAME));
+        org.dragonet.DragonetServer.instance().getServer().getWorld(worldName).getBlockAt(x, y, z).setType(Material.getMaterial(tileName));
     }
 }
