@@ -12,9 +12,9 @@ import org.mozilla.javascript.*;
  */
 public class Functions
 {
-    public static String[] Functions = new String[] {"clientMessage", "addItemInventory", "getCurrentWorld", "setBlock", "runConsoleCommand"};
+    public static String[] Functions = new String[] {"clientMessage", "addItemInventory", "getCurrentWorld", "setBlock", "runConsoleCommand", "disconnectPlayer"};
     
-    public static Class[] Classes = new Class[] {clientMessage.class, addItemInventory.class, getCurrentWorld.class, setBlock.class, runConsoleCommand.class};
+    public static Class[] Classes = new Class[] {clientMessage.class, addItemInventory.class, getCurrentWorld.class, setBlock.class, runConsoleCommand.class, disconnectPlayer.class};
     
     public static void defineFunctions(Scriptable scope)
     {
