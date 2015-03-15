@@ -66,7 +66,7 @@ public class Script {
 		return scriptContents;
 	}
 
-	public void runFunction(String func, Object[] params) {
+	public Object runFunction(String func, Object[] params) {
 		BufferedReader script = null;
 
 		try {
@@ -78,6 +78,7 @@ public class Script {
 		}
 
 		Context context = Context.enter();
+		Object result = null;
 
 		try {
 			ScriptableObject scope = context.initStandardObjects();
@@ -94,12 +95,13 @@ public class Script {
 			Object function = scope.get(func, scope);
 			if (!(function instanceof UniqueTag)) {
 				Function fct = (Function) function;
-				Object result = fct.call(context, scope, scope, params);
+				result = fct.call(context, scope, scope, params);
 			}
 		}
 
 		finally {
 			Context.exit();
 		}
+		return result;
 	}
 }

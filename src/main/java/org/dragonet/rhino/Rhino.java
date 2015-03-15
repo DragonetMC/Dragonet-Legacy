@@ -37,9 +37,9 @@ public class Rhino
         useItem.useItem(blockX, blockY, blockZ, blockFace, blockName, playerName);
     }
     
-    public void onChatSent(String playerName, String message)
+    public boolean onChatSending(String playerName, String message)
     {
-    	onChatSent.onChatSent(playerName, message);
+    	return onChatSending.onChatSending(playerName, message);
     }
     
     public void onConnect(String playerName)
