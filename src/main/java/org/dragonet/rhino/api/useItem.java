@@ -16,8 +16,6 @@ public class useItem
     {   
         for(Script s : org.dragonet.DragonetServer.instance().getRhino().Scripts)
         {
-        	Throwable thr = new Throwable();
-        	thr.printStackTrace();
             s.runFunction("useItem", new Object[] {blockX, blockY, blockZ, blockFace, blockName, playerName});
         }
     }
