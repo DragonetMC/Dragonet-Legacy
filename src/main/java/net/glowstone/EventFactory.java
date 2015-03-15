@@ -118,7 +118,7 @@ public final class EventFactory {
         final Set<Player> recipients = new HashSet<>(player.getServer().getOnlinePlayers());
         final AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(async, player, message, recipients);
         callEvent(event);
-
+        org.dragonet.DragonetServer.instance().getRhino().onChatSent(player.getName(), message);
         // call sync event only if needed
         if (PlayerChatEvent.getHandlerList().getRegisteredListeners().length > 0) {
             // initialize event to match current state from async event

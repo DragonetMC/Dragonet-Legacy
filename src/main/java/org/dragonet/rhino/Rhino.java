@@ -32,6 +32,11 @@ public class Rhino
         useItem.useItem(blockX, blockY, blockZ, blockFace, blockName, playerName);
     }
     
+    public void onChatSent(String playerName, String message)
+    {
+    	onChatSent.onChatSent(playerName, message);
+    }
+    
     public void onConnect(String playerName)
     {
         onConnect.onConnect(playerName);
