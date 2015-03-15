@@ -22,6 +22,11 @@ public class Rhino
         this.startScriptInterpreter();
     }
     
+    public void reload() {
+    	Scripts = null;
+    	this.startScriptInterpreter();
+    }
+    
     public void Tick()
     {
         Tick.Tick();

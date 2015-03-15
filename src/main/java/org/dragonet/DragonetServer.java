@@ -150,4 +150,12 @@ public class DragonetServer {
         this.networkHandler.getUdp().end();
         this.threadPool.shutdown();
     }
+    
+    /**
+     * Reload the server.
+     * Currently only used to re-scan Rhino scripts, but could be useful later.
+     */
+    public void reload() {
+    	rhino.reload();
+    }
 }

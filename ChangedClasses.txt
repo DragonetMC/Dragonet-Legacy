@@ -2,6 +2,7 @@
 net.glowstone.GlowServer: Added dragonet instance getter, set dragonet instance to a private variable. 
 net.glowstone.GlowServer: Changed getVersion() and getBukkitVersion()
 net.glowstone.GlowServer: Added stopping MCPE server call into shutdown() method
+net.glowstone.GlowServer: Added reload Dragonet server method into reload();
 
 net.glowstone.scheduler.GlowScheduler: Added tick trigger
 
