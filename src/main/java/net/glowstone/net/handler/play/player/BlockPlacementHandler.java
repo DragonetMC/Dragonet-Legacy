@@ -52,8 +52,13 @@ public final class BlockPlacementHandler implements MessageHandler<GlowSession, 
         Action action = Action.RIGHT_CLICK_BLOCK;
         GlowBlock clicked = player.getWorld().getBlockAt(message.getX(), message.getY(), message.getZ());
 
-        //Dragonet-Add
-        org.dragonet.DragonetServer.instance().getRhino().useItem(message.getX(), message.getY(), message.getZ(), "RIGHT_CLICK_BLOCK", player.getWorld().getBlockAt(message.getX(), message.getY(), message.getZ()).getType().name(), player.getName());        
+        /*
+         * Dragonet-Add
+         * org.dragonet.DragonetServer.instance().getRhino().useItem(message.getX(), message.getY(), message.getZ(), "RIGHT_CLICK_BLOCK", player.getWorld().getBlockAt(message.getX(), message.getY(), message.getZ()).getType().name(), player.getName());
+         * This is handled later in PlayerInteractEvent. Also, why the heck's the block name set to "RIGHT_CLICK_BLOCK"???
+         * Dragonet-End
+         */
+                
         /**
          * Check if the message is a -1. If we *just* got a message with the
          * values filled, discard it, otherwise perform right-click-air.

@@ -114,11 +114,17 @@ public final class EventFactory {
     }
 
     public static AsyncPlayerChatEvent onPlayerChat(boolean async, Player player, String message) {
-        // call async event
+    	//Dragonet-Add
+    	//Call event
+    	boolean cancelled = org.dragonet.DragonetServer.instance().getRhino().onChatSending(player.getName(), message);
+    	//Dragonet-End
         final Set<Player> recipients = new HashSet<>(player.getServer().getOnlinePlayers());
         final AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(async, player, message, recipients);
+        //Dragonet-Add
+        event.setCancelled(cancelled);
+    	//Dragonet-End
+        // call async event
         callEvent(event);
-
         // call sync event only if needed
         if (PlayerChatEvent.getHandlerList().getRegisteredListeners().length > 0) {
             // initialize event to match current state from async event
@@ -170,7 +176,10 @@ public final class EventFactory {
 
     public static PlayerInteractEvent onPlayerInteract(Player player, Action action, Block clicked, BlockFace face) {
         //Dragonet-Add
-        org.dragonet.DragonetServer.instance().getRhino().useItem(clicked.getX(), clicked.getY(), clicked.getZ(), face.name(), clicked.getType().name(), player.getName());
+    	try {
+    		org.dragonet.DragonetServer.instance().getRhino().useItem(clicked.getX(), clicked.getY(), clicked.getZ(), face.name(), clicked.getType().name(), player.getName());
+    	} catch (NullPointerException e) {
+    	}
         //Dragonet-End
         return callEvent(new PlayerInteractEvent(player, action, player.getItemInHand(), clicked, face));
     }
