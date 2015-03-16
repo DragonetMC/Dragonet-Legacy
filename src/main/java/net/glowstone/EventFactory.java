@@ -137,21 +137,21 @@ public final class EventFactory {
 
     public static PlayerJoinEvent onPlayerJoin(Player player) {
         //Dragonet-Add
-        org.dragonet.DragonetServer.instance().getRhino().onConnect(player.getName());
+        org.dragonet.DragonetServer.instance().getRhino().onConnect(player);
         //Dragonet-End
         return callEvent(new PlayerJoinEvent(player, ChatColor.YELLOW + player.getName() + " joined the game"));
     }
 
     public static PlayerKickEvent onPlayerKick(Player player, String reason) {
         //Dragonet-Add
-        org.dragonet.DragonetServer.instance().getRhino().onKick(player.getName(), reason);
+        org.dragonet.DragonetServer.instance().getRhino().onKick(player, reason);
         //Dragonet-End
         return callEvent(new PlayerKickEvent(player, reason, null));
     }
 
     public static PlayerQuitEvent onPlayerQuit(Player player) {
         //Dragonet-Add
-        org.dragonet.DragonetServer.instance().getRhino().onQuit(player.getName());
+        org.dragonet.DragonetServer.instance().getRhino().onQuit(player);
         //Dragonet-End
         return callEvent(new PlayerQuitEvent(player, ChatColor.YELLOW + player.getName() + " left the game"));
     }
@@ -170,7 +170,7 @@ public final class EventFactory {
 
     public static PlayerInteractEvent onPlayerInteract(Player player, Action action, Block clicked, BlockFace face) {
         //Dragonet-Add
-        org.dragonet.DragonetServer.instance().getRhino().useItem(clicked.getX(), clicked.getY(), clicked.getZ(), face.name(), clicked.getType().name(), player.getName());
+        org.dragonet.DragonetServer.instance().getRhino().useItem(clicked.getX(), clicked.getY(), clicked.getZ(), face.name(), clicked.getType().name(), player);
         //Dragonet-End
         return callEvent(new PlayerInteractEvent(player, action, player.getItemInHand(), clicked, face));
     }

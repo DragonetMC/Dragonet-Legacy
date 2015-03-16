@@ -4,6 +4,7 @@
  */
 package org.dragonet.rhino.api;
 
+import org.bukkit.entity.Player;
 import org.dragonet.rhino.Script;
 
 /**
@@ -12,11 +13,11 @@ import org.dragonet.rhino.Script;
  */
 public class onConnect
 {
-    public static void onConnect(String playerName)
+    public static void onConnect(Player plr)
     {
         for(Script s : org.dragonet.DragonetServer.instance().getRhino().Scripts)
         {
-            s.runFunction("onConnect", new Object[] {playerName});
+            s.runFunction("onConnect", new Object[] {plr});
         }
     }
 }

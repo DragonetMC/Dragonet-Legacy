@@ -7,6 +7,8 @@ package org.dragonet.rhino;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import net.glowstone.entity.GlowPlayer;
+import org.bukkit.entity.Player;
 import org.dragonet.rhino.api.*;
 
 /**
@@ -27,24 +29,29 @@ public class Rhino
         Tick.Tick();
     }
     
-    public void useItem(int blockX, int blockY, int blockZ, String blockFace, String blockName, String playerName)
+    public void useItem(int blockX, int blockY, int blockZ, String blockFace, String blockName, Player plr)
     {
-        useItem.useItem(blockX, blockY, blockZ, blockFace, blockName, playerName);
+        useItem.useItem(blockX, blockY, blockZ, blockFace, blockName, plr);
     }
     
-    public void onConnect(String playerName)
+    public void onConnect(Player plr)
     {
-        onConnect.onConnect(playerName);
+        onConnect.onConnect(plr);
     }
     
-    public void onQuit(String playerName)
+    public void onQuit(Player plr)
     {
-        onQuit.onQuit(playerName);
+        onQuit.onQuit(plr);
     }
     
-    public void onKick(String playerName, String msg)
+    public void onKick(Player plr, String msg)
     {
-        onKick.onKick(playerName, msg);
+        onKick.onKick(plr, msg);
+    }
+    
+    public void onEnchant(Player plr, int enchantID, String itemType, byte itemData)
+    {
+        onEnchant.onEnchant(plr, enchantID, itemType, itemData);
     }
     
     private void startScriptInterpreter()

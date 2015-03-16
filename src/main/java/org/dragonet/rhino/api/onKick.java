@@ -4,6 +4,7 @@
  */
 package org.dragonet.rhino.api;
 
+import org.bukkit.entity.Player;
 import org.dragonet.rhino.Script;
 
 /**
@@ -12,11 +13,11 @@ import org.dragonet.rhino.Script;
  */
 public class onKick
 {
-    public static void onKick(String playerName, String msg)
+    public static void onKick(Player plr, String msg)
     {
         for(Script s : org.dragonet.DragonetServer.instance().getRhino().Scripts)
         {
-            s.runFunction("onKick", new Object[] {playerName, msg});
+            s.runFunction("onKick", new Object[] {plr, msg});
         }
     }
 }

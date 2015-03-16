@@ -11,13 +11,13 @@ import org.dragonet.rhino.Script;
  *
  * @author TheMCPEGamer
  */
-public class useItem 
+public class onEnchant
 {
-    public static void useItem(int blockX, int blockY, int blockZ, String blockFace, String blockName, Player plr)
-    {   
+    public static void onEnchant(Player plr, int enchantID, String itemType, byte itemData)
+    {
         for(Script s : org.dragonet.DragonetServer.instance().getRhino().Scripts)
         {
-            s.runFunction("useItem", new Object[] {blockX, blockY, blockZ, blockFace, blockName, plr});
+            s.runFunction("onEnchant", new Object[] {plr, enchantID, itemType, itemData});
         }
     }
 }
