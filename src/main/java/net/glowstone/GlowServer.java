@@ -753,10 +753,7 @@ public final class GlowServer implements Server {
 
             // Reset crafting
             craftingManager.resetRecipes();
-            
-            //Dragonet-Add
-            DragonetServer.instance().reload();
-            //Dragonet-End
+
             // Load plugins
             loadPlugins();
             enablePlugins(PluginLoadOrder.STARTUP);

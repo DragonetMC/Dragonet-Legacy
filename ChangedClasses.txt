@@ -2,7 +2,6 @@
 net.glowstone.GlowServer: Added dragonet instance getter, set dragonet instance to a private variable. 
 net.glowstone.GlowServer: Changed getVersion() and getBukkitVersion()
 net.glowstone.GlowServer: Added stopping MCPE server call into shutdown() method
-net.glowstone.GlowServer: Added reload Dragonet server method into reload();
 
 net.glowstone.scheduler.GlowScheduler: Added tick trigger
 
@@ -18,9 +17,3 @@ net.glowstone.net.handler.login: Added checker for custom items for MCPE
 net.glowstone.net.message.*: Changed every variable to public in order to read/write
 
 net.glowstone.net.io.entity.EntityStorage: Added checking parent class on EntityStore<?> find(Class<? extends GlowEntity> clazz, String type)
-
-net.glowstone.EventFactory: Hooks for most DragonetAPI functions
-
-net.glowstone.net.handler.play.player.BlockPlacementHandler: [Now removed] Hook for DragonetAPI(useItem();)
-
-net.glowstone.net.handler.play.player.DiggingHandler: [Now removed] Hook for DragonetAPI(useItem();)

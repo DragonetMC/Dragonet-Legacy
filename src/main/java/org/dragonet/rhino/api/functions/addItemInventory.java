@@ -17,21 +17,15 @@ public class addItemInventory
     public static void addItemInventory(String PlayerName, String MaterialName, int Count)
     {          
         Player plr = org.dragonet.DragonetServer.instance().getServer().getPlayer(PlayerName);
-        Material mat = Material.getMaterial(MaterialName);
-        if((plr != null) && (mat != null))
+
+        if(plr != null)
         {
-            plr.getInventory().addItem(new ItemStack(mat, Count));
+            plr.getInventory().addItem(new ItemStack(Material.getMaterial(MaterialName), Count));
             return;
         }
-        else if (plr == null)
+        else
         {
-        	org.dragonet.DragonetServer.instance().getLogger().warn("[DragonetAPI] Script tried to add item to non-existent player! Please alert the script author.");
             return;
-        }
-        else if (mat == null)
-        {
-        	org.dragonet.DragonetServer.instance().getLogger().warn("[DragonetAPI] Script tried to add non-existent item to player! Please alret the script author.");
-        	return;
         }
     }
 }

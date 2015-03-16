@@ -22,11 +22,6 @@ public class Rhino
         this.startScriptInterpreter();
     }
     
-    public void reload() {
-    	Scripts = null;
-    	this.startScriptInterpreter();
-    }
-    
     public void Tick()
     {
         Tick.Tick();
@@ -35,11 +30,6 @@ public class Rhino
     public void useItem(int blockX, int blockY, int blockZ, String blockFace, String blockName, String playerName)
     {
         useItem.useItem(blockX, blockY, blockZ, blockFace, blockName, playerName);
-    }
-    
-    public boolean onChatSending(String playerName, String message)
-    {
-    	return onChatSending.onChatSending(playerName, message);
     }
     
     public void onConnect(String playerName)
