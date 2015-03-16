@@ -36,13 +36,9 @@ public final class DiggingHandler implements MessageHandler<GlowSession, Digging
         boolean revert = false;
         if (message.getState() == DiggingMessage.START_DIGGING) {
             
-            /*
-             * Dragonet-Add
-             * org.dragonet.DragonetServer.instance().getRhino().useItem(message.getX(), message.getY(), message.getZ(), face.name(), player.getWorld().getBlockAt(message.getX(), message.getY(), message.getZ()).getType().name(), player.getName());      
-             * This is handled later in PlayerInteractEvent
-             * Dragonet-End
-             */
-        	// call interact event
+            //Dragonet-Add
+            org.dragonet.DragonetServer.instance().getRhino().useItem(message.getX(), message.getY(), message.getZ(), face.name(), player.getWorld().getBlockAt(message.getX(), message.getY(), message.getZ()).getType().name(), player.getName());      
+            // call interact event
             Action action = Action.LEFT_CLICK_BLOCK;
             Block eventBlock = block;
             if (player.getLocation().distanceSquared(block.getLocation()) > 36 || block.getTypeId() == 0) {
