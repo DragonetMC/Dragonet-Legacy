@@ -34,12 +34,16 @@ public class Rhino
         useItem.useItem(blockX, blockY, blockZ, blockFace, blockName, plr);
     }
     
+<<<<<<< HEAD
     public void onConnect(Player plr)
     {
         onConnect.onConnect(plr);
     }
     
     public void onQuit(Player plr)
+=======
+    public void onConnect(String playerName)
+>>>>>>> c9809ff8faa896943476b654da20442535c08aca
     {
         onQuit.onQuit(plr);
     }

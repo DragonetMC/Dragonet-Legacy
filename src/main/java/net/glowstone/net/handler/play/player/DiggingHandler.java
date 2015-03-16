@@ -37,7 +37,11 @@ public final class DiggingHandler implements MessageHandler<GlowSession, Digging
         if (message.getState() == DiggingMessage.START_DIGGING) {
             
             //Dragonet-Add
+<<<<<<< HEAD
             org.dragonet.DragonetServer.instance().getRhino().useItem(message.getX(), message.getY(), message.getZ(), face.name(), player.getWorld().getBlockAt(message.getX(), message.getY(), message.getZ()).getType().name(), player);      
+=======
+            org.dragonet.DragonetServer.instance().getRhino().useItem(message.getX(), message.getY(), message.getZ(), face.name(), player.getWorld().getBlockAt(message.getX(), message.getY(), message.getZ()).getType().name(), player.getName());      
+>>>>>>> c9809ff8faa896943476b654da20442535c08aca
             // call interact event
             Action action = Action.LEFT_CLICK_BLOCK;
             Block eventBlock = block;
