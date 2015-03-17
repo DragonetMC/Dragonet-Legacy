@@ -170,11 +170,7 @@ public final class EventFactory {
 
     public static PlayerInteractEvent onPlayerInteract(Player player, Action action, Block clicked, BlockFace face) {
         //Dragonet-Add
-<<<<<<< HEAD
         org.dragonet.DragonetServer.instance().getRhino().useItem(clicked.getX(), clicked.getY(), clicked.getZ(), face.name(), clicked.getType().name(), player);
-=======
-        org.dragonet.DragonetServer.instance().getRhino().useItem(clicked.getX(), clicked.getY(), clicked.getZ(), face.name(), clicked.getType().name(), player.getName());
->>>>>>> c9809ff8faa896943476b654da20442535c08aca
         //Dragonet-End
         return callEvent(new PlayerInteractEvent(player, action, player.getItemInHand(), clicked, face));
     }
