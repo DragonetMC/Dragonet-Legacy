@@ -115,8 +115,16 @@ public final class EventFactory {
 
     public static AsyncPlayerChatEvent onPlayerChat(boolean async, Player player, String message) {
         // call async event
+        //Dragonet-Add
+    	//Call event
+    	boolean cancelled = org.dragonet.DragonetServer.instance().getRhino().onChatSending(player, message);
+    	//Dragonet-End
         final Set<Player> recipients = new HashSet<>(player.getServer().getOnlinePlayers());
         final AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(async, player, message, recipients);
+        //Dragonet-Add
+        event.setCancelled(cancelled);
+    	//Dragonet-End
+        // call async event
         callEvent(event);
 
         // call sync event only if needed

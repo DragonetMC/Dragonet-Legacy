@@ -13,7 +13,7 @@ import org.dragonet.rhino.api.*;
 
 /**
  *
- * @author TheMCPEGamer__
+ * @author TheMCPEGamer__ edited by Ash (QuarkTheAwesome)
  */
 public class Rhino
 {
@@ -21,6 +21,12 @@ public class Rhino
     
     public Rhino()
     {
+        this.startScriptInterpreter();
+    }
+    
+    public void reload()
+    {
+        this.Scripts = null;
         this.startScriptInterpreter();
     }
     
@@ -52,6 +58,11 @@ public class Rhino
     public void onEnchant(Player plr, int enchantID, String itemType, byte itemData)
     {
         onEnchant.onEnchant(plr, enchantID, itemType, itemData);
+    }
+    
+    public boolean onChatSending(Player plr, String message)
+    {
+        return onChatSending.onChatSending(plr, message);
     }
     
     private void startScriptInterpreter()

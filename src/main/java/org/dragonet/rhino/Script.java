@@ -13,7 +13,7 @@ import org.dragonet.rhino.api.functions.*;
 
 /**
  *
- * @author TheMCPEGamer__
+ * @author TheMCPEGamer__ edited by Ash (QuarkTheAwesome)
  */
 public class Script
 {
@@ -75,7 +75,7 @@ public class Script
             return scriptContents;
     }
     
-    public void runFunction(String func, Object[] params)
+    public Object runFunction(String func, Object[] params)
     {  
         BufferedReader script = null;
         
@@ -90,6 +90,7 @@ public class Script
         }
         
         Context context = Context.enter();
+        Object result = null;
         
 	try
         {
@@ -106,14 +107,18 @@ public class Script
                 System.out.println(Arrays.toString(IOe.getStackTrace()));
             }
             
-            
-            Function fct = (Function)scope.get(func, scope);
-            Object result = fct.call(context, scope, scope, params);
+            Object function = scope.get(func, scope);
+            if (!(function instanceof UniqueTag)) {
+		Function fct = (Function) function;
+                result = fct.call(context, scope, scope, params);
+            }
 	} 
 	
         finally
         {
             Context.exit();
 	}
+        
+        return result;
     }
 }
