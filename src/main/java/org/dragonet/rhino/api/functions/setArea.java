@@ -10,7 +10,7 @@ package org.dragonet.rhino.api.functions;
  */
 public class setArea
 {
-    public static void setArea(String worldName, int x1, int y1, int z1, int x2, int y2, int z2, String materialName, byte data)
+    public static void setArea(String worldName, int x1, int y1, int z1, int x2, int y2, int z2, String materialName, int tileData)
     {
         for(int x = x1; x < x2; x++)
         {
@@ -18,7 +18,7 @@ public class setArea
             {
                 for(int z = z1; z < z2; z++)
                 {
-                    setBlock.setBlock(worldName, x, y, z, materialName, data);
+                    setBlock.setBlock(worldName, x, y, z, materialName, java.lang.Byte.parseByte(tileData + ""));
                 }
             }
         }

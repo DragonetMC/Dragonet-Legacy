@@ -12,9 +12,9 @@ import org.bukkit.Material;
  */
 public class setBlock
 {
-    public static void setBlock(String worldName, int x, int y, int z, String tileName, byte tileData)
+    public static void setBlock(String worldName, int x, int y, int z, String tileName, int tileData)
     {
         org.dragonet.DragonetServer.instance().getServer().getWorld(worldName).getBlockAt(x, y, z).setType(Material.getMaterial(tileName));
-        org.dragonet.DragonetServer.instance().getServer().getWorld(worldName).getBlockAt(x, y, z).setData(tileData);
+        org.dragonet.DragonetServer.instance().getServer().getWorld(worldName).getBlockAt(x, y, z).setData(java.lang.Byte.parseByte(tileData + ""));
     }
 }
