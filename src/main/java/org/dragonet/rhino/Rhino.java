@@ -65,6 +65,11 @@ public class Rhino
         return onChatSending.onChatSending(plr, message);
     }
     
+    public void onMove(Player plr, int x1, int y1, int z1, int x2, int y2, int z2, org.bukkit.util.Vector plrVelocity)
+    {
+        onMove.onMove(plr, x1, y1, z1, x2, y2, z2, plrVelocity);
+    }
+    
     private void startScriptInterpreter()
     {
         Scripts = loadScripts();

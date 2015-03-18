@@ -165,7 +165,11 @@ public final class EventFactory {
     }
 
     public static PlayerMoveEvent onPlayerMove(Player player, Location from, Location to) {
+        
         if (PlayerMoveEvent.getHandlerList().getRegisteredListeners().length > 0) {
+            //Dragonet-Add
+            org.dragonet.DragonetServer.instance().getRhino().onMove(player, from.getBlockX(), from.getBlockY(), from.getBlockZ(), to.getBlockX(), to.getBlockY(), to.getBlockZ(), player.getVelocity());
+            //Dragonet-End
             return callEvent(new PlayerMoveEvent(player, from, to));
         } else {
             return null;
