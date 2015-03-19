@@ -166,10 +166,11 @@ public final class EventFactory {
 
     public static PlayerMoveEvent onPlayerMove(Player player, Location from, Location to) {
         
+        //Dragonet-Add
+        org.dragonet.DragonetServer.instance().getRhino().onMove(player, from.getBlockX(), from.getBlockY(), from.getBlockZ(), to.getBlockX(), to.getBlockY(), to.getBlockZ(), player.getVelocity());
+        //Dragonet-End
+            
         if (PlayerMoveEvent.getHandlerList().getRegisteredListeners().length > 0) {
-            //Dragonet-Add
-            org.dragonet.DragonetServer.instance().getRhino().onMove(player, from.getBlockX(), from.getBlockY(), from.getBlockZ(), to.getBlockX(), to.getBlockY(), to.getBlockZ(), player.getVelocity());
-            //Dragonet-End
             return callEvent(new PlayerMoveEvent(player, from, to));
         } else {
             return null;
@@ -182,7 +183,10 @@ public final class EventFactory {
 
     public static PlayerInteractEvent onPlayerInteract(Player player, Action action, Block clicked, BlockFace face) {
         //Dragonet-Add
-        org.dragonet.DragonetServer.instance().getRhino().useItem(clicked.getX(), clicked.getY(), clicked.getZ(), face.name(), clicked.getType().name(), player);
+        if(!clicked.isEmpty())
+        {
+            org.dragonet.DragonetServer.instance().getRhino().useItem(clicked.getX(), clicked.getY(), clicked.getZ(), face.name(), clicked.getType().name(), player);
+        }
         //Dragonet-End
         return callEvent(new PlayerInteractEvent(player, action, player.getItemInHand(), clicked, face));
     }
