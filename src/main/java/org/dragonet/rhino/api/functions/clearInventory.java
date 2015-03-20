@@ -12,8 +12,16 @@ import org.bukkit.entity.Player;
  */
 public class clearInventory
 {
-    public static void clearInventory(Player plr)
+    public static void clearInventory(Object plr)
     {
-        plr.getInventory().clear();
+        try
+        {
+            ((Player) plr).getInventory().clear();
+        }
+        
+        catch(ClassCastException cce)
+        {
+            org.dragonet.DragonetServer.instance().getLogger().warn("[DragonetAPI] Script passed non-player on clearInventory()! Please alert the script author.");
+        }
     }
 }

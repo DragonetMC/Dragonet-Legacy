@@ -14,35 +14,14 @@ import org.bukkit.entity.Player;
  */
 public class banPlayer
 {
-    public static void banPlayer(Player plr, String reason, int[] DateUnbanned)
+    public static void banPlayer(Object player, String reason)
     {
-        if(!plr.isBanned())
-        {
-            org.dragonet.DragonetServer.instance().getServer().getBanList(BanList.Type.NAME).addBan(plr.getName(), reason, new Date(DateUnbanned[0], DateUnbanned[1], DateUnbanned[2]), null);
-        }
-        else
-        {
-            org.dragonet.DragonetServer.instance().getLogger().warn("Player: \'" + plr.getName() + "\' is already banned!");
-        }
-    }
-    
-    public static void banPlayer(Player plr, String reason)
-    {
+        Player plr = (Player) player;
+        
+        
         if(!plr.isBanned())
         {
             org.dragonet.DragonetServer.instance().getServer().getBanList(BanList.Type.NAME).addBan(plr.getName(), reason, null, null);
-        }
-        else
-        {
-            org.dragonet.DragonetServer.instance().getLogger().warn("Player: \'" + plr.getName() + "\' is already banned!");
-        }
-    }
-    
-    public static void banPlayer(Player plr)
-    {
-        if(!plr.isBanned())
-        {
-            org.dragonet.DragonetServer.instance().getServer().getBanList(BanList.Type.NAME).addBan(plr.getName(), "[Banned] The Ban Hammer has spoken!", null, null);
         }
         else
         {

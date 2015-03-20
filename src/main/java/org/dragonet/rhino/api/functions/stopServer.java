@@ -23,16 +23,4 @@ public class stopServer
         
         org.dragonet.DragonetServer.instance().getServer().shutdown();
     }
-    
-    public static void stopServer()
-    {
-        org.dragonet.DragonetServer.instance().getServer().savePlayers();
-        
-        for(Player plr : org.dragonet.DragonetServer.instance().getServer().getOnlinePlayers())
-        {
-            plr.kickPlayer("Server stopped!");
-        }
-        
-        org.dragonet.DragonetServer.instance().getServer().shutdown();
-    }
 }
