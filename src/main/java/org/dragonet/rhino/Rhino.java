@@ -5,9 +5,7 @@
 package org.dragonet.rhino;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
-import net.glowstone.entity.GlowPlayer;
 import org.bukkit.entity.Player;
 import org.dragonet.rhino.api.*;
 
