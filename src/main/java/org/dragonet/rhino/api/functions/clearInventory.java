@@ -14,6 +14,8 @@ public class clearInventory
 {
     public static void clearInventory(Object plr)
     {
+      if(((Player) plr).isOnline())
+      {
         try
         {
             ((Player) plr).getInventory().clear();
@@ -23,5 +25,10 @@ public class clearInventory
         {
             org.dragonet.DragonetServer.instance().getLogger().warn("[DragonetAPI] Script passed non-player on clearInventory()! Please alert the script author.");
         }
+      }
+      else
+      {
+          org.dragonet.DragonetServer.instance().getLogger().warn("[DragonetAPI] Script passed an offline player on clearInventory()! Please alert the script author.");
+      }
     }
 }
