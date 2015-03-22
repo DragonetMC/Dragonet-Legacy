@@ -11,22 +11,19 @@ import org.mozilla.javascript.*;
  * TheMCPEGamer
  */
 public class Functions
-{
-    public static String[] Functions = new String[] {"clientMessage", "addItemInventory", "getCurrentWorld", "setBlock", "setArea", "getServerName", "runConsoleCommand", "disconnectPlayer", "clearInventory", "stopServer", "banPlayer"};
-    
-    public static Class[] Classes = new Class[] {clientMessage.class, addItemInventory.class, getCurrentWorld.class, setBlock.class, setArea.class, getServerName.class, runConsoleCommand.class, disconnectPlayer.class, clearInventory.class, stopServer.class, banPlayer.class};
-    
+{   
     public static void defineFunctions(Scriptable scope)
     {
         Context ctx = Context.enter();
         
         try
         {
-            for(int i = 0; i < Functions.length; i++)
-            {
-                ((ScriptableObject) scope).defineFunctionProperties(new String[] {Functions[i]}, Classes[i], ScriptableObject.DONTENUM);
-            }
+            ((ScriptableObject) scope).defineClass(scope, PlayerAPI.class);
+            ((ScriptableObject) scope).defineClass(scope, ServerAPI.class);
+            ((ScriptableObject) scope).defineClass(scope, WorldAPI.class);
         }
+        
+        catch(Exception e) {}
         
         finally
         {
