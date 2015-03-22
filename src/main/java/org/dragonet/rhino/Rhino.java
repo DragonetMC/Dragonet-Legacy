@@ -102,9 +102,10 @@ public class Rhino
             {
                if(f.getName().endsWith((".js")) && !fileList.contains(f))
                {
-                Script script = new Script(f);
-                fileList.add(script);
-                System.out.println("Loaded DragonetAPI Script " + script.name);
+                    Script script = new Script(f);
+                    fileList.add(script);
+                    System.out.println("Loaded DragonetAPI Script " + script.name);
+                    script.runFunction("onInit", null);
                }
             }
 
