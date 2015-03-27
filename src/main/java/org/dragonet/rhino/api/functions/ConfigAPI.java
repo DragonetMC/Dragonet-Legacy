@@ -8,6 +8,8 @@ package org.dragonet.rhino.api.functions;
 import com.google.common.io.Files;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import org.apache.commons.io.FileUtils;
 import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.annotations.JSFunction;
 
@@ -62,19 +64,26 @@ public class ConfigAPI extends ScriptableObject
     {
         File config = new File("plugins/" + name + "/" + name + ".yml");
         
-        String content = "";
+        String content = "EMPTY_NODE";
         
-        try
+        if(exists(name))
         {
-            for(String s : Files.readLines(config, null))
+            try
             {
-                if(s.contentEquals(new StringBuffer(entry)))
+                for(String s : FileUtils.readLines(config))
                 {
-                    content = s.substring(s.indexOf(entry), s.lastIndexOf(entry));
+                    if(s.contains(new StringBuffer(entry)))
+                    {
+                        content = s.replace(new StringBuffer(entry + ": "), new StringBuffer(""));
+                    }
                 }
             }
+            catch(IOException IOe) {System.err.println(IOe.getMessage());}
         }
-        catch(IOException IOe) {System.err.println(IOe.getMessage());}
+        else
+        {
+            org.dragonet.DragonetServer.instance().getLogger().warn("[DragonetAPI] Script tried to read a nonexistant config file!");
+        }
         
         return content;
     }
