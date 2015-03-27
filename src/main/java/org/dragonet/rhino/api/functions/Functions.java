@@ -21,7 +21,6 @@ public class Functions
             ((ScriptableObject) scope).defineClass(scope, PlayerAPI.class);
             ((ScriptableObject) scope).defineClass(scope, ServerAPI.class);
             ((ScriptableObject) scope).defineClass(scope, WorldAPI.class);
-            ((ScriptableObject) scope).defineClass(scope, ScriptAPI.class);
             ((ScriptableObject) scope).defineClass(scope, ConfigAPI.class);
         }
         

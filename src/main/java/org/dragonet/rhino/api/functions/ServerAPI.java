@@ -5,6 +5,7 @@
 
 package org.dragonet.rhino.api.functions;
 
+import net.glowstone.GlowServer;
 import org.bukkit.BanList;
 import org.bukkit.entity.Player;
 import org.dragonet.DragonetServer;
@@ -33,6 +34,18 @@ public class ServerAPI extends ScriptableObject
     // Server Methods
     //
     ////////////////
+    
+    @JSFunction
+    public static GlowServer getServer()
+    {
+        return org.dragonet.DragonetServer.instance().getServer();
+    }
+    
+    @JSFunction
+    public static Object[] getPlugins()
+    {
+        return getServer().getPluginManager().getPlugins();
+    }
     
     @JSFunction
     public static void banPlayer(Object player, String reason)

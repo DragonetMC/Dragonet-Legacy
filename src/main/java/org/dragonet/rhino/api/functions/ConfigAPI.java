@@ -5,6 +5,7 @@
 
 package org.dragonet.rhino.api.functions;
 
+import com.google.common.io.Files;
 import java.io.File;
 import java.io.IOException;
 import org.mozilla.javascript.ScriptableObject;
@@ -25,59 +26,76 @@ public class ConfigAPI extends ScriptableObject
     {
         return "ConfigAPI";
     }
-
-    
-    ////////////////
-    //
-    // Script Methods
-    //
-    ////////////////
     
     @JSFunction
-    public static boolean Exists(String dirName, String fileName)
-    {
-        boolean result = false;
+    public static void create(String name)
+    {      
+        File configDir = new File("plugins/" + name);
         
-        File dir = new File("plugins/" + dirName); 
+        File configFile = new File(configDir.getPath() + "/" + name + ".yml");
         
-        File config = new File(dir.getPath() + "/" + fileName);
-        
-        if(dir.exists() || config.exists())
+        try
         {
-            result = true;
+            if(!configDir.exists())
+            {
+                if(configDir.mkdir()) { if(configFile.createNewFile()) {}}
+            }
         }
-        
-        return result;
+        catch(IOException IOe) {System.err.println(IOe.getMessage());}
     }
     
     @JSFunction
-    public static void createConfig(String dirName, String fileName)
+    public static boolean exists(String name)
     {
-        File dir = new File("plugins/" + dirName); 
+        boolean doesExist = false;
         
-        File config = new File(dir.getPath() + "/" + fileName);
-        
-        if(!dirName.equals("") && !fileName.equals(""))
+        if(new File("plugins/" + name + "/" + name + ".yml").exists())
         {
-            if(!dir.exists() && !config.exists())
+            doesExist = true;
+        }
+        
+        return doesExist;
+    }
+    
+    @JSFunction
+    public static String readEntry(String name, String entry)
+    {
+        File config = new File("plugins/" + name + "/" + name + ".yml");
+        
+        String content = "";
+        
+        try
+        {
+            for(String s : Files.readLines(config, null))
             {
-                try
+                if(s.contentEquals(new StringBuffer(entry)))
                 {
-                    if(dir.mkdir()) {}
-                    else
-                    {
-                        System.err.println("Could not create config directory...");
-                    }
-                    
-                    if(config.createNewFile()) {}
-                    else
-                    {
-                        System.err.println("Could not create config file...");
-                    }
+                    content = s.substring(s.indexOf(entry), s.lastIndexOf(entry));
                 }
-                
-                catch(IOException IOe) {}
             }
         }
+        catch(IOException IOe) {System.err.println(IOe.getMessage());}
+        
+        return content;
+    }
+    
+    @JSFunction
+    public static void addNewEntry(String name, String entry, String value)
+    {
+        File config = new File("plugins/" + name + "/" + name + ".yml");
+        
+        String fullEntry = entry + ": " + value;
+        
+        try
+        {
+            Files.write(fullEntry.getBytes(), config);
+        }
+        catch(IOException IOe) {System.err.print(IOe.getMessage());}
+    }
+    
+    @JSFunction
+    public static void changeEntry(String name, String entry, String newValue)
+    {
+        //TODO
     }
 }
