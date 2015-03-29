@@ -105,7 +105,7 @@ public class Rhino
                     Script script = new Script(f);
                     fileList.add(script);
                     System.out.println("Loaded DragonetAPI Script " + script.name);
-                    script.runFunction("onInit", null);
+                    script.runFunction("onInit", new Object[] {});
                }
             }
 

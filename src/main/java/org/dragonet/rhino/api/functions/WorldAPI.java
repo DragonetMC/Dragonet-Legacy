@@ -5,7 +5,10 @@
 
 package org.dragonet.rhino.api.functions;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.annotations.JSFunction;
 
@@ -52,5 +55,11 @@ public class WorldAPI extends ScriptableObject
     {
         org.dragonet.DragonetServer.instance().getServer().getWorld(worldName).getBlockAt(x, y, z).setType(Material.getMaterial(tileName));
         org.dragonet.DragonetServer.instance().getServer().getWorld(worldName).getBlockAt(x, y, z).setData(java.lang.Byte.parseByte(tileData + ""));
+    }
+    
+    @JSFunction
+    public static void dropItem(String worldName, int x, int y, int z, String materialName, int Count)
+    {
+        org.dragonet.DragonetServer.instance().getServer().getWorld(worldName).dropItem(new Location(Bukkit.getWorld(worldName), x, y, z), new ItemStack(Material.getMaterial(materialName), Count));
     }
 }

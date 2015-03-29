@@ -36,20 +36,14 @@ public class ServerAPI extends ScriptableObject
     ////////////////
     
     @JSFunction
-    public static GlowServer getServer()
+    public static Object getServer()
     {
-        return org.dragonet.DragonetServer.instance().getServer();
-    }
-    
-    @JSFunction
-    public static Object[] getPlugins()
-    {
-        return getServer().getPluginManager().getPlugins();
+        return (GlowServer) (org.dragonet.DragonetServer.instance().getServer());
     }
     
     @JSFunction
     public static void banPlayer(Object player, String reason)
-    {
+    {     
         try
         {
             Player plr = (Player) player;
@@ -122,5 +116,33 @@ public class ServerAPI extends ScriptableObject
         }
         
         org.dragonet.DragonetServer.instance().getServer().shutdown();
+    }
+    
+    @JSFunction
+    public static void logMessage(String msg, String type)
+    {      
+        if(type.equalsIgnoreCase("debug"))
+        {
+            org.dragonet.DragonetServer.instance().getLogger().debug(msg);
+        }
+        else
+        if(type.equalsIgnoreCase("error"))
+        {
+            org.dragonet.DragonetServer.instance().getLogger().error(msg);
+        }
+        else
+        if(type.equalsIgnoreCase("trace"))
+        {
+            org.dragonet.DragonetServer.instance().getLogger().trace(msg);
+        }
+        else
+        if(type.equalsIgnoreCase("warn"))
+        {
+            org.dragonet.DragonetServer.instance().getLogger().warn(msg);
+        }
+        else
+        {
+            org.dragonet.DragonetServer.instance().getLogger().info(msg);
+        }
     }
 }
