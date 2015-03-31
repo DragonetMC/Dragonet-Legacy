@@ -90,4 +90,44 @@ public class PlayerAPI extends ScriptableObject
         
         return plr.getWorld().getName();
     }
+    
+    @JSFunction
+    public static void setHelth(Object player, double Health)
+    {
+        Player plr = ((Player) player);
+        
+        plr.setHealth(Health);
+    }
+    
+    @JSFunction
+    public static double getHealth(Object player)
+    {
+        Player plr =((Player) player);
+        
+        return plr.getHealth();
+    }
+    
+    @JSFunction
+    public static int getX(Object player)
+    {
+        Player plr = ((Player) player);
+        
+        return plr.getLocation().getBlockX();
+    }
+    
+    @JSFunction
+    public static int getY(Object player)
+    {
+        Player plr = ((Player) player);
+        
+        return plr.getLocation().getBlockY();
+    }
+    
+    @JSFunction
+    public static int getZ(Object player)
+    {
+        Player plr = ((Player) player);
+        
+        return plr.getLocation().getBlockZ();
+    }
 }
