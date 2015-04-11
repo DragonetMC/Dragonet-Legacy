@@ -18,17 +18,20 @@ public class Functions
         
         try
         {
-            ((ScriptableObject) scope).defineClass(scope, PlayerAPI.class);
-            ((ScriptableObject) scope).defineClass(scope, ServerAPI.class);
-            ((ScriptableObject) scope).defineClass(scope, WorldAPI.class);
-            ((ScriptableObject) scope).defineClass(scope, ConfigAPI.class);
+            ScriptableObject.defineClass(scope, PlayerAPI.class);
+            ScriptableObject.defineClass(scope, ServerAPI.class);
+            ScriptableObject.defineClass(scope, WorldAPI.class);
+            ScriptableObject.defineClass(scope, ScriptAPI.class);
+            ScriptableObject.defineClass(scope, ConfigAPI.class);
         }
         
-        catch(Exception e) {}
+        catch(Exception e) {
+        	e.printStackTrace();
+        }
         
         finally
         {
-            ctx.exit();
+            Context.exit();
         }
     }
 }

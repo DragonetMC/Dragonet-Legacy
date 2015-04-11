@@ -9,6 +9,7 @@ import java.io.*;
 import com.google.common.io.Files;
 import java.nio.charset.Charset;
 import org.mozilla.javascript.*;
+import org.dragonet.DragonetServer;
 import org.dragonet.rhino.api.functions.*;
 
 /**
@@ -18,6 +19,12 @@ import org.dragonet.rhino.api.functions.*;
 public class Script
 {
     public String name = "";
+    
+    //In order for the ScriptAPI to keep track of scripts without relying on filenames (which change)...
+    /**
+     * Unique name of script (not filename). Set by script.
+     */
+    public String UID = "";
     
     public String fullFilePath = "";
     
@@ -34,6 +41,8 @@ public class Script
         this.fileContents = getScriptContents(scriptFile);
         
         this.file = scriptFile;
+        
+        this.UID = findScriptUID();
     }
     
     public File getFile()
@@ -75,6 +84,21 @@ public class Script
             return scriptContents;
     }
     
+    private String findScriptUID() {
+    	Object name = runFunction("getScriptUID", new Object[] {});
+    	try {
+    		if ((String) name == null) {
+    			throw new ClassCastException();
+    		}
+    		return (String) name;
+    	} catch (ClassCastException e) {
+    		DragonetServer.instance().getLogger().warn("[DragonetAPI] Script " + this.name + " doesn't provide custom name!");
+    		DragonetServer.instance().getLogger().warn("[DragonetAPI] This script will not be able to use the ScriptAPI.");
+    		//TODO Link details section for how this works
+    		//DragonetServer.instance().getLogger().warn("[DragonetAPI] See <URL> for details.");
+    		return "INVALID";
+    	}
+    }
     public Object runFunction(String func, Object[] params)
     {  
         BufferedReader script = null;

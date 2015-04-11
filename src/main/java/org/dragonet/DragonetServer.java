@@ -20,13 +20,16 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
+
 import lombok.Getter;
 import net.glowstone.GlowServer;
+
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.dragonet.net.NetworkHandler;
 import org.dragonet.peaddon.DragonetPEAddonServer;
 import org.dragonet.rhino.Rhino;
+import org.dragonet.rhino.Script;
 import org.dragonet.statistic.StatisticSender;
 import org.dragonet.utilities.DragonetVersioning;
 import org.dragonet.rhino.Rhino;
@@ -133,6 +136,11 @@ public class DragonetServer {
         } else {
             this.addonSupported = false;
             this.getLogger().info("DragonetPE Android Addon support is disabled! ");
+        }
+        //This exists because ScriptAPI.addMethod() must be called AFTER Dragonet initialization
+        for (Script s : rhino.Scripts) {
+        	this.getLogger().info("[DragonetAPI] Running post-initialisation for script " + s.UID);
+        	s.runFunction("postInit", new Object[] {});
         }
         this.logger.info("Dragonet successfully initialized! ");
     }
