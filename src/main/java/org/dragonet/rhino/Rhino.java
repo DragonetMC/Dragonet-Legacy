@@ -6,8 +6,11 @@ package org.dragonet.rhino;
 
 import java.io.File;
 import java.util.*;
+
 import org.bukkit.entity.Player;
+import org.dragonet.DragonetServer;
 import org.dragonet.rhino.api.*;
+import org.dragonet.rhino.api.functions.ScriptAPI;
 
 /**
  *
@@ -25,7 +28,13 @@ public class Rhino
     public void reload()
     {
         this.Scripts = null;
+        //Reset methods in ScriptAPI as scripts will now re-add them
+        ScriptAPI.resetMethods();
         this.startScriptInterpreter();
+        for (Script s : Scripts) {
+        	DragonetServer.instance().getLogger().info("[DragonetAPI] Running post-initialisation for script " + s.UID);
+        	s.runFunction("postInit", new Object[] {});
+        }
     }
     
     public void Tick()
@@ -71,6 +80,11 @@ public class Rhino
     private void startScriptInterpreter()
     {
         Scripts = loadScripts();
+        //Moved this here so Scripts variable has already been initialized if it's needed
+        for (Script s : Scripts) {
+        	System.out.println("[DragonetAPI] Starting script " + s.getName() + " with UID " + s.UID);
+        	s.runFunction("onInit", new Object[] {});
+        }
     }
     
     private List<Script> loadScripts()
@@ -105,7 +119,6 @@ public class Rhino
                     Script script = new Script(f);
                     fileList.add(script);
                     System.out.println("Loaded DragonetAPI Script " + script.name);
-                    script.runFunction("onInit", new Object[] {});
                }
             }
 
