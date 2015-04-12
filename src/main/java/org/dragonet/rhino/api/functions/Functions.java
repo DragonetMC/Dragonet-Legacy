@@ -4,6 +4,7 @@
  */
 package org.dragonet.rhino.api.functions;
 
+import java.lang.reflect.InvocationTargetException;
 import org.mozilla.javascript.*;
 
 /**
@@ -16,17 +17,19 @@ public class Functions
     {
         Context ctx = Context.enter();
         
+        Class[] clazz = {PlayerAPI.class, ServerAPI.class, WorldAPI.class, ScriptAPI.class, ConfigAPI.class};
+        
         try
         {
-            ScriptableObject.defineClass(scope, PlayerAPI.class);
-            ScriptableObject.defineClass(scope, ServerAPI.class);
-            ScriptableObject.defineClass(scope, WorldAPI.class);
-            ScriptableObject.defineClass(scope, ScriptAPI.class);
-            ScriptableObject.defineClass(scope, ConfigAPI.class);
+            for(Class c : clazz)
+            {
+                ScriptableObject.defineClass(scope, c);
+            }
         }
         
-        catch(Exception e) {
-        	e.printStackTrace();
+        catch(IllegalAccessException | InstantiationException | InvocationTargetException e)
+        {
+        	org.dragonet.DragonetServer.instance().getLogger().warn(e.getMessage());
         }
         
         finally

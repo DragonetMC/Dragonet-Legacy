@@ -4,6 +4,7 @@
  */
 package org.dragonet.rhino.api.functions;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -129,5 +130,20 @@ public class PlayerAPI extends ScriptableObject
         Player plr = ((Player) player);
         
         return plr.getLocation().getBlockZ();
+    }
+    
+    @JSFunction
+    public static void teleport(Object player, int x, int y, int z, String worldName)
+    {
+        Player plr = (Player) player;
+        
+        if(worldName != "")
+        {
+            plr.teleport(new Location(org.dragonet.DragonetServer.instance().getServer().getWorld(worldName), x, y, z));
+        }
+        else
+        {
+            plr.teleport(new Location(org.dragonet.DragonetServer.instance().getServer().getWorld(plr.getWorld().getName()), x, y, z));
+        }
     }
 }
