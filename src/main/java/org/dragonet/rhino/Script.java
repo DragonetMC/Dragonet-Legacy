@@ -85,7 +85,7 @@ public class Script
     }
     
     private String findScriptUID() {
-    	Object name = runFunction("getScriptUID", new Object[] {});
+    	Object name = runFunction("getUID", new Object[] {});
     	try {
     		if ((String) name == null) {
     			throw new ClassCastException();
