@@ -8,7 +8,6 @@ package org.dragonet.rhino.api.functions;
 import com.google.common.io.Files;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.annotations.JSFunction;

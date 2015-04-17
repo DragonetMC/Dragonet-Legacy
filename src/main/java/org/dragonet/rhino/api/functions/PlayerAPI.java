@@ -146,4 +146,10 @@ public class PlayerAPI extends ScriptableObject
             plr.teleport(new Location(org.dragonet.DragonetServer.instance().getServer().getWorld(plr.getWorld().getName()), x, y, z));
         }
     }
+    
+    @JSFunction
+    public static void addPotionEffect()
+    {
+        //TODO for 0.11.0
+    }
 }
