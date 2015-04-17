@@ -18,7 +18,6 @@ import org.mozilla.javascript.annotations.JSFunction;
  * @author Ash (QuarkTheAwesome)
  */
 public class ScriptAPI extends ScriptableObject {
-	//Copy-pasted from PlayerAPI - Do I have to change this?
 	private static final long serialVersionUID = 438270592527335642L;
 	
 	//Rhino compatibility stuff
