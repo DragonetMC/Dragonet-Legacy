@@ -1,13 +1,17 @@
-/*
- * (c) 2015 The Dragonet Team
- * All rights reserved.
+ /* GNU LESSER GENERAL PUBLIC LICENSE
+ *                       Version 3, 29 June 2007
+ *
+ * Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/>
+ * Everyone is permitted to copy and distribute verbatim copies
+ * of this license document, but changing it is not allowed.
+ *
+ * You can view LICENCE file for details. 
  */
+
 package org.dragonet.rhino;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.mozilla.javascript.NativeObject;
 
 /**
  * Stores info about methods defined with the ScriptAPI.
