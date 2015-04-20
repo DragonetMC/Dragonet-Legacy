@@ -79,10 +79,12 @@ public class ScriptAPI extends ScriptableObject {
 	}
 	
 	@JSFunction
+	public static void callCustomMethod(String method, Object arguments) {
 		//Cycle through all scripts looking for our method.
 		for (CustomMethod m : CustomMethod.methods) {
 			if (m.method == method) {
 				//Found it! Run.
+				m.run(new Object[] {arguments});
 			}
 		}
 	}
