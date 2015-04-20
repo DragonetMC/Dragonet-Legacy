@@ -33,9 +33,15 @@ public class ScriptAPI extends ScriptableObject {
     //
     ////////////////
 	@JSFunction
-	public static void callCustomFunction(String function) {
-		for (Script s : DragonetServer.instance().getRhino().Scripts) {
-			s.runFunction(function, new Object[] {});
+	public static void callCustomFunction(String function, Object arguments) {
+		if (!(arguments == null)) {
+			for (Script s : DragonetServer.instance().getRhino().Scripts) {
+				s.runFunction(function, new Object[] {arguments});
+			}
+		} else {
+			for (Script s : DragonetServer.instance().getRhino().Scripts) {
+				s.runFunction(function, new Object[] {null});
+			}
 		}
 	}
 	
@@ -73,12 +79,10 @@ public class ScriptAPI extends ScriptableObject {
 	}
 	
 	@JSFunction
-	public static void callCustomMethod(String method) {
 		//Cycle through all scripts looking for our method.
 		for (CustomMethod m : CustomMethod.methods) {
 			if (m.method == method) {
 				//Found it! Run.
-				m.run();
 			}
 		}
 	}

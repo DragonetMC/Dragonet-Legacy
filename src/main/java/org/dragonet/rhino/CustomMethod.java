@@ -40,7 +40,11 @@ public class CustomMethod {
 	/**
 	 * Runs function {@link handler} in script {@link owner}
 	 */
-	public void run() {
-		owner.runFunction(handler, new Object[] {});
+	public void run(Object[] arguments) {
+		if (!(arguments == null)) {
+			owner.runFunction(handler, arguments);
+		} else {
+			owner.runFunction(handler, new Object[] {null});
+		}
 	}
 }
