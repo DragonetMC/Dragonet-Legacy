@@ -59,7 +59,8 @@ import java.util.logging.Level;
  * @author Graham Edgecombe
  */
 @DelegateDeserialization(GlowOfflinePlayer.class)
-//DRAGONET-Removed final to let DragonetPlayer to extend it
+//DRAGONET-Add
+//Removed final to let DragonetPlayer to extend it
 public class GlowPlayer extends GlowHumanEntity implements Player {
 
     /**

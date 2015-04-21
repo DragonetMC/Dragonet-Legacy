@@ -99,7 +99,7 @@ public final class EntityStorage {
      */
     private static EntityStore<?> find(Class<? extends GlowEntity> clazz, String type) {
         EntityStore<?> store = classTable.get(clazz);
-        //DRAGONET-Start: Check parent class
+        //DRAGONET-Add: Check parent class
         if (store == null) {
             store = classTable.get(clazz.getSuperclass());
         }

@@ -1,23 +1,54 @@
 ====[The Class We Edited/Changed]====
-net.glowstone.GlowServer: Added dragonet instance getter, set dragonet instance to a private variable. 
-net.glowstone.GlowServer: Changed getVersion() and getBukkitVersion()
-net.glowstone.GlowServer: Added stopping MCPE server call into shutdown() method
 
-net.glowstone.scheduler.GlowScheduler: Added tick trigger
+===[net.glowstone.GlowServer]===
+81-86: Added dragonet instance getter, set dragonet instance to a private variable. 
 
-net.glowstone.entity.GlowPlayer: Removed final
+611-613: Added stopping MCPE server call into shutdown() method
 
-net.glowstone.net.GlowSession: Removed final
-net.glowstone.net.GlowSession: Changed player variable into protected
-net.glowstone.net.GlowSession: Added @Getter at hostname variable
-net.glowstone.net.GlowSession: Added another constructor
+757-759: Added reload Dragonet server method into reload();
 
-net.glowstone.net.handler.login: Added checker for custom items for MCPE
+933-935: Changed getName() to return "Dragonet"
 
-net.glowstone.net.message.*: Changed every variable to public in order to read/write
+940-950: Changed getVersion() to return "DragonetVersioning.DRAGONET_VERSION" and getBukkitVersion() to return "Bukkit API 1.8-R0.1-SNAPSHOT"
 
-net.glowstone.net.io.entity.EntityStorage: Added checking parent class on EntityStore<?> find(Class<? extends GlowEntity> clazz, String type)
 
-net.glowstone.EventFactory: Hooks for most DragonetAPI functions
 
-net.glowstone.GlowServer: Added reload Dragonet server method into reload();
+===[net.glowstone.scheduler.GlowScheduler]===
+177-179: Added tick trigger
+
+
+
+===[net.glowstone.entity.GlowPlayer]
+83: Removed final from class
+
+
+
+===[net.glowstone.net.GlowSession]===
+45-47: Removed final on class
+
+117-119: Changed player variable into protected
+
+92-94: Added @Getter at hostname variable
+
+148-157: Added another constructor
+
+
+
+===[net.glowstone.net.handler.login.LoginStartHandler]===
+21-26: Added checker for custom items for MCPE
+
+
+
+===[net.glowstone.net.message.*]===
+Every class: Changed every variable to public in order to read/write
+
+
+
+===[net.glowstone.net.io.entity.EntityStorage]===
+102-106: Added checking parent class on EntityStore<?> find(Class<? extends GlowEntity> clazz, String type)
+
+
+
+===[net.glowstone.EventFactory]===
+118-EOF: Hooks for most DragonetAPI functions
+

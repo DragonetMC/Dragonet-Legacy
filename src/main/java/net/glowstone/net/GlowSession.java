@@ -42,7 +42,8 @@ import lombok.Getter;
  *
  * @author Graham Edgecombe
  */
-//DRAGONET-Removed final, DragonetSession extends it
+//DRAGONET-Add
+//Removed final, DragonetSession extends it
 public class GlowSession extends BasicSession {
 
     /**
@@ -114,7 +115,8 @@ public class GlowSession extends BasicSession {
     /**
      * The player associated with this session (if there is one).
      */
-    //DRAGONET-Change private into protected
+    //DRAGONET-Add
+    //Change private into protected
     protected GlowPlayer player;
 
     /**

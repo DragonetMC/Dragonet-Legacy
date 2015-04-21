@@ -80,7 +80,7 @@ public final class GlowServer implements Server {
      */
     public static final int PROTOCOL_VERSION = 47;
 
-    //DRAGONET-Start
+    //DRAGONET-Add
     private @Getter
     DragonetServer dragonetServer;
     //DRAGONET-End
@@ -930,19 +930,22 @@ public final class GlowServer implements Server {
     // Static server properties
     @Override
     public String getName() {
+        //Dragonet-Add
         return "Dragonet";
+        //Dragonet-End
     }
 
     @Override
     public String getVersion() {
-        //DRAGONET
+        //DRAGONET-Add
         //return getClass().getPackage().getImplementationVersion();
         return DragonetVersioning.DRAGONET_VERSION;
     }
 
     @Override
     public String getBukkitVersion() {
-        //DRAGONET-Changed to Dragonet version
+        //DRAGONET-Add
+        //Changed to Dragonet version
         //return getClass().getPackage().getSpecificationVersion();
         return "Bukkit API 1.8-R0.1-SNAPSHOT";
     }
