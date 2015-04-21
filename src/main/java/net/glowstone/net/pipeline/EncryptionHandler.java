@@ -45,7 +45,6 @@ public final class EncryptionHandler extends MessageToMessageCodec<ByteBuf, Byte
     }
 
     private static class CryptBuf {
-
         private final Cipher cipher;
 
         private CryptBuf(int mode, SecretKey sharedSecret) throws GeneralSecurityException {

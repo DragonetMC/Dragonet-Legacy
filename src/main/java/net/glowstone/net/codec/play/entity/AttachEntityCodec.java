@@ -7,7 +7,6 @@ import net.glowstone.net.message.play.entity.AttachEntityMessage;
 import java.io.IOException;
 
 public final class AttachEntityCodec implements Codec<AttachEntityMessage> {
-
     @Override
     public AttachEntityMessage decode(ByteBuf buf) throws IOException {
         int id = buf.readInt();

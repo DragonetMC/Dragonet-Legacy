@@ -1,5 +1,8 @@
 package net.glowstone;
 
+import com.avaje.ebean.config.DataSourceConfig;
+import com.avaje.ebean.config.dbplatform.SQLitePlatform;
+import com.avaje.ebeaninternal.server.lib.sql.TransactionIsolation;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import net.glowstone.command.ColorCommand;
@@ -8,6 +11,9 @@ import net.glowstone.constants.GlowEnchantment;
 import net.glowstone.constants.GlowPotionEffect;
 import net.glowstone.entity.EntityIdManager;
 import net.glowstone.entity.GlowPlayer;
+import net.glowstone.generator.CakeTownGenerator;
+import net.glowstone.generator.SurfaceGenerator;
+import net.glowstone.generator.UndergroundGenerator;
 import net.glowstone.inventory.CraftingManager;
 import net.glowstone.inventory.GlowInventory;
 import net.glowstone.inventory.GlowItemFactory;
@@ -22,6 +28,7 @@ import net.glowstone.scheduler.WorldScheduler;
 import net.glowstone.util.*;
 import net.glowstone.util.bans.GlowBanList;
 import net.glowstone.util.bans.UuidListFile;
+import org.apache.commons.lang.Validate;
 import org.bukkit.*;
 import org.bukkit.World.Environment;
 import org.bukkit.command.*;
@@ -46,6 +53,7 @@ import org.bukkit.util.permissions.DefaultPermissions;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.BindException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.file.*;
@@ -60,7 +68,6 @@ import org.dragonet.utilities.DragonetVersioning;
 
 /**
  * The core class of the Glowstone server.
- *
  * @author Graham Edgecombe
  */
 public final class GlowServer implements Server {
@@ -79,35 +86,28 @@ public final class GlowServer implements Server {
      * The protocol version supported by the server.
      */
     public static final int PROTOCOL_VERSION = 47;
-
+  
     //DRAGONET-Add
     private @Getter
     DragonetServer dragonetServer;
     //DRAGONET-End
-
+    
     /**
      * Creates a new server on TCP port 25565 and starts listening for
      * connections.
-     *
      * @param args The command-line arguments.
      */
     public static void main(String[] args) {
         try {
-            // check for console
-            /*if (System.console() == null) {
-             ConsoleMissing.display();
-             return;
-             }*/
-
-            ConfigurationSerialization.registerClass(GlowOfflinePlayer.class);
-            GlowPotionEffect.register();
-            GlowEnchantment.register();
-
             // parse arguments and read config
             final ServerConfig config = parseArguments(args);
             if (config == null) {
                 return;
             }
+
+            ConfigurationSerialization.registerClass(GlowOfflinePlayer.class);
+            GlowPotionEffect.register();
+            GlowEnchantment.register();
 
             // start server
             final GlowServer server = new GlowServer(config);
@@ -116,7 +116,24 @@ public final class GlowServer implements Server {
             server.bindQuery();
             server.bindRcon();
             logger.info("Ready for connections.");
+        } catch (BindException ex) {
+            // descriptive bind error messages
+            logger.severe("The server could not bind to the requested address.");
+            if (ex.getMessage().startsWith("Cannot assign requested address")) {
+                logger.severe("The 'server.ip' in your configuration may not be valid.");
+                logger.severe("Unless you are sure you need it, try removing it.");
+                logger.severe(ex.toString());
+            } else if (ex.getMessage().startsWith("Address already in use")) {
+                logger.severe("The address was already in use. Check that no server is");
+                logger.severe("already running on that port. If needed, try killing all");
+                logger.severe("Java processes using Task Manager or similar.");
+                logger.severe(ex.toString());
+            } else {
+                logger.log(Level.SEVERE, "An unknown bind error has occurred.", ex);
+            }
+            System.exit(1);
         } catch (Throwable t) {
+            // general server startup crash
             logger.log(Level.SEVERE, "Error during server startup.", t);
             System.exit(1);
         }
@@ -345,8 +362,7 @@ public final class GlowServer implements Server {
     private int spawnRadius;
 
     /**
-     * The ticks until a player who has not played the game has been kicked, or
-     * 0.
+     * The ticks until a player who has not played the game has been kicked, or 0.
      */
     private int idleTimeout;
 
@@ -379,6 +395,16 @@ public final class GlowServer implements Server {
      * The server port.
      */
     private int port;
+
+    /**
+     * A set of all online players.
+     */
+    private final Set<GlowPlayer> onlinePlayers = new HashSet<>();
+
+    /**
+     * A view of all online players.
+     */
+    private final Set<GlowPlayer> onlineView = Collections.unmodifiableSet(onlinePlayers);
 
     /**
      * Creates a new server.
@@ -418,11 +444,6 @@ public final class GlowServer implements Server {
         whitelist.load();
         nameBans.load();
         ipBans.load();
-
-        //DRAGONET-Start
-        this.dragonetServer = new DragonetServer(this);
-        this.dragonetServer.initialize();
-        //DRAGONET-End
 
         // Start loading plugins
         new LibraryManager(this).run();
@@ -510,14 +531,18 @@ public final class GlowServer implements Server {
     /**
      * Binds this server to the address specified in the configuration.
      */
-    private void bind() {
+    private void bind() throws BindException {
         SocketAddress address = getBindAddress(ServerConfig.Key.SERVER_PORT);
 
         logger.info("Binding to address: " + address + "...");
         ChannelFuture future = networkServer.bind(address);
         Channel channel = future.awaitUninterruptibly().channel();
         if (!channel.isActive()) {
-            throw new RuntimeException("Failed to bind to address. Maybe it is already in use?");
+            Throwable cause = future.cause();
+            if (cause instanceof BindException) {
+                throw (BindException) cause;
+            }
+            throw new RuntimeException("Failed to bind to address", cause);
         }
 
         logger.info("Successfully bound to: " + channel.localAddress());
@@ -564,7 +589,6 @@ public final class GlowServer implements Server {
 
     /**
      * Get the SocketAddress to bind to for a specified service.
-     *
      * @param portKey The configuration key for the port to use.
      * @return The SocketAddress
      */
@@ -607,11 +631,11 @@ public final class GlowServer implements Server {
         if (rconServer != null) {
             rconServer.shutdown();
         }
-
-        //DRAGONET-ADD: Shutdown Dragonet Server
+   
+        //DRAGONET-Add: Shutdown Dragonet Server
         this.dragonetServer.shutdown();
-        //DRAGONET-END
-
+        //DRAGONET-End
+        
         // Save worlds
         for (World world : getWorlds()) {
             logger.info("Saving world: " + world.getName());
@@ -664,7 +688,7 @@ public final class GlowServer implements Server {
     private void loadPlugins() {
         // clear the map
         commandMap.clearCommands();
-        commandMap.register("glowstone", new ColorCommand("colors"));
+        commandMap.register("glowstone", new ColorCommand());
         commandMap.register("glowstone", new TellrawCommand());
 
         File folder = new File(config.getString(ServerConfig.Key.PLUGIN_FOLDER));
@@ -689,13 +713,12 @@ public final class GlowServer implements Server {
 
     /**
      * Enable all plugins of the given load order type.
-     *
      * @param type The type of plugin to enable.
      */
     private void enablePlugins(PluginLoadOrder type) {
         if (type == PluginLoadOrder.STARTUP) {
             helpMap.clear();
-            helpMap.initializeGeneralTopics();
+            helpMap.loadConfig(config.getConfigFile(ServerConfig.Key.HELP_FILE));
         }
 
         // load all the plugins
@@ -724,6 +747,7 @@ public final class GlowServer implements Server {
             commandMap.registerServerAliases();
             DefaultPermissions.registerCorePermissions();
             helpMap.initializeCommands();
+            helpMap.amendTopics(config.getConfigFile(ServerConfig.Key.HELP_FILE));
 
             // load permissions.yml
             ConfigurationSection permConfig = config.getConfigFile(ServerConfig.Key.PERMISSIONS_FILE);
@@ -753,7 +777,7 @@ public final class GlowServer implements Server {
 
             // Reset crafting
             craftingManager.resetRecipes();
-           
+
             //Dragonet-Add
             DragonetServer.instance().reload();
             //Dragonet-End
@@ -774,9 +798,9 @@ public final class GlowServer implements Server {
 
     ////////////////////////////////////////////////////////////////////////////
     // Access to internals
+
     /**
      * Gets the command map.
-     *
      * @return The {@link SimpleCommandMap}.
      */
     public SimpleCommandMap getCommandMap() {
@@ -785,7 +809,6 @@ public final class GlowServer implements Server {
 
     /**
      * Gets the session registry.
-     *
      * @return The {@link SessionRegistry}.
      */
     public SessionRegistry getSessionRegistry() {
@@ -794,7 +817,6 @@ public final class GlowServer implements Server {
 
     /**
      * Gets the entity id manager.
-     *
      * @return The {@link EntityIdManager}.
      */
     public EntityIdManager getEntityIdManager() {
@@ -824,7 +846,6 @@ public final class GlowServer implements Server {
 
     /**
      * Return the crafting manager.
-     *
      * @return The server's crafting manager.
      */
     public CraftingManager getCraftingManager() {
@@ -833,7 +854,6 @@ public final class GlowServer implements Server {
 
     /**
      * The key pair generated at server start up
-     *
      * @return The key pair generated at server start up
      */
     public KeyPair getKeyPair() {
@@ -842,7 +862,6 @@ public final class GlowServer implements Server {
 
     /**
      * Returns the player data service attached to the first world.
-     *
      * @return The server's player data service.
      */
     public PlayerDataService getPlayerDataService() {
@@ -851,7 +870,6 @@ public final class GlowServer implements Server {
 
     /**
      * Get the threshold to use for network compression defined in the config.
-     *
      * @return The compression threshold, or -1 for no compression.
      */
     public int getCompressionThreshold() {
@@ -860,7 +878,6 @@ public final class GlowServer implements Server {
 
     /**
      * Get the default game difficulty defined in the config.
-     *
      * @return The default difficulty.
      */
     public Difficulty getDifficulty() {
@@ -873,7 +890,6 @@ public final class GlowServer implements Server {
 
     /**
      * Get whether worlds should keep their spawns loaded by default.
-     *
      * @return Whether to keep spawns loaded by default.
      */
     public boolean keepSpawnLoaded() {
@@ -882,7 +898,6 @@ public final class GlowServer implements Server {
 
     /**
      * Get whether parsing of data provided by a proxy is enabled.
-     *
      * @return True if a proxy is providing data to use.
      */
     public boolean getProxySupport() {
@@ -891,7 +906,6 @@ public final class GlowServer implements Server {
 
     /**
      * Get whether to use color codes in Rcon responses.
-     *
      * @return True if color codes will be present in Rcon responses
      */
     public boolean useRconColors() {
@@ -900,7 +914,6 @@ public final class GlowServer implements Server {
 
     /**
      * Get the resource pack url for this server, or {@code null} if not set.
-     *
      * @return The url of the resource pack to use, or {@code null}
      */
     public String getResourcePackURL() {
@@ -908,9 +921,7 @@ public final class GlowServer implements Server {
     }
 
     /**
-     * Get the resource pack hash for this server, or the empty string if not
-     * set.
-     *
+     * Get the resource pack hash for this server, or the empty string if not set.
      * @return The hash of the resource pack, or the empty string
      */
     public String getResourcePackHash() {
@@ -919,15 +930,29 @@ public final class GlowServer implements Server {
 
     /**
      * Get whether achievements should be announced.
-     *
      * @return True if achievements should be announced in chat.
      */
     public boolean getAnnounceAchievements() {
         return config.getBoolean(ServerConfig.Key.ANNOUNCE_ACHIEVEMENTS);
     }
 
+    /**
+     * Sets a player as being online internally.
+     * @param player player to set online/offline
+     * @param online whether the player is online or offline
+     */
+    public void setPlayerOnline(GlowPlayer player, boolean online) {
+        Validate.notNull(player);
+        if (online) {
+            onlinePlayers.add(player);
+        } else {
+            onlinePlayers.remove(player);
+        }
+    }
+
     ////////////////////////////////////////////////////////////////////////////
     // Static server properties
+
     @Override
     public String getName() {
         //Dragonet-Add
@@ -937,17 +962,19 @@ public final class GlowServer implements Server {
 
     @Override
     public String getVersion() {
-        //DRAGONET-Add
+        //Dragonet-Add
         //return getClass().getPackage().getImplementationVersion();
         return DragonetVersioning.DRAGONET_VERSION;
+        //Dragonet-End
     }
 
     @Override
     public String getBukkitVersion() {
-        //DRAGONET-Add
+        //Dragonet-Add
         //Changed to Dragonet version
         //return getClass().getPackage().getSpecificationVersion();
         return "Bukkit API 1.8-R0.1-SNAPSHOT";
+        //Dragonet-End
     }
 
     @Override
@@ -962,6 +989,7 @@ public final class GlowServer implements Server {
 
     ////////////////////////////////////////////////////////////////////////////
     // Access to Bukkit API
+
     @Override
     public PluginManager getPluginManager() {
         return pluginManager;
@@ -1017,6 +1045,7 @@ public final class GlowServer implements Server {
 
     ////////////////////////////////////////////////////////////////////////////
     // Commands and console
+
     @Override
     public ConsoleCommandSender getConsoleSender() {
         return consoleManager.getSender();
@@ -1063,6 +1092,7 @@ public final class GlowServer implements Server {
 
     ////////////////////////////////////////////////////////////////////////////
     // Player management
+
     @Override
     public Set<OfflinePlayer> getOperators() {
         Set<OfflinePlayer> offlinePlayers = new HashSet<>();
@@ -1080,14 +1110,7 @@ public final class GlowServer implements Server {
 
     @Override
     public Collection<GlowPlayer> getOnlinePlayers() {
-        // todo: provide a view instead of reassembling the list each time
-        ArrayList<GlowPlayer> result = new ArrayList<>();
-        for (GlowWorld world : worlds.getWorlds()) {
-            for (GlowPlayer player : world.getRawPlayers()) {
-                result.add(player);
-            }
-        }
-        return result;
+        return onlineView;
     }
 
     @Override
@@ -1255,6 +1278,7 @@ public final class GlowServer implements Server {
 
     ////////////////////////////////////////////////////////////////////////////
     // World management
+
     @Override
     public GlowWorld getWorld(String name) {
         return worlds.getWorld(name);
@@ -1279,7 +1303,6 @@ public final class GlowServer implements Server {
 
     /**
      * Gets the default ChunkGenerator for the given environment and type.
-     *
      * @return The ChunkGenerator.
      */
     private ChunkGenerator getGenerator(String name, Environment environment, WorldType type) {
@@ -1295,11 +1318,11 @@ public final class GlowServer implements Server {
 
         // find generator based on environment and world type
         if (environment == Environment.NETHER) {
-            return new net.glowstone.generator.UndergroundGenerator();
+            return new UndergroundGenerator();
         } else if (environment == Environment.THE_END) {
-            return new net.glowstone.generator.CakeTownGenerator();
+            return new CakeTownGenerator();
         } else {
-            return new net.glowstone.generator.SurfaceGenerator();
+            return new SurfaceGenerator();
         }
     }
 
@@ -1320,7 +1343,6 @@ public final class GlowServer implements Server {
 
     /**
      * Add a world to the internal world collection.
-     *
      * @param world The world to add.
      */
     void addWorld(GlowWorld world) {
@@ -1362,6 +1384,7 @@ public final class GlowServer implements Server {
 
     ////////////////////////////////////////////////////////////////////////////
     // Inventory and crafting
+
     @Override
     public List<Recipe> getRecipesFor(ItemStack result) {
         return craftingManager.getRecipesFor(result);
@@ -1409,6 +1432,7 @@ public final class GlowServer implements Server {
 
     ////////////////////////////////////////////////////////////////////////////
     // Server icons
+
     @Override
     public GlowServerIcon getServerIcon() {
         return defaultIcon;
@@ -1426,6 +1450,7 @@ public final class GlowServer implements Server {
 
     ////////////////////////////////////////////////////////////////////////////
     // Plugin messages
+
     @Override
     public void sendPluginMessage(Plugin source, String channel, byte[] message) {
         StandardMessenger.validatePluginMessage(getMessenger(), source, channel, message);
@@ -1445,6 +1470,7 @@ public final class GlowServer implements Server {
 
     ////////////////////////////////////////////////////////////////////////////
     // Configuration with special handling
+
     @Override
     public GameMode getDefaultGameMode() {
         return defaultGameMode;
@@ -1494,15 +1520,15 @@ public final class GlowServer implements Server {
 
     @Override
     public void configureDbConfig(com.avaje.ebean.config.ServerConfig dbConfig) {
-        com.avaje.ebean.config.DataSourceConfig ds = new com.avaje.ebean.config.DataSourceConfig();
+        DataSourceConfig ds = new DataSourceConfig();
         ds.setDriver(config.getString(ServerConfig.Key.DB_DRIVER));
         ds.setUrl(config.getString(ServerConfig.Key.DB_URL));
         ds.setUsername(config.getString(ServerConfig.Key.DB_USERNAME));
         ds.setPassword(config.getString(ServerConfig.Key.DB_PASSWORD));
-        ds.setIsolationLevel(com.avaje.ebeaninternal.server.lib.sql.TransactionIsolation.getLevel(config.getString(ServerConfig.Key.DB_ISOLATION)));
+        ds.setIsolationLevel(TransactionIsolation.getLevel(config.getString(ServerConfig.Key.DB_ISOLATION)));
 
         if (ds.getDriver().contains("sqlite")) {
-            dbConfig.setDatabasePlatform(new com.avaje.ebean.config.dbplatform.SQLitePlatform());
+            dbConfig.setDatabasePlatform(new SQLitePlatform());
             dbConfig.getDatabasePlatform().getDbDdlSyntax().setIdentity("");
         }
 
@@ -1511,6 +1537,7 @@ public final class GlowServer implements Server {
 
     ////////////////////////////////////////////////////////////////////////////
     // Configuration
+
     @Override
     public String getIp() {
         return config.getString(ServerConfig.Key.SERVER_IP);

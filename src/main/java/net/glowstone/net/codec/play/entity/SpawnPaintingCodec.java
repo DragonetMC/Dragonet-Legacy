@@ -10,7 +10,6 @@ import org.bukkit.util.BlockVector;
 import java.io.IOException;
 
 public final class SpawnPaintingCodec implements Codec<SpawnPaintingMessage> {
-
     @Override
     public SpawnPaintingMessage decode(ByteBuf buf) throws IOException {
         int id = ByteBufUtils.readVarInt(buf);

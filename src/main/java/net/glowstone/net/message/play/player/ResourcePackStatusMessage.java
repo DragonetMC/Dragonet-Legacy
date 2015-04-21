@@ -10,3 +10,4 @@ public final class ResourcePackStatusMessage implements Message {
     public final int result;
 
 }
+

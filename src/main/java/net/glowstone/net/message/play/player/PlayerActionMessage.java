@@ -9,3 +9,4 @@ public final class PlayerActionMessage implements Message {
     public final int id, action, jumpBoost;
 
 }
+

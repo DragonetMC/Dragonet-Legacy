@@ -12,7 +12,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerAnimationEvent;
 
 public final class PlayerSwingArmHandler implements MessageHandler<GlowSession, PlayerSwingArmMessage> {
-
     @Override
     public void handle(GlowSession session, PlayerSwingArmMessage message) {
         final GlowPlayer player = session.getPlayer();
@@ -26,9 +25,8 @@ public final class PlayerSwingArmHandler implements MessageHandler<GlowSession, 
         }
 
         if (block == null || block.isEmpty()) {
-            if (EventFactory.onPlayerInteract(player, Action.LEFT_CLICK_AIR).useItemInHand() == Event.Result.DENY) {
+            if (EventFactory.onPlayerInteract(player, Action.LEFT_CLICK_AIR).useItemInHand() == Event.Result.DENY)
                 return;
-            }
             // todo: item interactions with air
         }
 

@@ -11,3 +11,4 @@ public final class PlaySoundMessage implements Message {
     public final float volume, pitch;
 
 }
+

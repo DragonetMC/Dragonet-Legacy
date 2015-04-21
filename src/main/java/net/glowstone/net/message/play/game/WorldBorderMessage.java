@@ -59,7 +59,6 @@ public final class WorldBorderMessage implements Message {
     }
 
     public enum Action {
-
         SET_SIZE,
         LERP_SIZE,
         SET_CENTER,

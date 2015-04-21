@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.util.List;
 
 public final class SpawnMobCodec implements Codec<SpawnMobMessage> {
-
     @Override
     public SpawnMobMessage decode(ByteBuf buf) throws IOException {
         int id = ByteBufUtils.readVarInt(buf);

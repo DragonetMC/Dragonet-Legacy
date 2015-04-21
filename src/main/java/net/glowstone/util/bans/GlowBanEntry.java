@@ -128,13 +128,13 @@ final class GlowBanEntry implements JsonListFile.BaseEntry, BanEntry, Cloneable 
 
     @Override
     public String toString() {
-        return "GlowBanEntry{"
-                + "type=" + list.type
-                + ", target='" + target + '\''
-                + ", created=" + created
-                + ", expires=" + expires
-                + ", source='" + source + '\''
-                + ", reason='" + reason + '\''
-                + '}';
+        return "GlowBanEntry{" +
+                "type=" + list.type +
+                ", target='" + target + '\'' +
+                ", created=" + created +
+                ", expires=" + expires +
+                ", source='" + source + '\'' +
+                ", reason='" + reason + '\'' +
+                '}';
     }
 }

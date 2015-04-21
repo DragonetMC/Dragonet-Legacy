@@ -8,12 +8,11 @@ import net.glowstone.net.message.play.player.InteractEntityMessage;
 import java.io.IOException;
 
 public final class InteractEntityCodec implements Codec<InteractEntityMessage> {
-
     @Override
     public InteractEntityMessage decode(ByteBuf buf) throws IOException {
         int id = ByteBufUtils.readVarInt(buf);
         int action = ByteBufUtils.readVarInt(buf);
-        if (action == InteractEntityMessage.Action.ATTACK_AT.ordinal()) {
+        if (action == InteractEntityMessage.Action.INTERACT_AT.ordinal()) {
             float targetX = buf.readFloat();
             float targetY = buf.readFloat();
             float targetZ = buf.readFloat();
@@ -26,7 +25,7 @@ public final class InteractEntityCodec implements Codec<InteractEntityMessage> {
     public ByteBuf encode(ByteBuf buf, InteractEntityMessage message) throws IOException {
         ByteBufUtils.writeVarInt(buf, message.getId());
         ByteBufUtils.writeVarInt(buf, message.getAction());
-        if (message.getAction() == InteractEntityMessage.Action.ATTACK_AT.ordinal()) {
+        if (message.getAction() == InteractEntityMessage.Action.INTERACT_AT.ordinal()) {
             buf.writeFloat(message.getTargetX());
             buf.writeFloat(message.getTargetY());
             buf.writeFloat(message.getTargetZ());

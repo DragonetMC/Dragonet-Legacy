@@ -10,14 +10,12 @@ import static org.bukkit.Achievement.*;
  */
 public final class GlowAchievement {
 
-    private GlowAchievement() {
-    }
+    private GlowAchievement() {}
 
     private static final String[] names = new String[Achievement.values().length];
 
     /**
      * Get the achievement name for a specified Achievement.
-     *
      * @param achievement the Achievement.
      * @return the achievement name.
      */

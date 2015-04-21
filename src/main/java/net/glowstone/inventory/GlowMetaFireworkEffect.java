@@ -18,9 +18,7 @@ public class GlowMetaFireworkEffect extends GlowMetaItem implements FireworkEffe
     public GlowMetaFireworkEffect(GlowMetaItem meta) {
         super(meta);
 
-        if (meta == null || !(meta instanceof GlowMetaFireworkEffect)) {
-            return;
-        }
+        if (meta == null || !(meta instanceof GlowMetaFireworkEffect)) return;
 
         GlowMetaFireworkEffect effect = (GlowMetaFireworkEffect) meta;
         this.effect = effect.effect;
@@ -95,12 +93,8 @@ public class GlowMetaFireworkEffect extends GlowMetaItem implements FireworkEffe
 
         type = FireworkEffect.Type.values()[explosion.getByte("Type")];
 
-        if (explosion.isByte("Flicker")) {
-            flicker = explosion.getBool("Flicker");
-        }
-        if (explosion.isByte("Trail")) {
-            trail = explosion.getBool("Trail");
-        }
+        if (explosion.isByte("Flicker")) flicker = explosion.getBool("Flicker");
+        if (explosion.isByte("Trail")) trail = explosion.getBool("Trail");
 
         if (explosion.isIntArray("FadeColors")) {
             int[] fadeInts = explosion.getIntArray("FadeColors");
@@ -121,12 +115,8 @@ public class GlowMetaFireworkEffect extends GlowMetaItem implements FireworkEffe
     static CompoundTag toExplosion(FireworkEffect effect) {
         CompoundTag explosion = new CompoundTag();
 
-        if (effect.hasFlicker()) {
-            explosion.putBool("Flicker", true);
-        }
-        if (effect.hasTrail()) {
-            explosion.putBool("Trail", true);
-        }
+        if (effect.hasFlicker()) explosion.putBool("Flicker", true);
+        if (effect.hasTrail()) explosion.putBool("Trail", true);
 
         explosion.putByte("Type", effect.getType().ordinal());
 

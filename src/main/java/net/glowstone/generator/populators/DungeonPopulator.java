@@ -208,5 +208,5 @@ public class DungeonPopulator extends BlockPopulator {
         return !block.isLiquid() && block.getType() != Material.MOB_SPAWNER
                 && block.getType() != Material.CHEST;
     }
-
+    
 }

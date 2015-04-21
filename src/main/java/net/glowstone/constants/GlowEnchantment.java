@@ -118,7 +118,6 @@ public final class GlowEnchantment extends Enchantment {
     private static final int GROUP_DIG = 3;
 
     private static enum Impl {
-
         PROTECTION_ENVIRONMENTAL(0, "Protection", 4, EnchantmentTarget.ARMOR, GROUP_PROTECT),
         PROTECTION_FIRE(1, "Fire Protection", 4, EnchantmentTarget.ARMOR, GROUP_PROTECT),
         PROTECTION_FALL(2, "Feather Falling", 4, EnchantmentTarget.ARMOR_FEET, GROUP_PROTECT),
@@ -175,7 +174,6 @@ public final class GlowEnchantment extends Enchantment {
     }
 
     private static class MatcherAdapter implements MaterialMatcher {
-
         private final EnchantmentTarget target;
 
         public MatcherAdapter(EnchantmentTarget target) {

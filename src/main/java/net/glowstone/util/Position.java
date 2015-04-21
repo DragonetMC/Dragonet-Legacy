@@ -10,7 +10,6 @@ import static org.bukkit.block.BlockFace.*;
 
 /**
  * A static class housing position-related utilities and constants.
- *
  * @author Graham Edgecombe
  */
 public final class Position {
@@ -27,8 +26,7 @@ public final class Position {
 
     /**
      * Common Rotation values used blocks such as Signs, Skulls, and Banners.
-     * The order relates to the data/tag that is applied to the block on
-     * placing.
+     * The order relates to the data/tag that is applied to the block on placing.
      */
     public static final List<BlockFace> ROTATIONS = ImmutableList.of(NORTH, NORTH_NORTH_EAST, NORTH_EAST,
             EAST_NORTH_EAST, EAST, EAST_SOUTH_EAST, SOUTH_EAST, SOUTH_SOUTH_EAST, SOUTH, SOUTH_SOUTH_WEST,
@@ -37,7 +35,6 @@ public final class Position {
     /**
      * Gets the X coordinate multiplied the granularity and rounded to an
      * integer.
-     *
      * @return An integer approximation of the X coordinate.
      */
     public static int getIntX(Location loc) {
@@ -47,7 +44,6 @@ public final class Position {
     /**
      * Gets the Y coordinate multiplied the granularity and rounded to an
      * integer.
-     *
      * @return An integer approximation of the Y coordinate.
      */
     public static int getIntY(Location loc) {
@@ -57,7 +53,6 @@ public final class Position {
     /**
      * Gets the Z coordinate multiplied the granularity and rounded to an
      * integer.
-     *
      * @return An integer approximation of the Z coordinate.
      */
     public static int getIntZ(Location loc) {
@@ -66,7 +61,6 @@ public final class Position {
 
     /**
      * Gets an integer approximation of the yaw between 0 and 255.
-     *
      * @return An integer approximation of the yaw.
      */
     public static int getIntYaw(Location loc) {
@@ -75,7 +69,6 @@ public final class Position {
 
     /**
      * Gets an integer approximation of the pitch between 0 and 255.
-     *
      * @return An integer approximation of the yaw.
      */
     public static int getIntPitch(Location loc) {
@@ -84,7 +77,6 @@ public final class Position {
 
     /**
      * Gets whether there has been a position change between the two Locations.
-     *
      * @return A boolean.
      */
     public static boolean hasMoved(Location first, Location second) {
@@ -93,7 +85,6 @@ public final class Position {
 
     /**
      * Gets whether there has been a rotation change between the two Locations.
-     *
      * @return A boolean.
      */
     public static boolean hasRotated(Location first, Location second) {
@@ -102,7 +93,6 @@ public final class Position {
 
     /**
      * Copy the contents of one Location to another.
-     *
      * @param source The Location to read from.
      * @param dest The Location to modify. May be null.
      * @return The dest parameter, modified if not null.
@@ -122,7 +112,6 @@ public final class Position {
 
     /**
      * Get an intercardinal BlockFace from a rotation value, where NORTH is 0.
-     *
      * @param rotation byte value rotation to get
      * @return intercardinal BlockFace
      * @throws IndexOutOfBoundsException If 0 > value > 15
@@ -133,10 +122,8 @@ public final class Position {
 
     /**
      * Gets the byte rotation for an intercardinal BlockFace, where NORTH is 0.
-     *
      * @param rotation Rotation to get
-     * @return byte data value for the given rotation, or -1 if rotation is SELF
-     * or null
+     * @return byte data value for the given rotation, or -1 if rotation is SELF or null
      */
     public static byte getDirection(BlockFace rotation) {
         return (byte) ROTATIONS.indexOf(rotation);

@@ -144,7 +144,6 @@ public final class ConsoleManager {
     }
 
     private class CommandCompleter implements Completer {
-
         @Override
         public int complete(final String buffer, int cursor, List<CharSequence> candidates) {
             try {
@@ -169,7 +168,6 @@ public final class ConsoleManager {
     }
 
     private class ConsoleCommandThread extends Thread {
-
         @Override
         public void run() {
             String command = "";
@@ -181,9 +179,8 @@ public final class ConsoleManager {
                         command = reader.readLine();
                     }
 
-                    if (command == null || command.trim().length() == 0) {
+                    if (command == null || command.trim().length() == 0)
                         continue;
-                    }
 
                     server.getScheduler().runTask(null, new CommandTask(command.trim()));
                 } catch (CommandException ex) {
@@ -196,7 +193,6 @@ public final class ConsoleManager {
     }
 
     private class CommandTask implements Runnable {
-
         private final String command;
 
         public CommandTask(String command) {
@@ -211,11 +207,11 @@ public final class ConsoleManager {
     }
 
     private class ColoredCommandSender implements ConsoleCommandSender {
-
         private final PermissibleBase perm = new PermissibleBase(this);
 
         ////////////////////////////////////////////////////////////////////////
         // CommandSender
+
         @Override
         public String getName() {
             return "CONSOLE";
@@ -250,6 +246,7 @@ public final class ConsoleManager {
 
         ////////////////////////////////////////////////////////////////////////
         // Permissible
+
         @Override
         public boolean isPermissionSet(String name) {
             return perm.isPermissionSet(name);
@@ -307,6 +304,7 @@ public final class ConsoleManager {
 
         ////////////////////////////////////////////////////////////////////////
         // Conversable
+
         @Override
         public boolean isConversing() {
             return false;
@@ -339,7 +337,6 @@ public final class ConsoleManager {
     }
 
     private static class LoggerOutputStream extends ByteArrayOutputStream {
-
         private final String separator = System.getProperty("line.separator");
         private final Level level;
 
@@ -361,7 +358,6 @@ public final class ConsoleManager {
     }
 
     private class FancyConsoleHandler extends ConsoleHandler {
-
         public FancyConsoleHandler() {
             setFormatter(new DateOutputFormatter(CONSOLE_DATE, true));
             setOutputStream(System.out);
@@ -390,7 +386,6 @@ public final class ConsoleManager {
     }
 
     private static class RotatingFileHandler extends StreamHandler {
-
         private final SimpleDateFormat dateFormat;
         private final String template;
         private final boolean rotate;
@@ -446,7 +441,6 @@ public final class ConsoleManager {
     }
 
     private class DateOutputFormatter extends Formatter {
-
         private final SimpleDateFormat date;
         private final boolean color;
 
@@ -472,6 +466,8 @@ public final class ConsoleManager {
             builder.append('\n');
 
             if (record.getThrown() != null) {
+                // StringWriter's close() is trivial
+                @SuppressWarnings("resource")
                 StringWriter writer = new StringWriter();
                 record.getThrown().printStackTrace(new PrintWriter(writer));
                 builder.append(writer.toString());

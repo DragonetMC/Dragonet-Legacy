@@ -13,7 +13,6 @@ import java.util.logging.Logger;
 
 /**
  * Represents a task which is executed periodically.
- *
  * @author Graham Edgecombe
  */
 public class GlowTask extends FutureTask<Void> implements BukkitTask, BukkitWorker {
@@ -69,8 +68,8 @@ public class GlowTask extends FutureTask<Void> implements BukkitTask, BukkitWork
     private final String description;
 
     /**
-     * Creates a new task with the specified number of ticks between consecutive
-     * calls to execute().
+     * Creates a new task with the specified number of ticks between
+     * consecutive calls to execute().
      */
     public GlowTask(Plugin owner, Runnable task, boolean sync, long delay, long period) {
         super(task, null);
@@ -85,12 +84,12 @@ public class GlowTask extends FutureTask<Void> implements BukkitTask, BukkitWork
 
     @Override
     public String toString() {
-        return "GlowTask{"
-                + "id=" + taskId
-                + ", plugin=" + owner
-                + ", sync=" + sync
-                + ": " + description
-                + '}';
+        return "GlowTask{" +
+                "id=" + taskId +
+                ", plugin=" + owner +
+                ", sync=" + sync +
+                ": " + description +
+                '}';
     }
 
     /**
@@ -127,7 +126,6 @@ public class GlowTask extends FutureTask<Void> implements BukkitTask, BukkitWork
     /**
      * Called every 'pulse' which is around 50ms in Minecraft. This method
      * updates the counters and returns whether execute() should be called
-     *
      * @return Execution state for this task
      */
     TaskExecutionState shouldExecute() {
@@ -138,9 +136,7 @@ public class GlowTask extends FutureTask<Void> implements BukkitTask, BukkitWork
 
     private TaskExecutionState shouldExecuteUpdate() {
         if (isDone()) // Stop running if cancelled, exception, or not repeating
-        {
             return TaskExecutionState.STOP;
-        }
 
         ++counter;
         if (counter >= delay) {
@@ -154,7 +150,6 @@ public class GlowTask extends FutureTask<Void> implements BukkitTask, BukkitWork
 
     /**
      * Return the last execution state returned by {@link #shouldExecute()}
-     *
      * @return the last state (most likely the state the task is currently in)
      */
     public TaskExecutionState getLastExecutionState() {

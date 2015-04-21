@@ -9,3 +9,4 @@ public final class SignEditorMessage implements Message {
     public final int x, y, z;
 
 }
+

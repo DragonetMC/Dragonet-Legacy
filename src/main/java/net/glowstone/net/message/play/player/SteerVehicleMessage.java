@@ -10,3 +10,4 @@ public final class SteerVehicleMessage implements Message {
     public final boolean jump, unmount;
 
 }
+

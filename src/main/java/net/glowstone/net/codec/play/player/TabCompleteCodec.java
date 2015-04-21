@@ -10,7 +10,6 @@ import org.bukkit.util.BlockVector;
 import java.io.IOException;
 
 public final class TabCompleteCodec implements Codec<TabCompleteMessage> {
-
     @Override
     public TabCompleteMessage decode(ByteBuf buf) throws IOException {
         String text = ByteBufUtils.readUTF8(buf);

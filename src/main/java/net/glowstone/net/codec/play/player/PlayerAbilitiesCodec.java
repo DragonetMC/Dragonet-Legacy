@@ -7,7 +7,6 @@ import net.glowstone.net.message.play.player.PlayerAbilitiesMessage;
 import java.io.IOException;
 
 public final class PlayerAbilitiesCodec implements Codec<PlayerAbilitiesMessage> {
-
     @Override
     public PlayerAbilitiesMessage decode(ByteBuf buf) throws IOException {
         int flags = buf.readUnsignedByte();

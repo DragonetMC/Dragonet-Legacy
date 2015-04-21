@@ -8,7 +8,6 @@ import net.glowstone.net.message.play.player.ResourcePackStatusMessage;
 import java.io.IOException;
 
 public final class ResourcePackStatusCodec implements Codec<ResourcePackStatusMessage> {
-
     @Override
     public ResourcePackStatusMessage decode(ByteBuf buf) throws IOException {
         String hash = ByteBufUtils.readUTF8(buf);

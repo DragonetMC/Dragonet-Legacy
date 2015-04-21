@@ -38,13 +38,13 @@ public final class CompoundTag extends Tag<Map<String, Tag>> {
 
     ////////////////////////////////////////////////////////////////////////////
     // Helper stuff
+
     public boolean isEmpty() {
         return value.isEmpty();
     }
 
     /**
      * Check if the compound contains the given key.
-     *
      * @param key The key.
      * @return True if the key is in the map.
      */
@@ -58,6 +58,7 @@ public final class CompoundTag extends Tag<Map<String, Tag>> {
 
     ////////////////////////////////////////////////////////////////////////////
     // Simple gets
+
     public boolean getBool(String key) {
         return get(key, ByteTag.class) != 0;
     }
@@ -100,6 +101,7 @@ public final class CompoundTag extends Tag<Map<String, Tag>> {
 
     ////////////////////////////////////////////////////////////////////////////
     // Fancy gets
+
     @SuppressWarnings("unchecked")
     public <V> List<V> getList(String key, TagType type) {
         List<? extends Tag> original = getTagList(key, type);
@@ -121,6 +123,7 @@ public final class CompoundTag extends Tag<Map<String, Tag>> {
 
     ////////////////////////////////////////////////////////////////////////////
     // Simple is
+
     public boolean isByte(String key) {
         return is(key, ByteTag.class);
     }
@@ -159,10 +162,9 @@ public final class CompoundTag extends Tag<Map<String, Tag>> {
 
     ////////////////////////////////////////////////////////////////////////////
     // Fancy is
+
     public boolean isList(String key, TagType type) {
-        if (!is(key, ListTag.class)) {
-            return false;
-        }
+        if (!is(key, ListTag.class)) return false;
         ListTag tag = getTag(key, ListTag.class);
         return tag.getChildType() == type;
     }
@@ -173,6 +175,7 @@ public final class CompoundTag extends Tag<Map<String, Tag>> {
 
     ////////////////////////////////////////////////////////////////////////////
     // Simple sets
+
     public void putBool(String key, boolean value) {
         putByte(key, value ? 1 : 0);
     }
@@ -215,6 +218,7 @@ public final class CompoundTag extends Tag<Map<String, Tag>> {
 
     ////////////////////////////////////////////////////////////////////////////
     // Fancy sets
+
     public <V> void putList(String key, TagType type, List<V> value) {
         // the reflection here is really gross but I'm not sure a good way around it
         try {
@@ -239,10 +243,9 @@ public final class CompoundTag extends Tag<Map<String, Tag>> {
 
     ////////////////////////////////////////////////////////////////////////////
     // Accessor helpers
+
     private <T extends Tag<?>> boolean is(String key, Class<T> clazz) {
-        if (!containsKey(key)) {
-            return false;
-        }
+        if (!containsKey(key)) return false;
         final Tag tag = value.get(key);
         return tag != null && clazz == tag.getClass();
     }
@@ -277,3 +280,4 @@ public final class CompoundTag extends Tag<Map<String, Tag>> {
         return tag.getValue();
     }
 }
+

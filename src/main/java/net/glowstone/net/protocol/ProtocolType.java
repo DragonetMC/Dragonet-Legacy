@@ -4,7 +4,6 @@ package net.glowstone.net.protocol;
  * Enumeration of the different Minecraft protocol states.
  */
 public enum ProtocolType {
-
     HANDSHAKE(new HandshakeProtocol()),
     STATUS(new StatusProtocol()),
     LOGIN(new LoginProtocol()),
@@ -18,7 +17,6 @@ public enum ProtocolType {
 
     /**
      * Get a GlowProtocol corresponding to this protocol type.
-     *
      * @return A matching GlowProtocol.
      */
     public GlowProtocol getProtocol() {
@@ -27,7 +25,6 @@ public enum ProtocolType {
 
     /**
      * Get the ProtocolType corresponding to the given id if possible.
-     *
      * @param id The protocol type id.
      * @return The matching ProtocolType, or null.
      */

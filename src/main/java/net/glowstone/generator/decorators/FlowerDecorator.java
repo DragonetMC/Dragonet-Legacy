@@ -39,7 +39,7 @@ public class FlowerDecorator extends BlockDecorator {
     public void decorate(World world, Random random, Chunk source) {
         int sourceX = (source.getX() << 4) + random.nextInt(16);
         int sourceZ = (source.getZ() << 4) + random.nextInt(16);
-        int sourceY = random.nextInt(world.getHighestBlockYAt(sourceX, sourceZ) + 32);
+        int sourceY = random.nextInt(world.getHighestBlockYAt(sourceX, sourceZ)  + 32);
 
         // the flower can change on each decoration pass
         Flower flower = null;
@@ -58,8 +58,8 @@ public class FlowerDecorator extends BlockDecorator {
             int z = sourceZ + random.nextInt(8) - random.nextInt(8);
             int y = sourceY + random.nextInt(4) - random.nextInt(4);
 
-            if (y < 255 && world.getBlockAt(x, y, z).getType() == Material.AIR
-                    && world.getBlockAt(x, y - 1, z).getType() == Material.GRASS) {
+            if (y < 255 && world.getBlockAt(x, y, z).getType() == Material.AIR &&
+                    world.getBlockAt(x, y - 1, z).getType() == Material.GRASS) {
                 if (flower.isDoublePlant() && world.getBlockAt(x, y + 1, z).getType() != Material.AIR) {
                     continue;
                 }
@@ -101,6 +101,7 @@ public class FlowerDecorator extends BlockDecorator {
         TULIP_WHITE(Material.RED_ROSE, 6),
         TULIP_PINK(Material.RED_ROSE, 7),
         OXEYE_DAISY(Material.RED_ROSE, 8),
+
         SUNFLOWER(Material.DOUBLE_PLANT, 0, true),
         LILAC(Material.DOUBLE_PLANT, 1, true),
         ROSE_BUSH(Material.DOUBLE_PLANT, 4, true),

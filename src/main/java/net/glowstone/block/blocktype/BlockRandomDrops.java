@@ -11,7 +11,6 @@ import java.util.Collections;
 import java.util.Random;
 
 public class BlockRandomDrops extends BlockNeedsTool {
-
     private final Random random = new Random();
     private final Material dropType;
     private final short data;

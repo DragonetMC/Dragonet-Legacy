@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.UUID;
 
 public final class SpawnPlayerCodec implements Codec<SpawnPlayerMessage> {
-
     @Override
     public SpawnPlayerMessage decode(ByteBuf buf) throws IOException {
         int id = ByteBufUtils.readVarInt(buf);

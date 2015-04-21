@@ -22,6 +22,7 @@ public class GlowMetaSkull extends GlowMetaItem implements SkullMeta {
 
     ////////////////////////////////////////////////////////////////////////////
     // Internal stuff
+
     @Override
     public SkullMeta clone() {
         return new GlowMetaSkull(this);
@@ -72,6 +73,7 @@ public class GlowMetaSkull extends GlowMetaItem implements SkullMeta {
 
     ////////////////////////////////////////////////////////////////////////////
     // Properties
+
     @Override
     public String getOwner() {
         return (hasOwner() ? owner.getName() : null);

@@ -10,23 +10,21 @@ import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 public class TellrawCommand extends BukkitCommand {
 
     public TellrawCommand() {
-        super("tellraw");
-        this.description = "Send a private JSON message to the given player";
-        this.usageMessage = "/tellraw <player> <raw-json-message>";
-        this.setAliases(Arrays.<String>asList());
-        this.setPermission("glowstone.command.tellraw");
+        super("tellraw",
+                "Send a private JSON message to the given player",
+                "/tellraw <player> <raw-json-message>",
+                Collections.<String>emptyList());
+        setPermission("glowstone.command.tellraw");
     }
 
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!testPermission(sender)) {
-            return true;
-        }
+        if (!testPermission(sender)) return true;
         if (args.length < 2) {
             sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
             return false;
@@ -40,9 +38,7 @@ public class TellrawCommand extends BukkitCommand {
             StringBuilder message = new StringBuilder();
 
             for (int i = 1; i < args.length; i++) {
-                if (i > 1) {
-                    message.append(" ");
-                }
+                if (i > 1) message.append(" ");
                 message.append(args[i]);
             }
 

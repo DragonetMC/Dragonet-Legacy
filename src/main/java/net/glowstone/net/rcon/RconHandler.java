@@ -9,7 +9,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandException;
 import org.bukkit.event.server.RemoteServerCommandEvent;
 
-import java.io.IOException;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 
@@ -68,7 +67,7 @@ public class RconHandler extends SimpleChannelInboundHandler<ByteBuf> {
         }
     }
 
-    private void handleLogin(ChannelHandlerContext ctx, String payload, int requestId) throws IOException {
+    private void handleLogin(ChannelHandlerContext ctx, String payload, int requestId) {
         if (password.equals(payload)) {
             loggedIn = true;
             sendResponse(ctx, requestId, TYPE_COMMAND, "");
@@ -79,7 +78,7 @@ public class RconHandler extends SimpleChannelInboundHandler<ByteBuf> {
         }
     }
 
-    private void handleCommand(ChannelHandlerContext ctx, String payload, int requestId) throws IOException {
+    private void handleCommand(ChannelHandlerContext ctx, String payload, int requestId) {
         if (!loggedIn) {
             sendResponse(ctx, FAILURE, TYPE_COMMAND, "");
             return;
@@ -101,7 +100,7 @@ public class RconHandler extends SimpleChannelInboundHandler<ByteBuf> {
         }
     }
 
-    private void sendResponse(ChannelHandlerContext ctx, int requestId, int type, String payload) throws IOException {
+    private void sendResponse(ChannelHandlerContext ctx, int requestId, int type, String payload) {
         ByteBuf buf = ctx.alloc().buffer().order(ByteOrder.LITTLE_ENDIAN);
         buf.writeInt(requestId);
         buf.writeInt(type);
@@ -111,7 +110,7 @@ public class RconHandler extends SimpleChannelInboundHandler<ByteBuf> {
         ctx.write(buf);
     }
 
-    private void sendLargeResponse(ChannelHandlerContext ctx, int requestId, String payload) throws IOException {
+    private void sendLargeResponse(ChannelHandlerContext ctx, int requestId, String payload) {
         if (payload.length() == 0) {
             sendResponse(ctx, requestId, TYPE_RESPONSE, "");
             return;

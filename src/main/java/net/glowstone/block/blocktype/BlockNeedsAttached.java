@@ -5,7 +5,6 @@ import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 
 public class BlockNeedsAttached extends BlockType {
-
     @Override
     public void onNearBlockChanged(GlowBlock block, BlockFace face, GlowBlock changedBlock, Material oldType, byte oldData, Material newType, byte newData) {
         if (face == getAttachedFace(block)) {

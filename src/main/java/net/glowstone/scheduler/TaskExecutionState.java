@@ -4,7 +4,6 @@ package net.glowstone.scheduler;
  * Execution states for tasks
  */
 enum TaskExecutionState {
-
     /**
      * This task should be run this tick
      */

@@ -12,7 +12,6 @@ import org.bukkit.util.Vector;
  * Helper for trapdoor blocks.
  */
 public class BlockTrapDoor {
-
     private BlockType parent;
 
     public BlockTrapDoor(BlockType parent) {

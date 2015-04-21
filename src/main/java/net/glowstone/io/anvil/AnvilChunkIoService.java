@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.logging.Level;
 
 /**
- * An implementation of the {@link ChunkIoService} which reads and writes Anvil
- * maps, an improvement on the McRegion file format.
+ * An implementation of the {@link ChunkIoService} which reads and writes Anvil maps,
+ * an improvement on the McRegion file format.
  */
 public final class AnvilChunkIoService implements ChunkIoService {
 
@@ -33,23 +33,18 @@ public final class AnvilChunkIoService implements ChunkIoService {
     private static final int REGION_SIZE = 32;
 
     /**
-     * The root directory of the map.
-     */
-    private final File dir;
-
-    /**
      * The region file cache.
      */
-    private final RegionFileCache cache = new RegionFileCache(".mca");
+    private final RegionFileCache cache;
 
     // todo: consider the session.lock file
+
     public AnvilChunkIoService(File dir) {
-        this.dir = dir;
+        cache = new RegionFileCache(dir, ".mca");
     }
 
     /**
      * Reads a chunk from its region file.
-     *
      * @param chunk The GlowChunk to read into.
      * @return Whether the
      * @throws IOException if an I/O error occurs.
@@ -57,7 +52,7 @@ public final class AnvilChunkIoService implements ChunkIoService {
     @Override
     public boolean read(GlowChunk chunk) throws IOException {
         int x = chunk.getX(), z = chunk.getZ();
-        RegionFile region = cache.getRegionFile(dir, x, z);
+        RegionFile region = cache.getRegionFile(x, z);
         int regionX = x & (REGION_SIZE - 1);
         int regionZ = z & (REGION_SIZE - 1);
         if (!region.hasChunk(regionX, regionZ)) {
@@ -98,6 +93,12 @@ public final class AnvilChunkIoService implements ChunkIoService {
         if (levelTag.isByteArray("Biomes")) {
             chunk.setBiomes(levelTag.getByteArray("Biomes"));
         }
+        // read height map
+        if (levelTag.isIntArray("HeightMap")) {
+            chunk.setHeightMap(levelTag.getIntArray("HeightMap"));
+        } else {
+            chunk.automaticHeightMap();
+        }
 
         // read entities
         if (levelTag.isList("Entities", TagType.COMPOUND)) {
@@ -116,7 +117,6 @@ public final class AnvilChunkIoService implements ChunkIoService {
             }
         }
 
-        // read "HeightMap" if we need to
         // read tile entities
         List<CompoundTag> storedTileEntities = levelTag.getCompoundList("TileEntities");
         for (CompoundTag tileEntityTag : storedTileEntities) {
@@ -142,14 +142,13 @@ public final class AnvilChunkIoService implements ChunkIoService {
 
     /**
      * Writes a chunk to its region file.
-     *
      * @param chunk The {@link GlowChunk} to write from.
      * @throws IOException if an I/O error occurs.
      */
     @Override
     public void write(GlowChunk chunk) throws IOException {
         int x = chunk.getX(), z = chunk.getZ();
-        RegionFile region = cache.getRegionFile(dir, x, z);
+        RegionFile region = cache.getRegionFile(x, z);
         int regionX = x & (REGION_SIZE - 1);
         int regionZ = z & (REGION_SIZE - 1);
 
@@ -167,9 +166,7 @@ public final class AnvilChunkIoService implements ChunkIoService {
         ChunkSection[] sections = snapshot.getRawSections();
         for (byte i = 0; i < sections.length; ++i) {
             ChunkSection sec = sections[i];
-            if (sec == null) {
-                continue;
-            }
+            if (sec == null) continue;
 
             CompoundTag sectionTag = new CompoundTag();
             sectionTag.putByte("Y", i);

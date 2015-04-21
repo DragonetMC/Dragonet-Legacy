@@ -12,7 +12,6 @@ final class ByteTag extends Tag<Byte> {
 
     /**
      * Creates the tag.
-     *
      * @param value The value.
      */
     public ByteTag(byte value) {
@@ -26,3 +25,4 @@ final class ByteTag extends Tag<Byte> {
     }
 
 }
+

@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class DestroyEntitiesCodec implements Codec<DestroyEntitiesMessage> {
-
     @Override
     public DestroyEntitiesMessage decode(ByteBuf buf) throws IOException {
         int size = ByteBufUtils.readVarInt(buf);

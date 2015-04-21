@@ -10,11 +10,9 @@ import java.util.UUID;
 
 /**
  * The base for entity store classes.
- *
  * @param <T> The type of entity being stored.
  */
 abstract class EntityStore<T extends GlowEntity> {
-
     private final String id;
     private final Class<T> clazz;
 
@@ -32,9 +30,8 @@ abstract class EntityStore<T extends GlowEntity> {
     }
 
     /**
-     * Create a new entity of this store's type at the given location. The load
-     * method will be called separately.
-     *
+     * Create a new entity of this store's type at the given location. The
+     * load method will be called separately.
      * @param location The location.
      * @param compound The entity's tag, if extra data is needed.
      * @return The new entity.
@@ -43,14 +40,15 @@ abstract class EntityStore<T extends GlowEntity> {
 
     // For information on the NBT tags loaded here and elsewhere:
     // http://minecraft.gamepedia.com/Chunk_format#Entity_Format
+
     // todo: the following tags
     // - bool "Invulnerable"
     // - int "PortalCooldown"
     // - compound "Riding"
+
     /**
-     * Load data into an existing entity of the appropriate type from the given
-     * compound tag.
-     *
+     * Load data into an existing entity of the appropriate type from the
+     * given compound tag.
      * @param entity The target entity.
      * @param tag The entity's tag.
      */
@@ -83,7 +81,6 @@ abstract class EntityStore<T extends GlowEntity> {
 
     /**
      * Save information about this entity to the given tag.
-     *
      * @param entity The entity to save.
      * @param tag The target tag.
      */

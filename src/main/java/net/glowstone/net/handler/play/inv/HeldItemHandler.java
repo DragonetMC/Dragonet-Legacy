@@ -8,7 +8,6 @@ import net.glowstone.net.message.play.inv.HeldItemMessage;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 
 public final class HeldItemHandler implements MessageHandler<GlowSession, HeldItemMessage> {
-
     @Override
     public void handle(GlowSession session, HeldItemMessage message) {
         final int slot = message.getSlot();

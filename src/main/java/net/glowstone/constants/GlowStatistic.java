@@ -10,14 +10,12 @@ import static org.bukkit.Statistic.*;
  */
 public final class GlowStatistic {
 
-    private GlowStatistic() {
-    }
+    private GlowStatistic() {}
 
     private static final String[] names = new String[Statistic.values().length];
 
     /**
      * Get the statistic name for a specified Statistic.
-     *
      * @param stat the Statistic.
      * @return the statistic name.
      */

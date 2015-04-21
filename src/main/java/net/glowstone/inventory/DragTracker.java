@@ -15,7 +15,6 @@ public final class DragTracker {
 
     /**
      * Start tracking a drag operation if possible.
-     *
      * @param right True if the drag is a right-click drag.
      * @return True if the drag start was accepted.
      */
@@ -31,7 +30,6 @@ public final class DragTracker {
 
     /**
      * Add a slot to an in-progress drag operation if possible.
-     *
      * @param right True if the drag is a right-click drag.
      * @return True if the slot was accepted.
      */
@@ -48,7 +46,6 @@ public final class DragTracker {
 
     /**
      * Finish an in-progress drag operation if possible.
-     *
      * @param right True if the drag is a right-click drag.
      * @return The list of slots involved in the drag, or null on failure.
      */

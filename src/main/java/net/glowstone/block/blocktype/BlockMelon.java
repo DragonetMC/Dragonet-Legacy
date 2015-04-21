@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.Random;
 
 public class BlockMelon extends BlockType {
-
     private final Random random = new Random();
 
     @Override

@@ -15,7 +15,7 @@ import java.util.Map;
  * Represents a map item.
  */
 public final class GlowMapView implements MapView {
-
+    
     //private final Map<GlowPlayer, RenderData> renderCache = new HashMap<GlowPlayer, RenderData<>();
     private final List<MapRenderer> renderers = new ArrayList<>();
     private final Map<MapRenderer, Map<GlowPlayer, GlowMapCanvas>> canvases = new HashMap<>();
@@ -23,7 +23,7 @@ public final class GlowMapView implements MapView {
     private Scale scale;
     private int x, z;
     private GlowWorld world;
-
+    
     protected GlowMapView(GlowWorld world, short id) {
         this.world = world;
         this.id = id;
@@ -110,5 +110,5 @@ public final class GlowMapView implements MapView {
             return false;
         }
     }
-
+    
 }

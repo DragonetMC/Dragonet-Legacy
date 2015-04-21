@@ -148,5 +148,5 @@ public class UndergroundGenerator extends GlowChunkGenerator {
         gen.setScale(1 / 96.0);
         octaves.put("platform2", gen);
     }
-
+    
 }

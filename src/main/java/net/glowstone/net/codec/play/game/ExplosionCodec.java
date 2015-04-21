@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.util.Collection;
 
 public class ExplosionCodec implements Codec<ExplosionMessage> {
-
     @Override
     public ExplosionMessage decode(ByteBuf buffer) throws IOException {
         throw new DecoderException("Cannot decode ExplosionMessage");

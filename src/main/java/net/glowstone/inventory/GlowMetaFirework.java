@@ -20,9 +20,7 @@ public class GlowMetaFirework extends GlowMetaItem implements FireworkMeta {
 
     public GlowMetaFirework(GlowMetaItem meta) {
         super(meta);
-        if (meta == null || !(meta instanceof GlowMetaFirework)) {
-            return;
-        }
+        if (meta == null || !(meta instanceof GlowMetaFirework)) return;
 
         GlowMetaFirework firework = (GlowMetaFirework) meta;
         effects.addAll(firework.effects);

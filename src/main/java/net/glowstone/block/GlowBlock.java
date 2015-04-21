@@ -31,15 +31,14 @@ public final class GlowBlock implements Block {
      * The BlockFaces of a single-layer 3x3 area.
      */
     private static final BlockFace[] LAYER = new BlockFace[]{
-        BlockFace.NORTH_WEST, BlockFace.NORTH, BlockFace.NORTH_EAST,
-        BlockFace.EAST, BlockFace.SELF, BlockFace.WEST,
-        BlockFace.SOUTH_WEST, BlockFace.SOUTH, BlockFace.SOUTH_EAST};
+            BlockFace.NORTH_WEST, BlockFace.NORTH, BlockFace.NORTH_EAST,
+            BlockFace.EAST, BlockFace.SELF, BlockFace.WEST,
+            BlockFace.SOUTH_WEST, BlockFace.SOUTH, BlockFace.SOUTH_EAST};
 
     /**
      * The metadata store class for blocks.
      */
     private static final class BlockMetadataStore extends MetadataStoreBase<Block> implements MetadataStore<Block> {
-
         @Override
         protected String disambiguate(Block subject, String metadataKey) {
             return subject.getWorld() + "," + subject.getX() + "," + subject.getY() + "," + subject.getZ() + ":" + metadataKey;
@@ -65,6 +64,7 @@ public final class GlowBlock implements Block {
 
     ////////////////////////////////////////////////////////////////////////////
     // Basics
+
     @Override
     public GlowWorld getWorld() {
         return chunk.getWorld();
@@ -97,9 +97,7 @@ public final class GlowBlock implements Block {
 
     @Override
     public Location getLocation(Location loc) {
-        if (loc == null) {
-            return null;
-        }
+        if (loc == null) return null;
         loc.setWorld(getWorld());
         loc.setX(x);
         loc.setY(y);
@@ -145,12 +143,13 @@ public final class GlowBlock implements Block {
 
     ////////////////////////////////////////////////////////////////////////////
     // getFace & getRelative
+
     @Override
     public BlockFace getFace(Block block) {
         for (BlockFace face : BlockFace.values()) {
-            if ((x + face.getModX() == block.getX())
-                    && (y + face.getModY() == block.getY())
-                    && (z + face.getModZ() == block.getZ())) {
+            if ((x + face.getModX() == block.getX()) &&
+                    (y + face.getModY() == block.getY()) &&
+                    (z + face.getModZ() == block.getZ())) {
                 return face;
             }
         }
@@ -174,6 +173,7 @@ public final class GlowBlock implements Block {
 
     ////////////////////////////////////////////////////////////////////////////
     // Type and typeid getters/setters
+
     @Override
     public Material getType() {
         return Material.getMaterial(getTypeId());
@@ -232,6 +232,7 @@ public final class GlowBlock implements Block {
 
     ////////////////////////////////////////////////////////////////////////////
     // Data and light getters/setters
+
     @Override
     public byte getData() {
         return (byte) chunk.getMetaData(x & 0xf, z & 0xf, y);
@@ -272,6 +273,7 @@ public final class GlowBlock implements Block {
 
     ////////////////////////////////////////////////////////////////////////////
     // Redstone
+
     @Override
     public boolean isBlockPowered() {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -314,9 +316,9 @@ public final class GlowBlock implements Block {
 
     ////////////////////////////////////////////////////////////////////////////
     // Drops and breaking
+
     /**
      * Break the block naturally, randomly dropping only some of the drops.
-     *
      * @param yield The approximate portion of the drops to actually drop.
      * @return true if the block was destroyed
      */
@@ -364,6 +366,7 @@ public final class GlowBlock implements Block {
 
     ////////////////////////////////////////////////////////////////////////////
     // Metadata
+
     @Override
     public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {
         metadata.setMetadata(this, metadataKey, newMetadataValue);
@@ -386,10 +389,9 @@ public final class GlowBlock implements Block {
 
     /////////////////////////////////////////////////////////////////////////////
     // Physics
+
     /**
-     * Notify this block and its surrounding blocks that this block has changed
-     * type and data.
-     *
+     * Notify this block and its surrounding blocks that this block has changed type and data.
      * @param oldType the old block type
      * @param newTypeId the new block type
      * @param oldData the old data
@@ -402,9 +404,7 @@ public final class GlowBlock implements Block {
 
         for (int y = -1; y <= 1; y++) {
             for (BlockFace face : LAYER) {
-                if (y == 0 && face == BlockFace.SELF) {
-                    continue;
-                }
+                if (y == 0 && face == BlockFace.SELF) continue;
 
                 GlowBlock notify = this.getRelative(face.getModX(), face.getModY() + y, face.getModZ());
 

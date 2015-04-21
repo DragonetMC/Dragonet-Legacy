@@ -7,7 +7,6 @@ import net.glowstone.net.message.play.player.ClientStatusMessage;
 import java.io.IOException;
 
 public final class ClientStatusCodec implements Codec<ClientStatusMessage> {
-
     @Override
     public ClientStatusMessage decode(ByteBuf buf) throws IOException {
         int action = buf.readUnsignedByte();

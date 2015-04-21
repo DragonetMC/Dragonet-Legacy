@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.Random;
 
 public class BlockHugeMushroom extends BlockType {
-
     private final Random random = new Random();
     private final Material mushroomType;
     private final short data;

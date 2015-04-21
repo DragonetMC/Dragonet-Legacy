@@ -36,6 +36,7 @@ class GlowMetaBook extends GlowMetaItem implements BookMeta {
 
     ////////////////////////////////////////////////////////////////////////////
     // Internal stuff
+
     @Override
     public BookMeta clone() {
         return new GlowMetaBook(this);
@@ -93,6 +94,7 @@ class GlowMetaBook extends GlowMetaItem implements BookMeta {
 
     ////////////////////////////////////////////////////////////////////////////
     // Properties
+
     @Override
     public boolean hasTitle() {
         return title != null && !title.isEmpty();

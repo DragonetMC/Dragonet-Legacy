@@ -25,9 +25,9 @@ public class ItemDye extends ItemType {
             final Dye dye = (Dye) data;
             if (dye.getColor() == DyeColor.BROWN && target.getType() == Material.LOG) {
                 data = target.getState().getData();
-                if (data instanceof Tree
-                        && ((Tree) data).getSpecies() == TreeSpecies.JUNGLE
-                        && target.getRelative(face).getType() == Material.AIR) {
+                if (data instanceof Tree &&
+                        ((Tree) data).getSpecies() == TreeSpecies.JUNGLE &&
+                        target.getRelative(face).getType() == Material.AIR) {
                     final GlowBlockState state = target.getRelative(face).getState();
                     state.setType(Material.COCOA);
                     state.setData(new CocoaPlant(CocoaPlantSize.SMALL, face.getOppositeFace()));

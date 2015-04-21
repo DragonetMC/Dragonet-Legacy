@@ -10,7 +10,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 public class ItemFoodSeeds extends ItemFood {
-
     private Material cropsType;
     private Material soilType;
 

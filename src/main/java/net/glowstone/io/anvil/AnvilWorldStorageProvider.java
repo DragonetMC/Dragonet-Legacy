@@ -27,9 +27,8 @@ public class AnvilWorldStorageProvider implements WorldStorageProvider {
 
     @Override
     public void setWorld(GlowWorld world) {
-        if (this.world != null) {
+        if (this.world != null)
             throw new IllegalArgumentException("World is already set");
-        }
         this.world = world;
         service = new AnvilChunkIoService(dir);
         meta = new NbtWorldMetadataService(world, dir);

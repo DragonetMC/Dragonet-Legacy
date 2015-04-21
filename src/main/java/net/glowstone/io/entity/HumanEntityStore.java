@@ -18,6 +18,7 @@ abstract class HumanEntityStore<T extends GlowHumanEntity> extends LivingEntityS
 
     // documented at http://minecraft.gamepedia.com/Player.dat_Format
     // player data that does not correspond to HumanEntity is in PlayerStore
+
     @Override
     public void load(T entity, CompoundTag tag) {
         super.load(entity, tag);

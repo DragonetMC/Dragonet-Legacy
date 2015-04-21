@@ -6,7 +6,6 @@ import java.util.concurrent.ConcurrentMap;
 /**
  * A list of all the sessions which provides a convenient {@link #pulse()}
  * method to pulse every session in one operation.
- *
  * @author Graham Edgecombe
  */
 public final class SessionRegistry {
@@ -27,7 +26,6 @@ public final class SessionRegistry {
 
     /**
      * Adds a new session.
-     *
      * @param session The session to add.
      */
     public void add(GlowSession session) {
@@ -36,7 +34,6 @@ public final class SessionRegistry {
 
     /**
      * Removes a session.
-     *
      * @param session The session to remove.
      */
     public void remove(GlowSession session) {

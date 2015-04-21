@@ -11,7 +11,6 @@ import org.bukkit.inventory.ItemStack;
  * Represents a block that falls down, when there's no block below it.
  */
 public class BlockFalling extends BlockType {
-
     private final Material drop;
 
     public BlockFalling(Material drop) {

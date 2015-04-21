@@ -11,3 +11,4 @@ public final class SpectateMessage implements Message {
     public final UUID target;
 
 }
+

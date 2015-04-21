@@ -15,7 +15,6 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 public class NbtWorldMetadataService implements WorldMetadataService {
-
     private final GlowWorld world;
     private final File dir;
     private final GlowServer server;

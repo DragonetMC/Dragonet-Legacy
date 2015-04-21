@@ -7,7 +7,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 
 public class BlockLeaves extends BlockType {
-
     private final Random random = new Random();
 
     @Override

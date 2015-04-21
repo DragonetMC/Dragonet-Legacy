@@ -10,14 +10,12 @@ import static org.bukkit.Sound.*;
  */
 public final class GlowSound {
 
-    private GlowSound() {
-    }
+    private GlowSound() {}
 
     private static final String[] names = new String[Sound.values().length];
 
     /**
      * Get the sound name for a specified Sound.
-     *
      * @param sound the Sound.
      * @return the sound name.
      */

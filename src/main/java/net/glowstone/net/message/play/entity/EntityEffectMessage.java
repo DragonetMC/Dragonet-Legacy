@@ -7,7 +7,7 @@ import lombok.Data;
 public final class EntityEffectMessage implements Message {
 
     public final int id;
-    public final byte effect, amplifier;
+    public final int effect, amplifier;
     public final int duration;
     public final boolean hideParticles;
 

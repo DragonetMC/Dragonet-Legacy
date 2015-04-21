@@ -24,6 +24,7 @@ package net.glowstone.io.anvil;
 /*
  * Later changes made by the Glowstone project.
  */
+
 // Interfaces with region files on the disk
 
 /*
@@ -60,10 +61,12 @@ package net.glowstone.io.anvil;
  data is the chunk length - 1.
 
  */
+
 import net.glowstone.GlowServer;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
@@ -76,7 +79,7 @@ public class RegionFile {
     private static final int SECTOR_BYTES = 4096;
     private static final int SECTOR_INTS = SECTOR_BYTES / 4;
 
-    static final int CHUNK_HEADER_SIZE = 5;
+    private static final int CHUNK_HEADER_SIZE = 5;
     private static final byte[] emptySector = new byte[SECTOR_BYTES];
 
     private RandomAccessFile file;
@@ -158,7 +161,7 @@ public class RegionFile {
     }
 
     /* the modification date of the region file when it was first opened */
-    public long lastModified() {
+    public long getLastModified() {
         return lastModified;
     }
 
@@ -174,9 +177,7 @@ public class RegionFile {
      * the chunk is not found or an error occurs
      */
     public DataInputStream getChunkDataInputStream(int x, int z) throws IOException {
-        if (outOfBounds(x, z)) {
-            throw new IndexOutOfBoundsException();
-        }
+        checkBounds(x, z);
 
         int offset = getOffset(x, z);
         if (offset == 0) {
@@ -186,16 +187,14 @@ public class RegionFile {
 
         int sectorNumber = offset >> 8;
         int numSectors = offset & 0xFF;
-
         if (sectorNumber + numSectors > sectorFree.size()) {
-            throw new IOException("Invalid sector");
+            throw new IOException("Invalid sector: " + sectorNumber + "+" + numSectors + " > " + sectorFree.size());
         }
 
         file.seek(sectorNumber * SECTOR_BYTES);
         int length = file.readInt();
-
         if (length > SECTOR_BYTES * numSectors) {
-            throw new IOException("Invalid length");
+            throw new IOException("Invalid length: " + length + " > " + (SECTOR_BYTES * numSectors));
         }
 
         byte version = file.readByte();
@@ -209,15 +208,12 @@ public class RegionFile {
             return new DataInputStream(new InflaterInputStream(new ByteArrayInputStream(data)));
         }
 
-        throw new IOException("Unknown version");
+        throw new IOException("Unknown version: " + version);
     }
 
     public DataOutputStream getChunkDataOutputStream(int x, int z) {
-        if (outOfBounds(x, z)) {
-            return null;
-        }
-
-        return new DataOutputStream(new DeflaterOutputStream(new ChunkBuffer(x, z)));
+        checkBounds(x, z);
+        return new DataOutputStream(new DeflaterOutputStream(new ChunkBuffer(x, z), new Deflater(Deflater.BEST_SPEED)));
     }
 
     /*
@@ -225,7 +221,6 @@ public class RegionFile {
      * chunk is serializing -- only writes when serialization is over
      */
     class ChunkBuffer extends ByteArrayOutputStream {
-
         private final int x, z;
 
         public ChunkBuffer(int x, int z) {
@@ -273,11 +268,8 @@ public class RegionFile {
             if (runStart != -1) {
                 for (int i = runStart; i < sectorFree.size(); ++i) {
                     if (runLength != 0) {
-                        if (sectorFree.get(i)) {
-                            runLength++;
-                        } else {
-                            runLength = 0;
-                        }
+                        if (sectorFree.get(i)) runLength++;
+                        else runLength = 0;
                     } else if (sectorFree.get(i)) {
                         runStart = i;
                         runLength = 1;
@@ -326,8 +318,10 @@ public class RegionFile {
     }
 
     /* is this an invalid chunk coordinate? */
-    private boolean outOfBounds(int x, int z) {
-        return x < 0 || x >= 32 || z < 0 || z >= 32;
+    private void checkBounds(int x, int z) {
+        if (x < 0 || x >= 32 || z < 0 || z >= 32) {
+            throw new IllegalArgumentException("Chunk out of bounds: (" + x + ", " + z + ")");
+        }
     }
 
     private int getOffset(int x, int z) {

@@ -23,7 +23,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 public final class DiggingHandler implements MessageHandler<GlowSession, DiggingMessage> {
-
     @Override
     public void handle(GlowSession session, DiggingMessage message) {
         final GlowPlayer player = session.getPlayer();
@@ -32,10 +31,14 @@ public final class DiggingHandler implements MessageHandler<GlowSession, Digging
         BlockFace face = BlockPlacementHandler.convertFace(message.getFace());
         ItemStack holding = player.getItemInHand();
 
+        if (block.getRelative(face).getType() == Material.FIRE) {
+            block.getRelative(face).breakNaturally();
+            return; // returns to avoid breaking block in creative
+        }
+
         boolean blockBroken = false;
         boolean revert = false;
         if (message.getState() == DiggingMessage.START_DIGGING) {
-            
             // call interact event
             Action action = Action.LEFT_CLICK_BLOCK;
             Block eventBlock = block;
@@ -99,7 +102,7 @@ public final class DiggingHandler implements MessageHandler<GlowSession, Digging
             }
 
             // destroy the block
-            if (!block.isEmpty() && !block.isLiquid() && player.getGameMode() != GameMode.CREATIVE) {
+            if (!block.isEmpty() && !block.isLiquid() && player.getGameMode() != GameMode.CREATIVE && world.getGameRuleMap().getBoolean("doTileDrops")) {
                 for (ItemStack drop : block.getDrops(holding)) {
                     GlowItem item = world.dropItemNaturally(block.getLocation(), drop);
                     item.setPickupDelay(30);

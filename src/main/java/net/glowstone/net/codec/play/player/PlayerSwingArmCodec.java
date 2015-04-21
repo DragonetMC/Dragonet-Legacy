@@ -7,7 +7,6 @@ import net.glowstone.net.message.play.player.PlayerSwingArmMessage;
 import java.io.IOException;
 
 public final class PlayerSwingArmCodec implements Codec<PlayerSwingArmMessage> {
-
     @Override
     public PlayerSwingArmMessage decode(ByteBuf buf) throws IOException {
         return new PlayerSwingArmMessage();

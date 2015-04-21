@@ -39,6 +39,7 @@ public class GlowBlockState implements BlockState {
 
     ////////////////////////////////////////////////////////////////////////////
     // Basics
+
     @Override
     public GlowWorld getWorld() {
         return world;
@@ -81,6 +82,7 @@ public class GlowBlockState implements BlockState {
 
     ////////////////////////////////////////////////////////////////////////////
     // Type and data
+
     @Override
     public final Material getType() {
         return Material.getMaterial(type);
@@ -130,6 +132,7 @@ public class GlowBlockState implements BlockState {
 
     ////////////////////////////////////////////////////////////////////////////
     // Update
+
     @Override
     public final boolean update() {
         return update(false, true);
@@ -149,6 +152,7 @@ public class GlowBlockState implements BlockState {
 
     ////////////////////////////////////////////////////////////////////////////
     // Internals
+
     private void makeData(byte data) {
         Material mat = Material.getMaterial(type);
         if (mat == null) {
@@ -160,6 +164,7 @@ public class GlowBlockState implements BlockState {
 
     ////////////////////////////////////////////////////////////////////////////
     // Metadata
+
     @Override
     public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {
         getBlock().setMetadata(metadataKey, newMetadataValue);

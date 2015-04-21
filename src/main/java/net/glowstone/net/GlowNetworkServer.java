@@ -18,7 +18,6 @@ import java.net.SocketAddress;
  * Modified implementation of {@link com.flowpowered.networking.NetworkServer}.
  */
 public final class GlowNetworkServer implements ConnectionManager {
-
     /**
      * The {@link io.netty.bootstrap.ServerBootstrap} used to initialize Netty.
      */
@@ -61,3 +60,4 @@ public final class GlowNetworkServer implements ConnectionManager {
     }
 
 }
+

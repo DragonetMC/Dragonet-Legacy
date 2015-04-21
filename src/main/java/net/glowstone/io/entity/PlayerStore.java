@@ -30,7 +30,9 @@ class PlayerStore extends HumanEntityStore<GlowPlayer> {
     // - int "newExp"
     // - int "newLevel"
     // - int "newTotalExp"
+
     // Bukkit walk and fly speed units are twice Minecraft's
+
     @Override
     public void load(GlowPlayer entity, CompoundTag tag) {
         super.load(entity, tag);

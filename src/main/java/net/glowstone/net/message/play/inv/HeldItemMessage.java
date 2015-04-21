@@ -9,3 +9,4 @@ public final class HeldItemMessage implements Message {
     public final int slot;
 
 }
+

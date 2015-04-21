@@ -73,20 +73,15 @@ public final class GlowItemFactory implements ItemFactory {
     }
 
     public ItemMeta readNbt(Material material, CompoundTag tag) {
-        if (tag == null) {
-            return null;
-        }
+        if (tag == null) return null;
         GlowMetaItem meta = makeMeta(material, null);
-        if (meta == null) {
-            return null;
-        }
+        if (meta == null) return null;
         meta.readNbt(tag);
         return meta;
     }
 
     /**
      * Get the static GlowItemFactory instance.
-     *
      * @return The instance.
      */
     public static GlowItemFactory instance() {
@@ -94,9 +89,7 @@ public final class GlowItemFactory implements ItemFactory {
     }
 
     /**
-     * Throw a descriptive error if the given ItemMeta does not belong to this
-     * factory.
-     *
+     * Throw a descriptive error if the given ItemMeta does not belong to this factory.
      * @param meta The ItemMeta.
      * @return The GlowMetaItem.
      */
@@ -108,8 +101,7 @@ public final class GlowItemFactory implements ItemFactory {
     }
 
     /**
-     * Get a suitable ItemMeta for the material, reusing the provided meta if
-     * non-null and possible.
+     * Get a suitable ItemMeta for the material, reusing the provided meta if non-null and possible.
      */
     private GlowMetaItem makeMeta(Material material, GlowMetaItem meta) {
         // todo: more specific metas

@@ -47,7 +47,6 @@ public final class ServerConfig {
 
     /**
      * Initialize a new ServerConfig and associated settings.
-     *
      * @param configDir The config directory, or null for default.
      * @param configFile The config file, or null for default.
      * @param parameters The command-line parameters used as overrides.
@@ -66,6 +65,7 @@ public final class ServerConfig {
 
     ////////////////////////////////////////////////////////////////////////////
     // Modification
+
     /**
      * Save the configuration back to file.
      */
@@ -79,7 +79,6 @@ public final class ServerConfig {
 
     /**
      * Change a configuration value at runtime.
-     *
      * @see ServerConfig#save()
      * @param key the config key to write the value to
      * @param value value to write to config key
@@ -90,6 +89,7 @@ public final class ServerConfig {
 
     ////////////////////////////////////////////////////////////////////////////
     // Value getters
+
     public String getString(Key key) {
         if (parameters.containsKey(key)) {
             return parameters.get(key).toString();
@@ -116,6 +116,7 @@ public final class ServerConfig {
 
     ////////////////////////////////////////////////////////////////////////////
     // Fancy stuff
+
     public ConfigurationSection getConfigFile(Key key) {
         String filename = getString(key);
         if (extraConfig.containsKey(filename)) {
@@ -161,6 +162,7 @@ public final class ServerConfig {
 
     ////////////////////////////////////////////////////////////////////////////
     // Load and internals
+
     public void load() {
         // load extra config files again next time they're needed
         extraConfig.clear();
@@ -208,7 +210,7 @@ public final class ServerConfig {
         }
 
         try (final InputStream in = resource.openStream();
-                final OutputStream out = new FileOutputStream(dest)) {
+             final OutputStream out = new FileOutputStream(dest)) {
             final byte[] buf = new byte[2048];
             int len;
             while ((len = in.read(buf)) > 0) {
@@ -293,7 +295,6 @@ public final class ServerConfig {
      * An enum containing configuration keys used by the server.
      */
     public static enum Key {
-
         // server
         SERVER_IP("server.ip", "", Migrate.PROPS, "server-ip"),
         SERVER_PORT("server.port", 25565, Migrate.PROPS, "server-port"),
@@ -305,14 +306,17 @@ public final class ServerConfig {
         MOTD("server.motd", "Glowstone Server", Migrate.PROPS, "motd"),
         SHUTDOWN_MESSAGE("server.shutdown-message", "Server shutting down.", Migrate.BUKKIT, "settings.shutdown-message"),
         USE_JLINE("server.use-jline", true),
+
         // folders
         PLUGIN_FOLDER("folders.plugins", "plugins"),
         UPDATE_FOLDER("folders.update", "update", Migrate.BUKKIT, "settings.update-folder"),
         WORLD_FOLDER("folders.worlds", "worlds", Migrate.BUKKIT, "settings.world-container"),
+
         // files
         PERMISSIONS_FILE("files.permissions", "permissions.yml", Migrate.BUKKIT, "settings.permissions-file"),
         COMMANDS_FILE("files.commands", "commands.yml"),
         HELP_FILE("files.help", "help.yml"),
+
         // advanced
         CONNECTION_THROTTLE("advanced.connection-throttle", 4000, Migrate.BUKKIT, "settings.connection-throttle"),
         //PING_PACKET_LIMIT("advanced.ping-packet-limit", 100, Migrate.BUKKIT, "settings.ping-packet-limit"),
@@ -323,6 +327,7 @@ public final class ServerConfig {
         WARNING_STATE("advanced.deprecated-verbose", "false", Migrate.BUKKIT, "settings.deprecated-verbose"),
         COMPRESSION_THRESHOLD("advanced.compression-threshold", 256, Migrate.PROPS, "network-compression-threshold"),
         PROXY_SUPPORT("advanced.proxy-support", false),
+
         // query rcon etc
         QUERY_ENABLED("extras.query-enabled", false, Migrate.PROPS, "enable-query"),
         QUERY_PORT("extras.query-port", 25614, Migrate.PROPS, "query.port"),
@@ -331,6 +336,7 @@ public final class ServerConfig {
         RCON_PASSWORD("extras.rcon-password", "glowstone", Migrate.PROPS, "rcon.password"),
         RCON_PORT("extras.rcon-port", 25575, Migrate.PROPS, "rcon.port"),
         RCON_COLORS("extras.rcon-colors", true),
+
         // level props
         LEVEL_NAME("world.name", "world", Migrate.PROPS, "level-name"),
         LEVEL_SEED("world.seed", "", Migrate.PROPS, "level-seed"),
@@ -342,6 +348,7 @@ public final class ServerConfig {
         ALLOW_NETHER("world.allow-nether", true, Migrate.PROPS, "allow-nether"),
         ALLOW_END("world.allow-end", true, Migrate.BUKKIT, "settings.allow-end"),
         PERSIST_SPAWN("world.keep-spawn-loaded", true),
+
         // game props
         GAMEMODE("game.gamemode", "SURVIVAL", Migrate.PROPS, "gamemode"),
         FORCE_GAMEMODE("game.gamemode-force", "false", Migrate.PROPS, "force-gamemode"),
@@ -350,6 +357,7 @@ public final class ServerConfig {
         PVP_ENABLED("game.pvp", true, Migrate.PROPS, "pvp"),
         MAX_BUILD_HEIGHT("game.max-build-height", 256, Migrate.PROPS, "max-build-height"),
         ANNOUNCE_ACHIEVEMENTS("game.announce-achievements", true, Migrate.PROPS, "announce-player-achievements"),
+
         // server.properties keys
         ALLOW_FLIGHT("game.allow-flight", false, Migrate.PROPS, "allow-flight"),
         ENABLE_COMMAND_BLOCK("game.command-blocks", false, Migrate.PROPS, "enable-command-block"),
@@ -357,6 +365,7 @@ public final class ServerConfig {
         RESOURCE_PACK("game.resource-pack", "", Migrate.PROPS, "resource-pack"),
         RESOURCE_PACK_HASH("game.resource-pack-hash", "", Migrate.PROPS, "resource-pack-hash"),
         SNOOPER_ENABLED("server.snooper-enabled", false, Migrate.PROPS, "snooper-enabled"),
+
         // critters
         SPAWN_MONSTERS("creatures.enable.monsters", true, Migrate.PROPS, "spawn-monsters"),
         SPAWN_ANIMALS("creatures.enable.animals", true, Migrate.PROPS, "spawn-animals"),
@@ -367,6 +376,7 @@ public final class ServerConfig {
         AMBIENT_LIMIT("creatures.limit.ambient", 15, Migrate.BUKKIT, "spawn-limits.ambient"),
         MONSTER_TICKS("creatures.ticks.monsters", 1, Migrate.BUKKIT, "ticks-per.monster-spawns"),
         ANIMAL_TICKS("creatures.ticks.animal", 400, Migrate.BUKKIT, "ticks-per.animal-spawns"),
+
         // database
         DB_DRIVER("database.driver", "org.sqlite.JDBC", Migrate.BUKKIT, "database.driver"),
         DB_URL("database.url", "jdbc:sqlite:config/database.db", Migrate.BUKKIT, "database.url"),
@@ -397,7 +407,6 @@ public final class ServerConfig {
     }
 
     private static enum Migrate {
-
         BUKKIT, PROPS
     }
 

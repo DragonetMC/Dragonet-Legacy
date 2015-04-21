@@ -22,8 +22,8 @@ public class PumpkinDecorator extends BlockPopulator {
                 int z = sourceZ + random.nextInt(8) - random.nextInt(8);
                 int y = sourceY + random.nextInt(4) - random.nextInt(4);
 
-                if (world.getBlockAt(x, y, z).getType() == Material.AIR
-                        && world.getBlockAt(x, y - 1, z).getType() == Material.GRASS) {
+                if (world.getBlockAt(x, y, z).getType() == Material.AIR &&
+                        world.getBlockAt(x, y - 1, z).getType() == Material.GRASS) {
                     final Block block = world.getBlockAt(x, y, z);
                     block.setType(Material.PUMPKIN);
                     // random facing

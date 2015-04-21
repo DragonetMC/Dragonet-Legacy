@@ -54,8 +54,7 @@ public class GlowCraftingInventory extends GlowInventory implements CraftingInve
     }
 
     /**
-     * Remove a layer of items from the inventory according to the current
-     * recipe.
+     * Remove a layer of items from the inventory according to the current recipe.
      */
     public void craft() {
         ItemStack[] matrix = getMatrix();

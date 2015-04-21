@@ -2,8 +2,10 @@ package net.glowstone.constants;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.*;
+
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Definitions of potion effect types.
@@ -33,10 +35,9 @@ public final class GlowPotionEffect extends PotionEffectType {
     }
 
     /**
-     * Pulse this potion effect on a specified entity. If the potion effect is
-     * not applicable, nothing happens. For instant effects, will only have an
-     * effect if 'ticks' is 0.
-     *
+     * Pulse this potion effect on a specified entity. If the potion effect
+     * is not applicable, nothing happens. For instant effects, will only
+     * have an effect if 'ticks' is 0.
      * @param entity The entity to pulse on.
      * @param effect Information on the effect's state.
      */
@@ -52,14 +53,43 @@ public final class GlowPotionEffect extends PotionEffectType {
      * Register all potion effect types with PotionEffectType.
      */
     public static void register() {
+        Potion.setPotionBrewer(new Brewer());
         for (Impl impl : Impl.values()) {
             registerPotionEffectType(new GlowPotionEffect(impl));
         }
         stopAcceptingRegistrations();
     }
 
-    private static enum Impl {
+    /**
+     * Get a GlowPotionEffect from a PotionEffectType if possible.
+     * @param type The PotionEffectType.
+     * @return The associated GlowPotionEffect, or null.
+     */
+    public static GlowPotionEffect getEffect(PotionEffectType type) {
+        if (type instanceof GlowPotionEffect) {
+            return (GlowPotionEffect) type;
+        } else if (type instanceof PotionEffectTypeWrapper) {
+            return getEffect(getById(type.getId()));
+        } else {
+            return null;
+        }
+    }
 
+    private static class Brewer implements PotionBrewer {
+        @Override
+        public PotionEffect createEffect(PotionEffectType potion, int duration, int amplifier) {
+            // todo: apply duration modifiers, etc.
+            return new PotionEffect(potion, duration, amplifier);
+        }
+
+        @Override
+        public Collection<PotionEffect> getEffectsFromDamage(int damage) {
+            // todo: convert damage value to potion effects
+            return Collections.emptySet();
+        }
+    }
+
+    private static enum Impl {
         SPEED(1, false, 1.0),
         SLOW(2, false, 0.5),
         FAST_DIGGING(3, false, 1.5),

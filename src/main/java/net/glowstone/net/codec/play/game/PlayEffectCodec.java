@@ -9,7 +9,6 @@ import net.glowstone.net.message.play.game.PlayEffectMessage;
 import java.io.IOException;
 
 public final class PlayEffectCodec implements Codec<PlayEffectMessage> {
-
     @Override
     public PlayEffectMessage decode(ByteBuf buf) throws IOException {
         throw new DecoderException("Cannot decode PlayEffectMessage");

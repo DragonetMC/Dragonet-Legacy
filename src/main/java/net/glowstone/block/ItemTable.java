@@ -28,12 +28,14 @@ public final class ItemTable {
 
     ////////////////////////////////////////////////////////////////////////////
     // Data
+
     private final Map<Integer, ItemType> idToType = new HashMap<>(512);
 
     private int nextBlockId, nextItemId;
 
     ////////////////////////////////////////////////////////////////////////////
     // Registration
+
     private void registerBuiltins() {
         reg(Material.NOTE_BLOCK, new BlockNote());
         reg(Material.MOB_SPAWNER, new BlockMobSpawner());
@@ -49,6 +51,13 @@ public final class ItemTable {
         reg(Material.CLAY, new BlockDirectDrops(Material.CLAY_BALL, 4));
         reg(Material.HARD_CLAY, new BlockDirectDrops(ToolType.PICKAXE));
         reg(Material.STAINED_CLAY, new BlockDirectDrops(ToolType.PICKAXE));
+        reg(Material.WOODEN_DOOR, new BlockDoor(Material.WOOD_DOOR));
+        reg(Material.IRON_DOOR_BLOCK, new BlockDoor(Material.IRON_DOOR));
+        reg(Material.SPRUCE_DOOR, new BlockDoor(Material.SPRUCE_DOOR_ITEM));
+        reg(Material.BIRCH_DOOR, new BlockDoor(Material.BIRCH_DOOR_ITEM));
+        reg(Material.JUNGLE_DOOR, new BlockDoor(Material.JUNGLE_DOOR_ITEM));
+        reg(Material.ACACIA_DOOR, new BlockDoor(Material.ACACIA_DOOR_ITEM));
+        reg(Material.DARK_OAK_DOOR, new BlockDoor(Material.DARK_OAK_DOOR_ITEM));
         reg(Material.DOUBLE_STEP, new BlockDoubleSlab());
         reg(Material.DOUBLE_STEP_2, new BlockDoubleSlab());
         reg(Material.WOOD_DOUBLE_STEP, new BlockDoubleSlab());
@@ -209,6 +218,14 @@ public final class ItemTable {
         reg(Material.POTATO_ITEM, new ItemFoodSeeds(Material.POTATO, Material.SOIL));
         reg(Material.INK_SACK, new ItemDye());
         reg(Material.BANNER, new ItemBanner());
+        reg(Material.WOOD_DOOR, new ItemPlaceAs(Material.WOODEN_DOOR));
+        reg(Material.IRON_DOOR, new ItemPlaceAs(Material.IRON_DOOR_BLOCK));
+        reg(Material.SPRUCE_DOOR_ITEM, new ItemPlaceAs(Material.SPRUCE_DOOR));
+        reg(Material.BIRCH_DOOR_ITEM, new ItemPlaceAs(Material.BIRCH_DOOR));
+        reg(Material.JUNGLE_DOOR_ITEM, new ItemPlaceAs(Material.JUNGLE_DOOR));
+        reg(Material.ACACIA_DOOR_ITEM, new ItemPlaceAs(Material.ACACIA_DOOR));
+        reg(Material.DARK_OAK_DOOR_ITEM, new ItemPlaceAs(Material.DARK_OAK_DOOR));
+        reg(Material.WRITTEN_BOOK, new ItemWrittenBook());
     }
 
     private void reg(Material material, ItemType type) {
@@ -231,9 +248,7 @@ public final class ItemTable {
     }
 
     /**
-     * Register a new, non-Vanilla ItemType. It will be assigned an ID
-     * automatically.
-     *
+     * Register a new, non-Vanilla ItemType. It will be assigned an ID automatically.
      * @param type the ItemType to register.
      */
     public void register(ItemType type) {
@@ -276,6 +291,7 @@ public final class ItemTable {
 
     ////////////////////////////////////////////////////////////////////////////
     // Type access
+
     public ItemType getItem(int id) {
         ItemType type = idToType.get(id);
         if (type == null) {

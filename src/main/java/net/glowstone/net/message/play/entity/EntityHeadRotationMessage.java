@@ -10,3 +10,4 @@ public final class EntityHeadRotationMessage implements Message {
     public final int rotation;
 
 }
+

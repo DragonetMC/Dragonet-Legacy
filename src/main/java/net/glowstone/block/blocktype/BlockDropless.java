@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class BlockDropless extends BlockType {
-
     public static final Collection<ItemStack> EMPTY_STACK = Collections.unmodifiableList(Arrays.asList(new ItemStack[0]));
 
     @Override

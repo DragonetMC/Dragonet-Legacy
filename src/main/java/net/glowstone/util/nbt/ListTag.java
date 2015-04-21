@@ -20,7 +20,6 @@ final class ListTag<T extends Tag> extends Tag<List<T>> {
 
     /**
      * Creates the tag.
-     *
      * @param type The type of item in the list.
      * @param value The value.
      */
@@ -39,7 +38,6 @@ final class ListTag<T extends Tag> extends Tag<List<T>> {
 
     /**
      * Gets the type of item in this list.
-     *
      * @return The type of item in this list.
      */
     public TagType getChildType() {
@@ -61,3 +59,4 @@ final class ListTag<T extends Tag> extends Tag<List<T>> {
     }
 
 }
+

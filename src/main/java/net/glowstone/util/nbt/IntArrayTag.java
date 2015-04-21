@@ -12,7 +12,6 @@ final class IntArrayTag extends Tag<int[]> {
 
     /**
      * Creates the tag.
-     *
      * @param value The value.
      */
     public IntArrayTag(int[] value) {
@@ -34,3 +33,4 @@ final class IntArrayTag extends Tag<int[]> {
         }
     }
 }
+

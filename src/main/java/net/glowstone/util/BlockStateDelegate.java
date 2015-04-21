@@ -11,17 +11,16 @@ import java.util.Collection;
 import java.util.HashMap;
 
 /**
- * A small utility class that allow to maintain a {@link BlockState}'s list in
- * order to capture a chain of modified blocks and update all the states in
- * once, or never (ie: event cancelled).
+ * A small utility class that allow to maintain a {@link BlockState}'s
+ * list in order to capture a chain of modified blocks and update all
+ * the states in once, or never (ie: event cancelled).
  */
 public class BlockStateDelegate {
 
-    private final HashMap<Location, BlockState> blockStateMap = new HashMap<Location, BlockState>();
+    private final HashMap<Location, BlockState> blockStateMap = new HashMap<>();
 
     /**
      * Sets a block type and add it to the BlockState list.
-     *
      * @param world the world which contains the block
      * @param x the x-coordinate of this block
      * @param y the y-coordinate of this block
@@ -36,7 +35,6 @@ public class BlockStateDelegate {
 
     /**
      * Sets a block type and MaterialData, and add it to the BlockState list.
-     *
      * @param world the world which contains the block
      * @param x the x-coordinate of this block
      * @param y the y-coordinate of this block
@@ -53,7 +51,6 @@ public class BlockStateDelegate {
 
     /**
      * Sets a block type, data and add it to the BlockState list.
-     *
      * @param world the world which contains the block
      * @param x the x-coordinate of this block
      * @param y the y-coordinate of this block
@@ -70,7 +67,6 @@ public class BlockStateDelegate {
 
     /**
      * Returns the BlockState list
-     *
      * @return A list with all {@link BlockState}.
      */
     public Collection<BlockState> getBlockStates() {
@@ -88,7 +84,6 @@ public class BlockStateDelegate {
 
     /**
      * Returns the {@link BlockState} of a block at the given coordinates
-     *
      * @param world the world which contains the block
      * @param x the x-coordinate
      * @param y the y-coordinate
@@ -106,7 +101,6 @@ public class BlockStateDelegate {
 
     /**
      * Returns the {@link BlockState} of a block at the given location
-     *
      * @param loc the location which contains the block
      * @return The {@link BlockState} state.
      */
@@ -116,5 +110,5 @@ public class BlockStateDelegate {
         } else {
             return loc.getBlock().getState();
         }
-    }
+    }    
 }

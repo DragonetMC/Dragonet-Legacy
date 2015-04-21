@@ -7,7 +7,6 @@ import net.glowstone.net.message.play.entity.EntityStatusMessage;
 import java.io.IOException;
 
 public final class EntityStatusCodec implements Codec<EntityStatusMessage> {
-
     @Override
     public EntityStatusMessage decode(ByteBuf buf) throws IOException {
         int id = buf.readInt();

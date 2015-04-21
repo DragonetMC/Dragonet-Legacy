@@ -10,7 +10,6 @@ import org.bukkit.block.NoteBlock;
 import org.bukkit.util.Vector;
 
 public class BlockNote extends BlockType {
-
     @Override
     public TileEntity createTileEntity(GlowChunk chunk, int cx, int cy, int cz) {
         return new TENote(chunk.getBlock(cx, cy, cz));

@@ -13,6 +13,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.Inventory;
@@ -87,7 +88,6 @@ public abstract class GlowHumanEntity extends GlowLivingEntity implements HumanE
 
     /**
      * Creates a human within the specified world and with the specified name.
-     *
      * @param location The location.
      * @param profile The human's profile with name and UUID information.
      */
@@ -104,6 +104,7 @@ public abstract class GlowHumanEntity extends GlowLivingEntity implements HumanE
 
     ////////////////////////////////////////////////////////////////////////////
     // Internals
+
     @Override
     public void setUniqueId(UUID uuid) {
         // silently allow setting the same UUID again
@@ -148,7 +149,6 @@ public abstract class GlowHumanEntity extends GlowLivingEntity implements HumanE
 
     /**
      * Get this human entity's PlayerProfile with associated data.
-     *
      * @return The PlayerProfile.
      */
     public final PlayerProfile getProfile() {
@@ -157,6 +157,7 @@ public abstract class GlowHumanEntity extends GlowLivingEntity implements HumanE
 
     ////////////////////////////////////////////////////////////////////////////
     // Properties
+
     @Override
     public String getName() {
         return profile.getName();
@@ -204,6 +205,7 @@ public abstract class GlowHumanEntity extends GlowLivingEntity implements HumanE
 
     ////////////////////////////////////////////////////////////////////////////
     // Permissions
+
     @Override
     public boolean isPermissionSet(String name) {
         return permissions.isPermissionSet(name);
@@ -272,13 +274,15 @@ public abstract class GlowHumanEntity extends GlowLivingEntity implements HumanE
 
     ////////////////////////////////////////////////////////////////////////////
     // Health
+
     @Override
-    protected boolean canDrown() {
-        return gameMode == GameMode.SURVIVAL || gameMode == GameMode.ADVENTURE;
+    public boolean canTakeDamage(EntityDamageEvent.DamageCause damageCause) {
+        return (gameMode == GameMode.SURVIVAL || gameMode == GameMode.ADVENTURE) && super.canTakeDamage(damageCause);
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // Inventory
+
     @Override
     public GlowPlayerInventory getInventory() {
         return inventory;
@@ -385,9 +389,8 @@ public abstract class GlowHumanEntity extends GlowLivingEntity implements HumanE
     }
 
     /**
-     * Drops the item this entity currently has in its hands and remove the item
-     * from the HumanEntity's inventory.
-     *
+     * Drops the item this entity currently has in its hands and remove the
+     * item from the HumanEntity's inventory.
      * @param wholeStack True if the whole stack should be dropped
      */
     public void dropItemInHand(boolean wholeStack) {
@@ -418,12 +421,9 @@ public abstract class GlowHumanEntity extends GlowLivingEntity implements HumanE
     /**
      * Spawns a new {@link GlowItem} in the world, as if this HumanEntity had
      * dropped it. Note that this does NOT remove the item from the inventory.
-     *
      * @param stack The item to drop
-     * @return the GlowItem that was generated, or null if the spawning was
-     * cancelled
-     * @throws IllegalArgumentException if the stack is null or has an amount
-     * less than one
+     * @return the GlowItem that was generated, or null if the spawning was cancelled
+     * @throws IllegalArgumentException if the stack is null or has an amount less than one
      */
     public GlowItem drop(ItemStack stack) {
         Validate.notNull(stack, "stack must not be null");

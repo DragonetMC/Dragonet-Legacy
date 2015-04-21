@@ -7,6 +7,6 @@ import lombok.Data;
 public final class EntityRemoveEffectMessage implements Message {
 
     public final int id;
-    public final byte effect;
+    public final int effect;
 
 }

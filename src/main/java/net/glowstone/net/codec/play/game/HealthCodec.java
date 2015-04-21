@@ -8,7 +8,6 @@ import net.glowstone.net.message.play.game.HealthMessage;
 import java.io.IOException;
 
 public final class HealthCodec implements Codec<HealthMessage> {
-
     @Override
     public HealthMessage decode(ByteBuf buffer) throws IOException {
         float health = buffer.readFloat();

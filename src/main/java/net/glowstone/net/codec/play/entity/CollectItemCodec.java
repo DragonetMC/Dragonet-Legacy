@@ -8,7 +8,6 @@ import net.glowstone.net.message.play.entity.CollectItemMessage;
 import java.io.IOException;
 
 public final class CollectItemCodec implements Codec<CollectItemMessage> {
-
     @Override
     public CollectItemMessage decode(ByteBuf buf) throws IOException {
         int id = ByteBufUtils.readVarInt(buf);

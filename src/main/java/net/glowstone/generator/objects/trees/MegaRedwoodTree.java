@@ -21,9 +21,9 @@ public class MegaRedwoodTree extends MegaJungleTree {
 
         // generates the leaves
         int leavesHeight = random.nextInt(5);
-        if (random.nextBoolean()) {
+        if (random.nextBoolean())
             leavesHeight += 3;
-        } else {
+        else {
             leavesHeight += 13;
         }
         int previousRadius = 0;

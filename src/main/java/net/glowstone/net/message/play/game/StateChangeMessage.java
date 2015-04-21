@@ -17,7 +17,6 @@ public final class StateChangeMessage implements Message {
     }
 
     public static enum Reason {
-
         INVALID_BED,
         STOP_RAIN,
         START_RAIN,

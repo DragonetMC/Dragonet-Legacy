@@ -8,7 +8,6 @@ import net.glowstone.net.message.play.entity.EntityRemoveEffectMessage;
 import java.io.IOException;
 
 public final class EntityRemoveEffectCodec implements Codec<EntityRemoveEffectMessage> {
-
     @Override
     public EntityRemoveEffectMessage decode(ByteBuf buf) throws IOException {
         int id = ByteBufUtils.readVarInt(buf);

@@ -13,3 +13,4 @@ public final class ClientStatusMessage implements Message {
     public final int action;
 
 }
+

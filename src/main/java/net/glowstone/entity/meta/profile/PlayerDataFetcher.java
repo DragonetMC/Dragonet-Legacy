@@ -35,7 +35,6 @@ final class PlayerDataFetcher {
 
     /**
      * Look up the PlayerProfile for a given UUID.
-     *
      * @param uuid The UUID to look up.
      * @return The resulting PlayerProfile, or null on failure.
      */
@@ -60,12 +59,11 @@ final class PlayerDataFetcher {
             GlowServer.logger.log(Level.WARNING, "Failed to look up profile", e);
             return null;
         }
-        return PlayerProfile.parseProfile(json);
+        return PlayerProfile.fromJson(json);
     }
 
     /**
      * Look up the UUID for a given username.
-     *
      * @param playerName The name to look up.
      * @return The UUID, or null on failure.
      */
@@ -82,7 +80,7 @@ final class PlayerDataFetcher {
             return null;
         }
 
-        List<String> playerList = new ArrayList<String>();
+        List<String> playerList = new ArrayList<>();
         playerList.add(playerName);
 
         JSONArray json;

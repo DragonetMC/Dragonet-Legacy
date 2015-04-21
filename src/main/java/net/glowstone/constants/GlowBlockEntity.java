@@ -4,7 +4,6 @@ package net.glowstone.constants;
  * Name mappings for magic values in UpdateBlockEntity packet
  */
 public enum GlowBlockEntity {
-
     MOB_SPAWNER_POTENTIALS(1),
     COMMAND_BLOCK(2),
     BEACON(3),
@@ -20,7 +19,6 @@ public enum GlowBlockEntity {
 
     /**
      * Gets the magic number associated with this GlowBlockEntity
-     *
      * @return the magic number
      */
     public int getValue() {

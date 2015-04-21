@@ -30,7 +30,7 @@ public class TreePopulator extends BlockPopulator {
 
         switch (world.getBlockAt(centerX, 0, centerZ).getBiome()) {
             case OCEAN:
-            // workaround for lack of biome generation
+                // workaround for lack of biome generation
             case FOREST:
                 chance = 160;
                 multiplier = 10;

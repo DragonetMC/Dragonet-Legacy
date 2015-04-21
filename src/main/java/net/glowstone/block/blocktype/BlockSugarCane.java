@@ -34,6 +34,7 @@ public class BlockSugarCane extends BlockNeedsAttached {
         return false;
     }
 
+
     private boolean isNearWater(Block block) {
         for (BlockFace face : DIRECT_FACES) {
             switch (block.getRelative(face).getType()) {

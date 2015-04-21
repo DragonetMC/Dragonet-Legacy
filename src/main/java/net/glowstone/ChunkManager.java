@@ -16,7 +16,6 @@ import java.util.logging.Level;
 
 /**
  * A class which manages the {@link GlowChunk}s currently loaded in memory.
- *
  * @author Graham Edgecombe
  */
 public final class ChunkManager {
@@ -50,7 +49,6 @@ public final class ChunkManager {
     /**
      * Creates a new chunk manager with the specified I/O service and world
      * generator.
-     *
      * @param service The I/O service.
      * @param generator The world generator.
      */
@@ -70,7 +68,6 @@ public final class ChunkManager {
     /**
      * Gets a chunk object representing the specified coordinates, which might
      * not yet be loaded.
-     *
      * @param x The X coordinate.
      * @param z The Z coordinate.
      * @return The chunk.
@@ -90,7 +87,6 @@ public final class ChunkManager {
 
     /**
      * Checks if the Chunk at the specified coordinates is loaded.
-     *
      * @param x The X coordinate.
      * @param z The Z coordinate.
      * @return true if the chunk is loaded, otherwise false.
@@ -102,7 +98,6 @@ public final class ChunkManager {
 
     /**
      * Check whether a chunk has locks on it preventing it from being unloaded.
-     *
      * @param x The X coordinate.
      * @param z The Z coordinate.
      * @return Whether the chunk is in use.
@@ -115,7 +110,6 @@ public final class ChunkManager {
 
     /**
      * Call the ChunkIoService to load a chunk, optionally generating the chunk.
-     *
      * @param x The X coordinate of the chunk to load.
      * @param z The Y coordinate of the chunk to load.
      * @param generate Whether to generate the chunk if needed.
@@ -154,10 +148,10 @@ public final class ChunkManager {
 
         // right now, forcePopulate takes care of populating chunks that players actually see.
         /*for (int x2 = x - 1; x2 <= x + 1; ++x2) {
-         for (int z2 = z - 1; z2 <= z + 1; ++z2) {
-         populateChunk(x2, z2, false);
-         }
-         }*/
+            for (int z2 = z - 1; z2 <= z + 1; ++z2) {
+                populateChunk(x2, z2, false);
+            }
+        }*/
         return true;
     }
 
@@ -175,10 +169,10 @@ public final class ChunkManager {
             // cannot remove old chunks from cache - GlowBlock and GlowBlockState keep references.
             // they must either be changed to look up the chunk again all the time, or this code left out.
             /*if (!entry.getValue().isLoaded()) {
-             //GlowServer.logger.info("Removing from cache " + entry.getKey());
-             chunks.entrySet().remove(entry);
-             locks.remove(entry.getKey());
-             }*/
+                //GlowServer.logger.info("Removing from cache " + entry.getKey());
+                chunks.entrySet().remove(entry);
+                locks.remove(entry.getKey());
+            }*/
         }
     }
 
@@ -220,10 +214,8 @@ public final class ChunkManager {
     }
 
     /**
-     * Force a chunk to be populated by loading the chunks in an area around it.
-     * Used when streaming chunks to players so that they do not have to watch
-     * chunks being populated.
-     *
+     * Force a chunk to be populated by loading the chunks in an area around it. Used when streaming chunks to players
+     * so that they do not have to watch chunks being populated.
      * @param x The X coordinate.
      * @param z The Z coordinate.
      */
@@ -258,6 +250,7 @@ public final class ChunkManager {
             }
             chunk.initializeSections(sections);
             chunk.setBiomes(biomes.biomes);
+            chunk.automaticHeightMap();
             return;
         }
 
@@ -277,6 +270,7 @@ public final class ChunkManager {
             }
             chunk.initializeSections(sections);
             chunk.setBiomes(biomes.biomes);
+            chunk.automaticHeightMap();
             return;
         }
 
@@ -299,11 +293,11 @@ public final class ChunkManager {
         }
         chunk.initializeSections(sections);
         chunk.setBiomes(biomes.biomes);
+        chunk.automaticHeightMap();
     }
 
     /**
      * Forces generation of the given chunk.
-     *
      * @param x The X coordinate.
      * @param z The Z coordinate.
      * @return Whether the chunk was successfully regenerated.
@@ -328,7 +322,6 @@ public final class ChunkManager {
 
     /**
      * Gets a list of loaded chunks.
-     *
      * @return The currently loaded chunks.
      */
     public GlowChunk[] getLoadedChunks() {
@@ -343,7 +336,6 @@ public final class ChunkManager {
 
     /**
      * Performs the save for the given chunk using the storage provider.
-     *
      * @param chunk The chunk to save.
      */
     public boolean performSave(GlowChunk chunk) {
@@ -363,7 +355,6 @@ public final class ChunkManager {
      * A BiomeGrid implementation for chunk generation.
      */
     private class BiomeGrid implements ChunkGenerator.BiomeGrid {
-
         private final byte[] biomes = new byte[256];
 
         @Override
@@ -379,7 +370,6 @@ public final class ChunkManager {
 
     /**
      * Look up the set of locks on a given chunk.
-     *
      * @param key The chunk key.
      * @return The set of locks for that chunk.
      */
@@ -396,11 +386,9 @@ public final class ChunkManager {
     }
 
     /**
-     * A group of locks on chunks to prevent them from being unloaded while in
-     * use.
+     * A group of locks on chunks to prevent them from being unloaded while in use.
      */
     public static class ChunkLock implements Iterable<GlowChunk.Key> {
-
         private final ChunkManager cm;
         private final String desc;
         private final Set<GlowChunk.Key> keys = new HashSet<>();
@@ -411,18 +399,14 @@ public final class ChunkManager {
         }
 
         public void acquire(GlowChunk.Key key) {
-            if (keys.contains(key)) {
-                return;
-            }
+            if (keys.contains(key)) return;
             keys.add(key);
             cm.getLockSet(key).add(this);
             //GlowServer.logger.info(this + " acquires " + key);
         }
 
         public void release(GlowChunk.Key key) {
-            if (!keys.contains(key)) {
-                return;
-            }
+            if (!keys.contains(key)) return;
             keys.remove(key);
             cm.getLockSet(key).remove(this);
             //GlowServer.logger.info(this + " releases " + key);

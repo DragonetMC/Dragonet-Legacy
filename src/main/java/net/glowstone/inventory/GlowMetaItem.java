@@ -10,8 +10,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.*;
 
 /**
- * An implementation of {@link ItemMeta}, created through
- * {@link GlowItemFactory}.
+ * An implementation of {@link ItemMeta}, created through {@link GlowItemFactory}.
  */
 class GlowMetaItem implements ItemMeta {
 
@@ -21,7 +20,6 @@ class GlowMetaItem implements ItemMeta {
 
     /**
      * Create a GlowMetaItem, copying from another if possible.
-     *
      * @param meta The meta to copy from, or null.
      */
     public GlowMetaItem(GlowMetaItem meta) {
@@ -41,7 +39,6 @@ class GlowMetaItem implements ItemMeta {
 
     /**
      * Check whether this ItemMeta can be applied to the given material.
-     *
      * @param material The Material.
      * @return True if this ItemMeta is applicable.
      */
@@ -108,6 +105,7 @@ class GlowMetaItem implements ItemMeta {
 
     ////////////////////////////////////////////////////////////////////////////
     // Basic properties
+
     @Override
     public boolean hasDisplayName() {
         return !Strings.isNullOrEmpty(displayName);
@@ -141,6 +139,7 @@ class GlowMetaItem implements ItemMeta {
 
     ////////////////////////////////////////////////////////////////////////////
     // Enchants
+
     @Override
     public boolean hasEnchants() {
         return enchants != null && !enchants.isEmpty();

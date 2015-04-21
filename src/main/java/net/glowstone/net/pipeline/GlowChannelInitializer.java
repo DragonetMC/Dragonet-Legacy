@@ -9,7 +9,6 @@ import net.glowstone.net.protocol.ProtocolType;
  * Used to initialize the channels.
  */
 public final class GlowChannelInitializer extends ChannelInitializer<SocketChannel> {
-
     private final ConnectionManager connectionManager;
 
     public GlowChannelInitializer(ConnectionManager connectionManager) {

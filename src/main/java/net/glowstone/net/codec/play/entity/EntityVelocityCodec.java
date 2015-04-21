@@ -8,7 +8,6 @@ import net.glowstone.net.message.play.entity.EntityVelocityMessage;
 import java.io.IOException;
 
 public final class EntityVelocityCodec implements Codec<EntityVelocityMessage> {
-
     @Override
     public EntityVelocityMessage decode(ByteBuf buf) throws IOException {
         int id = ByteBufUtils.readVarInt(buf);

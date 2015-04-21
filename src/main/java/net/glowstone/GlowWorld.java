@@ -1,5 +1,6 @@
 package net.glowstone;
 
+import lombok.ToString;
 import net.glowstone.block.GlowBlock;
 import net.glowstone.constants.GlowBiome;
 import net.glowstone.constants.GlowEffect;
@@ -10,7 +11,10 @@ import net.glowstone.generator.TreeGenerator;
 import net.glowstone.io.WorldMetadataService.WorldFinalValues;
 import net.glowstone.io.WorldStorageProvider;
 import net.glowstone.io.anvil.AnvilWorldStorageProvider;
+import net.glowstone.net.message.play.entity.EntityStatusMessage;
+import net.glowstone.net.message.play.player.ServerDifficultyMessage;
 import net.glowstone.util.BlockStateDelegate;
+import net.glowstone.util.GameRuleManager;
 import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
@@ -38,16 +42,15 @@ import java.util.logging.Level;
 
 /**
  * A class which represents the in-game world.
- *
  * @author Graham Edgecombe
  */
+@ToString(of = "name")
 public final class GlowWorld implements World {
 
     /**
      * The metadata store class for worlds.
      */
     private static final class WorldMetadataStore extends MetadataStoreBase<World> implements MetadataStore<World> {
-
         @Override
         protected String disambiguate(World subject, String metadataKey) {
             return subject.getName() + ":" + metadataKey;
@@ -117,7 +120,7 @@ public final class GlowWorld implements World {
     /**
      * The game rules used in this world.
      */
-    private final Map<String, String> gameRules = new HashMap<>();
+    private final GameRuleManager gameRules = new GameRuleManager();
 
     /**
      * The environment.
@@ -145,8 +148,7 @@ public final class GlowWorld implements World {
     private Location spawnLocation;
 
     /**
-     * Whether to keep the spawn chunks in memory (prevent them from being
-     * unloaded)
+     * Whether to keep the spawn chunks in memory (prevent them from being unloaded)
      */
     private boolean keepSpawnLoaded = true;
 
@@ -232,7 +234,6 @@ public final class GlowWorld implements World {
 
     /**
      * Creates a new world from the options in the given WorldCreator.
-     *
      * @param server The server for the world.
      * @param creator The WorldCreator to use.
      */
@@ -333,18 +334,11 @@ public final class GlowWorld implements World {
         EventFactory.callEvent(new WorldLoadEvent(this));
     }
 
-    @Override
-    public String toString() {
-        return "GlowWorld{"
-                + "name='" + name + '\''
-                + '}';
-    }
-
     ////////////////////////////////////////////////////////////////////////////
     // Various internal mechanisms
+
     /**
      * Get the world chunk manager.
-     *
      * @return The ChunkManager for the world.
      */
     public ChunkManager getChunkManager() {
@@ -353,7 +347,6 @@ public final class GlowWorld implements World {
 
     /**
      * Get the world's parent server.
-     *
      * @return The GlowServer for the world.
      */
     public GlowServer getServer() {
@@ -361,9 +354,7 @@ public final class GlowWorld implements World {
     }
 
     /**
-     * Get a new chunk lock object a player or other party can use to keep
-     * chunks loaded.
-     *
+     * Get a new chunk lock object a player or other party can use to keep chunks loaded.
      * @return The ChunkLock.
      */
     public ChunkManager.ChunkLock newChunkLock(String desc) {
@@ -398,7 +389,9 @@ public final class GlowWorld implements World {
         // Tick the world age and time of day
         // Modulus by 24000, the tick length of a day
         worldAge++;
-        time = (time + 1) % DAY_LENGTH;
+        if (gameRules.getBoolean("doDaylightCycle")) {
+            time = (time + 1) % DAY_LENGTH;
+        }
         if (worldAge % (30 * 20) == 0) {
             // Only send the time every so often; clients are smart.
             for (GlowPlayer player : getRawPlayers()) {
@@ -444,13 +437,10 @@ public final class GlowWorld implements World {
     }
 
     /**
-     * Calculates how much the rays from the location to the entity's bounding
-     * box is blocked.
-     *
+     * Calculates how much the rays from the location to the entity's bounding box is blocked.
      * @param location The location for the rays to start
      * @param entity The entity that's bounding box is the ray's end point
-     * @return a value between 0 and 1, where 0 = all rays blocked and 1 = all
-     * rays unblocked
+     * @return a value between 0 and 1, where 0 = all rays blocked and 1 = all rays unblocked
      */
     public float rayTrace(Location location, GlowEntity entity) {
         // TODO: calculate how much of the entity is visible (not blocked by blocks) from the location
@@ -465,7 +455,6 @@ public final class GlowWorld implements World {
 
     /**
      * Gets the entity manager.
-     *
      * @return The entity manager.
      */
     public EntityManager getEntityManager() {
@@ -478,6 +467,7 @@ public final class GlowWorld implements World {
 
     ////////////////////////////////////////////////////////////////////////////
     // Entity lists
+
     @Override
     public List<Player> getPlayers() {
         return new ArrayList<Player>(entities.getAll(GlowPlayer.class));
@@ -492,9 +482,7 @@ public final class GlowWorld implements World {
     public List<LivingEntity> getLivingEntities() {
         List<LivingEntity> result = new LinkedList<>();
         for (Entity e : entities.getAll()) {
-            if (e instanceof GlowLivingEntity) {
-                result.add((GlowLivingEntity) e);
-            }
+            if (e instanceof GlowLivingEntity) result.add((GlowLivingEntity) e);
         }
         return result;
     }
@@ -534,6 +522,7 @@ public final class GlowWorld implements World {
 
     ////////////////////////////////////////////////////////////////////////////
     // Various malleable world properties
+
     @Override
     public Location getSpawnLocation() {
         return spawnLocation.clone();
@@ -603,10 +592,15 @@ public final class GlowWorld implements World {
     @Override
     public void setDifficulty(Difficulty difficulty) {
         this.difficulty = difficulty;
+        ServerDifficultyMessage message = new ServerDifficultyMessage(difficulty.getValue());
+        for (GlowPlayer player : getRawPlayers()) {
+            player.getSession().send(message);
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // Entity spawning properties
+
     @Override
     public void setSpawnFlags(boolean allowMonsters, boolean allowAnimals) {
         spawnMonsters = allowMonsters;
@@ -685,6 +679,7 @@ public final class GlowWorld implements World {
 
     ////////////////////////////////////////////////////////////////////////////
     // Various fixed world properties
+
     @Override
     public Environment getEnvironment() {
         return environment;
@@ -727,6 +722,7 @@ public final class GlowWorld implements World {
 
     ////////////////////////////////////////////////////////////////////////////
     // force-save
+
     @Override
     public void save() {
         save(false);
@@ -756,6 +752,7 @@ public final class GlowWorld implements World {
 
     ////////////////////////////////////////////////////////////////////////////
     // map generation
+
     @Override
     public ChunkGenerator getGenerator() {
         return chunks.getGenerator();
@@ -776,7 +773,7 @@ public final class GlowWorld implements World {
         final BlockStateDelegate blockStateDelegate = new BlockStateDelegate();
         final TreeGenerator generator = new TreeGenerator(blockStateDelegate);
         if (generator.generate(random, loc, type)) {
-            final List<BlockState> blockStates = new ArrayList<BlockState>(blockStateDelegate.getBlockStates());
+            final List<BlockState> blockStates = new ArrayList<>(blockStateDelegate.getBlockStates());
             StructureGrowEvent growEvent = new StructureGrowEvent(loc, type, false, null, blockStates);
             EventFactory.callEvent(growEvent);
             if (!growEvent.isCancelled()) {
@@ -794,6 +791,7 @@ public final class GlowWorld implements World {
 
     ////////////////////////////////////////////////////////////////////////////
     // get block, chunk, id, highest methods with coords
+
     @Override
     public GlowBlock getBlockAt(int x, int y, int z) {
         return new GlowBlock(getChunkAt(x >> 4, z >> 4), x, y & 0xff, z);
@@ -806,12 +804,7 @@ public final class GlowWorld implements World {
 
     @Override
     public int getHighestBlockYAt(int x, int z) {
-        for (int y = getMaxHeight() - 1; y >= 0; --y) {
-            if (getBlockTypeIdAt(x, y, z) != 0) {
-                return y + 1;
-            }
-        }
-        return 0;
+        return getChunkAt(x >> 4, z >> 4).getHeight(x & 0xf, z & 0xf);
     }
 
     @Override
@@ -821,6 +814,7 @@ public final class GlowWorld implements World {
 
     ////////////////////////////////////////////////////////////////////////////
     // get block, chunk, id, highest with locations
+
     @Override
     public GlowBlock getBlockAt(Location location) {
         return getBlockAt(location.getBlockX(), location.getBlockY(), location.getBlockZ());
@@ -858,6 +852,7 @@ public final class GlowWorld implements World {
 
     ////////////////////////////////////////////////////////////////////////////
     // Chunk loading and unloading
+
     @Override
     public boolean isChunkLoaded(Chunk chunk) {
         return chunk.isLoaded();
@@ -920,9 +915,7 @@ public final class GlowWorld implements World {
 
     @Override
     public boolean unloadChunkRequest(final int x, final int z, final boolean safe) {
-        if (safe && isChunkInUse(x, z)) {
-            return false;
-        }
+        if (safe && isChunkInUse(x, z)) return false;
 
         server.getScheduler().runTask(null, new Runnable() {
             @Override
@@ -936,9 +929,7 @@ public final class GlowWorld implements World {
 
     @Override
     public boolean regenerateChunk(int x, int z) {
-        if (!chunks.forceRegeneration(x, z)) {
-            return false;
-        }
+        if (!chunks.forceRegeneration(x, z)) return false;
         refreshChunk(x, z);
         return true;
     }
@@ -969,6 +960,7 @@ public final class GlowWorld implements World {
 
     ////////////////////////////////////////////////////////////////////////////
     // Biomes
+
     @Override
     public Biome getBiome(int x, int z) {
         if (environment == Environment.THE_END) {
@@ -997,6 +989,7 @@ public final class GlowWorld implements World {
 
     ////////////////////////////////////////////////////////////////////////////
     // Entity spawning
+
     @Override
     public <T extends Entity> T spawn(Location location, Class<T> clazz) throws IllegalArgumentException {
         GlowEntity entity = null;
@@ -1042,6 +1035,7 @@ public final class GlowWorld implements World {
 
         // yaw = Math.atan2(x, z) * 180.0D / 3.1415927410125732D;
         // pitch = Math.atan2(y, Math.sqrt(x * x + z * z)) * 180.0D / 3.1415927410125732D
+
         arrow.setVelocity(velocity);
         return arrow;
     }
@@ -1094,6 +1088,7 @@ public final class GlowWorld implements World {
 
     ////////////////////////////////////////////////////////////////////////////
     // Time
+
     @Override
     public long getTime() {
         return time;
@@ -1120,6 +1115,7 @@ public final class GlowWorld implements World {
 
     ////////////////////////////////////////////////////////////////////////////
     // Weather
+
     @Override
     public boolean hasStorm() {
         return currentlyRaining;
@@ -1227,6 +1223,7 @@ public final class GlowWorld implements World {
 
     ////////////////////////////////////////////////////////////////////////////
     // Explosions
+
     @Override
     public boolean createExplosion(Location loc, float power) {
         return createExplosion(loc, power, false);
@@ -1254,7 +1251,6 @@ public final class GlowWorld implements World {
 
     /**
      * Create an explosion with a specific entity as the source.
-     *
      * @param source The entity to treat as the source, or null.
      * @param x X coordinate
      * @param y Y coordinate
@@ -1271,6 +1267,7 @@ public final class GlowWorld implements World {
 
     ////////////////////////////////////////////////////////////////////////////
     // Effects
+
     @Override
     public void playEffect(Location location, Effect effect, int data) {
         playEffect(location, effect, data, 64);
@@ -1307,9 +1304,7 @@ public final class GlowWorld implements World {
 
     @Override
     public void playSound(Location location, Sound sound, float volume, float pitch) {
-        if (location == null || sound == null) {
-            return;
-        }
+        if (location == null || sound == null) return;
 
         final double radiusSquared = Math.pow(volume * 16, 2);
         for (Player player : getRawPlayers()) {
@@ -1326,9 +1321,7 @@ public final class GlowWorld implements World {
 
     @Override
     public void showParticle(Location loc, Particle particle, MaterialData material, float offsetX, float offsetY, float offsetZ, float speed, int amount) {
-        if (loc == null || particle == null) {
-            return;
-        }
+        if (loc == null || particle == null) return;
 
         final double radiusSquared;
         if (GlowParticle.isLongDistance(particle)) {
@@ -1346,9 +1339,9 @@ public final class GlowWorld implements World {
 
     ////////////////////////////////////////////////////////////////////////////
     // Level data write
+
     /**
      * Save the world data using the metadata service.
-     *
      * @param async Whether to write asynchronously.
      */
     private void writeWorldData(boolean async) {
@@ -1367,7 +1360,6 @@ public final class GlowWorld implements World {
 
     /**
      * Execute a runnable, optionally asynchronously.
-     *
      * @param async Whether to run the runnable in an asynchronous task.
      * @param runnable The runnable to run.
      */
@@ -1381,7 +1373,6 @@ public final class GlowWorld implements World {
 
     /**
      * Unloads the world
-     *
      * @return true if successful
      */
     public boolean unload() {
@@ -1396,7 +1387,6 @@ public final class GlowWorld implements World {
 
     /**
      * Get the storage provider for the world.
-     *
      * @return The {@link WorldStorageProvider}.
      */
     public WorldStorageProvider getStorage() {
@@ -1405,7 +1395,6 @@ public final class GlowWorld implements World {
 
     /**
      * Get the world folder.
-     *
      * @return world folder
      */
     @Override
@@ -1415,33 +1404,49 @@ public final class GlowWorld implements World {
 
     ////////////////////////////////////////////////////////////////////////////
     // Game rules
+
     @Override
     public String[] getGameRules() {
-        return gameRules.keySet().toArray(new String[gameRules.size()]);
+        return gameRules.getKeys();
     }
 
     @Override
     public String getGameRuleValue(String rule) {
-        return gameRules.get(rule);
+        return gameRules.getString(rule);
     }
 
     @Override
     public boolean setGameRuleValue(String rule, String value) {
-        if (value == null || !gameRules.containsKey(rule)) {
+        if (!gameRules.setValue(rule, value)) {
             return false;
-        } else {
-            gameRules.put(rule, value);
-            return true;
         }
+        if (rule.equals("doDaylightCycle")) {
+            // inform clients about the daylight cycle change
+            for (GlowPlayer player : getRawPlayers()) {
+                player.sendTime();
+            }
+        } else if (rule.equals("reducedDebugInfo")) {
+            // inform clients about the debug info change
+            EntityStatusMessage message = new EntityStatusMessage(0, gameRules.getBoolean("reducedDebugInfo") ? EntityStatusMessage.ENABLE_REDUCED_DEBUG_INFO : EntityStatusMessage.DISABLE_REDUCED_DEBUG_INFO);
+            for (GlowPlayer player : getRawPlayers()) {
+                player.getSession().send(message);
+            }
+        }
+        return true;
     }
 
     @Override
     public boolean isGameRule(String rule) {
-        return gameRules.containsKey(rule);
+        return gameRules.isGameRule(rule);
+    }
+
+    public GameRuleManager getGameRuleMap() {
+        return gameRules;
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // Metadata
+
     @Override
     public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {
         metadata.setMetadata(this, metadataKey, newMetadataValue);
@@ -1464,6 +1469,7 @@ public final class GlowWorld implements World {
 
     ////////////////////////////////////////////////////////////////////////////
     // Plugin messages
+
     @Override
     public void sendPluginMessage(Plugin source, String channel, byte[] message) {
         StandardMessenger.validatePluginMessage(server.getMessenger(), source, channel, message);

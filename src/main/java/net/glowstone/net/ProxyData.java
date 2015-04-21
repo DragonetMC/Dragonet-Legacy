@@ -24,7 +24,6 @@ public final class ProxyData {
 
     /**
      * Create a proxy data structure for a session from the given source text.
-     *
      * @param session The session to create the data for.
      * @param sourceText Contents of the hostname field of the handshake.
      * @throws Exception if an error occurs parsing the source text.
@@ -59,7 +58,6 @@ public final class ProxyData {
 
     /**
      * Get the spoofed hostname to use instead of the actual one.
-     *
      * @return The spoofed hostname.
      */
     public String getHostname() {
@@ -68,7 +66,6 @@ public final class ProxyData {
 
     /**
      * Get the spoofed address to use instead of the actual one.
-     *
      * @return The spoofed address.
      */
     public InetSocketAddress getAddress() {
@@ -77,7 +74,6 @@ public final class ProxyData {
 
     /**
      * Get a spoofed profile to use with the given name.
-     *
      * @param name The player name.
      * @return The spoofed profile.
      */

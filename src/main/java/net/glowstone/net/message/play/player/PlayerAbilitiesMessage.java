@@ -10,3 +10,4 @@ public final class PlayerAbilitiesMessage implements Message {
     public final float flySpeed, walkSpeed;
 
 }
+

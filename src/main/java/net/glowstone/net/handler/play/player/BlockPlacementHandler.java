@@ -21,34 +21,34 @@ import org.bukkit.util.Vector;
 import java.util.Objects;
 
 public final class BlockPlacementHandler implements MessageHandler<GlowSession, BlockPlacementMessage> {
-
     @Override
     public void handle(GlowSession session, BlockPlacementMessage message) {
-        
         final GlowPlayer player = session.getPlayer();
-        
-        if (player == null) {
+        if (player == null)
             return;
-        }
 
         //GlowServer.logger.info(session + ": " + message);
+
         /**
-         * The client sends this packet for the following cases: Right click
-         * air: - Send direction=-1 packet for any non-null item Right click
-         * block: - Send packet with all values filled - If client DOES NOT
-         * expect a block placement to result: - Send direction=-1 packet
-         * (unless item is null)
+         * The client sends this packet for the following cases:
+         * Right click air:
+         * - Send direction=-1 packet for any non-null item
+         * Right click block:
+         * - Send packet with all values filled
+         * - If client DOES NOT expect a block placement to result:
+         *   - Send direction=-1 packet (unless item is null)
          *
          * Client will expect a block placement to result from blocks and from
          * certain items (e.g. sugarcane, sign). We *could* opt to trust the
          * client on this, but the server's view of events (particularly under
          * the Bukkit API, or custom ItemTypes) may differ from the client's.
          *
-         * In order to avoid firing two events for one interact, the two packet
-         * case must be handled here. Care must also be taken that a right-click
-         * air of an expected-place item immediately after is not considered
-         * part of the same action.
+         * In order to avoid firing two events for one interact, the two
+         * packet case must be handled here. Care must also be taken that a
+         * right-click air of an expected-place item immediately after is
+         * not considered part of the same action.
          */
+
         Action action = Action.RIGHT_CLICK_BLOCK;
         GlowBlock clicked = player.getWorld().getBlockAt(message.getX(), message.getY(), message.getZ());
 
@@ -158,6 +158,6 @@ public final class BlockPlacementHandler implements MessageHandler<GlowSession, 
     }
 
     private static final BlockFace[] faces = {
-        BlockFace.DOWN, BlockFace.UP, BlockFace.NORTH, BlockFace.SOUTH, BlockFace.WEST, BlockFace.EAST
+            BlockFace.DOWN, BlockFace.UP, BlockFace.NORTH, BlockFace.SOUTH, BlockFace.WEST, BlockFace.EAST
     };
 }

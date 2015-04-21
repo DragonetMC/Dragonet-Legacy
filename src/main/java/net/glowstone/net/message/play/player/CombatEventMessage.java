@@ -30,7 +30,6 @@ public final class CombatEventMessage implements Message {
     }
 
     public static enum Event {
-
         ENTER_COMBAT,
         END_COMBAT,
         ENTITY_DEAD;
