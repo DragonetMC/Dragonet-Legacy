@@ -7,6 +7,8 @@
 server-ip: '0.0.0.0'
 server-port: 19132
 
+player-spawn-chunk-threshold: 36
+
 # Should we enable DragonetPE support? 
 # It may cost a little bit more CPU usage
 # If you enable this, the TCP port at server-port must be free to use. 

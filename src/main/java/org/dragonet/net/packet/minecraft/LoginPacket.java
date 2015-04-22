@@ -47,6 +47,7 @@ public class LoginPacket extends PEPacket {
             this.protocol2 = reader.readInt();
             this.clientIntID = reader.readInt();
             this.loginData = reader.readString();
+            this.setLength(reader.totallyRead());
         } catch (IOException e) {
         }
     }

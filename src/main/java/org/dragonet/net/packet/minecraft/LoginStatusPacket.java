@@ -18,11 +18,16 @@ import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class LoginStatusPacket extends PEPacket {
 
+    public final static int LOGIN_SUCCESS = 0;
+    public final static int LOGIN_FAILED_CLIENT = 1;
+    public final static int LOGIN_FAILED_SERVER = 2;
+    public final static int PLAYER_SPAWN = 3;
+
     public int status;
 
     @Override
     public int pid() {
-        return PEPacketIDs.LOGIN_STATUS_PACKET;
+        return PEPacketIDs.PLAY_STATUS_PACKET;
     }
 
     @Override

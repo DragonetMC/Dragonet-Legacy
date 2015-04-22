@@ -22,6 +22,8 @@ public class PEBinaryReader implements Closeable {
     protected InputStream is;
     protected boolean endianness;
 
+    private int totallyRead;
+    
     public PEBinaryReader(InputStream is) {
         this(is, PEBinaryUtils.BIG_ENDIAN);
     }
@@ -47,6 +49,7 @@ public class PEBinaryReader implements Closeable {
 
     public String readString() throws IOException {
         falloc(2);
+        this.totallyRead += 2;
         return readString(2);
     }
 
@@ -54,21 +57,25 @@ public class PEBinaryReader implements Closeable {
         falloc(lenLen);
         int length = (int) readNat(lenLen);
         falloc(length);
+        this.totallyRead += length;
         return new String(read(length), "UTF-8");
     }
 
     public byte readByte() throws IOException {
         falloc(1);
+        this.totallyRead += 1;
         return (byte) is.read();
     }
 
     public short readShort() throws IOException {
         falloc(2);
+        this.totallyRead += 2;
         return (short) (readNat(2) & 0xFFFF);
     }
 
     public int readTriad() throws IOException {
         falloc(3);
+        this.totallyRead += 3;
         this.endianness = !this.endianness;
         int triad = (int) (readNat(3) & 0xFFFFFF);
         this.endianness = !this.endianness;
@@ -77,28 +84,33 @@ public class PEBinaryReader implements Closeable {
 
     public int readInt() throws IOException {
         falloc(4);
+        this.totallyRead += 4;
         return (int) (readNat(4) & 0xFFFFFFFF);
     }
 
     public long readLong() throws IOException {
         falloc(8);
+        this.totallyRead += 8;
         return readNat(8);
     }
 
     public float readFloat() throws IOException {
         falloc(4);
+        this.totallyRead += 4;
         ByteBuffer bb = ByteBuffer.wrap(read(4));
         return bb.getFloat();
     }
 
     public double readDouble() throws IOException {
         falloc(8);
+        this.totallyRead += 8;
         ByteBuffer bb = ByteBuffer.wrap(read(8));
         return bb.getDouble();
     }
 
     public byte[] read(int length) throws IOException {
         falloc(length);
+        this.totallyRead += length;
         byte[] buffer = new byte[length];
         is.read(buffer, 0, length);
         return buffer;
@@ -106,6 +118,7 @@ public class PEBinaryReader implements Closeable {
 
     public long readNat(int length) throws IOException {
         falloc(length);
+        this.totallyRead += length;
         return PEBinaryUtils.read(read(length), 0, length, endianness);
     }
 
@@ -152,5 +165,9 @@ public class PEBinaryReader implements Closeable {
 
     public int available() throws IOException {
         return this.is.available();
+    }
+    
+    public int totallyRead(){
+        return this.totallyRead;
     }
 }

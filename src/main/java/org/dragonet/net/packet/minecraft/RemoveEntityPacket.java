@@ -18,7 +18,7 @@ import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class RemoveEntityPacket extends PEPacket {
 
-    public int eid;
+    public long eid;
 
     @Override
     public int pid() {
@@ -31,7 +31,7 @@ public class RemoveEntityPacket extends PEPacket {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PEBinaryWriter writer = new PEBinaryWriter(bos);
             writer.writeByte((byte) (this.pid() & 0xFF));
-            writer.writeInt(this.eid);
+            writer.writeLong(this.eid);
             this.setData(bos.toByteArray());
         } catch (IOException e) {
         }

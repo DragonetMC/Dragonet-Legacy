@@ -45,6 +45,7 @@ public class PingPongPacket extends PEPacket {
             PEBinaryReader reader = new PEBinaryReader(new ByteArrayInputStream(this.getData()));
             reader.readByte();
             this.pingID = reader.readLong();
+            this.setLength(reader.totallyRead());
         } catch (IOException e) {
         }
     }

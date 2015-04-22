@@ -62,6 +62,7 @@ public class PlayerEquipmentPacket extends PEPacket {
             this.item = reader.readShort();
             this.meta = reader.readShort();
             this.slot = reader.readByte() & 0xFF;
+            this.setLength(reader.totallyRead());
         } catch (IOException e) {
         }
     }

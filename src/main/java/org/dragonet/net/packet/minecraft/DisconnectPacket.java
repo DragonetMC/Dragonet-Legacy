@@ -12,15 +12,28 @@
  */
 package org.dragonet.net.packet.minecraft;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import static org.dragonet.net.packet.minecraft.ClientHandshakePacket.getDataArray;
+import org.dragonet.utilities.io.PEBinaryReader;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class DisconnectPacket extends PEPacket {
 
+    public String message;
+
+    public DisconnectPacket(String message) {
+        this.message = message;
+    }
+
+    public DisconnectPacket(byte[] data) {
+        this.setData(data);
+    }
+
     @Override
     public int pid() {
-        return PEPacketIDs.CLIENT_DISCONNECT;
+        return PEPacketIDs.DISCONNECT_PACKET;
     }
 
     @Override
@@ -29,6 +42,7 @@ public class DisconnectPacket extends PEPacket {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PEBinaryWriter writer = new PEBinaryWriter(bos);
             writer.writeByte((byte) (this.pid() & 0xFF));
+            writer.writeString(message);
             this.setData(bos.toByteArray());
         } catch (IOException e) {
         }
@@ -36,6 +50,13 @@ public class DisconnectPacket extends PEPacket {
 
     @Override
     public void decode() {
+        try {
+            PEBinaryReader reader = new PEBinaryReader(new ByteArrayInputStream(this.getData()));
+            reader.readByte(); //PID
+            this.message = reader.readString();
+            this.setLength(reader.totallyRead());
+        } catch (IOException e) {
+        }
     }
 
 }

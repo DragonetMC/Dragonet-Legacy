@@ -19,7 +19,6 @@ import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Level;
 
 import lombok.Getter;
 import net.glowstone.GlowServer;
@@ -28,7 +27,6 @@ import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.dragonet.net.NetworkHandler;
 import org.dragonet.peaddon.DragonetPEAddonServer;
-import org.dragonet.rhino.Rhino;
 import org.dragonet.rhino.Script;
 import org.dragonet.statistic.StatisticSender;
 import org.dragonet.utilities.DragonetVersioning;
@@ -52,7 +50,7 @@ public class DragonetServer {
 
     private @Getter
     Rhino rhino;
-    
+
     private @Getter
     NetworkHandler networkHandler;
 
@@ -67,7 +65,10 @@ public class DragonetServer {
 
     private @Getter
     CustomItemManager customMaterialManager;
-    
+
+    private @Getter
+    int playerSpawnThreshold;
+
     public DragonetServer(GlowServer server) {
         INSTANCE = this;
         this.server = server;
@@ -139,9 +140,10 @@ public class DragonetServer {
         }
         //This exists because ScriptAPI.addMethod() must be called AFTER Dragonet initialization
         for (Script s : rhino.Scripts) {
-        	this.getLogger().info("[DragonetAPI] Running post-initialisation for script " + s.UID);
-        	s.runFunction("postInit", new Object[] {});
+            this.getLogger().info("[DragonetAPI] Running post-initialisation for script " + s.UID);
+            s.runFunction("postInit", new Object[]{});
         }
+        this.playerSpawnThreshold = config.getInt("player-spawn-chunk-threshold", 36);
         this.logger.info("Dragonet successfully initialized! ");
     }
 
@@ -158,12 +160,12 @@ public class DragonetServer {
         this.networkHandler.getUdp().end();
         this.threadPool.shutdown();
     }
-    
-     /**
-     * Reload the server.
-     * Currently only used to re-scan Rhino scripts, but could be useful later.
+
+    /**
+     * Reload the server. Currently only used to re-scan Rhino scripts, but
+     * could be useful later.
      */
     public void reload() {
-    	rhino.reload();
+        rhino.reload();
     }
 }

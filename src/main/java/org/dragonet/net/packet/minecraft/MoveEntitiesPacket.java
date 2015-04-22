@@ -14,6 +14,7 @@ package org.dragonet.net.packet.minecraft;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import lombok.Data;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class MoveEntitiesPacket extends PEPacket {
@@ -37,7 +38,7 @@ public class MoveEntitiesPacket extends PEPacket {
             writer.writeByte((byte) (this.pid() & 0xFF));
             writer.writeInt(this.entities.length);
             for (MoveEntityData d : this.entities) {
-                writer.writeInt(d.eid);
+                writer.writeLong(d.eid);
                 writer.writeFloat(d.x);
                 writer.writeFloat(d.y);
                 writer.writeFloat(d.z);
@@ -53,9 +54,9 @@ public class MoveEntitiesPacket extends PEPacket {
     public void decode() {
     }
 
+    @Data
     public static class MoveEntityData {
-
-        public int eid;
+        public long eid;
         public float x;
         public float y;
         public float z;

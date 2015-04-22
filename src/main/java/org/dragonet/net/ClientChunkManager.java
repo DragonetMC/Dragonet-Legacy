@@ -24,7 +24,7 @@ import net.glowstone.entity.GlowPlayer;
 import org.apache.commons.lang.ArrayUtils;
 import org.dragonet.ChunkLocation;
 import org.dragonet.net.packet.minecraft.FullChunkPacket;
-import org.dragonet.net.packet.minecraft.UnloadChunkPacket;
+import org.dragonet.net.packet.minecraft.LoginStatusPacket;
 import org.dragonet.utilities.io.PEBinaryUtils;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
@@ -40,6 +40,9 @@ public class ClientChunkManager {
     private final ArrayList<ChunkLocation> chunksLoaded; //Already sent
     private final Deque<ChunkLocation> chunksQueue;  //Awaiting sending
 
+    @Getter
+    private boolean spawned;
+    
     public ClientChunkManager(DragonetSession session) {
         this.ticksCountDown = 20;
         this.session = session;
@@ -75,8 +78,13 @@ public class ClientChunkManager {
             return;
         }
         this.autoPrepareChunks();
-        this.unloadFarChunks();
         this.sendChunks();
+        if(spawned == false && this.chunksLoaded.size() > this.session.getDServer().getPlayerSpawnThreshold()){
+            spawned = true;
+            LoginStatusPacket pk = new LoginStatusPacket();
+            pk.status = LoginStatusPacket.PLAYER_SPAWN;
+            this.session.send(pk);
+        }
     }
 
     /**
@@ -177,26 +185,6 @@ public class ClientChunkManager {
     }
 
     /**
-     * Unload the chunks that distance > 8
-     */
-    public synchronized void unloadFarChunks() {
-        if (!(this.getSession().getPlayer() instanceof GlowPlayer)) {
-            return;
-        }
-        ChunkLocation playerChunk = new ChunkLocation(this.getSession().getPlayer().getLocation().getBlockX() / 16, this.getSession().getPlayer().getLocation().getBlockZ() / 16);
-        ArrayList<ChunkLocation> toUnload = new ArrayList<>();
-        for (ChunkLocation loc : this.chunksLoaded) {
-            if (loc.distanceTo(playerChunk) > 7) {
-                toUnload.add(loc);
-            }
-        }
-        for (ChunkLocation locUnload : toUnload) {
-            this.unloadChunk(locUnload.getX(), locUnload.getZ());
-        }
-        this.chunksLoaded.removeAll(toUnload);
-    }
-
-    /**
      * Send a single chunk to the client
      *
      * @param chunkX The chunk X coordinate
@@ -272,18 +260,5 @@ public class ClientChunkManager {
             this.getSession().send(packet);
         } catch (IOException e) {
         }
-    }
-
-    /**
-     * Unload a chunk. THIS DOES NOT REMOVE FROM THE CHUNKSLOADED ARRAYLIST!
-     *
-     * @param x Chunk X position
-     * @param z Chunk Z position
-     */
-    private void unloadChunk(int x, int z) {
-        UnloadChunkPacket pkUnloadChunk = new UnloadChunkPacket();
-        pkUnloadChunk.x = x;
-        pkUnloadChunk.z = z;
-        this.getSession().send(pkUnloadChunk);
     }
 }

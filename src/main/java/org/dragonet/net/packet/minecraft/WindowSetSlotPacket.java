@@ -56,6 +56,7 @@ public class WindowSetSlotPacket extends PEPacket {
             this.windowID = reader.readByte();
             this.slot = reader.readShort();
             this.item = PEInventorySlot.readSlot(reader);
+            this.setLength(reader.totallyRead());
         } catch (IOException e) {
         }
     }

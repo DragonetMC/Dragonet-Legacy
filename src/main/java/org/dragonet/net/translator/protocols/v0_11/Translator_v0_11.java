@@ -10,7 +10,7 @@
  *
  * @author The Dragonet Team
  */
-package org.dragonet.net.translator.protocols.v0_10_0;
+package org.dragonet.net.translator.protocols.v0_11;
 
 import com.flowpowered.networking.Message;
 import java.util.ArrayList;
@@ -101,7 +101,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-public class Translator_v0_10_0 extends BaseTranslator {
+public class Translator_v0_11 extends BaseTranslator {
 
     /**
      * Cached Window Types for Window Item Translating If the value equals
@@ -127,7 +127,7 @@ public class Translator_v0_10_0 extends BaseTranslator {
 
     private ItemTranslator itemTranslator;
 
-    public Translator_v0_10_0(DragonetSession session) {
+    public Translator_v0_11(DragonetSession session) {
         super(session);
         this.cachedWindowType = new int[256];
         this.cachedWindowType[0] = 0;
@@ -137,7 +137,7 @@ public class Translator_v0_10_0 extends BaseTranslator {
         this.cachedSpawnObjects = new HashMap<>();
         this.cachedEntityIDs = new ArrayList<>();
         this.cachedPlayerEntities = new ArrayList<>();
-        this.itemTranslator = new ItemTranslator_v0_10_0();
+        this.itemTranslator = new ItemTranslator_v0_11();
     }
 
     /* ===== TO PC ===== */

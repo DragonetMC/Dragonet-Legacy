@@ -13,14 +13,14 @@
 package org.dragonet.net.translator;
 
 import org.dragonet.net.DragonetSession;
-import org.dragonet.net.translator.protocols.v0_10_0.Translator_v0_10_0;
+import org.dragonet.net.translator.protocols.v0_11.Translator_v0_11;
 
 public final class TranslatorProvider {
 
     public static BaseTranslator getByPEProtocolID(DragonetSession session, int protocolID) {
         switch (protocolID) {
-            case 20:
-                return new Translator_v0_10_0(session);
+            case 23:
+                return new Translator_v0_11(session);
             default:
                 return null;
         }

@@ -14,23 +14,41 @@ package org.dragonet.net.packet.minecraft;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.dragonet.inventory.PEInventorySlot;
+import lombok.Data;
+import org.dragonet.entity.metadata.EntityMetaData;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
-public class AddItemEntityPacket extends PEPacket {
+public class AddEntityPacket1 extends PEPacket {
 
+    @Data
+    public static class EntityLink{
+        public long eid1;
+        public long eid2;
+        public byte flag;
+        
+        public void writeTo(PEBinaryWriter writer) throws IOException{
+            writer.writeLong(eid1);
+            writer.writeLong(eid2);
+            writer.writeByte(flag);
+        }
+    }
+    
     public long eid;
-    public PEInventorySlot item;
+    public int type;
     public float x;
     public float y;
     public float z;
     public float speedX;
     public float speedY;
     public float speedZ;
+    public float yaw;
+    public float pitch;
+    public EntityMetaData meta;
+    public EntityLink[] links;
 
     @Override
     public int pid() {
-        return PEPacketIDs.ADD_ITEM_ENTITY_PACKET;
+        return PEPacketIDs.ADD_ENTITY_PACKET;
     }
 
     @Override
@@ -40,13 +58,21 @@ public class AddItemEntityPacket extends PEPacket {
             PEBinaryWriter writer = new PEBinaryWriter(bos);
             writer.writeByte((byte) (this.pid() & 0xFF));
             writer.writeLong(eid);
-            PEInventorySlot.writeSlot(writer, item);
             writer.writeFloat(x);
             writer.writeFloat(y);
             writer.writeFloat(z);
             writer.writeFloat(speedX);
             writer.writeFloat(speedY);
             writer.writeFloat(speedZ);
+            writer.writeFloat(yaw);
+            writer.writeFloat(pitch);
+            writer.write(this.meta.encode());
+            writer.writeShort((short)(this.links == null ? 0 : this.links.length));
+            if(this.links != null){
+                for(EntityLink link : links){
+                    link.writeTo(writer);
+                }
+            }
             this.setData(bos.toByteArray());
         } catch (IOException e) {
         }

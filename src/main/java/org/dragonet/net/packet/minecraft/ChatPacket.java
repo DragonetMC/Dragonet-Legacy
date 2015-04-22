@@ -20,11 +20,50 @@ import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class ChatPacket extends PEPacket {
 
+    public enum TextType {
+
+        RAW(0),
+        CHAT(1),
+        TRANSLATION(2),
+        POPUP(3),
+        TIP(4);
+
+        private int type;
+
+        TextType(int type) {
+            this.type = type;
+        }
+
+        public int getType() {
+            return this.type;
+        }
+
+        public static TextType fromNum(int num) {
+            switch (num) {
+                case 0:
+                    return RAW;
+                case 1:
+                    return CHAT;
+                case 2:
+                    return TRANSLATION;
+                case 3:
+                    return POPUP;
+                case 4:
+                    return TIP;
+                default:
+                    return RAW;
+            }
+        }
+    }
+
+    private TextType type;
+    public String source;
     public String message;
+    public String[] params;
 
     @Override
     public int pid() {
-        return PEPacketIDs.CHAT_PACKET;
+        return PEPacketIDs.TEXT_PACKET;
     }
 
     @Override
@@ -33,7 +72,27 @@ public class ChatPacket extends PEPacket {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PEBinaryWriter writer = new PEBinaryWriter(bos);
             writer.writeByte((byte) (this.pid() & 0xFF));
-            writer.writeString(this.message);
+            writer.writeByte((byte) (this.type.getType() & 0xFF));
+            switch (this.type) {
+                case CHAT:
+                    writer.writeString(this.source);
+                case RAW:
+                case POPUP:
+                case TIP:
+                    writer.writeString(this.message);
+                    break;
+                case TRANSLATION:
+                    writer.writeString(this.message);
+                    if (this.params == null) {
+                        writer.writeByte((byte) 0);
+                        break;
+                    }
+                    writer.writeByte((byte) (this.params.length & 0xFF));
+                    for (int i = 0; i < this.params.length; i++) {
+                        writer.writeString(this.params[i]);
+                    }
+                    break;
+            }
             this.setData(bos.toByteArray());
         } catch (IOException e) {
         }
@@ -44,7 +103,25 @@ public class ChatPacket extends PEPacket {
         try {
             PEBinaryReader reader = new PEBinaryReader(new ByteArrayInputStream(this.getData()));
             reader.readByte(); //PID
-            this.message = reader.readString();
+            this.type = TextType.fromNum(reader.readByte());
+            switch (this.type) {
+                case CHAT:
+                    this.source = reader.readString();
+                case RAW:
+                case POPUP:
+                case TIP:
+                    this.message = reader.readString();
+                    break;
+                case TRANSLATION:
+                    this.message = reader.readString();
+                    int cnt = reader.readByte();
+                    this.params = new String[cnt];
+                    for (int i = 0; i < cnt; i++) {
+                        this.params[i] = reader.readString();
+                    }
+                    break;
+            }
+            this.setLength(reader.totallyRead());
         } catch (IOException e) {
         }
     }

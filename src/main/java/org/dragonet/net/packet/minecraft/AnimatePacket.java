@@ -33,7 +33,7 @@ public class AnimatePacket extends PEPacket {
             PEBinaryWriter writer = new PEBinaryWriter(bos);
             writer.writeByte((byte) (this.pid() & 0xFF));
             writer.writeByte(action);
-            writer.writeInt(eid);
+            writer.writeLong(eid);
             this.setData(bos.toByteArray());
         } catch (IOException e) {
         }

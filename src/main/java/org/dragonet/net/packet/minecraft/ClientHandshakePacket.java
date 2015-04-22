@@ -53,6 +53,7 @@ public class ClientHandshakePacket extends PEPacket {
             this.timestamp = reader.readShort();
             this.session2 = reader.readLong();
             this.session = reader.readLong();
+            this.setLength(reader.totallyRead());
         } catch (IOException e) {
         }
     }

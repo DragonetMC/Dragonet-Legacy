@@ -16,6 +16,8 @@ import org.dragonet.net.packet.BinaryPacket;
 
 public abstract class PEPacket extends BinaryPacket {
 
+    private int length;
+    
     public abstract int pid();
 
     @Override
@@ -23,51 +25,12 @@ public abstract class PEPacket extends BinaryPacket {
 
     @Override
     public abstract void decode();
-
-    public static PEPacket fromBinary(byte[] buffer) {
-        if (buffer.length == 0) {
-            return null;
-        }
-        //System.out.print("Got PEPacket 0x" + Integer.toHexString(buffer[0] & 0xFF));
-        PEPacket packet;
-        switch (buffer[0]) {
-            case PEPacketIDs.CLIENT_CONNECT:
-                packet = new ClientConnectPacket(buffer);
-                break;
-            case PEPacketIDs.CLIENT_HANDSHAKE:
-                packet = new ClientHandshakePacket(buffer);
-                break;
-            case PEPacketIDs.LOGIN_PACKET:
-                packet = new LoginPacket(buffer);
-                break;
-            case PEPacketIDs.MESSAGE_PACKET:
-                packet = new MessagePacket(buffer);
-                break;
-            case PEPacketIDs.MOVE_PLAYER_PACKET:
-                packet = new MovePlayerPacket(buffer);
-                break;
-            case PEPacketIDs.CLIENT_DISCONNECT:
-                packet = new DisconnectPacket();
-                break;
-            case PEPacketIDs.USE_ITEM_PACKET:
-                packet = new UseItemPacket(buffer);
-                break;
-            case PEPacketIDs.REMOVE_BLOCK_PACKET:
-                packet = new RemoveBlockPacket(buffer);
-                break;
-            case PEPacketIDs.ANIMATE_PACKET:
-                packet = new AnimatePacket();
-                break;
-            case PEPacketIDs.PLAYER_EQUIPMENT_PACKET:
-                packet = new PlayerEquipmentPacket(buffer);
-                break;
-            case PEPacketIDs.WINDOW_SET_SLOT_PACKET:
-                packet = new WindowSetSlotPacket(buffer);
-                break;
-            default:
-                return null;
-        }
-        packet.decode();
-        return packet;
+    
+    public final void setLength(int length){
+        this.length = length;
+    }
+    
+    public final int getLength(){
+        return this.length;
     }
 }

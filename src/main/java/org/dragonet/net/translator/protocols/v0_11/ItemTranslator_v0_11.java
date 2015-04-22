@@ -10,18 +10,18 @@
  *
  * @author The Dragonet Team
  */
-package org.dragonet.net.translator.protocols.v0_10_0;
+package org.dragonet.net.translator.protocols.v0_11;
 
 import java.util.HashMap;
 import org.dragonet.net.translator.ItemTranslator;
 
-public class ItemTranslator_v0_10_0 implements ItemTranslator {
+public class ItemTranslator_v0_11 implements ItemTranslator {
 
     private final HashMap<Integer, Integer> itemMap_PE_to_PC = new HashMap<>();
     private final HashMap<Integer, Integer> itemMap_PC_to_PE = new HashMap<>();
     private final int DEFAULT_BLOCK_TO_PE = 248; //Bedrock
 
-    public ItemTranslator_v0_10_0() {
+    public ItemTranslator_v0_11() {
         /* ===== PC to PE ===== */
         for (int i = 0; i <= 22; i++) {
             itemMap_PC_to_PE.put(i, i);

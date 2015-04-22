@@ -43,8 +43,8 @@ public class ClientConnectPacket extends PEPacket {
             this.clientID = reader.readLong();
             this.sessionID = reader.readLong();
             this.unknown1 = reader.readByte();
+            this.setLength(reader.totallyRead());
         } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 

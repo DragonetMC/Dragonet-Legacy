@@ -84,6 +84,7 @@ public class MovePlayerPacket extends PEPacket {
             this.yaw = reader.readFloat();
             this.pitch = reader.readFloat();
             this.bodyYaw = reader.readFloat();
+            this.setLength(reader.totallyRead());
         } catch (IOException e) {
         }
     }

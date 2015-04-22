@@ -14,15 +14,31 @@ package org.dragonet.net.packet.minecraft;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import lombok.Data;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class UpdateBlockPacket extends PEPacket {
 
-    public int x;
-    public int z;
-    public byte y;
-    public byte block;
-    public byte meta;
+    public final static byte FLAG_NONE = (byte) 0b0000;
+    public final static byte FLAG_NEIGHBORS = (byte) 0b0001;
+    public final static byte FLAG_NETWORK = (byte) 0b0010;
+    public final static byte FLAG_NOGRAPHIC = (byte) 0b0100;
+    public final static byte FLAG_PRIORITY = (byte) 0b1000;
+    public final static byte FLAG_ALL = (byte) (FLAG_NEIGHBORS | FLAG_NETWORK);
+    public final static byte FLAG_ALL_PRIORITY = (byte) (FLAG_ALL | FLAG_PRIORITY);
+
+    @Data
+    public static class UpdateBlockRecord {
+
+        public int x;
+        public int z;
+        public byte y;
+        public byte block;
+        public byte meta;
+        public byte flags;
+    }
+
+    public UpdateBlockRecord[] records;
 
     @Override
     public int pid() {
@@ -35,11 +51,18 @@ public class UpdateBlockPacket extends PEPacket {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PEBinaryWriter writer = new PEBinaryWriter(bos);
             writer.writeByte((byte) (this.pid() & 0xFF));
-            writer.writeInt(this.x);
-            writer.writeInt(this.z);
-            writer.writeByte(this.y);
-            writer.writeByte(this.block);
-            writer.writeByte(this.meta);
+            if (this.records == null) {
+                writer.writeInt(0);
+            } else {
+                writer.writeInt(this.records.length);
+                for(UpdateBlockRecord rec : this.records){
+                    writer.writeInt(rec.x);
+                    writer.writeInt(rec.z);
+                    writer.writeByte(rec.y);
+                    writer.writeByte(rec.block);
+                    writer.writeByte((byte)(rec.flags << 4 | rec.meta));
+                }
+            }
             this.setData(bos.toByteArray());
         } catch (IOException e) {
         }

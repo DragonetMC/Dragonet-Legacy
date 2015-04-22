@@ -56,6 +56,7 @@ import org.dragonet.inventory.InventoryType;
 import org.dragonet.inventory.PEInventorySlot;
 import org.dragonet.inventory.PEWindowConstantID;
 import org.dragonet.net.packet.EncapsulatedPacket;
+import org.dragonet.net.packet.Protocol;
 import org.dragonet.net.packet.RaknetDataPacket;
 import org.dragonet.net.packet.minecraft.AdventureSettingsPacket;
 import org.dragonet.net.packet.minecraft.ClientConnectPacket;
@@ -481,7 +482,7 @@ public class DragonetSession extends GlowSession {
             return;
         }
         for (EncapsulatedPacket epacket : dataPacket.getEncapsulatedPackets()) {
-            PEPacket packet = PEPacket.fromBinary(epacket.buffer);
+            PEPacket packet = Protocol.decode(epacket.buffer);
             if (packet == null) {
                 continue;
             }
@@ -519,7 +520,7 @@ public class DragonetSession extends GlowSession {
                     this.translator = TranslatorProvider.getByPEProtocolID(this, packetLogin.protocol1);
                     if (!(this.translator instanceof BaseTranslator)) {
                         LoginStatusPacket pkLoginStatus = new LoginStatusPacket();
-                        pkLoginStatus.status = 2;
+                        pkLoginStatus.status = LoginStatusPacket.LOGIN_FAILED_CLIENT;
                         this.send(pkLoginStatus);
                         this.disconnect("Unsupported game version! ");
                         break;
@@ -540,7 +541,7 @@ public class DragonetSession extends GlowSession {
                     this.loginStage = 3;
                     this.setPlayer(new PlayerProfile(this.username, UUID.nameUUIDFromBytes(("OfflinePlayer:" + this.username).getBytes(StandardCharsets.UTF_8))));
                     break;
-                case PEPacketIDs.CLIENT_DISCONNECT:
+                case PEPacketIDs.DISCONNECT_PACKET:
                     this.onDisconnect();
                     break;
                 default:
@@ -734,7 +735,7 @@ public class DragonetSession extends GlowSession {
             GlowServer.logger.info("[" + this.remoteIP + ":" + this.remotePort + "] kicked: " + reason);
         }
 
-        this.send(new DisconnectPacket());
+        this.send(new DisconnectPacket(reason));
         this.statusActive = false;
         this.dServer.getNetworkHandler().removeSession(this);
         this.getServer().getSessionRegistry().remove((GlowSession) this);

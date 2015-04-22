@@ -25,10 +25,15 @@ public class AddPlayerPacket extends PEPacket {
     public float x;
     public float y;
     public float z;
+    public float speedX;
+    public float speedY;
+    public float speedZ;
     public int yaw;
     public int pitch;
-    public short unknown1;
-    public short unknown2;
+    public short item;
+    public short meta;
+    public boolean slim;
+    public String skin;
     public EntityMetaData metadata;
 
     @Override
@@ -44,14 +49,20 @@ public class AddPlayerPacket extends PEPacket {
             writer.writeByte((byte) (this.pid() & 0xFF));
             writer.writeLong(this.clientID);
             writer.writeString(this.username);
-            writer.writeInt(this.eid);
+            writer.writeLong(this.eid);
             writer.writeFloat(this.x);
             writer.writeFloat(this.y);
             writer.writeFloat(this.z);
-            writer.writeByte((byte) ((this.yaw * (256 / 360)) & 0xFF));
-            writer.writeByte((byte) ((this.pitch * (256 / 360)) & 0xFF));
-            writer.writeShort(this.unknown1);
-            writer.writeShort(this.unknown2);
+            writer.writeFloat(this.speedX);
+            writer.writeFloat(this.speedY);
+            writer.writeFloat(this.speedZ);
+            writer.writeFloat(this.yaw);
+            writer.writeFloat(this.yaw); //Head rotation
+            writer.writeFloat(this.pitch);
+            writer.writeShort(this.item);
+            writer.writeShort(this.meta);
+            writer.writeByte(this.slim ? (byte)1 : (byte)0);
+            writer.writeString(this.skin);
             writer.write(this.metadata.encode());
             this.setData(bos.toByteArray());
         } catch (IOException e) {

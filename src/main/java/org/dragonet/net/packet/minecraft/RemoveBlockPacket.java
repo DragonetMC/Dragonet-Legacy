@@ -46,6 +46,7 @@ public class RemoveBlockPacket extends PEPacket {
             this.x = reader.readInt();
             this.z = reader.readInt();
             this.y = reader.readByte();
+            this.setLength(reader.totallyRead());
         } catch (IOException e) {
         }
     }

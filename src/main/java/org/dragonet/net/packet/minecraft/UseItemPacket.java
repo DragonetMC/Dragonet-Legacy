@@ -24,7 +24,7 @@ public class UseItemPacket extends PEPacket {
     public int face;
     public short item;
     public short meta;
-    public int eid;
+    public long eid;
     public float fx;
     public float fy;
     public float fz;
@@ -56,7 +56,7 @@ public class UseItemPacket extends PEPacket {
             this.face = reader.readByte() & 0xF;
             this.item = reader.readShort();
             this.meta = reader.readShort();
-            this.eid = reader.readInt();
+            this.eid = reader.readLong();
             this.fx = reader.readFloat();
             this.fy = reader.readFloat();
             this.fz = reader.readFloat();
