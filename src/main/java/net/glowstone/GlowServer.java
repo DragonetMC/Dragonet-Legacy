@@ -445,6 +445,11 @@ public final class GlowServer implements Server {
         nameBans.load();
         ipBans.load();
 
+        //Dragonet-Add
+        this.dragonetServer = new DragonetServer(this);
+        this.dragonetServer.initialize();
+        //Dragonet-End
+        
         // Start loading plugins
         new LibraryManager(this).run();
         loadPlugins();
