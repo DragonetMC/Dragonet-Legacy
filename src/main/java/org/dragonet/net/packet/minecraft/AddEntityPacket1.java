@@ -58,6 +58,7 @@ public class AddEntityPacket1 extends PEPacket {
             PEBinaryWriter writer = new PEBinaryWriter(bos);
             writer.writeByte((byte) (this.pid() & 0xFF));
             writer.writeLong(eid);
+            writer.writeInt(type);
             writer.writeFloat(x);
             writer.writeFloat(y);
             writer.writeFloat(z);
