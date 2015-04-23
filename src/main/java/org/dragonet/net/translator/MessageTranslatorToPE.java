@@ -23,5 +23,9 @@ public abstract class MessageTranslatorToPE<T extends BaseTranslator, P extends 
         this.session = session;
     }
 
-    public abstract PEPacket[] handle(P packet);
+    public abstract PEPacket[] handleSpecific(P packet);
+    
+    public PEPacket[] handle(Message message){
+        return handleSpecific((P)message);
+    }
 }
