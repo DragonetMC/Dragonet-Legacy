@@ -20,7 +20,7 @@ public class ClientConnectPacket extends PEPacket {
 
     public long clientID;
     public long sessionID;
-    public byte unknown1;
+    public boolean useSecurity;
 
     public ClientConnectPacket(byte[] data) {
         this.setData(data);
@@ -42,7 +42,7 @@ public class ClientConnectPacket extends PEPacket {
             reader.readByte(); //PID
             this.clientID = reader.readLong();
             this.sessionID = reader.readLong();
-            this.unknown1 = reader.readByte();
+            this.useSecurity = (reader.readByte() & 0xFF) > 0;
             this.setLength(reader.totallyRead());
         } catch (IOException e) {
         }

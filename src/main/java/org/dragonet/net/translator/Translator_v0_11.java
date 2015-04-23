@@ -10,21 +10,15 @@
  *
  * @author The Dragonet Team
  */
-package org.dragonet.net.translator.protocols.v0_11;
+package org.dragonet.net.translator;
 
 import com.flowpowered.networking.Message;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import net.glowstone.EventFactory;
-import net.glowstone.block.GlowBlock;
-import net.glowstone.block.ItemTable;
-import net.glowstone.block.blocktype.BlockType;
-import net.glowstone.block.entity.TileEntity;
-import net.glowstone.block.itemtype.ItemType;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import net.glowstone.entity.GlowPlayer;
-import net.glowstone.entity.objects.GlowItem;
 import net.glowstone.net.message.KickMessage;
 import net.glowstone.net.message.play.entity.AnimateEntityMessage;
 import net.glowstone.net.message.play.entity.CollectItemMessage;
@@ -37,7 +31,6 @@ import net.glowstone.net.message.play.entity.SpawnObjectMessage;
 import net.glowstone.net.message.play.entity.SpawnPlayerMessage;
 import net.glowstone.net.message.play.game.BlockChangeMessage;
 import net.glowstone.net.message.play.game.ChatMessage;
-import net.glowstone.net.message.play.game.IncomingChatMessage;
 import net.glowstone.net.message.play.game.MultiBlockChangeMessage;
 import net.glowstone.net.message.play.game.PositionRotationMessage;
 import net.glowstone.net.message.play.game.StateChangeMessage;
@@ -49,53 +42,21 @@ import net.glowstone.net.message.play.inv.SetWindowSlotMessage;
 import net.glowstone.net.message.play.player.PlayerPositionLookMessage;
 import net.glowstone.net.message.play.player.PlayerPositionMessage;
 import org.apache.commons.lang.ArrayUtils;
-import org.bukkit.Effect;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.util.Vector;
-import org.dragonet.entity.DragonetPlayer;
 import org.dragonet.entity.metadata.EntityMetaData;
 import org.dragonet.inventory.PEInventorySlot;
 import org.dragonet.inventory.InventoryType;
 import org.dragonet.inventory.ItemList;
 import org.dragonet.inventory.PEWindowConstantID;
 import org.dragonet.net.DragonetSession;
-import org.dragonet.net.packet.minecraft.AddItemEntityPacket;
-import org.dragonet.net.packet.minecraft.AddPlayerPacket;
-import org.dragonet.net.packet.minecraft.AnimatePacket;
-import org.dragonet.net.packet.minecraft.DisconnectPacket;
-import org.dragonet.net.packet.minecraft.MessagePacket;
-import org.dragonet.net.packet.minecraft.MoveEntitiesPacket;
-import org.dragonet.net.packet.minecraft.MovePlayerPacket;
-import org.dragonet.net.packet.minecraft.PEPacket;
-import org.dragonet.net.packet.minecraft.PEPacketIDs;
-import org.dragonet.net.packet.minecraft.PickUpItemPacket;
-import org.dragonet.net.packet.minecraft.PlayerEquipmentPacket;
-import org.dragonet.net.packet.minecraft.RemoveBlockPacket;
-import org.dragonet.net.packet.minecraft.RemoveEntityPacket;
-import org.dragonet.net.packet.minecraft.RemovePlayerPacket;
-import org.dragonet.net.packet.minecraft.SetEntityMotionPacket;
-import org.dragonet.net.packet.minecraft.SetTimePacket;
-import org.dragonet.net.packet.minecraft.StartGamePacket;
-import org.dragonet.net.packet.minecraft.UpdateBlockPacket;
-import org.dragonet.net.packet.minecraft.UseItemPacket;
-import org.dragonet.net.packet.minecraft.WindowClosePacket;
-import org.dragonet.net.packet.minecraft.WindowItemsPacket;
-import org.dragonet.net.packet.minecraft.WindowOpenPacket;
-import org.dragonet.net.packet.minecraft.WindowSetSlotPacket;
-import org.dragonet.net.translator.BaseTranslator;
-import org.dragonet.net.translator.ItemTranslator;
+import org.dragonet.net.packet.minecraft.*;
+import org.dragonet.net.translator.topc.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -103,29 +64,32 @@ import org.json.simple.parser.ParseException;
 
 public class Translator_v0_11 extends BaseTranslator {
 
+    private static ConcurrentMap<Class<? extends Message>, MessageTranslatorToPE<Translator_v0_11, ? extends Message>> mapToPE;
+    private static ConcurrentMap<Class<? extends PEPacket>, PEPacketTranslatorToPC<Translator_v0_11, ? extends PEPacket>> mapToPC;
+
     /**
      * Cached Window Types for Window Item Translating If the value equals
      * Integer.MAX_VALUE then the window doesn't exist
      */
-    private int[] cachedWindowType;
+    public int[] cachedWindowType;
 
     /**
      * Cached Entity Spawn Messages in order to wait for the meta data
      */
-    private HashMap<Integer, SpawnObjectMessage> cachedSpawnObjects;
+    public ConcurrentHashMap<Integer, SpawnObjectMessage> cachedSpawnObjects;
 
     /**
      * Spawned Objects, for traking which entity creation message was sent
      */
-    private ArrayList<Integer> cachedEntityIDs;
+    public ArrayList<Integer> cachedEntityIDs;
 
     /**
      * Client's special behavior to players, can not be treated like a normal
      * entity
      */
-    private ArrayList<Integer> cachedPlayerEntities;
+    public ArrayList<Integer> cachedPlayerEntities;
 
-    private ItemTranslator itemTranslator;
+    public ItemTranslator itemTranslator;
 
     public Translator_v0_11(DragonetSession session) {
         super(session);
@@ -134,191 +98,33 @@ public class Translator_v0_11 extends BaseTranslator {
         for (int i = 1; i < 256; i++) {
             this.cachedWindowType[i] = -1;
         }
-        this.cachedSpawnObjects = new HashMap<>();
+        this.cachedSpawnObjects = new ConcurrentHashMap<>();
         this.cachedEntityIDs = new ArrayList<>();
         this.cachedPlayerEntities = new ArrayList<>();
         this.itemTranslator = new ItemTranslator_v0_11();
+
+        mapToPE = new ConcurrentHashMap<>();
+        mapToPC = new ConcurrentHashMap<>();
+
+        // [PC => PE]
+        // [PE => PC]
+        mapToPC.put(AnimatePacket.class, new AnimatePacketTranslator(this, this.getSession()));
+        mapToPC.put(ChatPacket.class, new ChatPacketTranslator(this, this.getSession()));
+        mapToPC.put(MovePlayerPacket.class, new MovePlayerPacketTranslator(this, this.getSession()));
+        mapToPC.put(PlayerEquipmentPacket.class, new PlayerEquipmentPacketTranslator(this, this.getSession()));
+        mapToPC.put(RemoveBlockPacket.class, new RemoveBlockPacketTranslator(this, this.getSession()) );
+        mapToPC.put(UseItemPacket.class, new UseItemPacketTranslator(this, this.getSession()));
+        mapToPC.put(WindowSetSlotPacket.class, new WindowSetSlotPacketTranslator(this, this.getSession()));
     }
 
     /* ===== TO PC ===== */
     @Override
     public Message[] translateToPC(PEPacket packet) {
-        //System.out.print("Trnaslating to PC: " + packet.getClass().getSimpleName());
-        switch (packet.pid()) {
-            case PEPacketIDs.MESSAGE_PACKET:
-                IncomingChatMessage msgMessage = new IncomingChatMessage(((MessagePacket) packet).message);
-                return new Message[]{msgMessage};
-            case PEPacketIDs.MOVE_PLAYER_PACKET:
-                MovePlayerPacket pkMovePlayer = (MovePlayerPacket) packet;
-                //Check the position
-                Location loc = new Location(this.getSession().getPlayer().getWorld(), pkMovePlayer.x, pkMovePlayer.y, pkMovePlayer.z);
-                if (!this.getSession().validateMovement(loc)) { //Revert
-                    this.getSession().sendPosition();
-                    System.out.println("Reverted movement! ");
-                    return null;
-                }
-                //Hack ;P
-                ((DragonetPlayer) this.getSession().getPlayer()).setLocation(new Location(((DragonetPlayer) this.getSession().getPlayer()).getWorld(), pkMovePlayer.x, pkMovePlayer.y, pkMovePlayer.z, pkMovePlayer.yaw, pkMovePlayer.pitch));
-                return new Message[]{new PlayerPositionLookMessage(false, (double) pkMovePlayer.x, (double) pkMovePlayer.y, (double) pkMovePlayer.z, pkMovePlayer.yaw, pkMovePlayer.pitch)};
-            case PEPacketIDs.ANIMATE_PACKET:
-                return new Message[]{new AnimateEntityMessage(this.getSession().getPlayer().getEntityId(), 1)};
-            case PEPacketIDs.REMOVE_BLOCK_PACKET:
-                RemoveBlockPacket pkRemoveBlock = (RemoveBlockPacket) packet;
-                if (!(this.getSession().getPlayer() instanceof Player)) {
-                    return null;
-                }
-                GlowBlock block = this.getSession().getPlayer().getWorld().getBlockAt(pkRemoveBlock.x, pkRemoveBlock.y, pkRemoveBlock.z);
-
-                // fire the block break event
-                BlockBreakEvent breakEvent = EventFactory.callEvent(new BlockBreakEvent(block, this.getSession().getPlayer()));
-                if (breakEvent.isCancelled()) {
-                    return null;
-                }
-
-                BlockType blockType = ItemTable.instance().getBlock(block.getType());
-                if (blockType != null) {
-                    blockType.blockDestroy(this.getSession().getPlayer(), block, BlockFace.UP);
-                }
-
-                // destroy the block
-                if (!block.isEmpty() && !block.isLiquid() && this.getSession().getPlayer().getGameMode() != GameMode.CREATIVE) {
-                    for (ItemStack drop : block.getDrops(this.getSession().getPlayer().getInventory().getItem(this.getSession().getPlayer().getInventory().getHeldItemSlot()))) {
-                        GlowItem item = this.getSession().getPlayer().getWorld().dropItemNaturally(block.getLocation(), drop);
-                        item.setPickupDelay(30);
-                        item.setBias(this.getSession().getPlayer());
-                    }
-                }
-                // STEP_SOUND actually is the block break particles
-                this.getSession().getPlayer().getWorld().playEffectExceptTo(block.getLocation(), Effect.STEP_SOUND, block.getTypeId(), 64, this.getSession().getPlayer());
-                block.setType(Material.AIR);
-                return null;
-            case PEPacketIDs.PLAYER_EQUIPMENT_PACKET:
-                PlayerEquipmentPacket pkEquipment = (PlayerEquipmentPacket) packet;
-                if (pkEquipment.slot == 0x28 || pkEquipment.slot == 0 || pkEquipment.slot == 255) {
-                    if (this.getSession().getPlayer().getGameMode().equals(GameMode.CREATIVE)) {
-                        this.getSession().getPlayer().getInventory().setItemInHand(new ItemStack(Material.AIR));
-                        return null;
-                    } else {
-                        if (this.getSession().getPlayer().getInventory().firstEmpty() == -1) {
-                            this.getSession().sendInventory();
-                            this.getSession().getPlayer().sendMessage("Your inventory is full, you can't hold nothing. ");
-                        } else {
-                            this.getSession().getPlayer().getInventory().setHeldItemSlot(this.getSession().getPlayer().getInventory().firstEmpty());
-                        }
-                    }
-                    return null;
-                }
-                if (this.getSession().getPlayer().getGameMode().equals(GameMode.CREATIVE)) {
-                    this.getSession().getPlayer().getInventory().setItemInHand(new ItemStack(pkEquipment.item, 1, pkEquipment.meta, (byte) 0));
-                    return null;
-                }
-                int slot = pkEquipment.slot - 9;
-                if (slot < 27) { //Normal Inventory
-                    //Swap
-                    ItemStack item = this.getSession().getPlayer().getInventory().getItem(slot + 9);
-                    this.getSession().getPlayer().getInventory().setItem(slot + 9, this.getSession().getPlayer().getInventory().getItem(0));
-                    this.getSession().getPlayer().getInventory().setItem(0, item);
-                    if (item.getAmount() <= 0) {
-                        this.getSession().getPlayer().getInventory().setItem(slot + 9, null);
-                        this.getSession().sendInventory();
-                        return null;
-                    }
-                    if (item.getTypeId() == pkEquipment.item) {
-                        this.getSession().getPlayer().getInventory().setHeldItemSlot(slot + 9);
-                    }
-                    this.getSession().sendInventory();
-                } else if (slot >= 27) { //Hotbar
-                    ItemStack item = this.getSession().getPlayer().getInventory().getItem(slot - 27);
-                    if (item.getAmount() <= 0) {
-                        this.getSession().getPlayer().getInventory().setItem(slot - 27, null);
-                        this.getSession().sendInventory();
-                        return null;
-                    }
-                    if (item.getTypeId() == pkEquipment.item) {
-                        this.getSession().getPlayer().getInventory().setHeldItemSlot(slot - 27);
-                    } else {
-                        this.getSession().sendInventory();
-                    }
-                }
-                break;
-            case PEPacketIDs.USE_ITEM_PACKET:
-                UseItemPacket pkUseItem = (UseItemPacket) packet;
-                if (!(pkUseItem.face > 0 && pkUseItem.face < 6)) {
-                    return null;
-                }
-                //Copied from Glowstone class BlockPlacementHandler
-
-                GlowBlock clicked = this.getSession().getPlayer().getWorld().getBlockAt(pkUseItem.x, pkUseItem.y, pkUseItem.z);
-                GlowPlayer player = this.getSession().getPlayer();
-                ItemStack holding = this.getSession().getPlayer().getInventory().getItemInHand();
-                // check that a block-click wasn't against air
-                if (clicked != null && clicked.getType() == Material.AIR) {
-                    // inform the player their perception of reality is wrong
-                    player.sendBlockChange(clicked.getLocation(), Material.AIR, (byte) 0);
-                    return null;
-                }
-
-                // call interact event
-                PlayerInteractEvent event = EventFactory.onPlayerInteract(player, Action.RIGHT_CLICK_BLOCK, clicked, convertFace(pkUseItem.face));
-
-                // attempt to use interacted block
-                // DEFAULT is treated as ALLOW, and sneaking is always considered
-                boolean useInteractedBlock = event.useInteractedBlock() != Event.Result.DENY;
-                if (useInteractedBlock && clicked != null && (!player.isSneaking() || this.getSession().getPlayer().getInventory().getItemInHand() == null)) {
-                    BlockType useBlockType = ItemTable.instance().getBlock(clicked.getType());
-                    useInteractedBlock = useBlockType.blockInteract(player, clicked, convertFace(pkUseItem.face), new Vector(1, 1, 1));
-                } else {
-                    useInteractedBlock = false;
-                }
-
-                // attempt to use item in hand
-                // follows ALLOW/DENY: default to if no block was interacted with
-                if ((event.useItemInHand() == Event.Result.DEFAULT ? !useInteractedBlock : event.useItemInHand() == Event.Result.ALLOW) && holding != null) {
-                    // call out to the item type to determine the appropriate right-click action
-                    ItemType type = ItemTable.instance().getItem(this.getSession().getPlayer().getInventory().getItemInHand().getType());
-                    if (clicked == null) {
-                        type.rightClickAir(player, this.getSession().getPlayer().getInventory().getItemInHand());
-                    } else {
-                        type.rightClickBlock(player, clicked, convertFace(pkUseItem.face), this.getSession().getPlayer().getInventory().getItemInHand(), new Vector(1, 1, 1));
-                    }
-                }
-
-                // if anything was actually clicked, make sure the player's up to date
-                // in case something is unimplemented or otherwise screwy on our side
-                if (clicked != null) {
-                    player.sendBlockChange(clicked.getLocation(), clicked.getType(), clicked.getData());
-                    TileEntity entity = clicked.getTileEntity();
-                    if (entity != null) {
-                        entity.update(player);
-                    }
-                    player.sendBlockChange(clicked.getRelative(convertFace(pkUseItem.face)).getLocation(), clicked.getRelative(convertFace(pkUseItem.face)).getType(), clicked.getRelative(convertFace(pkUseItem.face)).getData());
-                    TileEntity entity2 = clicked.getTileEntity();
-                    if (entity2 != null) {
-                        entity2.update(player);
-                    }
-                }
-
-                // if there's been a change in the held item, make it valid again
-                if (holding != null) {
-                    if (holding.getType().getMaxDurability() > 0 && holding.getDurability() > holding.getType().getMaxDurability()) {
-                        holding.setAmount(holding.getAmount() - 1);
-                        holding.setDurability((short) 0);
-                    }
-                    if (holding.getAmount() <= 0) {
-                        holding = null;
-                    }
-                }
-                //player.setItemInHand(holding);
-                break;
-            case PEPacketIDs.WINDOW_SET_SLOT_PACKET:
-                WindowSetSlotPacket pkSetSlot = (WindowSetSlotPacket) packet;
-                if (pkSetSlot.windowID == PEWindowConstantID.PLAYER_INVENTORY) {
-                    //Crafting! 
-                    this.processCrafting(pkSetSlot);
-                }
-                break;
+        if(mapToPC.containsKey(packet.getClass())){
+            return mapToPC.get(packet.getClass()).handle(packet);
+        }else{
+            return null;
         }
-        return null;
     }
 
     static BlockFace convertFace(int direction) {
@@ -348,7 +154,19 @@ public class Translator_v0_11 extends BaseTranslator {
          * Kick Message
          */
         if (message instanceof KickMessage) {
-            return new PEPacket[]{new DisconnectPacket()};
+            String msg = "";
+            try {
+                //String msg = ((ChatMessage) message).text.asPlaintext();
+                Object json = new JSONParser().parse(((KickMessage) message).text.encode());
+                if (json instanceof JSONObject) {
+                    msg = this.translateChatMessage((JSONObject) json);
+                } else {
+                    msg = ((KickMessage) message).text.asPlaintext();
+                }
+            } catch (ParseException ex) {
+                return null;
+            }
+            return new PEPacket[]{new DisconnectPacket(msg)};
         }
 
         /**
@@ -368,8 +186,9 @@ public class Translator_v0_11 extends BaseTranslator {
                 return null;
             }
             //if(json)
-            MessagePacket pkMessage = new MessagePacket();
-            pkMessage.sender = "";
+            ChatPacket pkMessage = new ChatPacket();
+            pkMessage.source = "";
+            pkMessage.type = ChatPacket.TextType.RAW;
             pkMessage.message = msg;
             return new PEPacket[]{pkMessage};
         }
@@ -458,10 +277,13 @@ public class Translator_v0_11 extends BaseTranslator {
             pkAddPlayer.x = (float) msgSpawnPlayer.getX();
             pkAddPlayer.y = (float) msgSpawnPlayer.getY();
             pkAddPlayer.z = (float) msgSpawnPlayer.getZ();
-            pkAddPlayer.yaw = (msgSpawnPlayer.getRotation() % 360 + 360) % 360;
+            pkAddPlayer.speedX = 0.0f;
+            pkAddPlayer.speedY = 0.0f;
+            pkAddPlayer.speedZ = 0.0f;
+            pkAddPlayer.yaw = msgSpawnPlayer.getRotation();
             pkAddPlayer.pitch = msgSpawnPlayer.getPitch();
-            pkAddPlayer.unknown1 = 0;
-            pkAddPlayer.unknown2 = 0;
+            pkAddPlayer.skin = String.format("http://s3.amazonaws.com/MinecraftSkins/%s.png", pkAddPlayer.username);
+            pkAddPlayer.slim = true;
             pkAddPlayer.metadata = EntityMetaData.getMetaDataFromPlayer((GlowPlayer) this.getSession().getPlayer().getWorld().getEntityManager().getEntity(msgSpawnPlayer.getId()));
             return new PEPacket[]{pkAddPlayer};
         }
@@ -640,11 +462,13 @@ public class Translator_v0_11 extends BaseTranslator {
         if (message instanceof BlockChangeMessage) {
             BlockChangeMessage msgBC = (BlockChangeMessage) message;
             UpdateBlockPacket pkBC = new UpdateBlockPacket();
-            pkBC.x = msgBC.x;
-            pkBC.z = msgBC.z;
-            pkBC.y = (byte) (msgBC.y & 0xFF);
-            pkBC.block = (byte) (this.itemTranslator.translateToPE(msgBC.type >> 4) & 0xFF);
-            pkBC.meta = (byte) (msgBC.type & 0xFF);
+            UpdateBlockPacket.UpdateBlockRecord rec = new UpdateBlockPacket.UpdateBlockRecord();
+            rec.x = msgBC.x;
+            rec.z = msgBC.z;
+            rec.y = (byte) (msgBC.y & 0xFF);
+            rec.block = (byte) (this.itemTranslator.translateToPE(msgBC.type >> 4) & 0xFF);
+            rec.meta = (byte) (msgBC.type & 0xFF);
+            pkBC.records = new UpdateBlockPacket.UpdateBlockRecord[]{rec};
             return new PEPacket[]{pkBC};
         }
 
@@ -653,13 +477,21 @@ public class Translator_v0_11 extends BaseTranslator {
          */
         if (message instanceof MultiBlockChangeMessage) {
             MultiBlockChangeMessage msgMBC = (MultiBlockChangeMessage) message;
-            PEPacket[] packets = new PEPacket[msgMBC.records.size()];
+            UpdateBlockPacket pkBC = new UpdateBlockPacket();
+            pkBC.records = new UpdateBlockPacket.UpdateBlockRecord[msgMBC.records.size()];
+            //PEPacket[] packets = new PEPacket[msgMBC.records.size()];
             int i = 0;
             for (BlockChangeMessage msgBC : msgMBC.records) {
-                packets[i] = this.translateToPE(msgBC)[0];
+                //packets[i] = this.translateToPE(msgBC)[0];
+                pkBC.records[i] = new UpdateBlockPacket.UpdateBlockRecord();
+                pkBC.records[i].x = msgBC.x;
+                pkBC.records[i].z = msgBC.z;
+                pkBC.records[i].y = (byte) (msgBC.y & 0xFF);
+                pkBC.records[i].block = (byte) (this.itemTranslator.translateToPE(msgBC.type >> 4) & 0xFF);
+                pkBC.records[i].meta = (byte) (msgBC.type & 0xFF);
                 i++;
             }
-            return packets;
+            return new PEPacket[]{pkBC};
         }
 
         /**
@@ -685,12 +517,9 @@ public class Translator_v0_11 extends BaseTranslator {
                             AddItemEntityPacket pkAddItemEntity = new AddItemEntityPacket();
                             pkAddItemEntity.eid = msgObj.id;
                             pkAddItemEntity.item = new PEInventorySlot((short) (((ItemStack) msgEntityMeta.entries.get(0).value).getTypeId() & 0xFFFF), (byte) (((ItemStack) msgEntityMeta.entries.get(0).value).getAmount() & 0xFF), (short) (((ItemStack) msgEntityMeta.entries.get(0).value).getDurability() & 0xFFFF));
-                            pkAddItemEntity.pitch = 0;
-                            pkAddItemEntity.yaw = 0;
                             pkAddItemEntity.x = (float) (msgObj.x / 32);
                             pkAddItemEntity.y = (float) (msgObj.y / 32);
                             pkAddItemEntity.z = (float) (msgObj.z / 32);
-                            pkAddItemEntity.roll = (byte) 0x00;
                             return new PEPacket[]{pkAddItemEntity};
                     }
                 } else {
@@ -800,7 +629,7 @@ public class Translator_v0_11 extends BaseTranslator {
         return sbuilder.toString();
     }
 
-    private void processCrafting(WindowSetSlotPacket packet) {
+    public void processCrafting(WindowSetSlotPacket packet) {
         if (!(this.getSession().getPlayer() instanceof Player)) {
             return;
         }

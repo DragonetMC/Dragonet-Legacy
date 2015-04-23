@@ -56,7 +56,7 @@ public class ChatPacket extends PEPacket {
         }
     }
 
-    private TextType type;
+    public TextType type;
     public String source;
     public String message;
     public String[] params;

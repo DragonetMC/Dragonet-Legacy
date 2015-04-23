@@ -13,7 +13,6 @@
 package org.dragonet.net.translator;
 
 import org.dragonet.net.DragonetSession;
-import org.dragonet.net.translator.protocols.v0_11.Translator_v0_11;
 
 public final class TranslatorProvider {
 

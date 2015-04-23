@@ -10,7 +10,7 @@
  *
  * @author The Dragonet Team
  */
-package org.dragonet.net.translator.protocols.v0_11;
+package org.dragonet.net.translator;
 
 import java.util.HashMap;
 import org.dragonet.net.translator.ItemTranslator;
