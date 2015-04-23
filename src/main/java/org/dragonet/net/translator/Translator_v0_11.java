@@ -22,6 +22,7 @@ import net.glowstone.net.message.KickMessage;
 import net.glowstone.net.message.play.entity.AnimateEntityMessage;
 import net.glowstone.net.message.play.entity.CollectItemMessage;
 import net.glowstone.net.message.play.entity.DestroyEntitiesMessage;
+import net.glowstone.net.message.play.entity.EntityEffectMessage;
 import net.glowstone.net.message.play.entity.EntityEquipmentMessage;
 import net.glowstone.net.message.play.entity.EntityMetadataMessage;
 import net.glowstone.net.message.play.entity.EntityVelocityMessage;
@@ -106,6 +107,7 @@ public class Translator_v0_11 extends BaseTranslator {
         mapToPE.put(CloseWindowMessage.class, new CloseWindowMessageTranslator(this, this.getSession()));
         mapToPE.put(CollectItemMessage.class, new CollectItemMessageTranslator(this, this.getSession()));
         mapToPE.put(DestroyEntitiesMessage.class, new DestroyEntitiesMessageTranslator(this, this.getSession()));
+        mapToPE.put(EntityEffectMessage.class, new EntityEffectMessageTranslator(this, this.getSession()));
         mapToPE.put(EntityEquipmentMessage.class, new EntityEquipmentMessageTranslator(this, this.getSession()));
         mapToPE.put(EntityMetadataMessage.class, new EntityMetadataMessageTranslator(this, this.getSession()));
         mapToPE.put(EntityVelocityMessage.class, new EntityVelocityMessageTranslator(this, this.getSession()));
