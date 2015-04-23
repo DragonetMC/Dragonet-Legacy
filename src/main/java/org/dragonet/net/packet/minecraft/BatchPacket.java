@@ -9,8 +9,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 import org.dragonet.net.packet.Protocol;
@@ -18,7 +16,7 @@ import org.dragonet.utilities.io.PEBinaryReader;
 
 public class BatchPacket extends PEPacket {
 
-    private ArrayList<PEPacket> packets;
+    public ArrayList<PEPacket> packets;
 
     @Override
     public int pid() {
