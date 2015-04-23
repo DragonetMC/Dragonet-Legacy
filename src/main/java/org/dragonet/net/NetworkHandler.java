@@ -85,7 +85,8 @@ public class NetworkHandler {
                     break;
                 case RaknetConstants.ID_OPEN_CONNECTION_REQUEST_2:
                     reader.read(16);
-                    reader.read(5);
+                    reader.readByte();
+                    reader.readInt();
                     reader.readShort();
                     short clientMTU = reader.readShort();
                     long clientID = reader.readLong();
@@ -94,7 +95,7 @@ public class NetworkHandler {
                     writer8.writeByte(RaknetConstants.ID_OPEN_CONNECTION_REPLY_2);
                     writer8.write(RaknetConstants.magic);
                     writer8.writeLong(NetworkHandler.serverID);
-                    writer8.writeShort((short) (packet.getPort() & 0xFFFF));
+                    writer8.writeAddress(packet.getAddress(), (short)packet.getPort());
                     writer8.writeShort(clientMTU);
                     writer8.writeByte((byte) 0x00);
                     this.send(bos8.toByteArray(), packet.getSocketAddress());

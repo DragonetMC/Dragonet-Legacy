@@ -16,6 +16,8 @@ import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.nio.ByteBuffer;
 
 public class PEBinaryWriter implements Flushable, Closeable {
@@ -53,6 +55,18 @@ public class PEBinaryWriter implements Flushable, Closeable {
 
     public void writeString(String string) throws IOException {
         writeString(string, 2);
+    }
+    
+    public void writeAddress(InetAddress addr, short port) throws IOException{
+        if(addr instanceof Inet4Address){
+            writeByte((byte)4);
+            writeInt((addr.getAddress()[0] << 24) | (addr.getAddress()[1] << 16) | (addr.getAddress()[2] << 8) | addr.getAddress()[3]);
+            writeShort(port);
+        }else{
+            //IPv6? Nah, we do this later. 
+            writeByte((byte)6);
+            writeLong(0L);
+        }
     }
 
     public void writeString(String string, int lenLen) throws IOException {

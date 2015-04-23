@@ -22,7 +22,9 @@ public class LoginPacket extends PEPacket {
     public int protocol1;
     public int protocol2;
     public int clientIntID;
-    public String loginData;
+    
+    public boolean slim;
+    public String skin;
 
     public LoginPacket(byte[] data) {
         this.setData(data);
@@ -46,7 +48,8 @@ public class LoginPacket extends PEPacket {
             this.protocol1 = reader.readInt();
             this.protocol2 = reader.readInt();
             this.clientIntID = reader.readInt();
-            this.loginData = reader.readString();
+            this.slim = (reader.readByte() & 0xF) > 0;
+            this.skin = reader.readString();
             this.setLength(reader.totallyRead());
         } catch (IOException e) {
         }

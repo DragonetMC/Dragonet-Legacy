@@ -49,11 +49,13 @@ public final class Protocol {
             return null;
         }
         byte pid = data[0];
+        System.out.println("Trying to decode 0x" + Integer.toHexString(pid & 0xFF) + "... ");
         if (protocol.containsKey(pid)) {
             Class<? extends PEPacket> c = protocol.get(pid);
             try {
                 PEPacket pk = c.getDeclaredConstructor(byte[].class).newInstance((Object)data);
                 pk.decode();
+                System.out.println("Decode 0x" + Integer.toHexString(pid & 0xFF) + " as " + pk.getClass().getSimpleName() + ". ");
                 return pk;
             } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
             }

@@ -498,7 +498,8 @@ public class DragonetSession extends GlowSession {
                     }
                     this.clientSessionID = ((ClientConnectPacket) packet).sessionID;
                     ServerHandshakePacket pkServerHandshake = new ServerHandshakePacket();
-                    pkServerHandshake.port = (short) (this.remotePort & 0xFFFF);
+                    pkServerHandshake.addr = this.getDServer().getNetworkHandler().getUdp().getLocalAddress();
+                    pkServerHandshake.port = (short) (this.getDServer().getNetworkHandler().getUdp().getServerPort() & 0xFFFF);
                     pkServerHandshake.session = this.clientSessionID;
                     pkServerHandshake.session2 = 0x04440BA9L;
                     this.loginStage = 1;

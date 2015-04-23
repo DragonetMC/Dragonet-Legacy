@@ -154,6 +154,7 @@ public class EncapsulatedPacket extends BinaryPacket {
             return new EncapsulatedPacket[]{singlePacket};
         } else {
             //Not fit in one packet, need to be splitted
+            System.out.println("DATALEN = " + data.length + ", MTU = " + session.getClientMTU());
             byte[][] multipleData = ArraySplitter.splitArray(data, session.getClientMTU() - 34);
             EncapsulatedPacket[] encapsulatedPackets = new EncapsulatedPacket[multipleData.length];
 

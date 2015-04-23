@@ -98,4 +98,10 @@ public class NonBlockUDPSocket extends Thread {
     public int getServerPort() {
         return this.socket.getLocalPort();
     }
+
+    public InetAddress getLocalAddress(){
+        return this.socket.getLocalAddress();
+    }
+    
+    
 }
