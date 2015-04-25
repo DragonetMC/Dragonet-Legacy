@@ -18,6 +18,7 @@ public final class TranslatorProvider {
 
     public static BaseTranslator getByPEProtocolID(DragonetSession session, int protocolID) {
         switch (protocolID) {
+            case 23:
             case 24:
                 return new Translator_v0_11(session);
             default:

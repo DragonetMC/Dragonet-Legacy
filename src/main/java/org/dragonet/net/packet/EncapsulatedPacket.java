@@ -23,7 +23,7 @@ import org.dragonet.utilities.io.PEBinaryWriter;
 public class EncapsulatedPacket extends BinaryPacket {
 
     public int reliability;
-    public boolean hasSplit = false;
+    public boolean hasSplit;
 
     public int messageIndex;
     public int orderIndex;
