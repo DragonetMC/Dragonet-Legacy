@@ -396,14 +396,16 @@ public class DragonetSession extends GlowSession {
             return;
         }
         packet.encode();
-        if (packet.getData().length > 256) {
+        if (packet.getData().length > this.clientMTU + 1 && !(packet instanceof BatchPacket)) {
             //BATCH PACKET
             BatchPacket pk = new BatchPacket();
             pk.packets.add(packet);
             send(pk, reliability);
+            System.out.println("Using BATCH PACKET for " + packet.getClass().getSimpleName());
             return;
         }
         this.fireQueue();
+        System.out.println(" >>*>> Sending: " + packet.getClass().getSimpleName());
         EncapsulatedPacket[] encapsulatedPacket = EncapsulatedPacket.fromPEPacket(this, packet, reliability);
         for (EncapsulatedPacket ePacket : encapsulatedPacket) {
             ePacket.encode();
