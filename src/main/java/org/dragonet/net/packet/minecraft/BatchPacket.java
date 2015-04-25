@@ -35,6 +35,7 @@ public class BatchPacket extends PEPacket {
             PEBinaryReader reader = new PEBinaryReader(new ByteArrayInputStream(this.getData()));
             reader.readByte(); //PID
             int size = reader.readInt();
+            System.out.println("PAYLOAD SIZE=" + (this.getData().length - 5) + ", BATCH SIZE=" + size);
             byte[] payload = reader.read(size);
             Inflater inf = new Inflater();
             inf.setInput(payload);
@@ -44,9 +45,11 @@ public class BatchPacket extends PEPacket {
             try {
                 decompressedSize = inf.inflate(decompressedPayload);
             } catch (DataFormatException ex) {
+                ex.printStackTrace();
                 this.setLength(reader.totallyRead());
                 return;
             }
+            System.out.println("Batch Packet decompressed length: " + decompressedSize);
             decompressedPayload = Arrays.copyOfRange(decompressedPayload, 0, decompressedSize);
             int offset = 0;
             while (offset < decompressedSize) {
