@@ -29,6 +29,7 @@ public class EntityEffectMessageTranslator extends MessageTranslatorToPE<Transla
         effect.setAmpilifier(packet.amplifier);
         effect.setParticles(!packet.hideParticles);
         effect.setDuration(packet.duration);
+        pk.effect = effect;
         return new PEPacket[]{pk};
     }
 
