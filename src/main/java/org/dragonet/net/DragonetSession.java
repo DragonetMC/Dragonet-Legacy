@@ -490,6 +490,7 @@ public class DragonetSession extends GlowSession {
             if (epacket.hasSplit) {
                 System.out.println("PROCESSING SPLITTED PACKET ID: " + epacket.splitID + ", Index-" + epacket.splitIndex + ", Count-" + epacket.splitCount);
                 //Handle split packet
+                if (epacket.splitIndex == epacket.splitCount - 1) {
                     if (splits.containsKey((Integer) epacket.splitID)) {
                         byte[] buff = splits.get((Integer) epacket.splitID).toByteArray();
                         splits.remove((Integer) epacket.splitID);
