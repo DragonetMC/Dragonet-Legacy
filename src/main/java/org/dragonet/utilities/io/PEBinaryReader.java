@@ -16,6 +16,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import lombok.Data;
 
 public class PEBinaryReader implements Closeable {
 
@@ -45,6 +46,25 @@ public class PEBinaryReader implements Closeable {
     @Override
     public void close() throws IOException {
         is.close();
+    }
+        
+    public static class BinaryAddress{
+        public byte type;
+        public byte[] address;
+        public short port;
+    }
+    
+    public BinaryAddress readAddress() throws IOException{
+        BinaryAddress addr = new BinaryAddress();
+        addr.type = readByte();
+        if((addr.type & 0xFF) == 4){
+            //IPv4
+            addr.address = read(4);
+        }else{
+            addr.address = read(8);
+        }
+        addr.port = readShort();
+        return addr;
     }
 
     public String readString() throws IOException {

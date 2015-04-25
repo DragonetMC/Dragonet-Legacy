@@ -18,12 +18,7 @@ import org.dragonet.utilities.io.PEBinaryReader;
 
 public class ClientHandshakePacket extends PEPacket {
 
-    public byte[] cookie;
-    public byte security;
-    public short port;
-    public byte[] dataArray0;
-    public byte[][] dataArray;
-    public short timestamp;
+    public PEBinaryReader.BinaryAddress address;
     public long session;
     public long session2;
 
@@ -45,12 +40,17 @@ public class ClientHandshakePacket extends PEPacket {
         try {
             PEBinaryReader reader = new PEBinaryReader(new ByteArrayInputStream(this.getData()));
             reader.readByte(); //PID
-            this.cookie = reader.read(4);
-            this.security = reader.readByte();
-            this.port = reader.readShort();
-            this.dataArray0 = reader.read(reader.readByte() & 0xFF);
-            this.dataArray = getDataArray(reader, 9);
-            this.timestamp = reader.readShort();
+            this.address = reader.readAddress();
+            reader.readAddress();
+            reader.readAddress();
+            reader.readAddress();
+            reader.readAddress();
+            reader.readAddress();
+            reader.readAddress();
+            reader.readAddress();
+            reader.readAddress();
+            reader.readAddress();
+            reader.readAddress();
             this.session2 = reader.readLong();
             this.session = reader.readLong();
             this.setLength(reader.totallyRead());
