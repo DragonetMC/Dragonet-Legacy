@@ -400,6 +400,7 @@ public class DragonetSession extends GlowSession {
             //BATCH PACKET
             BatchPacket pk = new BatchPacket();
             pk.packets.add(packet);
+            pk.encode();
             send(pk, reliability);
             System.out.println("Using BATCH PACKET for " + packet.getClass().getSimpleName());
             return;
