@@ -402,11 +402,11 @@ public class DragonetSession extends GlowSession {
             BatchPacket pk = new BatchPacket();
             pk.packets.add(packet);
             send(pk, reliability);
-            System.out.println("Using BATCH PACKET for " + packet.getClass().getSimpleName());
+            //System.out.println("Using BATCH PACKET for " + packet.getClass().getSimpleName());
             return;
         }
         this.fireQueue();
-        System.out.println(" >>*>> Sending: " + packet.getClass().getSimpleName());
+        //System.out.println(" >>*>> Sending: " + packet.getClass().getSimpleName());
         EncapsulatedPacket[] encapsulatedPacket = EncapsulatedPacket.fromPEPacket(this, packet, reliability);
         for (EncapsulatedPacket ePacket : encapsulatedPacket) {
             ePacket.encode();
