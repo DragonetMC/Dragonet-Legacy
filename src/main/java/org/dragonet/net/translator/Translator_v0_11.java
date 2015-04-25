@@ -139,24 +139,10 @@ public class Translator_v0_11 extends BaseTranslator {
     /* ===== TO PC ===== */
     @Override
     public Message[] translateToPC(PEPacket packet) {
-        if(packet instanceof BatchPacket){
-            BatchPacket pkBatch = (BatchPacket)packet;
-            if(pkBatch.packets == null || pkBatch.packets.isEmpty()){
-                return null;
-            }
-            ArrayList<Message> msgs = new ArrayList<>();
-            for(PEPacket subPacket : pkBatch.packets){
-                Message[] ret = this.translateToPC(subPacket);
-                if(ret != null){
-                    msgs.addAll(Arrays.asList(ret));
-                }
-            }
-            return msgs.toArray(new Message[0]);
-        }
-        
         if (mapToPC.containsKey(packet.getClass())) {
             return mapToPC.get(packet.getClass()).handle(packet);
         } else {
+            System.out.println("FAILD TO TRANSLATE TO PC MESSAGE: " + packet.getClass().getSimpleName());
             return null;
         }
     }
@@ -186,6 +172,7 @@ public class Translator_v0_11 extends BaseTranslator {
         if (mapToPE.containsKey(message.getClass())) {
             return mapToPE.get(message.getClass()).handle(message);
         } else {
+            System.out.println("FAILD TO TRANSLATE TO PE PACKET: " + message.getClass().getSimpleName());
             return null;
         }
     }

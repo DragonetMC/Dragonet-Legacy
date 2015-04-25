@@ -201,8 +201,10 @@ public class ClientChunkManager {
             if (writer.getEndianness() == PEBinaryUtils.BIG_ENDIAN) {
                 writer.switchEndianness();
             }
+            /*
             writer.writeInt(chunkX);
             writer.writeInt(chunkZ);
+            */
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
                     for (int y = 0; y < 128; y++) {
@@ -248,16 +250,21 @@ public class ClientChunkManager {
                 writer.writeByte((byte) 0xB2);
                 writer.writeByte((byte) 0x4A);
             }
-
+            /*
             Deflater deflater = new Deflater(7);
             deflater.reset();
             deflater.setInput(totalData.toByteArray());
             deflater.finish();
             byte[] bufferDeflate = new byte[65536];
             int deflatedSize = deflater.deflate(bufferDeflate);
+            */
             FullChunkPacket packet = new FullChunkPacket();
-            packet.compressedData = ArrayUtils.subarray(bufferDeflate, 0, deflatedSize);
+            packet.chunkX = chunkX;
+            packet.chunkZ = chunkZ;
+            packet.chunkData = totalData.toByteArray();
+            //packet.compressedData = ArrayUtils.subarray(bufferDeflate, 0, deflatedSize);
             this.getSession().send(packet);
+            System.out.println("Sent chunk! " + chunkX + ", " + chunkZ);
         } catch (IOException e) {
         }
     }

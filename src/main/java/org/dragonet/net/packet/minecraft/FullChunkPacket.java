@@ -18,7 +18,9 @@ import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class FullChunkPacket extends PEPacket {
 
-    public byte[] compressedData;
+    public int chunkX;
+    public int chunkZ;
+    public byte[] chunkData;
 
     @Override
     public int pid() {
@@ -31,7 +33,10 @@ public class FullChunkPacket extends PEPacket {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PEBinaryWriter writer = new PEBinaryWriter(bos);
             writer.writeByte((byte) (this.pid() & 0xFF));
-            writer.write(this.compressedData);
+            writer.writeInt(chunkX);
+            writer.writeInt(chunkZ);
+            writer.writeInt(chunkData.length);
+            writer.write(chunkData);
             this.setData(bos.toByteArray());
         } catch (IOException e) {
         }

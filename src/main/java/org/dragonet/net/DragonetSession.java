@@ -61,6 +61,7 @@ import org.dragonet.net.packet.EncapsulatedPacket;
 import org.dragonet.net.packet.Protocol;
 import org.dragonet.net.packet.RaknetDataPacket;
 import org.dragonet.net.packet.minecraft.AdventureSettingsPacket;
+import org.dragonet.net.packet.minecraft.BatchPacket;
 import org.dragonet.net.packet.minecraft.ClientConnectPacket;
 import org.dragonet.net.packet.minecraft.DisconnectPacket;
 import org.dragonet.net.packet.minecraft.FullChunkPacket;
@@ -127,6 +128,7 @@ public class DragonetSession extends GlowSession {
 
     //Handle spltted packets. 
     private ConcurrentHashMap<Integer, ByteArrayOutputStream> splits = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<Integer, Integer> splitCounter = new ConcurrentHashMap<>();
 
     private @Getter
     BaseTranslator translator;
@@ -394,6 +396,13 @@ public class DragonetSession extends GlowSession {
             return;
         }
         packet.encode();
+        if (packet.getData().length > 256) {
+            //BATCH PACKET
+            BatchPacket pk = new BatchPacket();
+            pk.packets.add(packet);
+            send(pk, reliability);
+            return;
+        }
         this.fireQueue();
         EncapsulatedPacket[] encapsulatedPacket = EncapsulatedPacket.fromPEPacket(this, packet, reliability);
         for (EncapsulatedPacket ePacket : encapsulatedPacket) {
@@ -492,9 +501,14 @@ public class DragonetSession extends GlowSession {
                 //Handle split packet
                 if (epacket.splitIndex == epacket.splitCount - 1) {
                     if (splits.containsKey((Integer) epacket.splitID)) {
-                        splits.get((Integer) epacket.splitID).write(epacket.buffer);
+                        try {
+                            splits.get((Integer) epacket.splitID).write(epacket.buffer);
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
                         byte[] buff = splits.get((Integer) epacket.splitID).toByteArray();
                         splits.remove((Integer) epacket.splitID);
+                        splitCounter.remove((Integer) epacket.splitID);
                         processPacketBuffer(buff);
                     }
                 } else {
@@ -503,9 +517,12 @@ public class DragonetSession extends GlowSession {
                             ByteArrayOutputStream oup = new ByteArrayOutputStream();
                             oup.write(epacket.buffer);
                             splits.put((Integer) epacket.splitID, oup);
+                            splitCounter.put((Integer) epacket.splitID, -1);
                         } else {
-                            if (splits.containsKey((Integer) epacket.splitID)) {
+                            if (splits.containsKey((Integer) epacket.splitID)
+                                    && (splitCounter.get((Integer) epacket.splitID) < epacket.splitIndex)) {
                                 splits.get((Integer) epacket.splitID).write(epacket.buffer);
+                                splitCounter.put((Integer) epacket.splitID, epacket.splitIndex);
                             }
                         }
                     } catch (IOException ex) {
@@ -580,6 +597,50 @@ public class DragonetSession extends GlowSession {
                 break;
             case PEPacketIDs.DISCONNECT_PACKET:
                 this.onDisconnect();
+                break;
+            case PEPacketIDs.BATCH_PACKET:
+                BatchPacket packetBatch = (BatchPacket) packet;
+                if (packetBatch.packets == null || packetBatch.packets.isEmpty()) {
+                    return;
+                }
+                for (PEPacket pk : packetBatch.packets) {
+                    if (pk.pid() == PEPacketIDs.LOGIN_PACKET) {
+                        if (this.loginStage != 2) {
+                            break;
+                        }
+                        LoginPacket packetLogin1 = (LoginPacket) pk;
+                        this.username = packetLogin1.username;
+
+                        this.translator = TranslatorProvider.getByPEProtocolID(this, packetLogin1.protocol1);
+                        if (!(this.translator instanceof BaseTranslator)) {
+                            LoginStatusPacket pkLoginStatus1 = new LoginStatusPacket();
+                            pkLoginStatus1.status = LoginStatusPacket.LOGIN_FAILED_CLIENT;
+                            this.send(pkLoginStatus1);
+                            this.disconnect("Unsupported game version! ");
+                            break;
+                        }
+
+                        LoginStatusPacket pkLoginStatus1 = new LoginStatusPacket();
+                        pkLoginStatus1.status = 0;
+                        this.send(pkLoginStatus1);
+
+                        this.getLogger().info("Accepted connection by [" + this.username + "]. ");
+
+                        Matcher matcher1 = patternUsername.matcher(this.username);
+                        if (!matcher1.matches()) {
+                            this.disconnect("Bad username! ");
+                            break;
+                        }
+
+                        this.loginStage = 3;
+                        this.setPlayer(new PlayerProfile(this.username, UUID.nameUUIDFromBytes(("OfflinePlayer:" + this.username).getBytes(StandardCharsets.UTF_8))));
+                        continue;
+                    }
+                    if (!(this.translator instanceof BaseTranslator)) {
+                        break;
+                    }
+                    this.dServer.getThreadPool().submit(new ProcessPEPacketTask(this, pk));
+                }
                 break;
             default:
                 if (this.loginStage != 3) {
