@@ -21,7 +21,7 @@ public class StartGamePacket extends PEPacket {
     public int seed;
     public int generator;
     public int gamemode;
-    public int eid;
+    public long eid;
     public int spawnX;
     public int spawnY;
     public int spawnZ;
@@ -43,7 +43,7 @@ public class StartGamePacket extends PEPacket {
             writer.writeInt(this.seed);
             writer.writeInt(this.generator);
             writer.writeInt(this.gamemode);
-            writer.writeInt(this.eid);
+            writer.writeLong(this.eid);
             writer.writeInt(this.spawnX);
             writer.writeInt(this.spawnY);
             writer.writeInt(this.spawnZ);

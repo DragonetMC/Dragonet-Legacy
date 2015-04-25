@@ -20,7 +20,7 @@ import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class MovePlayerPacket extends PEPacket {
 
-    public int eid;
+    public long eid;
     public float x;
     public float y;
     public float z;
@@ -58,13 +58,13 @@ public class MovePlayerPacket extends PEPacket {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PEBinaryWriter writer = new PEBinaryWriter(bos);
             writer.writeByte((byte) (this.pid() & 0xFF));
-            writer.writeInt(this.eid);
+            writer.writeLong(this.eid);
             writer.writeFloat(this.x);
             writer.writeFloat(this.y);
             writer.writeFloat(this.z);
             writer.writeFloat(this.yaw);
-            writer.writeFloat(this.pitch);
             writer.writeFloat(this.bodyYaw);
+            writer.writeFloat(this.pitch);
             //writer.writeByte((byte)0x80);
             writer.writeByte((byte) (this.teleport ? 0x80 : 0x00));
             this.setData(bos.toByteArray());
@@ -77,13 +77,13 @@ public class MovePlayerPacket extends PEPacket {
         try {
             PEBinaryReader reader = new PEBinaryReader(new ByteArrayInputStream(this.getData()));
             reader.readByte(); //PID
-            this.eid = reader.readInt();
+            this.eid = reader.readLong();
             this.x = reader.readFloat();
             this.y = reader.readFloat();
             this.z = reader.readFloat();
             this.yaw = reader.readFloat();
-            this.pitch = reader.readFloat();
             this.bodyYaw = reader.readFloat();
+            this.pitch = reader.readFloat();
             this.setLength(reader.totallyRead());
         } catch (IOException e) {
         }

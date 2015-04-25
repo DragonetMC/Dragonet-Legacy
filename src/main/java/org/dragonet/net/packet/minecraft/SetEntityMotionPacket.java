@@ -36,7 +36,7 @@ public class SetEntityMotionPacket extends PEPacket {
                 if (d == null) {
                     continue;
                 }
-                writer.writeInt(d.eid);
+                writer.writeLong(d.eid);
                 writer.writeShort((short) ((d.motionX * 8000) & 0xFFFF));
                 writer.writeShort((short) ((d.motionY * 8000) & 0xFFFF));
                 writer.writeShort((short) ((d.motionZ * 8000) & 0xFFFF));
@@ -52,7 +52,7 @@ public class SetEntityMotionPacket extends PEPacket {
 
     public static class EntityMotionData {
 
-        public int eid;
+        public long eid;
         public int motionX;
         public int motionY;
         public int motionZ;

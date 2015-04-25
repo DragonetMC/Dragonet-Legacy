@@ -13,6 +13,9 @@
 package org.dragonet.net;
 
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -42,7 +45,7 @@ public class ClientChunkManager {
 
     @Getter
     private boolean spawned;
-    
+
     public ClientChunkManager(DragonetSession session) {
         this.ticksCountDown = 20;
         this.session = session;
@@ -79,7 +82,7 @@ public class ClientChunkManager {
         }
         this.autoPrepareChunks();
         this.sendChunks();
-        if(spawned == false && this.chunksLoaded.size() > this.session.getDServer().getPlayerSpawnThreshold()){
+        if (spawned == false && this.chunksLoaded.size() > this.session.getDServer().getPlayerSpawnThreshold()) {
             spawned = true;
             LoginStatusPacket pk = new LoginStatusPacket();
             pk.status = LoginStatusPacket.PLAYER_SPAWN;
@@ -198,13 +201,15 @@ public class ClientChunkManager {
             GlowChunkSnapshot chunk = this.getSession().getPlayer().getWorld().getChunkAt(chunkX, chunkZ).getChunkSnapshot();
             ByteArrayOutputStream totalData = new ByteArrayOutputStream();
             PEBinaryWriter writer = new PEBinaryWriter(totalData);
-            if (writer.getEndianness() == PEBinaryUtils.BIG_ENDIAN) {
-                writer.switchEndianness();
-            }
             /*
-            writer.writeInt(chunkX);
-            writer.writeInt(chunkZ);
-            */
+             if (writer.getEndianness() == PEBinaryUtils.BIG_ENDIAN) {
+             writer.switchEndianness();
+             }
+             */
+            /*
+             writer.writeInt(chunkX);
+             writer.writeInt(chunkZ);
+             */
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
                     for (int y = 0; y < 128; y++) {
@@ -251,13 +256,13 @@ public class ClientChunkManager {
                 writer.writeByte((byte) 0x4A);
             }
             /*
-            Deflater deflater = new Deflater(7);
-            deflater.reset();
-            deflater.setInput(totalData.toByteArray());
-            deflater.finish();
-            byte[] bufferDeflate = new byte[65536];
-            int deflatedSize = deflater.deflate(bufferDeflate);
-            */
+             Deflater deflater = new Deflater(7);
+             deflater.reset();
+             deflater.setInput(totalData.toByteArray());
+             deflater.finish();
+             byte[] bufferDeflate = new byte[65536];
+             int deflatedSize = deflater.deflate(bufferDeflate);
+             */
             FullChunkPacket packet = new FullChunkPacket();
             packet.chunkX = chunkX;
             packet.chunkZ = chunkZ;
@@ -265,6 +270,18 @@ public class ClientChunkManager {
             //packet.compressedData = ArrayUtils.subarray(bufferDeflate, 0, deflatedSize);
             this.getSession().send(packet);
             System.out.println("Sent chunk! " + chunkX + ", " + chunkZ);
+
+            File outfile = new File("D:/temp/a/chunk_" + chunkX + "-" + chunkZ + ".bin");
+            DataOutputStream out = null;
+            try {
+                out = new DataOutputStream(new FileOutputStream(outfile));
+                packet.encode();
+                out.write(packet.getData());
+                out.close();
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         } catch (IOException e) {
         }
     }
