@@ -27,7 +27,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.crypto.SecretKey;
@@ -122,6 +124,9 @@ public class DragonetSession extends GlowSession {
     private ArrayList<Integer> queueACK = new ArrayList<>();
     private ArrayList<Integer> queueNACK = new ArrayList<>();
     private HashMap<Integer, RaknetDataPacket> cachedOutgoingPacket = new HashMap<>();
+
+    //Handle spltted packets. 
+    private ConcurrentHashMap<Integer, ByteArrayOutputStream> splits = new ConcurrentHashMap<>();
 
     private @Getter
     BaseTranslator translator;
@@ -482,79 +487,107 @@ public class DragonetSession extends GlowSession {
             return;
         }
         for (EncapsulatedPacket epacket : dataPacket.getEncapsulatedPackets()) {
-            PEPacket packet = Protocol.decode(epacket.buffer);
-            if (packet == null) {
+            if (epacket.hasSplit) {
+                System.out.println("PROCESSING SPLITTED PACKET ID: " + epacket.splitID + ", Index-" + epacket.splitIndex + ", Count-" + epacket.splitCount);
+                //Handle split packet
+                    if (splits.containsKey((Integer) epacket.splitID)) {
+                        byte[] buff = splits.get((Integer) epacket.splitID).toByteArray();
+                        splits.remove((Integer) epacket.splitID);
+                        processPacketBuffer(buff);
+                    }
+                } else {
+                    try {
+                        if (epacket.splitIndex == 0) {
+                            ByteArrayOutputStream oup = new ByteArrayOutputStream();
+                            oup.write(epacket.buffer);
+                            splits.put((Integer) epacket.splitID, oup);
+                        } else {
+                            if (splits.containsKey((Integer) epacket.splitID)) {
+                                splits.get((Integer) epacket.splitID).write(epacket.buffer);
+                            }
+                        }
+                    } catch (IOException ex) {
+                    }
+                }
                 continue;
             }
-            switch (packet.pid()) {
-                case PEPacketIDs.PING:
-                    PingPongPacket pkPong = new PingPongPacket();
-                    pkPong.pingID = ((PingPongPacket) packet).pingID;
-                    this.send(pkPong, 0);
-                    break;
-                case PEPacketIDs.CLIENT_CONNECT:
-                    if (this.loginStage != 0) {
-                        break;
-                    }
-                    this.clientSessionID = ((ClientConnectPacket) packet).sessionID;
-                    ServerHandshakePacket pkServerHandshake = new ServerHandshakePacket();
-                    pkServerHandshake.addr = this.getAddress().getAddress();
-                    pkServerHandshake.port = (short) (0 & 0xFFFF);
-                    pkServerHandshake.session = this.clientSessionID;
-                    pkServerHandshake.session2 = this.clientSessionID + 1000L;
-                    this.loginStage = 1;
-                    this.send(pkServerHandshake);
-                    break;
-                case PEPacketIDs.CLIENT_HANDSHAKE:
-                    if (this.loginStage != 1) {
-                        break;
-                    }
-                    this.loginStage = 2;
-                    break;
-                case PEPacketIDs.LOGIN_PACKET:
-                    if (this.loginStage != 2) {
-                        break;
-                    }
-                    LoginPacket packetLogin = (LoginPacket) packet;
-                    this.username = packetLogin.username;
+            processPacketBuffer(epacket.buffer);
+        }
+    }
 
-                    this.translator = TranslatorProvider.getByPEProtocolID(this, packetLogin.protocol1);
-                    if (!(this.translator instanceof BaseTranslator)) {
-                        LoginStatusPacket pkLoginStatus = new LoginStatusPacket();
-                        pkLoginStatus.status = LoginStatusPacket.LOGIN_FAILED_CLIENT;
-                        this.send(pkLoginStatus);
-                        this.disconnect("Unsupported game version! ");
-                        break;
-                    }
+    private void processPacketBuffer(byte[] buffer) {
+        PEPacket packet = Protocol.decode(buffer);
+        if (packet == null) {
+            return;
+        }
+        switch (packet.pid()) {
+            case PEPacketIDs.PING:
+                PingPongPacket pkPong = new PingPongPacket();
+                pkPong.pingID = ((PingPongPacket) packet).pingID;
+                this.send(pkPong, 0);
+                break;
+            case PEPacketIDs.CLIENT_CONNECT:
+                if (this.loginStage != 0) {
+                    break;
+                }
+                this.clientSessionID = ((ClientConnectPacket) packet).sessionID;
+                ServerHandshakePacket pkServerHandshake = new ServerHandshakePacket();
+                pkServerHandshake.addr = this.getAddress().getAddress();
+                pkServerHandshake.port = (short) (0 & 0xFFFF);
+                pkServerHandshake.session = this.clientSessionID;
+                pkServerHandshake.session2 = this.clientSessionID + 1000L;
+                this.loginStage = 1;
+                this.send(pkServerHandshake);
+                break;
+            case PEPacketIDs.CLIENT_HANDSHAKE:
+                if (this.loginStage != 1) {
+                    break;
+                }
+                this.loginStage = 2;
+                break;
+            case PEPacketIDs.LOGIN_PACKET:
+                if (this.loginStage != 2) {
+                    break;
+                }
+                LoginPacket packetLogin = (LoginPacket) packet;
+                this.username = packetLogin.username;
 
+                this.translator = TranslatorProvider.getByPEProtocolID(this, packetLogin.protocol1);
+                if (!(this.translator instanceof BaseTranslator)) {
                     LoginStatusPacket pkLoginStatus = new LoginStatusPacket();
-                    pkLoginStatus.status = 0;
+                    pkLoginStatus.status = LoginStatusPacket.LOGIN_FAILED_CLIENT;
                     this.send(pkLoginStatus);
-
-                    this.getLogger().info("Accepted connection by [" + this.username + "]. ");
-
-                    Matcher matcher = patternUsername.matcher(this.username);
-                    if (!matcher.matches()) {
-                        this.disconnect("Bad username! ");
-                        break;
-                    }
-
-                    this.loginStage = 3;
-                    this.setPlayer(new PlayerProfile(this.username, UUID.nameUUIDFromBytes(("OfflinePlayer:" + this.username).getBytes(StandardCharsets.UTF_8))));
+                    this.disconnect("Unsupported game version! ");
                     break;
-                case PEPacketIDs.DISCONNECT_PACKET:
-                    this.onDisconnect();
+                }
+
+                LoginStatusPacket pkLoginStatus = new LoginStatusPacket();
+                pkLoginStatus.status = 0;
+                this.send(pkLoginStatus);
+
+                this.getLogger().info("Accepted connection by [" + this.username + "]. ");
+
+                Matcher matcher = patternUsername.matcher(this.username);
+                if (!matcher.matches()) {
+                    this.disconnect("Bad username! ");
                     break;
-                default:
-                    if (this.loginStage != 3) {
-                        break;
-                    }
-                    if (!(this.translator instanceof BaseTranslator)) {
-                        break;
-                    }
-                    this.dServer.getThreadPool().submit(new ProcessPEPacketTask(this, packet));
+                }
+
+                this.loginStage = 3;
+                this.setPlayer(new PlayerProfile(this.username, UUID.nameUUIDFromBytes(("OfflinePlayer:" + this.username).getBytes(StandardCharsets.UTF_8))));
+                break;
+            case PEPacketIDs.DISCONNECT_PACKET:
+                this.onDisconnect();
+                break;
+            default:
+                if (this.loginStage != 3) {
                     break;
-            }
+                }
+                if (!(this.translator instanceof BaseTranslator)) {
+                    break;
+                }
+                this.dServer.getThreadPool().submit(new ProcessPEPacketTask(this, packet));
+                break;
         }
     }
 
