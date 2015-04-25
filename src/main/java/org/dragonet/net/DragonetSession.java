@@ -390,17 +390,17 @@ public class DragonetSession extends GlowSession {
         if (!(packet instanceof PEPacket)) {
             return;
         }
+        /*
         if (!(packet instanceof FullChunkPacket) && !(packet instanceof StartGamePacket) && !(packet instanceof SetTimePacket) && !(packet instanceof SetDifficultyPacket)
                 && !(packet instanceof LoginStatusPacket) && !(packet instanceof ServerHandshakePacket) && this.sentAndReceivedChunks != -1) {
             this.queueAfterChunkSent.add(packet);
             return;
-        }
+        }*/
         packet.encode();
         if (packet.getData().length > this.clientMTU + 1 && !(packet instanceof BatchPacket)) {
             //BATCH PACKET
             BatchPacket pk = new BatchPacket();
             pk.packets.add(packet);
-            pk.encode();
             send(pk, reliability);
             System.out.println("Using BATCH PACKET for " + packet.getClass().getSimpleName());
             return;
