@@ -14,6 +14,11 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.dragonet.PocketPotionEffect;
+import org.dragonet.entity.DragonetPlayer;
+import org.dragonet.net.packet.minecraft.MobEffectPacket;
 import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.annotations.JSFunction;
 
@@ -143,7 +148,7 @@ public class PlayerAPI extends ScriptableObject
     {
         Player plr = (Player) player;
         
-        if(worldName != "")
+        if(!worldName.equals(""))
         {
             plr.teleport(new Location(org.dragonet.DragonetServer.instance().getServer().getWorld(worldName), x, y, z));
         }
@@ -154,8 +159,19 @@ public class PlayerAPI extends ScriptableObject
     }
     
     @JSFunction
-    public static void addPotionEffect()
+    public static void addPotionEffect(Object player, int effectID, int duration, int amp, boolean areParticles)
     {
-        //TODO for 0.11.0
+        if(player instanceof DragonetPlayer)
+        {         
+            //TODO for MC:PE
+        }
+        else         
+        {
+            PotionEffect effectPC = new PotionEffect(PotionEffectType.getById(effectID), duration, amp, !areParticles);
+            
+            Player plr = (Player) player;
+            
+            plr.addPotionEffect(effectPC);
+        }
     }
 }
