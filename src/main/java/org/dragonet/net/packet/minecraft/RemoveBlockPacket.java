@@ -19,7 +19,7 @@ import org.dragonet.utilities.io.PEBinaryReader;
 
 public class RemoveBlockPacket extends PEPacket {
 
-    public int eid;
+    public long eid;
     public int x;
     public int z;
     public int y;
@@ -42,7 +42,7 @@ public class RemoveBlockPacket extends PEPacket {
         try {
             PEBinaryReader reader = new PEBinaryReader(new ByteArrayInputStream(this.getData()));
             reader.readByte();
-            this.eid = reader.readInt();
+            this.eid = reader.readLong();
             this.x = reader.readInt();
             this.z = reader.readInt();
             this.y = reader.readByte();

@@ -21,6 +21,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.dragonet.net.DragonetSession;
+import org.dragonet.net.packet.minecraft.PEPacket;
+import org.dragonet.net.packet.minecraft.PlayerEquipmentPacket;
 import org.dragonet.net.packet.minecraft.UseItemPacket;
 import org.dragonet.net.translator.PEPacketTranslatorToPC;
 import org.dragonet.net.translator.Translator_v0_11;
@@ -49,6 +51,20 @@ public class UseItemPacketTranslator extends PEPacketTranslatorToPC<Translator_v
         if (!(pkUseItem.face > 0 && pkUseItem.face < 6)) {
             return null;
         }
+        
+        //Check the slot
+        ItemStack test_holding = this.getSession().getPlayer().getInventory().getItemInHand();
+        if(packet.item != this.getTranslator().getItemTranslator().translateToPE(test_holding.getTypeId()) ||
+           packet.meta != test_holding.getDurability()){
+            //Not same, resend
+            PlayerEquipmentPacket pkRet = new PlayerEquipmentPacket();
+            pkRet.eid = this.getSession().getPlayer().getEntityId();
+            pkRet.item = (short)(this.getTranslator().getItemTranslator().translateToPE(test_holding.getTypeId()) & 0xFFFF);
+            pkRet.meta = test_holding.getDurability();
+            pkRet.selectedSlot = this.getSession().getPlayer().getInventory().getHeldItemSlot();
+            return new PEPacket[]{pkRet};//Fix the slot
+        }
+        
         //Copied from Glowstone class BlockPlacementHandler
 
         GlowBlock clicked = this.getSession().getPlayer().getWorld().getBlockAt(pkUseItem.x, pkUseItem.y, pkUseItem.z);

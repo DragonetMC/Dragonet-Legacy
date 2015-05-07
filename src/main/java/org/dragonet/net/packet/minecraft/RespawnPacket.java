@@ -16,14 +16,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
-public class RemovePlayerPacket extends PEPacket {
+public class RespawnPacket extends PEPacket {
 
-    public long eid;
-    public long clientID;
+    public float x;
+    public float y;
+    public float z;
 
     @Override
     public int pid() {
-        return PEPacketIDs.REMOVE_PLAYER_PACKET;
+        return PEPacketIDs.RESPAWN_PACKET;
     }
 
     @Override
@@ -32,8 +33,9 @@ public class RemovePlayerPacket extends PEPacket {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PEBinaryWriter writer = new PEBinaryWriter(bos);
             writer.writeByte((byte) (this.pid() & 0xFF));
-            writer.writeLong(this.eid);
-            writer.writeLong(this.clientID);
+            writer.writeFloat(x);
+            writer.writeFloat(y);
+            writer.writeFloat(z);
             this.setData(bos.toByteArray());
         } catch (IOException e) {
         }

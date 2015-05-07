@@ -32,6 +32,7 @@ import net.glowstone.net.message.play.entity.SpawnObjectMessage;
 import net.glowstone.net.message.play.entity.SpawnPlayerMessage;
 import net.glowstone.net.message.play.game.BlockChangeMessage;
 import net.glowstone.net.message.play.game.ChatMessage;
+import net.glowstone.net.message.play.game.HealthMessage;
 import net.glowstone.net.message.play.game.MultiBlockChangeMessage;
 import net.glowstone.net.message.play.game.PositionRotationMessage;
 import net.glowstone.net.message.play.game.StateChangeMessage;
@@ -125,6 +126,7 @@ public class Translator_v0_11 extends BaseTranslator {
         mapToPE.put(SpawnPlayerMessage.class, new SpawnPlayerMessageTranslator(this, this.getSession()));
         mapToPE.put(StateChangeMessage.class, new StateChangeMessageTranslator(this, this.getSession()));
         mapToPE.put(TimeMessage.class, new TimeMessageTranslator(this, this.getSession()));
+        mapToPE.put(HealthMessage.class, new HealthMessageTranslator(this, this.getSession()));
 
         // [PE => PC]
         mapToPC.put(AnimatePacket.class, new AnimatePacketTranslator(this, this.getSession()));

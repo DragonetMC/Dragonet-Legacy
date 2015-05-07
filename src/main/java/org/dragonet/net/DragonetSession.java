@@ -748,12 +748,14 @@ public class DragonetSession extends GlowSession {
         SetTimePacket pkTime = new SetTimePacket((int) (this.getPlayer().getWorld().getTime() & 0xFFFFFFFF), false);
         this.send(pkTime);
 
+        /*
         //Send Spawn Position
         SetSpawnPositionPacket pkSpawnPos = new SetSpawnPositionPacket();
         pkSpawnPos.x = this.player.getLocation().getBlockX();
         pkSpawnPos.y = this.player.getLocation().getBlockY();
         pkSpawnPos.z = this.player.getLocation().getBlockZ();
         this.send(pkSpawnPos);
+        */
 
         //Send Health
         SetHealthPacket pkHealth = new SetHealthPacket((int) Math.floor(this.getPlayer().getHealth()));

@@ -20,10 +20,11 @@ import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class PlayerEquipmentPacket extends PEPacket {
 
-    public int eid;
+    public long eid;
     public short item;
     public short meta;
     public int slot;
+    public int selectedSlot;
 
     public PlayerEquipmentPacket() {
     }
@@ -43,10 +44,11 @@ public class PlayerEquipmentPacket extends PEPacket {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PEBinaryWriter writer = new PEBinaryWriter(bos);
             writer.writeByte((byte) (this.pid() & 0xFF));
-            writer.writeInt(eid);
+            writer.writeLong(eid);
             writer.writeShort(item);
             writer.writeShort(meta);
             writer.writeByte((byte) (slot & 0xFF));
+            writer.writeByte((byte) (selectedSlot & 0xFF));
             this.setData(bos.toByteArray());
         } catch (IOException e) {
 

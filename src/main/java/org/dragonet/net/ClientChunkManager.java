@@ -243,14 +243,14 @@ public class ClientChunkManager {
                 writer.writeByte((byte) 0x00);
             }
 
-            //Biome IDs
+            //Height Map
             for (int i = 0; i < 256; i++) {
                 writer.writeByte((byte) 0xFF);
             }
 
             //Biome Colors
             for (int i = 0; i < 256; i++) {
-                writer.writeByte((byte) 0x00);
+                writer.writeByte((byte) 0x01);
                 writer.writeByte((byte) 0x85);
                 writer.writeByte((byte) 0xB2);
                 writer.writeByte((byte) 0x4A);
