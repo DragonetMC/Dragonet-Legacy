@@ -62,7 +62,8 @@ public class UseItemPacketTranslator extends PEPacketTranslatorToPC<Translator_v
             pkRet.item = (short)(this.getTranslator().getItemTranslator().translateToPE(test_holding.getTypeId()) & 0xFFFF);
             pkRet.meta = test_holding.getDurability();
             pkRet.selectedSlot = this.getSession().getPlayer().getInventory().getHeldItemSlot();
-            return new PEPacket[]{pkRet};//Fix the slot
+            getSession().send(pkRet);
+            return null;
         }
         
         //Copied from Glowstone class BlockPlacementHandler
