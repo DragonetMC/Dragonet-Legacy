@@ -27,17 +27,17 @@ public class EntityMetadataMessageTranslator extends MessageTranslatorToPE<Trans
             if (this.getTranslator().cachedSpawnObjects.containsKey(packet.id)) {
                 //Spawn it :) 
                 SpawnObjectMessage msgObj = this.getTranslator().cachedSpawnObjects.get(packet.id);
-                this.getTranslator().cachedSpawnObjects.remove(packet.id); //Remove it
                 switch (msgObj.type) {
                     case 2: //Dropped Item
                         AddItemEntityPacket pkAddItemEntity = new AddItemEntityPacket();
                         pkAddItemEntity.eid = msgObj.id;
                         pkAddItemEntity.item = new PEInventorySlot((short) (((ItemStack) packet.entries.get(0).value).getTypeId() & 0xFFFF), (byte) (((ItemStack) packet.entries.get(0).value).getAmount() & 0xFF), (short) (((ItemStack) packet.entries.get(0).value).getDurability() & 0xFFFF));
-                        pkAddItemEntity.x = (float) (msgObj.x / 32);
-                        pkAddItemEntity.y = (float) (msgObj.y / 32);
-                        pkAddItemEntity.z = (float) (msgObj.z / 32);
+                        pkAddItemEntity.x = (float) msgObj.velX / 32;
+                        pkAddItemEntity.y = (float) msgObj.velY / 32;
+                        pkAddItemEntity.z = (float) msgObj.velZ / 32;
                         return new PEPacket[]{pkAddItemEntity};
                 }
+                this.getTranslator().cachedSpawnObjects.remove(packet.id); //Remove it
             } else {
                 return null;
             }
