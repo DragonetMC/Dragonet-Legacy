@@ -21,7 +21,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.dragonet.net.DragonetSession;
-import org.dragonet.net.packet.minecraft.PEPacket;
 import org.dragonet.net.packet.minecraft.PlayerEquipmentPacket;
 import org.dragonet.net.packet.minecraft.UseItemPacket;
 import org.dragonet.net.translator.PEPacketTranslatorToPC;
