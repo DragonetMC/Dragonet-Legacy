@@ -28,6 +28,7 @@ import net.glowstone.net.message.play.entity.EntityEquipmentMessage;
 import net.glowstone.net.message.play.entity.EntityMetadataMessage;
 import net.glowstone.net.message.play.entity.EntityVelocityMessage;
 import net.glowstone.net.message.play.entity.RelativeEntityPositionMessage;
+import net.glowstone.net.message.play.entity.RelativeEntityPositionRotationMessage;
 import net.glowstone.net.message.play.entity.SpawnObjectMessage;
 import net.glowstone.net.message.play.entity.SpawnPlayerMessage;
 import net.glowstone.net.message.play.game.BlockChangeMessage;
@@ -120,6 +121,7 @@ public class Translator_v0_11 extends BaseTranslator {
         mapToPE.put(PlayerPositionMessage.class, new PlayerPositionMessageTranslator(this, this.getSession()));
         mapToPE.put(PositionRotationMessage.class, new PositionRotationMessageTranslator(this, this.getSession()));
         mapToPE.put(RelativeEntityPositionMessage.class, new RelativeEntityPositionMessageTranslator(this, this.getSession()));
+        mapToPE.put(RelativeEntityPositionRotationMessage.class, new RelativeEntityPositionRotationMessageTranslator(this, this.getSession()));
         mapToPE.put(SetWindowContentsMessage.class, new SetWindowContentsMessageTranslator(this, this.getSession()));
         mapToPE.put(SetWindowSlotMessage.class, new SetWindowSlotMessageTranslator(this, this.getSession()));
         mapToPE.put(SpawnObjectMessage.class, new SpawnObjectMessageTranslator(this, this.getSession()));

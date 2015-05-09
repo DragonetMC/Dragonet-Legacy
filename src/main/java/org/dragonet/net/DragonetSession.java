@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.crypto.SecretKey;
@@ -919,7 +918,7 @@ public class DragonetSession extends GlowSession {
             return false;
         }
         //Check block stucking
-        if (!newLoc.getWorld().getName().equals(this.getPlayer().getLocation().getWorld())) {
+        if (!newLoc.getWorld().getName().equals(this.getPlayer().getLocation().getWorld().getName())) {
             newLoc.setWorld(this.getPlayer().getLocation().getWorld());
         }
         Block block = this.getPlayer().getWorld().getBlockAt(newLoc);

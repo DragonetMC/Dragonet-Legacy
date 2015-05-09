@@ -94,6 +94,7 @@ public class EncapsulatedPacket extends BinaryPacket {
      * @return Encoded bytes array
      */
     public static byte[] toBinary(EncapsulatedPacket packet) {
+        if(packet == null) return null;
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PEBinaryWriter writer = new PEBinaryWriter(bos);
@@ -154,7 +155,7 @@ public class EncapsulatedPacket extends BinaryPacket {
             return new EncapsulatedPacket[]{singlePacket};
         } else {
             //Not fit in one packet, need to be splitted
-            System.out.println("DATALEN = " + data.length + ", MTU = " + session.getClientMTU());
+            //System.out.println("DATALEN = " + data.length + ", MTU = " + session.getClientMTU());
             byte[][] multipleData = ArraySplitter.splitArray(data, session.getClientMTU() - 34);
             EncapsulatedPacket[] encapsulatedPackets = new EncapsulatedPacket[multipleData.length];
 

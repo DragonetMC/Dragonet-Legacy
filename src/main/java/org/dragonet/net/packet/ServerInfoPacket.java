@@ -32,7 +32,7 @@ public class ServerInfoPacket extends BinaryPacket {
             writer.writeLong(this.time);
             writer.writeLong(this.serverID);
             writer.write(RaknetConstants.magic);
-            writer.writeString("MCCPP;MINECON;" + this.serverName);
+            writer.writeString("MCPE;Dragonet Server;25;0.11.0b9");
             this.setData(bos.toByteArray());
         } catch (IOException e) {
             this.setData(new byte[0]);
