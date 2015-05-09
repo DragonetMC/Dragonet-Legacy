@@ -10,7 +10,9 @@
 
 package org.dragonet.rhino.api.functions;
 
+import net.glowstone.entity.passive.GlowChicken;
 import net.glowstone.entity.passive.GlowPig;
+import net.glowstone.entity.passive.GlowSheep;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -79,11 +81,21 @@ public class WorldAPI extends ScriptableObject
     @JSFunction
     public static void spawnMob(String worldName, int x, int y, int z, String entityType)
     {
-        if(entityType.equalsIgnoreCase("Pig"))
-        {
-            GlowPig pig = new GlowPig(new Location(org.dragonet.DragonetServer.instance().getServer().getWorld(worldName), x, y, z));
-            
-            //pig.createSpawnMessage();
-        }
+            if(entityType.equalsIgnoreCase("Pig"))
+            {
+                GlowPig pig = new GlowPig(new Location(org.dragonet.DragonetServer.instance().getServer().getWorld(worldName), x, y, z));
+            }
+            else if(entityType.equalsIgnoreCase("Sheep"))
+            {
+                GlowSheep sheep = new GlowSheep(new Location(org.dragonet.DragonetServer.instance().getServer().getWorld(worldName), x, y, z));
+            }
+            else if(entityType.equalsIgnoreCase("Chicken"))
+            {
+                GlowChicken chicken = new GlowChicken(new Location(org.dragonet.DragonetServer.instance().getServer().getWorld(worldName), x, y, z));
+            }
+            else
+            {
+                throw new UnsupportedOperationException("Entity provided either does not exist or is not implemented!");
+            }
     }
 }

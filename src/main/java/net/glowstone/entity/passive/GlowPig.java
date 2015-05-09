@@ -8,9 +8,12 @@ import net.glowstone.net.message.play.entity.EntityMetadataMessage;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Pig;
-
 import java.util.List;
 
+/**
+ *
+ * @author gabizou (Taken from his PR found here: https://github.com/GlowstoneMC/Glowstone/pull/599/files)
+ */
 public class GlowPig extends GlowAnimal implements Pig {
 
     private boolean hasSaddle;
