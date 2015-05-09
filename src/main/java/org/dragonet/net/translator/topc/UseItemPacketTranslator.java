@@ -22,6 +22,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.dragonet.net.DragonetSession;
 import org.dragonet.net.packet.minecraft.PlayerEquipmentPacket;
+import org.dragonet.net.packet.minecraft.UpdateBlockPacket;
 import org.dragonet.net.packet.minecraft.UseItemPacket;
 import org.dragonet.net.translator.PEPacketTranslatorToPC;
 import org.dragonet.net.translator.Translator_v0_11;
@@ -31,8 +32,8 @@ public class UseItemPacketTranslator extends PEPacketTranslatorToPC<Translator_v
     public UseItemPacketTranslator(Translator_v0_11 translator, DragonetSession session) {
         super(translator, session);
     }
-    
-        static BlockFace convertFace(int direction) {
+
+    static BlockFace convertFace(int direction) {
         if (direction >= 0 && direction < faces.length) {
             return faces[direction];
         } else {
@@ -50,23 +51,32 @@ public class UseItemPacketTranslator extends PEPacketTranslatorToPC<Translator_v
         if (!(pkUseItem.face > 0 && pkUseItem.face < 6)) {
             return null;
         }
-        
+
         //Check the slot
         ItemStack test_holding = this.getSession().getPlayer().getInventory().getItemInHand();
-        if(packet.item != this.getTranslator().getItemTranslator().translateToPE(test_holding.getTypeId()) ||
-           packet.meta != test_holding.getDurability()){
-            //Not same, resend
+        if (packet.item != this.getTranslator().getItemTranslator().translateToPE(test_holding.getTypeId())
+                || packet.meta != test_holding.getDurability()) {
+            //Not same, resend slot
             PlayerEquipmentPacket pkRet = new PlayerEquipmentPacket();
             pkRet.eid = this.getSession().getPlayer().getEntityId();
-            pkRet.item = (short)(this.getTranslator().getItemTranslator().translateToPE(test_holding.getTypeId()) & 0xFFFF);
+            pkRet.item = (short) (this.getTranslator().getItemTranslator().translateToPE(test_holding.getTypeId()) & 0xFFFF);
             pkRet.meta = test_holding.getDurability();
             pkRet.selectedSlot = this.getSession().getPlayer().getInventory().getHeldItemSlot();
+            //Resend block
+            UpdateBlockPacket pkUpdateBlock = new UpdateBlockPacket();
+            UpdateBlockPacket.UpdateBlockRecord blockRec = new UpdateBlockPacket.UpdateBlockRecord();
+            blockRec.x = packet.x;
+            blockRec.z = packet.z;
+            blockRec.y = (byte) (packet.y & 0xFF);
+            blockRec.block = (byte) (this.getSession().getPlayer().getWorld().getBlockAt(pkUseItem.x, pkUseItem.y, pkUseItem.z).getTypeId() & 0xFF);
+            blockRec.meta = (byte) (this.getSession().getPlayer().getWorld().getBlockAt(pkUseItem.x, pkUseItem.y, pkUseItem.z).getData() & 0xFF);
+            pkUpdateBlock.records = new UpdateBlockPacket.UpdateBlockRecord[]{blockRec};
             getSession().send(pkRet);
+            getSession().send(pkUpdateBlock);
             return null;
         }
-        
-        //Copied from Glowstone class BlockPlacementHandler
 
+        //Copied from Glowstone class BlockPlacementHandler
         GlowBlock clicked = this.getSession().getPlayer().getWorld().getBlockAt(pkUseItem.x, pkUseItem.y, pkUseItem.z);
         GlowPlayer player = this.getSession().getPlayer();
         ItemStack holding = this.getSession().getPlayer().getInventory().getItemInHand();
@@ -80,7 +90,7 @@ public class UseItemPacketTranslator extends PEPacketTranslatorToPC<Translator_v
         // call interact event
         PlayerInteractEvent event = EventFactory.onPlayerInteract(player, Action.RIGHT_CLICK_BLOCK, clicked, convertFace(pkUseItem.face));
 
-                // attempt to use interacted block
+        // attempt to use interacted block
         // DEFAULT is treated as ALLOW, and sneaking is always considered
         boolean useInteractedBlock = event.useInteractedBlock() != Event.Result.DENY;
         if (useInteractedBlock && clicked != null && (!player.isSneaking() || this.getSession().getPlayer().getInventory().getItemInHand() == null)) {
@@ -90,7 +100,7 @@ public class UseItemPacketTranslator extends PEPacketTranslatorToPC<Translator_v
             useInteractedBlock = false;
         }
 
-                // attempt to use item in hand
+        // attempt to use item in hand
         // follows ALLOW/DENY: default to if no block was interacted with
         if ((event.useItemInHand() == Event.Result.DEFAULT ? !useInteractedBlock : event.useItemInHand() == Event.Result.ALLOW) && holding != null) {
             // call out to the item type to determine the appropriate right-click action
@@ -102,7 +112,7 @@ public class UseItemPacketTranslator extends PEPacketTranslatorToPC<Translator_v
             }
         }
 
-                // if anything was actually clicked, make sure the player's up to date
+        // if anything was actually clicked, make sure the player's up to date
         // in case something is unimplemented or otherwise screwy on our side
         if (clicked != null) {
             player.sendBlockChange(clicked.getLocation(), clicked.getType(), clicked.getData());
@@ -127,7 +137,7 @@ public class UseItemPacketTranslator extends PEPacketTranslatorToPC<Translator_v
                 holding = null;
             }
         }
-        
+
         return null;
     }
 

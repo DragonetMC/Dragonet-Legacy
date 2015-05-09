@@ -68,6 +68,7 @@ import org.dragonet.net.packet.minecraft.FullChunkPacket;
 import org.dragonet.net.packet.minecraft.LoginPacket;
 import org.dragonet.net.packet.minecraft.LoginStatusPacket;
 import org.dragonet.net.packet.minecraft.MoveEntitiesPacket;
+import org.dragonet.net.packet.minecraft.MovePlayerPacket;
 import org.dragonet.net.packet.minecraft.PEPacket;
 import org.dragonet.net.packet.minecraft.PEPacketIDs;
 import org.dragonet.net.packet.minecraft.PingPongPacket;
@@ -885,6 +886,7 @@ public class DragonetSession extends GlowSession {
         if (this.getPlayer() == null) {
             return;
         }
+        /*
         MoveEntitiesPacket.MoveEntityData d = new MoveEntitiesPacket.MoveEntityData();
         d.eid = this.getPlayer().getEntityId();
         d.x = (float) this.getPlayer().getLocation().getX();
@@ -893,6 +895,16 @@ public class DragonetSession extends GlowSession {
         d.yaw = this.getPlayer().getLocation().getYaw();
         d.pitch = this.getPlayer().getLocation().getPitch();
         MoveEntitiesPacket pkMovePlayer = new MoveEntitiesPacket(new MoveEntitiesPacket.MoveEntityData[]{d});
+        */
+        MovePlayerPacket pkMovePlayer = new MovePlayerPacket();
+        pkMovePlayer.eid = this.getPlayer().getEntityId();
+        pkMovePlayer.x = (float) this.getPlayer().getLocation().getX();
+        pkMovePlayer.y = (float) this.getPlayer().getLocation().getY();
+        pkMovePlayer.z = (float) this.getPlayer().getLocation().getZ();
+        pkMovePlayer.yaw = this.getPlayer().getLocation().getYaw();
+        pkMovePlayer.bodyYaw = this.getPlayer().getLocation().getYaw();
+        pkMovePlayer.pitch = this.getPlayer().getLocation().getPitch();
+        pkMovePlayer.teleport = true;
         this.send(pkMovePlayer);
     }
 

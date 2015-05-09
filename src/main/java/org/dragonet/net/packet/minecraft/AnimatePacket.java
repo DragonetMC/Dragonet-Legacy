@@ -19,7 +19,7 @@ import org.dragonet.utilities.io.PEBinaryWriter;
 public class AnimatePacket extends PEPacket {
 
     public byte action;
-    public int eid;
+    public long eid;
 
     @Override
     public int pid() {

@@ -60,7 +60,7 @@ public class PlayerEquipmentPacket extends PEPacket {
         try {
             PEBinaryReader reader = new PEBinaryReader(new ByteArrayInputStream(this.getData()));
             reader.readByte();
-            this.eid = reader.readInt();
+            this.eid = reader.readLong();
             this.item = reader.readShort();
             this.meta = reader.readShort();
             this.slot = reader.readByte() & 0xFF;

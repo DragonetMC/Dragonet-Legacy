@@ -60,7 +60,7 @@ public class MovePlayerPacket extends PEPacket {
             writer.writeByte((byte) (this.pid() & 0xFF));
             writer.writeLong(this.eid);
             writer.writeFloat(this.x);
-            writer.writeFloat(this.y);
+            writer.writeFloat(this.y + 1.62f);
             writer.writeFloat(this.z);
             writer.writeFloat(this.yaw);
             writer.writeFloat(this.bodyYaw);
@@ -79,7 +79,7 @@ public class MovePlayerPacket extends PEPacket {
             reader.readByte(); //PID
             this.eid = reader.readLong();
             this.x = reader.readFloat();
-            this.y = reader.readFloat();
+            this.y = reader.readFloat() - 1.62f;
             this.z = reader.readFloat();
             this.yaw = reader.readFloat();
             this.bodyYaw = reader.readFloat();

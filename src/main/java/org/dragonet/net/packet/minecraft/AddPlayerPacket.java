@@ -21,19 +21,19 @@ public class AddPlayerPacket extends PEPacket {
 
     public long clientID;
     public String username;
-    public int eid;
+    public long eid;
     public float x;
     public float y;
     public float z;
     public float speedX;
     public float speedY;
     public float speedZ;
-    public int yaw;
-    public int pitch;
+    public float yaw;
+    public float pitch;
     public short item;
     public short meta;
     public boolean slim;
-    public String skin;
+    public byte[] skin;
     public EntityMetaData metadata;
 
     @Override
@@ -62,7 +62,8 @@ public class AddPlayerPacket extends PEPacket {
             writer.writeShort(this.item);
             writer.writeShort(this.meta);
             writer.writeByte(this.slim ? (byte)1 : (byte)0);
-            writer.writeString(this.skin);
+            writer.writeShort((short)(this.skin.length & 0xFFFF));
+            writer.write(this.skin);
             writer.write(this.metadata.encode());
             this.setData(bos.toByteArray());
         } catch (IOException e) {
