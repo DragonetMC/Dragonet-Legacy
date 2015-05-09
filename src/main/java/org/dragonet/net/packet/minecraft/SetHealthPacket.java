@@ -38,7 +38,7 @@ public class SetHealthPacket extends PEPacket {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PEBinaryWriter writer = new PEBinaryWriter(bos);
             writer.writeByte((byte) (this.pid() & 0xFF));
-            writer.writeByte((byte) (this.health & 0xFF));
+            writer.writeInt(this.health);
             this.setData(bos.toByteArray());
         } catch (IOException e) {
         }
