@@ -14,7 +14,6 @@ import java.net.URL;
 public class SkinDownloader {
     public static byte[] download(String username)
     {
- 
         try {
             URL url = new URL(String.format("http://s3.amazonaws.com/MinecraftSkins/%s.png", username));
              

@@ -15,6 +15,7 @@ package org.dragonet.net.packet;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.dragonet.net.RaknetConstants;
+import org.dragonet.utilities.DragonetVersioning;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class ServerInfoPacket extends BinaryPacket {
@@ -32,7 +33,7 @@ public class ServerInfoPacket extends BinaryPacket {
             writer.writeLong(this.time);
             writer.writeLong(this.serverID);
             writer.write(RaknetConstants.magic);
-            writer.writeString("MCPE;Dragonet Server;25;0.11.0b9");
+            writer.writeString("MCPE;" + serverName + ";25;MCPC " + DragonetVersioning.MINECRAFT_PC_VERSION + ", MCPE " + DragonetVersioning.MINECRAFT_PE_VERSION);
             this.setData(bos.toByteArray());
         } catch (IOException e) {
             this.setData(new byte[0]);

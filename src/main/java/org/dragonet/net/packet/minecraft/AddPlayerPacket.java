@@ -15,6 +15,7 @@ package org.dragonet.net.packet.minecraft;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.dragonet.entity.metadata.EntityMetaData;
+import org.dragonet.utilities.DefaultSkin;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class AddPlayerPacket extends PEPacket {
@@ -62,8 +63,8 @@ public class AddPlayerPacket extends PEPacket {
             writer.writeShort(this.item);
             writer.writeShort(this.meta);
             writer.writeByte(this.slim ? (byte)1 : (byte)0);
-            writer.writeShort((short)(this.skin.length & 0xFFFF));
-            writer.write(this.skin);
+            writer.writeShort((short)(DefaultSkin.getDefaultSkin().length & 0xFFFF)); //DEFAULT SKIN
+            writer.write(DefaultSkin.getDefaultSkin());
             writer.write(this.metadata.encode());
             this.setData(bos.toByteArray());
         } catch (IOException e) {

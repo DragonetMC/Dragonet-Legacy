@@ -13,6 +13,7 @@
 package org.dragonet.net.packet.minecraft;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import org.dragonet.utilities.io.PEBinaryReader;
 
@@ -24,7 +25,7 @@ public class LoginPacket extends PEPacket {
     public int clientIntID;
     
     public boolean slim;
-    public String skin;
+    public byte[] skin;
 
     public LoginPacket(byte[] data) {
         this.setData(data);
@@ -49,7 +50,8 @@ public class LoginPacket extends PEPacket {
             this.protocol2 = reader.readInt();
             this.clientIntID = reader.readInt();
             this.slim = (reader.readByte() & 0xF) > 0;
-            this.skin = reader.readString();
+            int len = reader.readShort();
+            this.skin = reader.read(len);
             this.setLength(reader.totallyRead());
         } catch (IOException e) {
         }
