@@ -14,6 +14,7 @@ package org.dragonet.entity.metadata.type;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import org.dragonet.entity.metadata.EntityMetaData;
 import org.dragonet.entity.metadata.EntityMetaDataObject;
 
 public class ShortMeta implements EntityMetaDataObject {
@@ -26,7 +27,7 @@ public class ShortMeta implements EntityMetaDataObject {
 
     @Override
     public int type() {
-        return 1;
+        return EntityMetaData.Constants.DATA_TYPE_SHORT;
     }
 
     @Override

@@ -14,15 +14,16 @@ package org.dragonet.entity.metadata.type;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import org.dragonet.entity.metadata.EntityMetaData;
 import org.dragonet.entity.metadata.EntityMetaDataObject;
 
-public class SmallCoordinateMeta implements EntityMetaDataObject {
+public class SlotMeta implements EntityMetaDataObject {
 
     public short data1;
     public byte data2;
     public short data3;
 
-    public SmallCoordinateMeta(short data1, byte data2, short data3) {
+    public SlotMeta(short data1, byte data2, short data3) {
         this.data1 = data1;
         this.data2 = data2;
         this.data3 = data3;
@@ -30,7 +31,7 @@ public class SmallCoordinateMeta implements EntityMetaDataObject {
 
     @Override
     public int type() {
-        return 5;
+        return EntityMetaData.Constants.DATA_TYPE_SLOT;
     }
 
     @Override

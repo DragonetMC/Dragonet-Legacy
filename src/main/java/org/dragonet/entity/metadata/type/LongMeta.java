@@ -12,24 +12,30 @@
  */
 package org.dragonet.entity.metadata.type;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import org.dragonet.entity.metadata.EntityMetaData;
 import org.dragonet.entity.metadata.EntityMetaDataObject;
 
-public class ByteMeta implements EntityMetaDataObject {
+public class LongMeta implements EntityMetaDataObject {
 
-    public byte data;
+    public long data;
 
-    public ByteMeta(byte data) {
+    public LongMeta(long data) {
         this.data = data;
     }
 
     @Override
     public int type() {
-        return EntityMetaData.Constants.DATA_TYPE_BYTE;
+        return EntityMetaData.Constants.DATA_TYPE_LONG;
     }
 
     @Override
     public byte[] encode() {
-        return new byte[]{this.data};
+        ByteBuffer buff = ByteBuffer.allocate(8);
+        buff.order(ByteOrder.LITTLE_ENDIAN);
+        buff.putLong(this.data);
+        return buff.array();
     }
+
 }

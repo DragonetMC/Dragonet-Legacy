@@ -24,6 +24,31 @@ import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class EntityMetaData {
 
+    public static class Constants {
+        public final static int DATA_TYPE_BYTE = 0;
+        public final static int DATA_TYPE_SHORT = 1;
+        public final static int DATA_TYPE_INT = 2;
+        public final static int DATA_TYPE_FLOAT = 3;
+        public final static int DATA_TYPE_STRING = 4;
+        public final static int DATA_TYPE_SLOT = 5;
+        public final static int DATA_TYPE_POS = 6;
+        public final static int DATA_TYPE_ROTATION = 7;
+        public final static int DATA_TYPE_LONG = 8;
+
+        public final static int DATA_FLAGS = 0;
+        public final static int DATA_AIR = 1;
+        public final static int DATA_SHOW_NAMETAG = 3;
+        public final static int DATA_POTION_COLOR = 7;
+        public final static int DATA_POTION_VISIBLE = 8;
+        public final static int DATA_NO_AI = 15;
+
+        public final static int DATA_FLAG_ONFIRE = 0;
+        public final static int DATA_FLAG_SNEAKING = 1;
+        public final static int DATA_FLAG_RIDING = 2;
+        public final static int DATA_FLAG_ACTION = 4;
+        public final static int DATA_FLAG_INVISIBLE = 5;
+    }
+
     public HashMap<Integer, EntityMetaDataObject> map;
 
     public EntityMetaData() {
@@ -50,13 +75,12 @@ public class EntityMetaData {
     }
 
     public static EntityMetaData getMetaDataFromPlayer(GlowPlayer player) {
-        byte flags = (byte) 0x00;
-        flags |= player.getFireTicks() > 0 ? 1 : 0;
+        byte flags = (byte)0x00;
+        if(player.getFireTicks() > 0) flags |= EntityMetaData.Constants.DATA_FLAG_ACTION;
         EntityMetaData data = new EntityMetaData();
-        data.set(0, new ByteMeta(flags));
-        data.set(1, new ShortMeta((short) 0));
-        data.set(16, new ByteMeta((byte) 0x00));
-        data.set(17, new CoordinateMeta(player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ()));
+        data.set(EntityMetaData.Constants.DATA_FLAGS, new ByteMeta((byte)0x00));
+        data.set(EntityMetaData.Constants.DATA_SHOW_NAMETAG, new ByteMeta((byte)0x01));
+        data.set(EntityMetaData.Constants.DATA_AIR, new ShortMeta((short) 300));
         return data;
     }
 }
