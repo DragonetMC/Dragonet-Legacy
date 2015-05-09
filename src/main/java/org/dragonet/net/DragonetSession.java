@@ -539,6 +539,7 @@ public class DragonetSession extends GlowSession {
         if (packet == null) {
             return;
         }
+        System.out.println("Received Packet: " + packet.getClass().getSimpleName());
         switch (packet.pid()) {
             case PEPacketIDs.PING:
                 PingPongPacket pkPong = new PingPongPacket();

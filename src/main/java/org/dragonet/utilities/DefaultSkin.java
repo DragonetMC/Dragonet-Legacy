@@ -26,7 +26,7 @@ public class DefaultSkin {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
 
             byte[] buffer = new byte[4096];
-            int count = 0;
+            int count;
             while ((count = in.read(buffer)) > 0) {
                 out.write(buffer, 0, count);
             }

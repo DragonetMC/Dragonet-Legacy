@@ -216,6 +216,7 @@ public class ClientChunkManager {
                     }
                 }
             }
+            
             //Block Meta
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
@@ -232,7 +233,7 @@ public class ClientChunkManager {
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
                     for (int y = 0; y < 128; y += 2) {
-                        byte data = 0;
+                        byte data;
                         data = (byte) ((chunk.getBlockSkyLight(x, y, z) & 0xF) << 4);
                         data |= chunk.getBlockSkyLight(x, y + 1, z) & 0xF;
                         writer.writeByte(data);
@@ -244,13 +245,14 @@ public class ClientChunkManager {
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
                     for (int y = 0; y < 128; y += 2) {
-                        byte data = 0;
+                        byte data;
                         data = (byte) ((chunk.getBlockEmittedLight(x, y, z) & 0xF) << 4);
                         data |= chunk.getBlockEmittedLight(x, y + 1, z) & 0xF;
                         writer.writeByte(data);
                     }
                 }
             }
+
 
             //Height Map
             for (int i = 0; i < 256; i++) {
