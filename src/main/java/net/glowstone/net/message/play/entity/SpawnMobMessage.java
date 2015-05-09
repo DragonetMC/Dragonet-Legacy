@@ -11,5 +11,5 @@ public final class SpawnMobMessage implements Message {
 
     public final int id, type, x, y, z, rotation, pitch, headPitch, velX, velY, velZ;
     public final List<MetadataMap.Entry> metadata;
-
+    
 }

@@ -23,8 +23,10 @@ public enum MetadataIndex {
     // allowed to override NAME_TAG from LivingEntity
     PLAYER_SKIN_FLAGS(10, BYTE, HumanEntity.class),
 
-    AGE(12, INT, Ageable.class),
-
+    //Dragonet-ADD
+    AGE(12, BYTE, Ageable.class),
+    //Dragonet-END
+    
     HORSE_FLAGS(16, INT, Horse.class),
     HORSE_TYPE(19, BYTE, Horse.class),
     HORSE_STYLE(20, INT, Horse.class),

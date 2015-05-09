@@ -52,3 +52,19 @@ Every class: Changed every variable to public in order to read/write
 ===[net.glowstone.EventFactory]===
 118-EOF: Hooks for most DragonetAPI functions
 
+
+
+===[net.glowstone.entity.meta.MetadataIndex]===
+26-28: Changed parameter #2 of AGE to BYTE instead of INT
+
+
+
+===[net.glowstone.entity.GlowCreature]===
+20-22: Removed final
+
+
+===[(Test Package) net.glowstone.net.ProtocolTestUtils]===
+35-37: Cast the 1 to a byte
+
+===[net.glowstone.entity.GlowEntity]===
+511-525: Added a setSize method

@@ -518,6 +518,12 @@ public abstract class GlowEntity implements Entity {
         return true;
     }
 
+    //Dragonet-ADD
+    protected void setSize(float xz, float y) {
+        //todo Size stuff with bounding boxes.
+    }
+    //Dragonet-END
+    
     /**
      * Determine if this entity is intersecting a block of the specified type.
      * If the entity has a defined bounding box, that is used to check for

@@ -10,9 +10,11 @@
 
 package org.dragonet.rhino.api.functions;
 
+import net.glowstone.entity.passive.GlowPig;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.annotations.JSFunction;
@@ -72,5 +74,16 @@ public class WorldAPI extends ScriptableObject
     public static Object getBlockAt(String worldName, int x, int y, int z)
     {
         return org.dragonet.DragonetServer.instance().getServer().getWorld(worldName).getBlockAt(x, y, z);
+    }
+    
+    @JSFunction
+    public static void spawnMob(String worldName, int x, int y, int z, String entityType)
+    {
+        if(entityType.equalsIgnoreCase("Pig"))
+        {
+            GlowPig pig = new GlowPig(new Location(org.dragonet.DragonetServer.instance().getServer().getWorld(worldName), x, y, z));
+            
+            //pig.createSpawnMessage();
+        }
     }
 }
