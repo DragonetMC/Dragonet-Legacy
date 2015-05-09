@@ -33,7 +33,7 @@ public class ServerInfoPacket extends BinaryPacket {
             writer.writeLong(this.time);
             writer.writeLong(this.serverID);
             writer.write(RaknetConstants.magic);
-            writer.writeString("MCPE;" + serverName + ";25;MCPC " + DragonetVersioning.MINECRAFT_PC_VERSION + ", MCPE " + DragonetVersioning.MINECRAFT_PE_VERSION);
+            writer.writeString("MCPE;" + serverName + " (Dragonet " + DragonetVersioning.DRAGONET_VERSION + ");25;MCPC " + DragonetVersioning.MINECRAFT_PC_VERSION + ", MCPE " + DragonetVersioning.MINECRAFT_PE_VERSION);
             this.setData(bos.toByteArray());
         } catch (IOException e) {
             this.setData(new byte[0]);
