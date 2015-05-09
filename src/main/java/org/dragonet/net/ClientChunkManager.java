@@ -234,13 +234,27 @@ public class ClientChunkManager {
             }
 
             //Sky Light
-            for (int i = 0; i < 16384; i++) {
-                writer.writeByte((byte) 0x00);
+            for (int x = 0; x < 16; x++) {
+                for (int z = 0; z < 16; z++) {
+                    for (int y = 0; y < 128; y += 2) {
+                        byte data = 0;
+                        data = (byte) ((chunk.getBlockSkyLight(x, y, z) & 0xF) << 4);
+                        data |= chunk.getBlockSkyLight(x, y + 1, z) & 0xF;
+                        writer.writeByte(data);
+                    }
+                }
             }
 
             //Block Light (Emitted Light)
-            for (int i = 0; i < 16384; i++) {
-                writer.writeByte((byte) 0x00);
+            for (int x = 0; x < 16; x++) {
+                for (int z = 0; z < 16; z++) {
+                    for (int y = 0; y < 128; y += 2) {
+                        byte data = 0;
+                        data = (byte) ((chunk.getBlockEmittedLight(x, y, z) & 0xF) << 4);
+                        data |= chunk.getBlockEmittedLight(x, y + 1, z) & 0xF;
+                        writer.writeByte(data);
+                    }
+                }
             }
 
             //Height Map
