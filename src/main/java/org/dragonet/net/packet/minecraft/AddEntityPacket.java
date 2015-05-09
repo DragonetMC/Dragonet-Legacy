@@ -18,7 +18,7 @@ import lombok.Data;
 import org.dragonet.entity.metadata.EntityMetaData;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
-public class AddEntityPacket1 extends PEPacket {
+public class AddEntityPacket extends PEPacket {
 
     @Data
     public static class EntityLink{

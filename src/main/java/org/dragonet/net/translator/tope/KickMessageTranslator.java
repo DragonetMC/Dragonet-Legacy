@@ -23,7 +23,7 @@ public class KickMessageTranslator extends MessageTranslatorToPE<Translator_v0_1
 
     @Override
     public PEPacket[] handleSpecific(KickMessage packet) {
-        String msg = "";
+        String msg;
         try {
             //String msg = ((ChatMessage) message).text.asPlaintext();
             Object json = new JSONParser().parse(packet.text.encode());

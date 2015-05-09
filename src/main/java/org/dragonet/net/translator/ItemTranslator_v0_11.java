@@ -46,7 +46,6 @@ public class ItemTranslator_v0_11 implements ItemTranslator {
         for (int i = 91; i <= 92; i++) {
             itemMap_PC_to_PE.put(i, i);
         }
-        /*
          for (int i = 95; i <= 96; i++) {
          itemMap_PC_to_PE.put(i, i);
          }
@@ -79,14 +78,14 @@ public class ItemTranslator_v0_11 implements ItemTranslator {
          for (int i = 243; i <= 249; i++) {
          itemMap_PC_to_PE.put(i, i);
          }
-         */
-        //itemMap_PC_to_PE.put(8, 8);
-        //itemMap_PC_to_PE.put(9, 9);
-        //itemMap_PC_to_PE.put(10, 10);
-        //itemMap_PC_to_PE.put(11, 11);
-        //for (int i = 1; i <= 12; i++) {
-        //    itemMap_PC_to_PE.put(i, i);
-        //}
+         
+        itemMap_PC_to_PE.put(8, 8);
+        itemMap_PC_to_PE.put(9, 9);
+        itemMap_PC_to_PE.put(10, 10);
+        itemMap_PC_to_PE.put(11, 11);
+        for (int i = 1; i <= 12; i++) {
+            itemMap_PC_to_PE.put(i, i);
+        }
         //TODO: More blocks/items
 
         /* ===== PE to PC ===== */

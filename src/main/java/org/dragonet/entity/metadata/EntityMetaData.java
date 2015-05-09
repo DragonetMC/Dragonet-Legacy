@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.Map;
 import net.glowstone.entity.GlowPlayer;
 import org.dragonet.entity.metadata.type.ByteMeta;
-import org.dragonet.entity.metadata.type.CoordinateMeta;
 import org.dragonet.entity.metadata.type.ShortMeta;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
