@@ -25,12 +25,13 @@ public class DragonetPlayer extends GlowPlayer {
     }
 
     public void setLocation(Location location) {
-        this.location.setWorld(location.getWorld());
+        this.location.setWorld(location.getWorld() != null ? location.getWorld() : this.getWorld());
         this.location.setX(location.getX());
         this.location.setY(location.getY());
         this.location.setZ(location.getZ());
         this.location.setYaw(location.getYaw());
         this.location.setPitch(location.getPitch());
+        this.setRawLocation(this.location);
         this.velocityChanged = true;
     }
 }

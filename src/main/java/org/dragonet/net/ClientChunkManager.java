@@ -13,22 +13,16 @@
 package org.dragonet.net;
 
 import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
-import java.util.zip.Deflater;
 import lombok.Getter;
 import net.glowstone.GlowChunkSnapshot;
 import net.glowstone.entity.GlowPlayer;
-import org.apache.commons.lang.ArrayUtils;
 import org.dragonet.ChunkLocation;
 import org.dragonet.net.packet.minecraft.FullChunkPacket;
 import org.dragonet.net.packet.minecraft.LoginStatusPacket;
-import org.dragonet.utilities.io.PEBinaryUtils;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class ClientChunkManager {
@@ -77,6 +71,7 @@ public class ClientChunkManager {
              */
             this.chunksLoaded.clear();
             this.chunksQueue.clear();
+            System.out.println("Detected world change: " + this.lastWorld + " -> " + this.getSession().getPlayer().getWorld().getName());
             this.lastWorld = this.getSession().getPlayer().getWorld().getName();
             return;
         }
@@ -283,8 +278,9 @@ public class ClientChunkManager {
             packet.chunkData = totalData.toByteArray();
             //packet.compressedData = ArrayUtils.subarray(bufferDeflate, 0, deflatedSize);
             this.getSession().send(packet);
-            System.out.println("Sent chunk! " + chunkX + ", " + chunkZ);
+            //System.out.println("Sent chunk! " + chunkX + ", " + chunkZ);
 
+            /*
             File outfile = new File("D:/temp/a/chunk_" + chunkX + "-" + chunkZ + ".bin");
             DataOutputStream out = null;
             try {
@@ -296,6 +292,7 @@ public class ClientChunkManager {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
+            */
         } catch (IOException e) {
         }
     }
