@@ -221,7 +221,7 @@ public class ClientChunkManager {
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
                     for (int y = 0; y < 128; y += 2) {
-                        byte data = 0;
+                        byte data;
                         data = (byte) ((chunk.getBlockData(x, y, z) & 0xF) << 4);
                         data |= chunk.getBlockData(x, y + 1, z) & 0xF;
                         writer.writeByte(data);
