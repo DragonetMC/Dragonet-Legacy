@@ -9,18 +9,14 @@ The universal Minecraft server, supports both `Minecraft PC` and `Minecraft PE` 
 Yes, mostly! But you may expirence some bugs and issues because this software is still in heavy development stage. 
 
 ##Where do I grab the GUI version?
-Right now, The Dragonet Team is working on a GUI wrapper for the server, it will hopefully be released soon!
+Right now, The Dragonet Team is working on a GUI wrapper for the server, it will be released when we are done with 0.0.2!
 
 ##Where is the Dragonet GitHub Wiki?
 [Here!](https://github.com/TheMCPEGamer/Dragonet/wiki)<br>
 
-It is currently under some construction, please bear with us for the moment...
-
 ##Download
 You may download pre-compiled binaries at our website:
 [http://dragonet.org/](http://dragonet.org/)<br> 
-or here:
-[http://themcpegamer.github.io/Dragonet/](http://themcpegamer.github.io/Dragonet/)<br>
 
 ###Credits & Licencing
 Dragonet software: `A universal Minecraft server that supports both Minecraft for PC and Minecraft: Pocket Edition. `<br>
