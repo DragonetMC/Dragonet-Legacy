@@ -10,9 +10,13 @@
 
 package org.dragonet.rhino.api.functions;
 
+import net.glowstone.entity.passive.GlowBat;
 import net.glowstone.entity.passive.GlowChicken;
+import net.glowstone.entity.passive.GlowCow;
+import net.glowstone.entity.passive.GlowMooshroom;
 import net.glowstone.entity.passive.GlowPig;
 import net.glowstone.entity.passive.GlowSheep;
+import net.glowstone.entity.passive.GlowSquid;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -92,6 +96,22 @@ public class WorldAPI extends ScriptableObject
             else if(entityType.equalsIgnoreCase("Chicken"))
             {
                 GlowChicken chicken = new GlowChicken(new Location(org.dragonet.DragonetServer.instance().getServer().getWorld(worldName), x, y, z));
+            }
+            else if(entityType.equalsIgnoreCase("Cow"))
+            {
+                GlowCow cow = new GlowCow(new Location(org.dragonet.DragonetServer.instance().getServer().getWorld(worldName), x, y, z));
+            }
+            else if(entityType.equalsIgnoreCase("Bat"))
+            {
+                GlowBat bat = new GlowBat(new Location(org.dragonet.DragonetServer.instance().getServer().getWorld(worldName), x, y, z));
+            }
+            else if(entityType.equalsIgnoreCase("Squid"))
+            {
+                GlowSquid squid = new GlowSquid(new Location(org.dragonet.DragonetServer.instance().getServer().getWorld(worldName), x, y, z));
+            }
+            else if(entityType.equalsIgnoreCase("Mooshroom"))
+            {
+                GlowMooshroom mooshroom = new GlowMooshroom(new Location(org.dragonet.DragonetServer.instance().getServer().getWorld(worldName), x, y, z));
             }
             else
             {
