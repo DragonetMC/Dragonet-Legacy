@@ -14,6 +14,7 @@ import org.dragonet.net.packet.minecraft.AddPlayerPacket;
 import org.dragonet.net.packet.minecraft.PEPacket;
 import org.dragonet.net.translator.MessageTranslatorToPE;
 import org.dragonet.net.translator.Translator_v0_11;
+import org.dragonet.utilities.DefaultSkin;
 import org.dragonet.utilities.io.SkinDownloader;
 
 public class SpawnPlayerMessageTranslator extends MessageTranslatorToPE<Translator_v0_11, SpawnPlayerMessage> {
@@ -29,13 +30,17 @@ public class SpawnPlayerMessageTranslator extends MessageTranslatorToPE<Translat
             }
             this.getTranslator().cachedPlayerEntities.add(packet.id); //Register this id as a player
             
+            //Prepare the skin
+            /*
             byte[] skin = SkinDownloader.download(this.getSession().getServer().getPlayer(packet.getUuid()).getDisplayName());
             if(skin == null){
                 skin = new byte[]{}; //TODO: PRESET DATA
             }
+            */
+            byte[] skin = DefaultSkin.getDefaultSkin();
             
             AddPlayerPacket pkAddPlayer = new AddPlayerPacket();
-            pkAddPlayer.clientID = 0;
+            pkAddPlayer.clientID = packet.getId();
             pkAddPlayer.eid = packet.getId();
             pkAddPlayer.username = this.getSession().getServer().getPlayer(packet.getUuid()).getDisplayName();
             pkAddPlayer.x = (float) packet.getX();
@@ -46,7 +51,7 @@ public class SpawnPlayerMessageTranslator extends MessageTranslatorToPE<Translat
             pkAddPlayer.speedZ = 0.0f;
             pkAddPlayer.yaw = packet.getRotation();
             pkAddPlayer.pitch = packet.getPitch();
-            pkAddPlayer.skin = skin;//String.format("http://s3.amazonaws.com/MinecraftSkins/%s.png", pkAddPlayer.username);
+            pkAddPlayer.skin = skin;
             pkAddPlayer.slim = false;
             pkAddPlayer.metadata = EntityMetaData.getMetaDataFromPlayer((GlowPlayer) this.getSession().getPlayer().getWorld().getEntityManager().getEntity(packet.getId()));
             return new PEPacket[]{pkAddPlayer};
