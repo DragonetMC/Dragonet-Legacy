@@ -138,6 +138,7 @@ public class Translator_v0_11 extends BaseTranslator {
         mapToPC.put(RemoveBlockPacket.class, new RemoveBlockPacketTranslator(this, this.getSession()));
         mapToPC.put(UseItemPacket.class, new UseItemPacketTranslator(this, this.getSession()));
         mapToPC.put(WindowSetSlotPacket.class, new WindowSetSlotPacketTranslator(this, this.getSession()));
+        mapToPC.put(WindowItemsPacket.class, new WindowItemsPacketTranslator(this, this.getSession()));
     }
 
     /* ===== TO PC ===== */
