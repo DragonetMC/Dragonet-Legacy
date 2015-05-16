@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package org.dragonet.net.translator.tope;
 
 import net.glowstone.net.message.play.game.HealthMessage;
@@ -22,16 +21,16 @@ public class HealthMessageTranslator extends MessageTranslatorToPE<Translator_v0
 
     @Override
     public PEPacket[] handleSpecific(HealthMessage packet) {
-        int h = (int)packet.health;
-        if(h<=0){
+        int h = (int) packet.health;
+        if (h <= 0) {
             //DEAD
             SetHealthPacket pk1 = new SetHealthPacket(h);
             RespawnPacket pk2 = new RespawnPacket();
-            pk2.x = (float)getTranslator().getSession().getServer().getWorlds().get(0).getSpawnLocation().getX();
-            pk2.y = (float)getTranslator().getSession().getServer().getWorlds().get(0).getSpawnLocation().getY();
-            pk2.z = (float)getTranslator().getSession().getServer().getWorlds().get(0).getSpawnLocation().getZ();
-            return new PEPacket[]{pk1,pk2};
-        }else{
+            pk2.x = (float) getTranslator().getSession().getServer().getWorlds().get(0).getSpawnLocation().getX();
+            pk2.y = (float) getTranslator().getSession().getServer().getWorlds().get(0).getSpawnLocation().getY();
+            pk2.z = (float) getTranslator().getSession().getServer().getWorlds().get(0).getSpawnLocation().getZ();
+            return new PEPacket[]{pk1, pk2};
+        } else {
             SetHealthPacket pk = new SetHealthPacket(h);
             return new PEPacket[]{pk};
         }

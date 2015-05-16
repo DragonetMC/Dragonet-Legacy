@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package org.dragonet.net.packet.minecraft;
 
 import java.io.ByteArrayOutputStream;
@@ -19,7 +18,7 @@ public class AddPaintingPacket extends PEPacket {
     public int z;
     public int direction;
     public String title;
-    
+
     @Override
     public int pid() {
         return PEPacketIDs.ADD_PAINTING_PACKET;

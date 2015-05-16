@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package org.dragonet.net.translator.topc;
 
 import com.flowpowered.networking.Message;
@@ -13,7 +12,7 @@ import org.dragonet.net.packet.minecraft.ChatPacket;
 import org.dragonet.net.translator.PEPacketTranslatorToPC;
 import org.dragonet.net.translator.Translator_v0_11;
 
-public class ChatPacketTranslator extends PEPacketTranslatorToPC<Translator_v0_11, ChatPacket>{
+public class ChatPacketTranslator extends PEPacketTranslatorToPC<Translator_v0_11, ChatPacket> {
 
     public ChatPacketTranslator(Translator_v0_11 translator, DragonetSession session) {
         super(translator, session);

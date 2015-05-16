@@ -23,7 +23,7 @@ public class LoginPacket extends PEPacket {
     public int protocol1;
     public int protocol2;
     public int clientIntID;
-    
+
     public boolean slim;
     public byte[] skin;
 

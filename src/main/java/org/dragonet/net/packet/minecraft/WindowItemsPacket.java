@@ -63,13 +63,13 @@ public class WindowItemsPacket extends PEPacket {
             this.windowID = reader.readByte();
             short cnt = reader.readShort();
             slots = new PEInventorySlot[cnt];
-            for(int i = 0; i < cnt; i++){
+            for (int i = 0; i < cnt; i++) {
                 slots[i] = PEInventorySlot.readSlot(reader);
             }
-            if(this.windowID == PEWindowConstantID.PLAYER_INVENTORY){
+            if (this.windowID == PEWindowConstantID.PLAYER_INVENTORY) {
                 short hcnt = reader.readShort();
                 hotbar = new int[hcnt];
-                for(int i = 0; i < hcnt; i++){
+                for (int i = 0; i < hcnt; i++) {
                     hotbar[i] = reader.readInt();
                 }
             }

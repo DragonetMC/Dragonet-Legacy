@@ -54,7 +54,7 @@ public final class Protocol {
         if (protocol.containsKey(pid)) {
             Class<? extends PEPacket> c = protocol.get(pid);
             try {
-                PEPacket pk = c.getDeclaredConstructor(byte[].class).newInstance((Object)data);
+                PEPacket pk = c.getDeclaredConstructor(byte[].class).newInstance((Object) data);
                 pk.decode();
                 //System.out.println("Decode 0x" + Integer.toHexString(pid & 0xFF) + " as " + pk.getClass().getSimpleName() + ". ");
                 return pk;

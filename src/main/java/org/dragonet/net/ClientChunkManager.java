@@ -216,7 +216,7 @@ public class ClientChunkManager {
                     }
                 }
             }
-            
+
             //Block Meta
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
@@ -253,7 +253,6 @@ public class ClientChunkManager {
                 }
             }
 
-
             //Height Map
             for (int i = 0; i < 256; i++) {
                 writer.writeByte((byte) 0xFF);
@@ -283,18 +282,18 @@ public class ClientChunkManager {
             //System.out.println("Sent chunk! " + chunkX + ", " + chunkZ);
 
             /*
-            File outfile = new File("D:/temp/a/chunk_" + chunkX + "-" + chunkZ + ".bin");
-            DataOutputStream out = null;
-            try {
-                out = new DataOutputStream(new FileOutputStream(outfile));
-                packet.encode();
-                out.write(packet.getData());
-                out.close();
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            */
+             File outfile = new File("D:/temp/a/chunk_" + chunkX + "-" + chunkZ + ".bin");
+             DataOutputStream out = null;
+             try {
+             out = new DataOutputStream(new FileOutputStream(outfile));
+             packet.encode();
+             out.write(packet.getData());
+             out.close();
+             } catch (Exception e) {
+             // TODO Auto-generated catch block
+             e.printStackTrace();
+             }
+             */
         } catch (IOException e) {
         }
     }

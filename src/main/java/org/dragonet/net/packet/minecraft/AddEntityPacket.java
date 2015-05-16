@@ -21,18 +21,19 @@ import org.dragonet.utilities.io.PEBinaryWriter;
 public class AddEntityPacket extends PEPacket {
 
     @Data
-    public static class EntityLink{
+    public static class EntityLink {
+
         public long eid1;
         public long eid2;
         public byte flag;
-        
-        public void writeTo(PEBinaryWriter writer) throws IOException{
+
+        public void writeTo(PEBinaryWriter writer) throws IOException {
             writer.writeLong(eid1);
             writer.writeLong(eid2);
             writer.writeByte(flag);
         }
     }
-    
+
     public long eid;
     public int type;
     public float x;
@@ -68,9 +69,9 @@ public class AddEntityPacket extends PEPacket {
             writer.writeFloat(yaw);
             writer.writeFloat(pitch);
             writer.write(this.meta.encode());
-            writer.writeShort((short)(this.links == null ? 0 : this.links.length));
-            if(this.links != null){
-                for(EntityLink link : links){
+            writer.writeShort((short) (this.links == null ? 0 : this.links.length));
+            if (this.links != null) {
+                for (EntityLink link : links) {
                     link.writeTo(writer);
                 }
             }

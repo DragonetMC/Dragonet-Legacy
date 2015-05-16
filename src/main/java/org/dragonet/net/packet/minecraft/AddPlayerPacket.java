@@ -62,8 +62,8 @@ public class AddPlayerPacket extends PEPacket {
             writer.writeFloat(this.pitch);
             writer.writeShort(this.item);
             writer.writeShort(this.meta);
-            writer.writeByte(this.slim ? (byte)1 : (byte)0);
-            writer.writeShort((short)(DefaultSkin.getDefaultSkin().length & 0xFFFF)); //DEFAULT SKIN
+            writer.writeByte(this.slim ? (byte) 1 : (byte) 0);
+            writer.writeShort((short) (DefaultSkin.getDefaultSkin().length & 0xFFFF)); //DEFAULT SKIN
             writer.write(DefaultSkin.getDefaultSkin());
             writer.write(this.metadata.encode());
             this.setData(bos.toByteArray());

@@ -55,12 +55,12 @@ public class UpdateBlockPacket extends PEPacket {
                 writer.writeInt(0);
             } else {
                 writer.writeInt(this.records.length);
-                for(UpdateBlockRecord rec : this.records){
+                for (UpdateBlockRecord rec : this.records) {
                     writer.writeInt(rec.x);
                     writer.writeInt(rec.z);
                     writer.writeByte(rec.y);
                     writer.writeByte(rec.block);
-                    writer.writeByte((byte)(rec.flags << 4 | rec.meta));
+                    writer.writeByte((byte) (rec.flags << 4 | rec.meta));
                 }
             }
             this.setData(bos.toByteArray());

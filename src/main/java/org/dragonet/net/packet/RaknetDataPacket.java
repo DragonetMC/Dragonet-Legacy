@@ -53,7 +53,9 @@ public class RaknetDataPacket extends BinaryPacket {
             writer.writeTriad(this.sequenceNumber);
             for (EncapsulatedPacket packet : this.encapsulatedPackets.toArray(new EncapsulatedPacket[this.encapsulatedPackets.size()])) {
                 byte[] data = EncapsulatedPacket.toBinary(packet);
-                if(data != null) writer.write(data);
+                if (data != null) {
+                    writer.write(data);
+                }
             }
             this.setData(bos.toByteArray());
         } catch (IOException e) {

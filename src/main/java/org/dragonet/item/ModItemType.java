@@ -10,10 +10,9 @@
  *
  * @author The Dragonet Team
  */
-
 package org.dragonet.item;
 
 import net.glowstone.block.itemtype.ItemType;
 
-public class ModItemType extends ItemType{
+public class ModItemType extends ItemType {
 }

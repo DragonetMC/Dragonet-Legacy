@@ -24,6 +24,7 @@ import org.dragonet.utilities.io.PEBinaryWriter;
 public class EntityMetaData {
 
     public static class Constants {
+
         public final static int DATA_TYPE_BYTE = 0;
         public final static int DATA_TYPE_SHORT = 1;
         public final static int DATA_TYPE_INT = 2;
@@ -74,11 +75,13 @@ public class EntityMetaData {
     }
 
     public static EntityMetaData getMetaDataFromPlayer(GlowPlayer player) {
-        byte flags = (byte)0x00;
-        if(player.getFireTicks() > 0) flags |= EntityMetaData.Constants.DATA_FLAG_ACTION;
+        byte flags = (byte) 0x00;
+        if (player.getFireTicks() > 0) {
+            flags |= EntityMetaData.Constants.DATA_FLAG_ACTION;
+        }
         EntityMetaData data = new EntityMetaData();
-        data.set(EntityMetaData.Constants.DATA_FLAGS, new ByteMeta((byte)0x00));
-        data.set(EntityMetaData.Constants.DATA_SHOW_NAMETAG, new ByteMeta((byte)0x01));
+        data.set(EntityMetaData.Constants.DATA_FLAGS, new ByteMeta((byte) 0x00));
+        data.set(EntityMetaData.Constants.DATA_SHOW_NAMETAG, new ByteMeta((byte) 0x01));
         data.set(EntityMetaData.Constants.DATA_AIR, new ShortMeta((short) 300));
         return data;
     }

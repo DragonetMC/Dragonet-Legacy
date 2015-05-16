@@ -22,7 +22,7 @@ public class SetWindowSlotMessageTranslator extends MessageTranslatorToPE<Transl
         if (this.getTranslator().cachedWindowType[packet.id & 0xFF] == -1) {
             return null;
         }
-            //NOT WORKING YET
+        //NOT WORKING YET
             /*
          //System.out.println("Updating slot: WID=" + msgSetSlot.id + ", ITEM=" + msgSetSlot.item + ", SLOTID=" + msgSetSlot.slot);
          //byte typePE = (byte) (this.cachedWindowType[msgSetSlot.id & 0xFF] & 0xFF);
@@ -49,7 +49,7 @@ public class SetWindowSlotMessageTranslator extends MessageTranslatorToPE<Transl
             this.getSession().sendInventory();
             return null;
         } else {
-                //TODO
+            //TODO
             //this.getSession().getPlayer().getOpenInventory().getTopInventory()
         }
         return null;

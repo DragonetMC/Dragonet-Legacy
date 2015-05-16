@@ -63,7 +63,7 @@ public class UseItemPacket extends PEPacket {
             this.posX = reader.readFloat();
             this.posY = reader.readFloat();
             this.posZ = reader.readFloat();
-            
+
         } catch (IOException e) {
         }
     }

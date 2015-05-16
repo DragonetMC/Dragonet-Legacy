@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package org.dragonet.net.packet.minecraft;
 
 import java.io.ByteArrayInputStream;
@@ -16,12 +15,12 @@ public class DropItemPacket extends PEPacket {
     public DropItemPacket(byte[] data) {
         this.setData(data);
     }
-    
+
     @Override
     public int pid() {
         return PEPacketIDs.DROP_ITEM_PACKET;
     }
-    
+
     public long eid;
     public byte unknown;
     public PEInventorySlot slot;
@@ -42,5 +41,5 @@ public class DropItemPacket extends PEPacket {
         } catch (IOException e) {
         }
     }
-    
+
 }

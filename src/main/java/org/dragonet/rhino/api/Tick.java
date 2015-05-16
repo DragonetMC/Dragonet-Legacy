@@ -7,7 +7,6 @@
  *
  * You can view LICENCE file for details. 
  */
-
 package org.dragonet.rhino.api;
 
 import org.dragonet.rhino.Script;
@@ -16,13 +15,11 @@ import org.dragonet.rhino.Script;
  *
  * @author TheMCPEGamer__
  */
-public class Tick
-{
-    public static void Tick()
-    {
-        for(Script s : org.dragonet.DragonetServer.instance().getRhino().Scripts)
-        {
-            s.runFunction("Tick", new Object[] {});
+public class Tick {
+
+    public static void Tick() {
+        for (Script s : org.dragonet.DragonetServer.instance().getRhino().Scripts) {
+            s.runFunction("Tick", new Object[]{});
         }
     }
 }

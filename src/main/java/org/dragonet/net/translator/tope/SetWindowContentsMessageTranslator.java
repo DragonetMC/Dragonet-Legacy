@@ -59,7 +59,7 @@ public class SetWindowContentsMessageTranslator extends MessageTranslatorToPE<Tr
             }
             return null;
         }
-            //TODO: Implement other types of inventory
+        //TODO: Implement other types of inventory
         //switch(this.getSession().getPlayer().)
         System.out.println("Updating window content for " + packet.id + ", which has " + packet.items.length + " slots. ");
         return null;

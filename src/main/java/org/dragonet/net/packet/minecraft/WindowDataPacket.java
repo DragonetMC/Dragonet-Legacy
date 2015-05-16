@@ -14,7 +14,7 @@ public class WindowDataPacket extends PEPacket {
     private byte windowID;
     private short property;
     private short value;
-    
+
     @Override
     public int pid() {
         return PEPacketIDs.WINDOW_SET_DATA_PACKET;

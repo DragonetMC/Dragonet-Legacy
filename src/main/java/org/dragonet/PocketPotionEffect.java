@@ -62,14 +62,14 @@ public class PocketPotionEffect {
         effects.put(HEALTH_BOOST, new PocketPotionEffect(HEALTH_BOOST));
     }
 
-    public static PocketPotionEffect getByID(int id){
-        if(effects.containsKey(id)){
-            return effects.get((Integer)id).clone();
-        }else{
+    public static PocketPotionEffect getByID(int id) {
+        if (effects.containsKey(id)) {
+            return effects.get((Integer) id).clone();
+        } else {
             return null;
         }
     }
-    
+
     @Getter
     private int effect;
 

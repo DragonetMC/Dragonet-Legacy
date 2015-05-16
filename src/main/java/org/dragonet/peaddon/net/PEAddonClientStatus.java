@@ -10,12 +10,12 @@
  *
  * @author The Dragonet Team
  */
-
 package org.dragonet.peaddon.net;
 
 public class PEAddonClientStatus {
+
     public boolean isReadingHeader;
-    
+
     public short packetLength;
 
     public PEAddonClientStatus() {

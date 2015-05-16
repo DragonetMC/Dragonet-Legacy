@@ -17,7 +17,7 @@ import org.dragonet.net.packet.BinaryPacket;
 public abstract class PEPacket extends BinaryPacket {
 
     private int length;
-    
+
     public abstract int pid();
 
     @Override
@@ -25,12 +25,12 @@ public abstract class PEPacket extends BinaryPacket {
 
     @Override
     public abstract void decode();
-    
-    public final void setLength(int length){
+
+    public final void setLength(int length) {
         this.length = length;
     }
-    
-    public final int getLength(){
+
+    public final int getLength() {
         return this.length;
     }
 }

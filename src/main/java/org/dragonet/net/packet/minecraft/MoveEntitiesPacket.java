@@ -56,6 +56,7 @@ public class MoveEntitiesPacket extends PEPacket {
 
     @Data
     public static class MoveEntityData {
+
         public long eid;
         public float x;
         public float y;

@@ -48,7 +48,7 @@ public class ChunkLocation {
     public int hashCode() {
         return toString().hashCode();
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof ChunkLocation)) {

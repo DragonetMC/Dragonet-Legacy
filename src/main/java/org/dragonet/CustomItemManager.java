@@ -47,7 +47,7 @@ public class CustomItemManager {
             throw new IllegalStateException("ID Already taken! ");
         }
         this.madeChanges = true;
-        if(this.getTable().containsKey(id)){
+        if (this.getTable().containsKey(id)) {
             this.getTable().remove(id);
         }
         type.setId(id);

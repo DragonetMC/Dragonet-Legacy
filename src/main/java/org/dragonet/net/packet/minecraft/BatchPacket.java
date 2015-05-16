@@ -27,11 +27,11 @@ public class BatchPacket extends PEPacket {
     public BatchPacket() {
         packets = new ArrayList<>();
     }
-    
+
     public BatchPacket(byte[] data) {
         this.setData(data);
     }
-    
+
     @Override
     public int pid() {
         return PEPacketIDs.BATCH_PACKET;
@@ -42,7 +42,7 @@ public class BatchPacket extends PEPacket {
         try {
             //Combine all packets
             ByteArrayOutputStream packetCombiner = new ByteArrayOutputStream();
-            for(PEPacket pk : packets){
+            for (PEPacket pk : packets) {
                 pk.encode();
                 packetCombiner.write(pk.getData());
             }
@@ -81,7 +81,7 @@ public class BatchPacket extends PEPacket {
                 this.setLength(reader.totallyRead());
                 return;
             }
-            inf.end();                
+            inf.end();
             int offset = 0;
             while (offset < decompressedSize) {
                 PEPacket pk = Protocol.decode(Arrays.copyOfRange(decompressedPayload, offset, decompressedSize));

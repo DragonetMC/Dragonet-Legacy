@@ -10,9 +10,8 @@
  *
  * @author The Dragonet Team
  */
-
 package org.dragonet.item;
 
-public class ModBlockType extends ModItemType{
-    
+public class ModBlockType extends ModItemType {
+
 }

@@ -63,11 +63,11 @@ public class ChatPacket extends PEPacket {
 
     public ChatPacket() {
     }
-    
+
     public ChatPacket(byte[] data) {
         this.setData(data);
     }
-    
+
     @Override
     public int pid() {
         return PEPacketIDs.TEXT_PACKET;

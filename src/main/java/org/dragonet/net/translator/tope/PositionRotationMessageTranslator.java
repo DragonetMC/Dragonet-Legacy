@@ -24,7 +24,7 @@ public class PositionRotationMessageTranslator extends MessageTranslatorToPE<Tra
         if (this.getSession().getPlayer() == null) {
             return null;
         }
-            //Hack: Yaw and pitch set to 0.0f
+        //Hack: Yaw and pitch set to 0.0f
         //MovePlayerPacket pkMovePlayer = new MovePlayerPacket(this.getSession().getPlayer().getEntityId(), (float) msgPosRot.x, (float) msgPosRot.y, (float) msgPosRot.z, 0.0f, 0.0f, 0.0f, true);
         MoveEntitiesPacket.MoveEntityData d = new MoveEntitiesPacket.MoveEntityData();
         d.x = (float) packet.x;

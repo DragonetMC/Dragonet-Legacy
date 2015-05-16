@@ -388,11 +388,11 @@ public class DragonetSession extends GlowSession {
             return;
         }
         /*
-        if (!(packet instanceof FullChunkPacket) && !(packet instanceof StartGamePacket) && !(packet instanceof SetTimePacket) && !(packet instanceof SetDifficultyPacket)
-                && !(packet instanceof LoginStatusPacket) && !(packet instanceof ServerHandshakePacket) && this.sentAndReceivedChunks != -1) {
-            this.queueAfterChunkSent.add(packet);
-            return;
-        }*/
+         if (!(packet instanceof FullChunkPacket) && !(packet instanceof StartGamePacket) && !(packet instanceof SetTimePacket) && !(packet instanceof SetDifficultyPacket)
+         && !(packet instanceof LoginStatusPacket) && !(packet instanceof ServerHandshakePacket) && this.sentAndReceivedChunks != -1) {
+         this.queueAfterChunkSent.add(packet);
+         return;
+         }*/
         packet.encode();
         if (packet.getData().length > this.clientMTU + 1 && !(packet instanceof BatchPacket)) {
             //BATCH PACKET
@@ -747,14 +747,13 @@ public class DragonetSession extends GlowSession {
         this.send(pkTime);
 
         /*
-        //Send Spawn Position
-        SetSpawnPositionPacket pkSpawnPos = new SetSpawnPositionPacket();
-        pkSpawnPos.x = this.player.getLocation().getBlockX();
-        pkSpawnPos.y = this.player.getLocation().getBlockY();
-        pkSpawnPos.z = this.player.getLocation().getBlockZ();
-        this.send(pkSpawnPos);
-        */
-
+         //Send Spawn Position
+         SetSpawnPositionPacket pkSpawnPos = new SetSpawnPositionPacket();
+         pkSpawnPos.x = this.player.getLocation().getBlockX();
+         pkSpawnPos.y = this.player.getLocation().getBlockY();
+         pkSpawnPos.z = this.player.getLocation().getBlockZ();
+         this.send(pkSpawnPos);
+         */
         //Send Health
         SetHealthPacket pkHealth = new SetHealthPacket((int) Math.floor(this.getPlayer().getHealth()));
         this.send(pkHealth);
@@ -884,15 +883,15 @@ public class DragonetSession extends GlowSession {
             return;
         }
         /*
-        MoveEntitiesPacket.MoveEntityData d = new MoveEntitiesPacket.MoveEntityData();
-        d.eid = this.getPlayer().getEntityId();
-        d.x = (float) this.getPlayer().getLocation().getX();
-        d.y = (float) this.getPlayer().getLocation().getY();
-        d.z = (float) this.getPlayer().getLocation().getZ();
-        d.yaw = this.getPlayer().getLocation().getYaw();
-        d.pitch = this.getPlayer().getLocation().getPitch();
-        MoveEntitiesPacket pkMovePlayer = new MoveEntitiesPacket(new MoveEntitiesPacket.MoveEntityData[]{d});
-        */
+         MoveEntitiesPacket.MoveEntityData d = new MoveEntitiesPacket.MoveEntityData();
+         d.eid = this.getPlayer().getEntityId();
+         d.x = (float) this.getPlayer().getLocation().getX();
+         d.y = (float) this.getPlayer().getLocation().getY();
+         d.z = (float) this.getPlayer().getLocation().getZ();
+         d.yaw = this.getPlayer().getLocation().getYaw();
+         d.pitch = this.getPlayer().getLocation().getPitch();
+         MoveEntitiesPacket pkMovePlayer = new MoveEntitiesPacket(new MoveEntitiesPacket.MoveEntityData[]{d});
+         */
         MovePlayerPacket pkMovePlayer = new MovePlayerPacket();
         pkMovePlayer.eid = this.getPlayer().getEntityId();
         pkMovePlayer.x = (float) this.getPlayer().getLocation().getX();

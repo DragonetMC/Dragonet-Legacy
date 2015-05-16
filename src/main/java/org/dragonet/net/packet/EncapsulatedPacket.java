@@ -94,7 +94,9 @@ public class EncapsulatedPacket extends BinaryPacket {
      * @return Encoded bytes array
      */
     public static byte[] toBinary(EncapsulatedPacket packet) {
-        if(packet == null) return null;
+        if (packet == null) {
+            return null;
+        }
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PEBinaryWriter writer = new PEBinaryWriter(bos);

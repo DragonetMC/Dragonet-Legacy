@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package org.dragonet.net.translator.topc;
 
 import com.flowpowered.networking.Message;
@@ -32,35 +31,35 @@ public class RemoveBlockPacketTranslator extends PEPacketTranslatorToPC<Translat
 
     @Override
     public Message[] handleSpecific(RemoveBlockPacket packet) {
-                        RemoveBlockPacket pkRemoveBlock = (RemoveBlockPacket) packet;
-                if (!(this.getSession().getPlayer() instanceof Player)) {
-                    return null;
-                }
-                GlowBlock block = this.getSession().getPlayer().getWorld().getBlockAt(pkRemoveBlock.x, pkRemoveBlock.y, pkRemoveBlock.z);
+        RemoveBlockPacket pkRemoveBlock = (RemoveBlockPacket) packet;
+        if (!(this.getSession().getPlayer() instanceof Player)) {
+            return null;
+        }
+        GlowBlock block = this.getSession().getPlayer().getWorld().getBlockAt(pkRemoveBlock.x, pkRemoveBlock.y, pkRemoveBlock.z);
 
-                // fire the block break event
-                BlockBreakEvent breakEvent = EventFactory.callEvent(new BlockBreakEvent(block, this.getSession().getPlayer()));
-                if (breakEvent.isCancelled()) {
-                    return null;
-                }
+        // fire the block break event
+        BlockBreakEvent breakEvent = EventFactory.callEvent(new BlockBreakEvent(block, this.getSession().getPlayer()));
+        if (breakEvent.isCancelled()) {
+            return null;
+        }
 
-                BlockType blockType = ItemTable.instance().getBlock(block.getType());
-                if (blockType != null) {
-                    blockType.blockDestroy(this.getSession().getPlayer(), block, BlockFace.UP);
-                }
+        BlockType blockType = ItemTable.instance().getBlock(block.getType());
+        if (blockType != null) {
+            blockType.blockDestroy(this.getSession().getPlayer(), block, BlockFace.UP);
+        }
 
-                // destroy the block
-                if (!block.isEmpty() && !block.isLiquid() && this.getSession().getPlayer().getGameMode() != GameMode.CREATIVE) {
-                    for (ItemStack drop : block.getDrops(this.getSession().getPlayer().getInventory().getItem(this.getSession().getPlayer().getInventory().getHeldItemSlot()))) {
-                        GlowItem item = this.getSession().getPlayer().getWorld().dropItemNaturally(block.getLocation(), drop);
-                        item.setPickupDelay(30);
-                        item.setBias(this.getSession().getPlayer());
-                    }
-                }
-                // STEP_SOUND actually is the block break particles
-                this.getSession().getPlayer().getWorld().playEffectExceptTo(block.getLocation(), Effect.STEP_SOUND, block.getTypeId(), 64, this.getSession().getPlayer());
-                block.setType(Material.AIR);
-                return null;
+        // destroy the block
+        if (!block.isEmpty() && !block.isLiquid() && this.getSession().getPlayer().getGameMode() != GameMode.CREATIVE) {
+            for (ItemStack drop : block.getDrops(this.getSession().getPlayer().getInventory().getItem(this.getSession().getPlayer().getInventory().getHeldItemSlot()))) {
+                GlowItem item = this.getSession().getPlayer().getWorld().dropItemNaturally(block.getLocation(), drop);
+                item.setPickupDelay(30);
+                item.setBias(this.getSession().getPlayer());
+            }
+        }
+        // STEP_SOUND actually is the block break particles
+        this.getSession().getPlayer().getWorld().playEffectExceptTo(block.getLocation(), Effect.STEP_SOUND, block.getTypeId(), 64, this.getSession().getPlayer());
+        block.setType(Material.AIR);
+        return null;
     }
 
 }

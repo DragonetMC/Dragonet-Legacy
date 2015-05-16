@@ -23,7 +23,7 @@ public class PEBinaryReader implements Closeable {
     protected boolean endianness;
 
     private int totallyRead;
-    
+
     public PEBinaryReader(InputStream is) {
         this(is, PEBinaryUtils.BIG_ENDIAN);
     }
@@ -46,20 +46,21 @@ public class PEBinaryReader implements Closeable {
     public void close() throws IOException {
         is.close();
     }
-        
-    public static class BinaryAddress{
+
+    public static class BinaryAddress {
+
         public byte type;
         public byte[] address;
         public short port;
     }
-    
-    public BinaryAddress readAddress() throws IOException{
+
+    public BinaryAddress readAddress() throws IOException {
         BinaryAddress addr = new BinaryAddress();
         addr.type = readByte();
-        if((addr.type & 0xFF) == 4){
+        if ((addr.type & 0xFF) == 4) {
             //IPv4
             addr.address = read(4);
-        }else{
+        } else {
             addr.address = read(8);
         }
         addr.port = readShort();
@@ -176,8 +177,8 @@ public class PEBinaryReader implements Closeable {
     public int available() throws IOException {
         return this.is.available();
     }
-    
-    public int totallyRead(){
+
+    public int totallyRead() {
         return this.totallyRead;
     }
 }

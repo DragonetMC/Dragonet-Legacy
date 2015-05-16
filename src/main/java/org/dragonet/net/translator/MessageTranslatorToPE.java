@@ -14,7 +14,7 @@ public abstract class MessageTranslatorToPE<T extends BaseTranslator, P extends 
 
     private @Getter
     T translator;
-    
+
     private @Getter
     DragonetSession session;
 
@@ -24,8 +24,8 @@ public abstract class MessageTranslatorToPE<T extends BaseTranslator, P extends 
     }
 
     public abstract PEPacket[] handleSpecific(P packet);
-    
-    public PEPacket[] handle(Message message){
-        return handleSpecific((P)message);
+
+    public PEPacket[] handle(Message message) {
+        return handleSpecific((P) message);
     }
 }

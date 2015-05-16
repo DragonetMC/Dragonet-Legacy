@@ -14,7 +14,7 @@ public class MobEffectPacket extends PEPacket {
 
     public enum EffectAction {
 
-        ADD(1), 
+        ADD(1),
         MODIFY(2),
         REMOVE(3);
 
@@ -46,8 +46,8 @@ public class MobEffectPacket extends PEPacket {
             writer.writeByte((byte) (this.pid() & 0xFF));
             writer.writeLong(eid);
             writer.writeByte(action.getActionID());
-            writer.writeByte((byte)(effect.getEffect() & 0xFF));
-            writer.writeByte((byte)(effect.getAmpilifier() & 0xFF));
+            writer.writeByte((byte) (effect.getEffect() & 0xFF));
+            writer.writeByte((byte) (effect.getAmpilifier() & 0xFF));
             writer.writeByte((byte) (effect.isParticles() ? 1 : 0));
             writer.writeInt(effect.getDuration());
             this.setData(bos.toByteArray());
