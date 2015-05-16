@@ -16,4 +16,7 @@ public final class PEWindowConstantID {
 
     public final static byte PLAYER_INVENTORY = (byte) 0x00;
     public final static byte PLAYER_ARMOR = (byte) 0x78;
+    public final static byte PLAYER_CREATIVE = (byte) 0x79;
+    public final static byte PLAYER_CRAFTING = (byte) 0x7a;
+    
 }

@@ -13,7 +13,6 @@
 package org.dragonet.net.translator;
 
 import java.util.HashMap;
-import org.dragonet.net.translator.ItemTranslator;
 
 public class ItemTranslator_v0_11 implements ItemTranslator {
 
@@ -100,11 +99,14 @@ public class ItemTranslator_v0_11 implements ItemTranslator {
      */
     @Override
     public int translateToPC(int itemPE) {
+        /*
         if (itemMap_PE_to_PC.containsKey(itemPE)) {
             return itemMap_PE_to_PC.get(itemPE);
         } else {
-            return DEFAULT_BLOCK_TO_PE;
+            return DEFAULT_BLOCK_TO_PC;
         }
+        */
+        return itemPE; //TODO
     }
 
     /**

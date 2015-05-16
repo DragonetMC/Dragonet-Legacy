@@ -9,6 +9,7 @@ import org.bukkit.inventory.*;
 
 import java.io.InputStream;
 import java.util.*;
+import org.dragonet.inventory.ItemList;
 
 /**
  * Manager for crafting and smelting recipes
@@ -84,7 +85,22 @@ public final class CraftingManager implements Iterable<Recipe> {
      * @param recipe A recipe known to match the items.
      */
     public void removeItems(ItemStack[] items, Recipe recipe) {
-        // todo
+        //DRAGONET - Implemented removeItems() method for Glowstone. 
+        ItemList lst = new ItemList(items);
+        if (recipe instanceof ShapedRecipe) {
+            ShapedRecipe shaped = (ShapedRecipe) recipe;
+            for (String itemChar : shaped.getShape()) {
+                ItemStack ingredient = shaped.getIngredientMap().get(new Character(itemChar.charAt(0)));
+                if (ingredient == null) {
+                    continue;
+                }
+                lst.tryToRemove(ingredient);
+            }
+        }
+        for(int i = 0; i < items.length; i++){
+            items[i] = lst.getItems().get(i);
+        }
+        //DRAGONET - END
     }
 
     /**
