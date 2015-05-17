@@ -23,9 +23,9 @@ public class EntityVelocityMessageTranslator extends MessageTranslatorToPE<Trans
         SetEntityMotionPacket pkMotion = new SetEntityMotionPacket();
         SetEntityMotionPacket.EntityMotionData data = new SetEntityMotionPacket.EntityMotionData();
         data.eid = packet.id;
-        data.motionX = packet.velocityX;
-        data.motionY = packet.velocityY;
-        data.motionZ = packet.velocityZ;
+        data.motionX = (float)packet.velocityX / 32;
+        data.motionY = (float)packet.velocityY / 32;
+        data.motionZ = (float)packet.velocityZ / 32;
         pkMotion.motions = new SetEntityMotionPacket.EntityMotionData[]{data};
         return new PEPacket[]{pkMotion};
     }

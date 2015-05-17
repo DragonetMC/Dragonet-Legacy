@@ -53,8 +53,8 @@ public class SetEntityMotionPacket extends PEPacket {
     public static class EntityMotionData {
 
         public long eid;
-        public int motionX;
-        public int motionY;
-        public int motionZ;
+        public float motionX;
+        public float motionY;
+        public float motionZ;
     }
 }

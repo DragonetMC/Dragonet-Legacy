@@ -29,7 +29,15 @@ public class RelativeEntityPositionRotationMessageTranslator extends MessageTran
         }
         if (entity instanceof GlowPlayer) {
             boolean isTeleport = Math.sqrt(packet.deltaX ^ 2 + packet.deltaY ^ 2 + packet.deltaZ ^ 2) > 2;
-            MovePlayerPacket pkMovePlayer = new MovePlayerPacket(packet.id, (float) entity.getLocation().getX(), (float) entity.getLocation().getY(), (float) entity.getLocation().getZ(), entity.getLocation().getYaw(), entity.getLocation().getPitch(), entity.getLocation().getYaw(), isTeleport);
+            MovePlayerPacket pkMovePlayer = new MovePlayerPacket(
+                    packet.id, 
+                    (float) entity.getLocation().getX(), 
+                    (float) entity.getLocation().getY(), 
+                    (float) entity.getLocation().getZ(), 
+                    (float) entity.getLocation().getYaw(), 
+                    (float) entity.getLocation().getPitch(), 
+                    (float) entity.getLocation().getYaw()
+                    , isTeleport);
             return new PEPacket[]{pkMovePlayer};
         } else {
             MoveEntitiesPacket.MoveEntityData data = new MoveEntitiesPacket.MoveEntityData();
@@ -37,8 +45,8 @@ public class RelativeEntityPositionRotationMessageTranslator extends MessageTran
             data.x = (float) entity.getLocation().getX();
             data.y = (float) entity.getLocation().getY();
             data.z = (float) entity.getLocation().getZ();
-            data.yaw = entity.getLocation().getYaw();
-            data.pitch = entity.getLocation().getPitch();
+            data.yaw = (float)entity.getLocation().getYaw();
+            data.pitch = (float)entity.getLocation().getPitch();
             MoveEntitiesPacket pk = new MoveEntitiesPacket(new MoveEntitiesPacket.MoveEntityData[]{data});
             return new PEPacket[]{pk};
         }

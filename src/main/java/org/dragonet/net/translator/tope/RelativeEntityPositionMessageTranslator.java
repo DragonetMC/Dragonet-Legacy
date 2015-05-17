@@ -37,8 +37,8 @@ public class RelativeEntityPositionMessageTranslator extends MessageTranslatorTo
             data.x = (float) entity.getLocation().getX();
             data.y = (float) entity.getLocation().getY();
             data.z = (float) entity.getLocation().getZ();
-            data.yaw = entity.getLocation().getYaw();
-            data.pitch = entity.getLocation().getPitch();
+            data.yaw = (float) entity.getLocation().getYaw();
+            data.pitch = (float)entity.getLocation().getPitch();
             MoveEntitiesPacket pk = new MoveEntitiesPacket(new MoveEntitiesPacket.MoveEntityData[]{data});
             return new PEPacket[]{pk};
         }
