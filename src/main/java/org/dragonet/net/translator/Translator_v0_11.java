@@ -14,6 +14,7 @@ package org.dragonet.net.translator;
 
 import com.flowpowered.networking.Message;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -55,6 +56,7 @@ import org.dragonet.net.DragonetSession;
 import org.dragonet.net.packet.minecraft.*;
 import org.dragonet.net.translator.topc.*;
 import org.dragonet.net.translator.tope.*;
+import org.dragonet.utilities.MCColor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -187,21 +189,43 @@ public class Translator_v0_11 extends BaseTranslator {
     }
 
     public String translateChatMessage(JSONObject jsonObj) {
-        StringBuilder sbuilder = new StringBuilder(jsonObj.containsKey("text") ? ((String) jsonObj.get("text")) : "");
+        StringBuilder sbuilder = new StringBuilder();
+        if(jsonObj.containsKey("text")){
+            if(jsonObj.containsKey("color")){
+                try{
+                    sbuilder.append(MCColor.valueOf((String) jsonObj.get("color")).getPECode().toUpperCase());
+                } catch (IllegalArgumentException e) {
+                }
+            }
+            sbuilder.append(((String) jsonObj.get("text")));
+        }
         if (jsonObj.containsKey("extra")) {
             if (jsonObj.get("extra") instanceof LinkedList) {
                 LinkedList<JSONObject> jsonList = (LinkedList<JSONObject>) jsonObj.get("extra");
                 for (JSONObject obj : jsonList) {
                     if (obj.containsKey("text")) {
+                        if (obj.containsKey("color")) {
+                            try {
+                                sbuilder.append(MCColor.valueOf((String) obj.get("color")).getPECode().toUpperCase());
+                            } catch (IllegalArgumentException e) {
+                            }
+                        }
                         sbuilder.append((String) obj.get("text"));
                     }
                 }
             } else if (jsonObj.get("extra") instanceof JSONArray) {
                 JSONArray jsonArray = (JSONArray) jsonObj.get("extra");
                 if (jsonArray.size() > 0) {
-                    for (int i = 0; i < jsonArray.size(); i++) {
-                        if (((JSONObject) jsonArray.get(i)).containsKey("text")) {
-                            sbuilder.append((String) ((JSONObject) jsonArray.get(i)).get("text"));
+                    for (Iterator it = jsonArray.iterator(); it.hasNext();) {
+                        Object obj = it.next();
+                        if (((JSONObject) obj).containsKey("text")) {
+                            if (((JSONObject) obj).containsKey("color")) {
+                                try {
+                                    sbuilder.append(MCColor.valueOf((String) ((JSONObject) obj).get("color")).getPECode().toUpperCase());
+                                }catch (IllegalArgumentException e) {
+                                }
+                            }
+                            sbuilder.append((String) ((JSONObject) obj).get("text"));
                         }
                     }
                 }

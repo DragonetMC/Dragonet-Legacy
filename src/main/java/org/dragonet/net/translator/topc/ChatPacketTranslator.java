@@ -11,6 +11,7 @@ import org.dragonet.net.DragonetSession;
 import org.dragonet.net.packet.minecraft.ChatPacket;
 import org.dragonet.net.translator.PEPacketTranslatorToPC;
 import org.dragonet.net.translator.Translator_v0_11;
+import org.dragonet.utilities.MCColor;
 
 public class ChatPacketTranslator extends PEPacketTranslatorToPC<Translator_v0_11, ChatPacket> {
 
@@ -20,7 +21,7 @@ public class ChatPacketTranslator extends PEPacketTranslatorToPC<Translator_v0_1
 
     @Override
     public Message[] handleSpecific(ChatPacket packet) {
-        return new Message[]{new IncomingChatMessage(packet.message)};
+        return new Message[]{new IncomingChatMessage(MCColor.cleanAll(packet.message))};
     }
 
 }
