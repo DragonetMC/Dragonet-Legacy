@@ -18,9 +18,7 @@ import org.mozilla.javascript.*;
  */
 public class Functions {
 
-    public static void defineFunctions(Scriptable scope) {
-        Context ctx = Context.enter();
-
+    public static void defineFunctions(Context context, Scriptable scope) {
         Class[] clazz = {PlayerAPI.class, ServerAPI.class, WorldAPI.class, ScriptAPI.class, ConfigAPI.class};
 
         try {
@@ -30,7 +28,6 @@ public class Functions {
         } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
             org.dragonet.DragonetServer.instance().getLogger().warn(e.getMessage());
         } finally {
-            Context.exit();
         }
     }
 }

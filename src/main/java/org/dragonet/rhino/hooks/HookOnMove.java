@@ -7,20 +7,21 @@
  *
  * You can view LICENCE file for details. 
  */
-package org.dragonet.rhino.api;
+package org.dragonet.rhino.hooks;
 
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 import org.dragonet.rhino.Script;
 
 /**
  *
  * @author TheMCPEGamer
  */
-public class onEnchant {
+public class HookOnMove {
 
-    public static void onEnchant(Player plr, int enchantID, String itemType, byte itemData) {
-        for (Script s : org.dragonet.DragonetServer.instance().getRhino().Scripts) {
-            s.runFunction("onEnchant", new Object[]{plr, enchantID, itemType, itemData});
+    public static void onMove(Player plr, int x1, int y1, int z1, int x2, int y2, int z2, Vector plrVelocity) {
+        for (Script s : org.dragonet.DragonetServer.instance().getRhino().getScripts()) {
+            s.runFunction("onMove", new Object[]{plr, x1, y1, z1, x2, y2, z2, plrVelocity});
         }
     }
 }

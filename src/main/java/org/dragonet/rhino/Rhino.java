@@ -9,81 +9,89 @@
  */
 package org.dragonet.rhino;
 
+import org.dragonet.rhino.hooks.HookOnEnchant;
+import org.dragonet.rhino.hooks.HookOnQuit;
+import org.dragonet.rhino.hooks.HookUseItem;
+import org.dragonet.rhino.hooks.HookTick;
+import org.dragonet.rhino.hooks.HookOnMove;
+import org.dragonet.rhino.hooks.HookOnChatSending;
+import org.dragonet.rhino.hooks.HookOnKick;
+import org.dragonet.rhino.hooks.HookOnConnect;
 import java.io.File;
 import java.util.*;
+import lombok.Getter;
+import net.glowstone.GlowServer;
 
 import org.bukkit.entity.Player;
-import org.dragonet.DragonetServer;
-import org.dragonet.rhino.api.*;
 import org.dragonet.rhino.api.functions.ScriptAPI;
-
 /**
  *
- * @author TheMCPEGamer__ edited by Ash (QuarkTheAwesome)
+ * @author TheMCPEGamer__ 
+ * @author Ash (QuarkTheAwesome) edited
+ * @author DefinitlyEvil improved
  */
 public class Rhino {
 
-    public List<Script> Scripts = new ArrayList<>();
+    private final GlowServer server;
 
-    public Rhino() {
+    @Getter
+    private List<Script> scripts = new ArrayList<>();
+
+    public Rhino(GlowServer server) {
+        this.server = server;
         this.startScriptInterpreter();
     }
 
     public void reload() {
-        this.Scripts = null;
+        this.scripts = null;
         //Reset methods in ScriptAPI as scripts will now re-add them
         ScriptAPI.resetMethods();
-        this.startScriptInterpreter();
-        for (Script s : Scripts) {
-            DragonetServer.instance().getLogger().info("[DragonetAPI] Running post-initialisation for script " + s.UID);
-            s.runFunction("postInit", new Object[]{});
-        }
     }
 
     public void Tick() {
-        Tick.Tick();
+        HookTick.Tick();
     }
 
     public void useItem(int blockX, int blockY, int blockZ, String blockFace, String blockName, Player plr) {
-        useItem.useItem(blockX, blockY, blockZ, blockFace, blockName, plr);
+        HookUseItem.useItem(blockX, blockY, blockZ, blockFace, blockName, plr);
     }
 
     public void onConnect(Player plr) {
-        onConnect.onConnect(plr);
+        HookOnConnect.onConnect(plr);
     }
 
     public void onQuit(Player plr) {
-        onQuit.onQuit(plr);
+        HookOnQuit.onQuit(plr);
     }
 
     public void onKick(Player plr, String msg) {
-        onKick.onKick(plr, msg);
+        HookOnKick.onKick(plr, msg);
     }
 
     public void onEnchant(Player plr, int enchantID, String itemType, byte itemData) {
-        onEnchant.onEnchant(plr, enchantID, itemType, itemData);
+        HookOnEnchant.onEnchant(plr, enchantID, itemType, itemData);
     }
 
     public boolean onChatSending(Player plr, String message) {
-        return onChatSending.onChatSending(plr, message);
+        return HookOnChatSending.onChatSending(plr, message);
     }
 
     public void onMove(Player plr, int x1, int y1, int z1, int x2, int y2, int z2, org.bukkit.util.Vector plrVelocity) {
-        onMove.onMove(plr, x1, y1, z1, x2, y2, z2, plrVelocity);
+        HookOnMove.onMove(plr, x1, y1, z1, x2, y2, z2, plrVelocity);
     }
 
     private void startScriptInterpreter() {
-        Scripts = loadScripts();
+        scripts = loadScripts();
         //Moved this here so Scripts variable has already been initialized if it's needed
-        for (Script s : Scripts) {
-            System.out.println("[DragonetAPI] Starting script " + s.getName() + " with UID " + s.UID);
+        for (Script s : scripts) {
+            System.out.println("[DragonetAPI] Starting script " + s.getName() + " with UID " + s.getUID());
             s.runFunction("onInit", new Object[]{});
         }
     }
 
     private List<Script> loadScripts() {
         List<Script> fileList = new ArrayList<>();
-        File dir = new File("./plugins");
+        File dir = new File("plugins");
 
         if (!dir.isDirectory()) {
             try {
@@ -99,9 +107,9 @@ public class Rhino {
         } else {
             for (File f : dir.listFiles()) {
                 if (f.getName().endsWith((".js")) && !fileList.contains(f)) {
-                    Script script = new Script(f);
+                    Script script = new Script(server, f);
                     fileList.add(script);
-                    System.out.println("Loaded DragonetAPI Script " + script.name);
+                    System.out.println("Loaded DragonetAPI Script " + script.getName());
                 }
             }
 

@@ -17,11 +17,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
+import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import lombok.Getter;
 import net.glowstone.GlowServer;
+import net.glowstone.util.ServerConfig;
 
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -42,36 +44,41 @@ public class DragonetServer {
         return INSTANCE;
     }
 
-    private @Getter
-    GlowServer server;
+    @Getter
+    private GlowServer server;
 
-    private @Getter
-    Logger logger;
+    @Getter
+    private Logger logger;
 
-    private @Getter
-    Rhino rhino;
+    @Getter
+    private Rhino rhino;
 
-    private @Getter
-    NetworkHandler networkHandler;
+    @Getter
+    private NetworkHandler networkHandler;
 
-    private @Getter
-    ExecutorService threadPool;
+    @Getter
+    private ExecutorService threadPool;
 
-    private @Getter
-    DragonetPEAddonServer addonServer;
+    @Getter
+    private DragonetPEAddonServer addonServer;
 
-    private @Getter
-    boolean addonSupported;
+    @Getter
+    private boolean addonSupported;
 
-    private @Getter
-    CustomItemManager customMaterialManager;
+    @Getter
+    private CustomItemManager customMaterialManager;
 
-    private @Getter
-    int playerSpawnThreshold;
+    @Getter
+    private int playerSpawnThreshold;
+
+    @Getter
+    private final File pluginFolder;
 
     public DragonetServer(GlowServer server) {
         INSTANCE = this;
         this.server = server;
+        ServerConfig serverConfig = new ServerConfig(server.getConfigDir(), new File(server.getConfigDir(), "glowstone.yml"), new HashMap<ServerConfig.Key, Object>());
+        pluginFolder = new File(serverConfig.getString(ServerConfig.Key.PLUGIN_FOLDER));
         this.logger = LoggerFactory.getLogger("DragonetServer");
         this.customMaterialManager = new CustomItemManager(this);
         this.logger.info("Starting Dragonet Server version " + DragonetVersioning.DRAGONET_VERSION + "... ");

@@ -10,6 +10,8 @@
 package org.dragonet.rhino.api.functions;
 
 import java.util.ArrayList;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 
 import org.dragonet.DragonetServer;
 import org.dragonet.rhino.CustomMethod;
@@ -43,11 +45,11 @@ public class ScriptAPI extends ScriptableObject {
     @JSFunction
     public static void callCustomFunction(String function, Object arguments) {
         if (!(arguments == null)) {
-            for (Script s : DragonetServer.instance().getRhino().Scripts) {
+            for (Script s : DragonetServer.instance().getRhino().getScripts()) {
                 s.runFunction(function, new Object[]{arguments});
             }
         } else {
-            for (Script s : DragonetServer.instance().getRhino().Scripts) {
+            for (Script s : DragonetServer.instance().getRhino().getScripts()) {
                 s.runFunction(function, new Object[]{null});
             }
         }
@@ -58,8 +60,8 @@ public class ScriptAPI extends ScriptableObject {
         //Check if ownerUID belongs to a valid script
         Script scr = null;
         try {
-            for (Script s : DragonetServer.instance().getRhino().Scripts) {
-                if (s.UID == ownerUID) {
+            for (Script s : DragonetServer.instance().getRhino().getScripts()) {
+                if (s.getUID().equals(ownerUID)) {
                     scr = s;
                 }
             }
@@ -75,30 +77,40 @@ public class ScriptAPI extends ScriptableObject {
 
         //Check if method name is already taken
         for (CustomMethod m : CustomMethod.methods) {
-            if (m.method == method) {
-                DragonetServer.instance().getLogger().error("[DragonetAPI] Script " + scr.UID + " (" + scr.getName() + ")" + " tried to reserve method " + method + ", but this has already been reserved by " + m.owner.getName() + "!");
+            if (m.method.equals(method)) {
+                DragonetServer.instance().getLogger().error("[DragonetAPI] Script " + scr.getUID() + " (" + scr.getName() + ")" + " tried to reserve method " + method + ", but this has already been reserved by " + m.owner.getName() + "!");
                 DragonetServer.instance().getLogger().error("[DragonetAPI] Method " + method + " will not be defined. This will cause issues with other scripts.");
             }
         }
 
         //Finally, add method
         CustomMethod.methods.add(new CustomMethod(method, handler, scr));
-        DragonetServer.instance().getLogger().info("[DragonetAPI] Script " + scr.UID + " (" + scr.getName() + ") added API method " + method + " sucessfully.");
+        DragonetServer.instance().getLogger().info("[DragonetAPI] Script " + scr.getUID() + " (" + scr.getName() + ") added API method " + method + " sucessfully.");
     }
 
     @JSFunction
     public static void callCustomMethod(String method, Object arguments) {
         //Cycle through all scripts looking for our method.
         for (CustomMethod m : CustomMethod.methods) {
-            if (m.method == method) {
+            if (m.method.equals(method)) {
                 //Found it! Run.
                 m.run(new Object[]{arguments});
             }
         }
     }
 
+    @JSFunction
+    public static void registerCommand(final Script script, final String commandName){
+        DragonetServer.instance().getServer().getCommandMap().register(commandName, "[" + script.getName() + ":" + commandName + "]", new Command(commandName) {
+            @Override
+            public boolean execute(CommandSender cs, String alias, String[] args) {
+                return script.onCommand(cs, this, alias, args);
+            }
+        });
+    }
+    
     public static void resetMethods() {
         DragonetServer.instance().getLogger().info("[DragonetAPI] Removing all custom methods...");
-        CustomMethod.methods = new ArrayList<CustomMethod>();
+        CustomMethod.methods = new ArrayList<>();
     }
 }

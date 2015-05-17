@@ -7,7 +7,7 @@
  *
  * You can view LICENCE file for details. 
  */
-package org.dragonet.rhino.api;
+package org.dragonet.rhino.hooks;
 
 import org.bukkit.entity.Player;
 import org.dragonet.DragonetServer;
@@ -16,13 +16,13 @@ import org.dragonet.rhino.Script;
 /**
  * @author Ash (QuarkTheAwesome)
  */
-public class onChatSending {
+public class HookOnChatSending {
 
     public static boolean cancelled = false;
 
     public static boolean onChatSending(Player plr, String message) {
         cancelled = false;
-        for (Script s : org.dragonet.DragonetServer.instance().getRhino().Scripts) {
+        for (Script s : org.dragonet.DragonetServer.instance().getRhino().getScripts()) {
             Object result = s.runFunction("onChatSending", new Object[]{plr, message});
             if (result != null) {
                 try {

@@ -7,19 +7,20 @@
  *
  * You can view LICENCE file for details. 
  */
-package org.dragonet.rhino.api;
+package org.dragonet.rhino.hooks;
 
+import org.bukkit.entity.Player;
 import org.dragonet.rhino.Script;
 
 /**
  *
- * @author TheMCPEGamer__
+ * @authorTheMCPEGamer
  */
-public class Tick {
+public class HookOnConnect {
 
-    public static void Tick() {
-        for (Script s : org.dragonet.DragonetServer.instance().getRhino().Scripts) {
-            s.runFunction("Tick", new Object[]{});
+    public static void onConnect(Player plr) {
+        for (Script s : org.dragonet.DragonetServer.instance().getRhino().getScripts()) {
+            s.runFunction("onConnect", new Object[]{plr});
         }
     }
 }

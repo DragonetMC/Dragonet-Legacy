@@ -7,7 +7,7 @@
  *
  * You can view LICENCE file for details. 
  */
-package org.dragonet.rhino.api;
+package org.dragonet.rhino.hooks;
 
 import org.bukkit.entity.Player;
 import org.dragonet.rhino.Script;
@@ -16,11 +16,11 @@ import org.dragonet.rhino.Script;
  *
  * @author TheMCPEGamer
  */
-public class onQuit {
+public class HookOnEnchant {
 
-    public static void onQuit(Player plr) {
-        for (Script s : org.dragonet.DragonetServer.instance().getRhino().Scripts) {
-            s.runFunction("onQuit", new Object[]{plr});
+    public static void onEnchant(Player plr, int enchantID, String itemType, byte itemData) {
+        for (Script s : org.dragonet.DragonetServer.instance().getRhino().getScripts()) {
+            s.runFunction("onEnchant", new Object[]{plr, enchantID, itemType, itemData});
         }
     }
 }

@@ -15,9 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.dragonet.PocketPotionEffect;
 import org.dragonet.entity.DragonetPlayer;
-import org.dragonet.net.packet.minecraft.MobEffectPacket;
 import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.annotations.JSFunction;
 

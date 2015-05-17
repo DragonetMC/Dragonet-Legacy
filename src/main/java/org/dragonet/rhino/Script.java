@@ -13,47 +13,64 @@ import java.util.*;
 import java.io.*;
 import com.google.common.io.Files;
 import java.nio.charset.Charset;
+import lombok.Getter;
+import net.glowstone.GlowServer;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.mozilla.javascript.*;
 import org.dragonet.DragonetServer;
-import org.dragonet.rhino.api.functions.*;
+import org.dragonet.rhino.api.functions.Functions;
 
 /**
  *
  * @author TheMCPEGamer__ edited by Ash (QuarkTheAwesome)
  */
-public class Script {
+public class Script extends PluginAdapter {
 
-    public String name = "";
+    private String name;
+    
+    @Getter
+    private Context context;
 
     //In order for the ScriptAPI to keep track of scripts without relying on filenames (which change)...
     /**
      * Unique name of script (not filename). Set by script.
      */
-    public String UID = "";
+    @Getter
+    private String UID = "";
+    
+    @Getter
+    private final ScriptableObject scope;
 
-    public String fullFilePath = "";
+    private String fullFilePath = "";
 
-    public String fileContents = "";
+    @Getter
+    private File file;
 
-    public File file;
-
-    public Script(File scriptFile) {
-        this.name = scriptFile.getName();
-
-        this.fullFilePath = scriptFile.getAbsolutePath();
-
-        this.fileContents = getScriptContents(scriptFile);
-
-        this.file = scriptFile;
-
-        this.UID = findScriptUID();
+    public Script(GlowServer server, File scriptFile) {
+        super(server);
+        name = scriptFile.getName();
+        context = new ContextFactory().enterContext();
+        scope = context.initStandardObjects();
+        Functions.defineFunctions(context, scope);
+        fullFilePath = scriptFile.getAbsolutePath();
+        file = scriptFile;
+        UID = findScriptUID();
+        //Reads the script and evaluate it
+        BufferedReader script = null;
+        try {
+            script = new BufferedReader(new FileReader(this.getFile()));
+        } catch (IOException e) {
+        }
+        try {
+            context.evaluateReader(scope, script, getName(), 1, null);
+        } catch (IOException e) {
+            System.out.println(Arrays.toString(e.getStackTrace()));
+        }
     }
 
-    public File getFile() {
-        return this.file;
-    }
-
-    public String getName() {
+    @Override
+    public final String getName() {
         return this.name;
     }
 
@@ -96,36 +113,54 @@ public class Script {
     }
 
     public Object runFunction(String func, Object[] params) {
-        BufferedReader script = null;
-
+        Object result = null;  
         try {
-            script = new BufferedReader(new FileReader(this.getFile()));
-        } catch (IOException IOe) {
-            System.out.println(Arrays.toString(IOe.getStackTrace()));
-        }
-
-        Context context = Context.enter();
-        Object result = null;
-
-        try {
-            ScriptableObject scope = context.initStandardObjects();
-
-            try {
-                Functions.defineFunctions(scope);
-                context.evaluateReader(scope, script, "script", 1, null);
-            } catch (IOException IOe) {
-                System.out.println(Arrays.toString(IOe.getStackTrace()));
-            }
-
             Object function = scope.get(func, scope);
             if (!(function instanceof UniqueTag)) {
                 Function fct = (Function) function;
                 result = fct.call(context, scope, scope, params);
             }
         } finally {
-            Context.exit();
         }
 
         return result;
+    }
+
+    @Override
+    public void onDisable() {
+        runFunction("onDisable", new Object[]{});
+    }
+
+    @Override
+    public void onLoad() {
+        runFunction("onLoad", new Object[]{this});
+    }
+    
+    @Override
+    public boolean onCommand(CommandSender cs, Command cmd, String alias, String[] args) {
+        Object ret = runFunction("onCommand", new Object[]{
+            cs, cmd.getLabel(), alias, args
+        });
+        if(boolean.class.isInstance(ret)){
+            return (boolean)ret;
+        }
+        if(Boolean.class.isInstance(ret)){
+            return (boolean)ret;
+        }
+        if(String.class.isInstance(ret)){
+            String s = (String)ret;
+            if(s.trim().toLowerCase().contains("false")){
+                return false;
+            }else{
+                return true;
+            }
+        }
+        getLogger().warning("Script returns a invalid boolean object in onCommand() hook. ");
+        return true;
+    }
+
+    @Override
+    public void onEnable() {
+        runFunction("onEnable", new Object[]{});
     }
 }
