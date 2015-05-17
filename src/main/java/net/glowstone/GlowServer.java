@@ -5,6 +5,7 @@ import com.avaje.ebean.config.dbplatform.SQLitePlatform;
 import com.avaje.ebeaninternal.server.lib.sql.TransactionIsolation;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import io.netty.util.internal.ConcurrentSet;
 import net.glowstone.command.ColorCommand;
 import net.glowstone.command.TellrawCommand;
 import net.glowstone.constants.GlowEnchantment;
@@ -396,11 +397,13 @@ public final class GlowServer implements Server {
      */
     private int port;
 
+    //DRAGONET - Change HashSet to ConcurrentSet()
     /**
      * A set of all online players.
      */
-    private final Set<GlowPlayer> onlinePlayers = new HashSet<>();
-
+    private final Set<GlowPlayer> onlinePlayers = new ConcurrentSet<>();
+    //DRAGONET - End
+    
     /**
      * A view of all online players.
      */
