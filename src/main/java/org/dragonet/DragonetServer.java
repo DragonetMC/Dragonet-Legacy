@@ -82,7 +82,7 @@ public class DragonetServer {
         this.logger = LoggerFactory.getLogger("DragonetServer");
         this.customMaterialManager = new CustomItemManager(this);
         this.logger.info("Starting Dragonet Server version " + DragonetVersioning.DRAGONET_VERSION + "... ");
-        this.rhino = new Rhino();
+        this.rhino = new Rhino(this.getServer());
     }
 
     /**
@@ -146,9 +146,9 @@ public class DragonetServer {
             this.getLogger().info("DragonetPE Android Addon support is disabled! ");
         }
         //This exists because ScriptAPI.addMethod() must be called AFTER Dragonet initialization
-        for (Script s : rhino.Scripts) {
-            this.getLogger().info("[DragonetAPI] Running post-initialisation for script " + s.UID);
-            s.runFunction("postInit", new Object[]{});
+        for (Script s : rhino.getScripts()) {
+            this.getLogger().info("[DragonetAPI] Loading script " + s.getUID());
+            s.runFunction("onLoad", new Object[]{s});
         }
         this.playerSpawnThreshold = config.getInt("player-spawn-chunk-threshold", 36);
         this.logger.info("Dragonet successfully initialized! ");
