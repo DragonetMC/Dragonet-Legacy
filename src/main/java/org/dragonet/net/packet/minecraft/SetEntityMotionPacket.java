@@ -37,9 +37,9 @@ public class SetEntityMotionPacket extends PEPacket {
                     continue;
                 }
                 writer.writeLong(d.eid);
-                writer.writeShort((short) ((d.motionX * 8000) & 0xFFFF));
-                writer.writeShort((short) ((d.motionY * 8000) & 0xFFFF));
-                writer.writeShort((short) ((d.motionZ * 8000) & 0xFFFF));
+                writer.writeFloat(d.motionX);
+                writer.writeFloat(d.motionY);
+                writer.writeFloat(d.motionZ);
             }
             this.setData(bos.toByteArray());
         } catch (IOException e) {
