@@ -10,7 +10,6 @@
  *
  * @author The Dragonet Team
  */
-
 package org.dragonet.rhino;
 
 import com.avaje.ebean.EbeanServer;
@@ -32,22 +31,21 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.PluginLogger;
 
-public abstract class PluginAdapter implements  Plugin{
+public abstract class PluginAdapter implements Plugin {
 
     private final GlowServer server;
     private final PluginLogger logger = new PluginLogger(this);
     private final File dataFolder;
-    
+
     private FileConfiguration config;
-    
+
     private boolean enabled;
     private boolean naggable;
-    
-    
+
     public PluginAdapter(GlowServer server) throws IllegalStateException {
         this.server = server;
         dataFolder = new File(server.getDragonetServer().getPluginFolder(), this.getName());
-        if(dataFolder.isFile()){
+        if (dataFolder.isFile()) {
             server.getLogger().warning("Faild to load plugin [" + getName() + "] due to plugin folder is occupied by a regular file. ");
             throw new IllegalStateException("Plugin folder for [" + getName() + "] is occupied by a regular file. ");
         }
@@ -58,10 +56,12 @@ public abstract class PluginAdapter implements  Plugin{
         } catch (InvalidConfigurationException ex) {
         }
     }
-    
+
     @Override
     public File getDataFolder() {
-        if(!dataFolder.exists()) dataFolder.mkdirs();
+        if (!dataFolder.exists()) {
+            dataFolder.mkdirs();
+        }
         return dataFolder;
     }
 
@@ -167,15 +167,19 @@ public abstract class PluginAdapter implements  Plugin{
     public int hashCode() {
         return getName().hashCode();
     }
-    
+
     @Override
     public boolean equals(Object obj) {
-        if(this == obj) return true;
-        if(obj == null) return false;
-        if(!Plugin.class.isInstance(obj)) return false;
-        return getName().equals(((Plugin)obj).getName());
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!Plugin.class.isInstance(obj)) {
+            return false;
+        }
+        return getName().equals(((Plugin) obj).getName());
     }
-    
-    
-    
+
 }

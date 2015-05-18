@@ -87,12 +87,11 @@ public class Rhino {
 
     private List<Script> loadScripts() {
         List<Script> fileList = new ArrayList<>();
-        File dir = new File("plugins");
+        File dir = server.getDragonetServer().getPluginFolder();
 
         if (!dir.isDirectory()) {
             try {
-                if (dir.mkdir()) {
-                } else {
+                if (!dir.mkdir()) {
                     System.err.println("Could not create plugins file...");
                     System.err.println("Please create it yourself");
                     org.dragonet.DragonetServer.instance().shutdown();
@@ -102,7 +101,7 @@ public class Rhino {
             }
         } else {
             for (File f : dir.listFiles()) {
-                if (f.getName().endsWith((".js")) && !fileList.contains(f)) {
+                if (f.getName().toLowerCase().endsWith((".js")) && !fileList.contains(f)) {
                     Script script = new Script(server, f);
                     fileList.add(script);
                     ((MixedPluginManager)server.getPluginManager()).addPlugin(script);

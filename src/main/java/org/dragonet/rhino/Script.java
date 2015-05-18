@@ -11,8 +11,6 @@ package org.dragonet.rhino;
 
 import java.util.*;
 import java.io.*;
-import com.google.common.io.Files;
-import java.nio.charset.Charset;
 import lombok.Getter;
 import net.glowstone.GlowServer;
 import org.bukkit.command.Command;
@@ -50,6 +48,8 @@ public class Script extends PluginAdapter {
     public Script(GlowServer server, File scriptFile) {
         super(server);
         name = scriptFile.getName();
+        System.out.println((scriptFile == null) + "(SCRIPTFILE) AND ");
+        System.out.println((scriptFile.getName() == null) + "(getName)");
         context = new ContextFactory().enterContext();
         scope = context.initStandardObjects();
         Functions.defineFunctions(context, scope);
@@ -78,24 +78,6 @@ public class Script extends PluginAdapter {
         return this.fullFilePath;
     }
 
-    private String getScriptContents(File f) {
-        List<String> scriptContentList = new ArrayList<>();
-
-        String scriptContents = new String();
-
-        try {
-            scriptContentList = Files.readLines(f, Charset.defaultCharset());
-        } catch (IOException IOe) {
-            System.out.println(IOe.getMessage());
-        }
-
-        for (String str : scriptContentList) {
-            scriptContents += " " + str;
-        }
-
-        return scriptContents;
-    }
-
     private String findScriptUID() {
         Object name = runFunction("getUID", new Object[]{});
         try {
@@ -106,7 +88,7 @@ public class Script extends PluginAdapter {
         } catch (ClassCastException e) {
             DragonetServer.instance().getLogger().warn("[DragonetAPI] Script " + this.name + " doesn't provide custom name!");
             DragonetServer.instance().getLogger().warn("[DragonetAPI] This script will not be able to use the ScriptAPI.");
-    		//TODO Link details section for how this works
+            //TODO Link details section for how this works
             //DragonetServer.instance().getLogger().warn("[DragonetAPI] See <URL> for details.");
             return "INVALID";
         }

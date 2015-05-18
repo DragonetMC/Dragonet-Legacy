@@ -17,6 +17,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -77,12 +78,10 @@ public class DragonetServer {
     public DragonetServer(GlowServer server) {
         INSTANCE = this;
         this.server = server;
-        ServerConfig serverConfig = new ServerConfig(server.getConfigDir(), new File(server.getConfigDir(), "glowstone.yml"), new HashMap<ServerConfig.Key, Object>());
+        ServerConfig serverConfig = new ServerConfig(server.getConfigDir(), new File(server.getConfigDir(), "glowstone.yml"), new EnumMap<ServerConfig.Key, Object>(ServerConfig.Key.class));
         pluginFolder = new File(serverConfig.getString(ServerConfig.Key.PLUGIN_FOLDER));
         this.logger = LoggerFactory.getLogger("DragonetServer");
         this.customMaterialManager = new CustomItemManager(this);
-        this.logger.info("Starting Dragonet Server version " + DragonetVersioning.DRAGONET_VERSION + "... ");
-        this.rhino = new Rhino(this.getServer());
     }
 
     /**
@@ -94,6 +93,7 @@ public class DragonetServer {
         //this.logger.info("Sending statistic... ");
         //StatisticSender statSender = new StatisticSender(DragonetVersioning.DRAGONET_VERSION, System.currentTimeMillis());
         //statSender.sendStatistic();
+        this.logger.info("Starting Dragonet Server version " + DragonetVersioning.DRAGONET_VERSION + "... ");
         File fileConfig = new File(this.server.getConfigDir() + File.separator + "dragonet.yml");
         if (!fileConfig.exists()) {
             try {
@@ -129,6 +129,10 @@ public class DragonetServer {
             this.getServer().shutdown();
             return;
         }
+        
+        this.logger.info("Starting DAPIS scripts... ");
+        this.rhino = new Rhino(this.getServer());
+        
         if (config.getBoolean("enable-addon", true)) {
             this.getLogger().info("Enabling DragonetPE Android Addon server... ");
             this.addonServer = new DragonetPEAddonServer(this);
