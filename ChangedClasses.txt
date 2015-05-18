@@ -2,6 +2,9 @@
 
 ===[net.glowstone.GlowServer]===
 81-86: Added dragonet instance getter, set dragonet instance to a private variable. 
+
+~268: Changed SimplePluginManager to Dragonet's MixedPluginManager in order to let Rhino load scripts as plugins dynamically. 
+
 ~400: Changed onlinePlayers variable to ConcurrentSet instead of HashSet. 
 
 611-613: Added stopping MCPE server call into shutdown() method

@@ -155,7 +155,7 @@ public class Script extends PluginAdapter {
                 return true;
             }
         }
-        getLogger().warning("Script returns a invalid boolean object in onCommand() hook. ");
+        getLogger().warning("Script returns a invalid boolean object in onCommand() hook, treating as true. ");
         return true;
     }
 

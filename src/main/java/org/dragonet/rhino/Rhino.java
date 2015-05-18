@@ -23,6 +23,7 @@ import lombok.Getter;
 import net.glowstone.GlowServer;
 
 import org.bukkit.entity.Player;
+import org.dragonet.plugin.MixedPluginManager;
 import org.dragonet.rhino.api.functions.ScriptAPI;
 /**
  *
@@ -82,11 +83,6 @@ public class Rhino {
 
     private void startScriptInterpreter() {
         scripts = loadScripts();
-        //Moved this here so Scripts variable has already been initialized if it's needed
-        for (Script s : scripts) {
-            System.out.println("[DragonetAPI] Starting script " + s.getName() + " with UID " + s.getUID());
-            s.runFunction("onInit", new Object[]{});
-        }
     }
 
     private List<Script> loadScripts() {
@@ -109,6 +105,7 @@ public class Rhino {
                 if (f.getName().endsWith((".js")) && !fileList.contains(f)) {
                     Script script = new Script(server, f);
                     fileList.add(script);
+                    ((MixedPluginManager)server.getPluginManager()).addPlugin(script);
                     System.out.println("Loaded DragonetAPI Script " + script.getName());
                 }
             }

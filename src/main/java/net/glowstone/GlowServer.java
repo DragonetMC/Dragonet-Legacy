@@ -65,6 +65,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
 import org.dragonet.DragonetServer;
+import org.dragonet.plugin.MixedPluginManager;
 import org.dragonet.utilities.DragonetVersioning;
 
 /**
@@ -265,8 +266,10 @@ public final class GlowServer implements Server {
     /**
      * The plugin manager of this server.
      */
-    private final PluginManager pluginManager = new SimplePluginManager(this, commandMap);
-
+    //DRAGONET - Changed to customized MixedPluginManager. 
+    private final PluginManager pluginManager = new MixedPluginManager(this, commandMap);
+    //DRAGONET - END
+    
     /**
      * The plugin channel messenger for the server.
      */
