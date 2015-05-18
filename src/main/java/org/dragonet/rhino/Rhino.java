@@ -19,6 +19,8 @@ import org.dragonet.rhino.hooks.HookOnKick;
 import org.dragonet.rhino.hooks.HookOnConnect;
 import java.io.File;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lombok.Getter;
 import net.glowstone.GlowServer;
 
@@ -102,10 +104,15 @@ public class Rhino {
         } else {
             for (File f : dir.listFiles()) {
                 if (f.getName().toLowerCase().endsWith((".js")) && !fileList.contains(f)) {
-                    Script script = new Script(server, f);
-                    fileList.add(script);
-                    ((MixedPluginManager)server.getPluginManager()).addPlugin(script);
-                    System.out.println("Loaded DragonetAPI Script " + script.getName());
+                    Script script;
+                    try {
+                        script = new Script(server, f);
+                        fileList.add(script);
+                        ((MixedPluginManager) server.getPluginManager()).addPlugin(script);
+                        System.out.println("Loaded DragonetAPI Script " + script.getName());
+                    } catch (InvalidScriptException ex) {
+                        server.getLogger().warning(ex.getMessage());
+                    }
                 }
             }
 

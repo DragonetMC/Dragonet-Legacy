@@ -43,14 +43,13 @@ public class Script extends PluginAdapter {
     @Getter
     private File file;
 
-    public Script(GlowServer server, File scriptFile) {
-        super(server, scriptFile.getName());
+    public Script(GlowServer server, File scriptFile) throws InvalidScriptException {
+        super(server);
         context = new ContextFactory().enterContext();
         scope = context.initStandardObjects();
         Functions.defineFunctions(context, scope);
         fullFilePath = scriptFile.getAbsolutePath();
         file = scriptFile;
-        UID = findScriptUID();
         //Reads the script and evaluate it
         BufferedReader script = null;
         try {
@@ -62,6 +61,16 @@ public class Script extends PluginAdapter {
         } catch (IOException e) {
             System.out.println(Arrays.toString(e.getStackTrace()));
         }
+        UID = findScriptUID();
+        if(UID == null){
+            throw new InvalidScriptException(scriptFile.getName(), "Can not find a valid UID defined/returned! ");
+        }
+        for(Script checkScript : server.getDragonetServer().getRhino().getScripts()){
+            if(checkScript.getUID().equals(this.UID)){
+                throw new InvalidScriptException(scriptFile.getName(), "There is already a script using that UID, maybe duplicated file? ");
+            }
+        }
+        this.initialize(UID);
     }
 
     public String getPath() {
@@ -80,7 +89,7 @@ public class Script extends PluginAdapter {
             DragonetServer.instance().getLogger().warn("[DragonetAPI] This script will not be able to use the ScriptAPI.");
             //TODO Link details section for how this works
             //DragonetServer.instance().getLogger().warn("[DragonetAPI] See <URL> for details.");
-            return "INVALID";
+            return null;
         }
     }
 

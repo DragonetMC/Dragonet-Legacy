@@ -33,20 +33,26 @@ import org.bukkit.plugin.PluginLogger;
 
 public abstract class PluginAdapter implements Plugin {
 
-    private final String name;
+    private String name;
     
-    private final GlowServer server;
-    private final PluginLogger logger;
-    private final File dataFolder;
+    private boolean initialized;
+    
+    private GlowServer server;
+    private PluginLogger logger;
+    private File dataFolder;
 
     private FileConfiguration config;
 
     private boolean enabled;
     private boolean naggable;
 
-    public PluginAdapter(GlowServer server, String name) throws IllegalStateException {
-        this.name = name;
+    public PluginAdapter(GlowServer server) throws IllegalStateException {
         this.server = server;
+    }
+    
+    public void initialize(String name) {
+        if(initialized) return;
+        this.name = name;
         dataFolder = new File(server.getDragonetServer().getPluginFolder(), this.getName().replace(".", "_").concat("-data"));
         if (dataFolder.isFile()) {
             server.getLogger().warning("Faild to load plugin [" + getName() + "] due to plugin folder is occupied by a regular file. ");
@@ -58,6 +64,7 @@ public abstract class PluginAdapter implements Plugin {
         } catch (IOException | InvalidConfigurationException ex) {
         }
         logger = new PluginLogger(this);
+        initialized = true;
     }
 
     @Override
