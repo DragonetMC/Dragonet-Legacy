@@ -100,13 +100,17 @@ public class ScriptAPI extends ScriptableObject {
     }
 
     @JSFunction
-    public static void registerCommand(final Script script, final String commandName){
-        DragonetServer.instance().getServer().getCommandMap().register(commandName, "[" + script.getName() + ":" + commandName + "]", new Command(commandName) {
+    public static boolean registerCommand(final Object script, final String commandName){
+        if(!Script.class.isInstance(script)){
+            return false;
+        }
+        DragonetServer.instance().getServer().getCommandMap().register(commandName, "[" + ((Script)script).getName() + ":" + commandName + "]", new Command(commandName) {
             @Override
             public boolean execute(CommandSender cs, String alias, String[] args) {
-                return script.onCommand(cs, this, alias, args);
+                return ((Script)script).onCommand(cs, this, alias, args);
             }
         });
+        return true;
     }
     
     public static void resetMethods() {

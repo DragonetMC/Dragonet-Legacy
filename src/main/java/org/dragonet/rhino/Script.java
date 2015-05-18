@@ -24,8 +24,6 @@ import org.dragonet.rhino.api.functions.Functions;
  * @author TheMCPEGamer__ edited by Ash (QuarkTheAwesome)
  */
 public class Script extends PluginAdapter {
-
-    private String name;
     
     @Getter
     private Context context;
@@ -46,10 +44,7 @@ public class Script extends PluginAdapter {
     private File file;
 
     public Script(GlowServer server, File scriptFile) {
-        super(server);
-        name = scriptFile.getName();
-        System.out.println((scriptFile == null) + "(SCRIPTFILE) AND ");
-        System.out.println((scriptFile.getName() == null) + "(getName)");
+        super(server, scriptFile.getName());
         context = new ContextFactory().enterContext();
         scope = context.initStandardObjects();
         Functions.defineFunctions(context, scope);
@@ -69,11 +64,6 @@ public class Script extends PluginAdapter {
         }
     }
 
-    @Override
-    public final String getName() {
-        return this.name;
-    }
-
     public String getPath() {
         return this.fullFilePath;
     }
@@ -86,7 +76,7 @@ public class Script extends PluginAdapter {
             }
             return (String) name;
         } catch (ClassCastException e) {
-            DragonetServer.instance().getLogger().warn("[DragonetAPI] Script " + this.name + " doesn't provide custom name!");
+            DragonetServer.instance().getLogger().warn("[DragonetAPI] Script " + this.getName() + " doesn't provide custom name!");
             DragonetServer.instance().getLogger().warn("[DragonetAPI] This script will not be able to use the ScriptAPI.");
             //TODO Link details section for how this works
             //DragonetServer.instance().getLogger().warn("[DragonetAPI] See <URL> for details.");

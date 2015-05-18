@@ -33,8 +33,10 @@ import org.bukkit.plugin.PluginLogger;
 
 public abstract class PluginAdapter implements Plugin {
 
+    private final String name;
+    
     private final GlowServer server;
-    private final PluginLogger logger = new PluginLogger(this);
+    private final PluginLogger logger;
     private final File dataFolder;
 
     private FileConfiguration config;
@@ -42,9 +44,10 @@ public abstract class PluginAdapter implements Plugin {
     private boolean enabled;
     private boolean naggable;
 
-    public PluginAdapter(GlowServer server) throws IllegalStateException {
+    public PluginAdapter(GlowServer server, String name) throws IllegalStateException {
+        this.name = name;
         this.server = server;
-        dataFolder = new File(server.getDragonetServer().getPluginFolder(), this.getName());
+        dataFolder = new File(server.getDragonetServer().getPluginFolder(), this.getName().replace(".", "_").concat("-data"));
         if (dataFolder.isFile()) {
             server.getLogger().warning("Faild to load plugin [" + getName() + "] due to plugin folder is occupied by a regular file. ");
             throw new IllegalStateException("Plugin folder for [" + getName() + "] is occupied by a regular file. ");
@@ -52,9 +55,9 @@ public abstract class PluginAdapter implements Plugin {
         config = new YamlConfiguration();
         try {
             config.load(new File(dataFolder, "config.yml"));
-        } catch (IOException ex) {
-        } catch (InvalidConfigurationException ex) {
+        } catch (IOException | InvalidConfigurationException ex) {
         }
+        logger = new PluginLogger(this);
     }
 
     @Override
@@ -65,6 +68,11 @@ public abstract class PluginAdapter implements Plugin {
         return dataFolder;
     }
 
+    @Override
+    public String getName() {
+        return name;
+    }
+    
     @Override
     public PluginDescriptionFile getDescription() {
         return new PluginDescriptionFile(getName(), "DAPIS Script", "");
