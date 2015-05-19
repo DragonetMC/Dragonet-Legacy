@@ -10,12 +10,11 @@
 package org.dragonet.rhino.api.functions;
 
 import java.util.ArrayList;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 
 import org.dragonet.DragonetServer;
 import org.dragonet.rhino.CustomMethod;
 import org.dragonet.rhino.Script;
+import org.dragonet.rhino.ScriptCommand;
 import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.WrappedException;
 import org.mozilla.javascript.annotations.JSFunction;
@@ -98,18 +97,18 @@ public class ScriptAPI extends ScriptableObject {
             }
         }
     }
+    
+        @JSFunction
+    public static boolean registerCommand(final Object script, final String commandName, String handlerFunction){
+            return registerCommand(script, commandName, handlerFunction, "");
+    }
 
     @JSFunction
-    public static boolean registerCommand(final Object script, final String commandName){
+    public static boolean registerCommand(final Object script, final String commandName, String handlerFunction, final String requiredPermissions){
         if(!Script.class.isInstance(script)){
             return false;
         }
-        DragonetServer.instance().getServer().getCommandMap().register(commandName, "[" + ((Script)script).getName() + ":" + commandName + "]", new Command(commandName) {
-            @Override
-            public boolean execute(CommandSender cs, String alias, String[] args) {
-                return ((Script)script).onCommand(cs, this, alias, args);
-            }
-        });
+        DragonetServer.instance().getServer().getCommandMap().register("Script_" + ((Script)script).getName(), "[" + ((Script)script).getName() + ":" + commandName + "]", new ScriptCommand(commandName, (Script)script, handlerFunction, requiredPermissions));
         return true;
     }
     

@@ -9,6 +9,7 @@
  */
 package org.dragonet.rhino;
 
+import org.dragonet.plugin.PluginAdapter;
 import java.util.*;
 import java.io.*;
 import lombok.Getter;
@@ -116,10 +117,14 @@ public class Script extends PluginAdapter {
     public void onLoad() {
         runFunction("onLoad", new Object[]{this});
     }
-    
+
     @Override
     public boolean onCommand(CommandSender cs, Command cmd, String alias, String[] args) {
-        Object ret = runFunction("onCommand", new Object[]{
+        return false;
+    }
+    
+    public boolean onScriptCommand(String handler, CommandSender cs, Command cmd, String alias, String[] args) {
+        Object ret = runFunction(handler, new Object[]{
             cs, cmd.getLabel(), alias, args
         });
         if(boolean.class.isInstance(ret)){
@@ -130,7 +135,11 @@ public class Script extends PluginAdapter {
         }
         if(String.class.isInstance(ret)){
             String s = (String)ret;
-            return !s.trim().toLowerCase().contains("false");
+            if(s.trim().toLowerCase().contains("false") || s.trim().toLowerCase().contains("no")){
+                return false;
+            }else{
+                return true;
+            }
         }
         getLogger().warning("Script returns a invalid boolean object in onCommand() hook, treating as true. ");
         return true;

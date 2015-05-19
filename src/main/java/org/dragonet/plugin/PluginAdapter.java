@@ -10,7 +10,7 @@
  *
  * @author The Dragonet Team
  */
-package org.dragonet.rhino;
+package org.dragonet.plugin;
 
 import com.avaje.ebean.EbeanServer;
 import java.io.File;
