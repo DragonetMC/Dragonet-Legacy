@@ -110,12 +110,23 @@ public class Script extends PluginAdapter {
 
     @Override
     public void onDisable() {
-        runFunction("onDisable", new Object[]{});
+        getLogger().info("Disabling " + getName());
+        try{
+            runFunction("onDisable", new Object[]{});
+        }catch(Exception e){
+            getLogger().warning("Error disabling " + getName() + "! " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onLoad() {
-        runFunction("onLoad", new Object[]{this});
+        try{
+            runFunction("onLoad", new Object[]{this});
+        }catch(Exception e){
+            getLogger().warning("Error loading " + getName() + "! " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -146,7 +157,13 @@ public class Script extends PluginAdapter {
     }
 
     @Override
-    public void onEnable() {
-        runFunction("onEnable", new Object[]{});
+    protected void onScriptEnable() {
+        getLogger().info("Enabling " + getName());
+        try {
+            runFunction("onEnable", new Object[]{});
+        } catch (Exception e) {
+            getLogger().warning("Error enabling " + getName() + "! " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

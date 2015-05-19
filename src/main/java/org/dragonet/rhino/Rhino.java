@@ -43,9 +43,12 @@ public class Rhino {
     }
 
     public void reload() {
-        this.scripts = null;
         //Reset methods in ScriptAPI as scripts will now re-add them
         ScriptAPI.resetMethods();
+        for(Script s : this.scripts){
+            ((MixedPluginManager)server.getPluginManager()).addPlugin(s);
+            s.onLoad();
+        }
     }
 
     public void Tick() {
@@ -102,7 +105,6 @@ public class Rhino {
                             script = new Script(server, f);
                             scripts.add(script);
                             ((MixedPluginManager) server.getPluginManager()).addPlugin(script);
-                            System.out.println("Loaded DragonetAPI Script " + script.getName());
                         } catch (InvalidScriptException ex) {
                             server.getLogger().warning(ex.getMessage());
                         }

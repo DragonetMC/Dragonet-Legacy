@@ -139,12 +139,6 @@ public abstract class PluginAdapter implements Plugin {
     }
 
     @Override
-    public abstract void onDisable();
-
-    @Override
-    public abstract void onLoad();
-
-    @Override
     public boolean isNaggable() {
         return naggable;
     }
@@ -170,8 +164,17 @@ public abstract class PluginAdapter implements Plugin {
     }
 
     @Override
+    public void onEnable() {
+        if(enabled) return;
+        onScriptEnable();
+        enabled = true;
+    }
+    
+    protected abstract void onScriptEnable();
+    
+    @Override
     public List<String> onTabComplete(CommandSender cs, Command cmnd, String string, String[] strings) {
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
     @Override

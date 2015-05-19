@@ -58,6 +58,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.plugin.TimedRegisteredListener;
 import org.bukkit.plugin.UnknownDependencyException;
+import org.dragonet.rhino.Script;
 
 /**
  * Handles all plugin management from the Server
@@ -442,7 +443,13 @@ public final class MixedPluginManager implements PluginManager {
             }
 
             try {
-                plugin.getPluginLoader().enablePlugin(plugin);
+                if(Script.class.isInstance(plugin)){
+                    if(!plugin.isEnabled()){
+                        plugin.onEnable();
+                    }
+                }else{
+                    plugin.getPluginLoader().enablePlugin(plugin);
+                }
             } catch (Throwable ex) {
                 server.getLogger().log(Level.SEVERE, "Error occurred (in the plugin loader) while enabling " + plugin.getDescription().getFullName() + " (Is it up to date?)", ex);
             }

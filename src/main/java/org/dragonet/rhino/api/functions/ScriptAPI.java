@@ -97,18 +97,18 @@ public class ScriptAPI extends ScriptableObject {
             }
         }
     }
-    
-        @JSFunction
-    public static boolean registerCommand(final Object script, final String commandName, String handlerFunction){
-            return registerCommand(script, commandName, handlerFunction, "");
+
+    @JSFunction
+    public static boolean registerCommand(final Object script, final String commandName, String handlerFunction) {
+        return registerCommandWithPerms(script, commandName, handlerFunction, "");
     }
 
     @JSFunction
-    public static boolean registerCommand(final Object script, final String commandName, String handlerFunction, final String requiredPermissions){
+    public static boolean registerCommandWithPerms(final Object script, final String commandName, String handlerFunction, final String requiredPermissions){
         if(!Script.class.isInstance(script)){
             return false;
         }
-        DragonetServer.instance().getServer().getCommandMap().register("Script_" + ((Script)script).getName(), "[" + ((Script)script).getName() + ":" + commandName + "]", new ScriptCommand(commandName, (Script)script, handlerFunction, requiredPermissions));
+        DragonetServer.instance().getServer().getCommandMap().register(commandName, "[" + ((Script)script).getName() + ":" + commandName + "]", new ScriptCommand(commandName, (Script)script, handlerFunction, requiredPermissions));
         return true;
     }
     

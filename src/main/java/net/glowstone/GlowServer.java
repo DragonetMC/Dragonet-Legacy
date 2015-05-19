@@ -453,12 +453,16 @@ public final class GlowServer implements Server {
 
         //Dragonet-Add
         this.dragonetServer = new DragonetServer(this);
-        this.dragonetServer.initialize();
         //Dragonet-End
         
         // Start loading plugins
         new LibraryManager(this).run();
         loadPlugins();
+        
+        //DRAGONET-Add (Moved here due to loadPlugins() will clear all the plugins. )
+        this.dragonetServer.initialize();
+        //DRAGONET-End
+        
         enablePlugins(PluginLoadOrder.STARTUP);
 
         // Create worlds
@@ -788,13 +792,14 @@ public final class GlowServer implements Server {
 
             // Reset crafting
             craftingManager.resetRecipes();
-
+            
+            // Load plugins
+            loadPlugins();
+            
             //Dragonet-Add
             DragonetServer.instance().reload();
             //Dragonet-End
             
-            // Load plugins
-            loadPlugins();
             enablePlugins(PluginLoadOrder.STARTUP);
             enablePlugins(PluginLoadOrder.POSTWORLD);
         } catch (Exception ex) {
