@@ -40,7 +40,6 @@ public class Rhino {
 
     public Rhino(GlowServer server) {
         this.server = server;
-        this.startScriptInterpreter();
     }
 
     public void reload() {
@@ -81,12 +80,7 @@ public class Rhino {
         HookOnMove.onMove(plr, x1, y1, z1, x2, y2, z2, plrVelocity);
     }
 
-    private void startScriptInterpreter() {
-        scripts = loadScripts();
-    }
-
-    private List<Script> loadScripts() {
-        List<Script> fileList = new ArrayList<>();
+    public void loadScripts() {
         File dir = server.getDragonetServer().getPluginFolder();
 
         if (!dir.isDirectory()) {
@@ -102,11 +96,11 @@ public class Rhino {
         } else {
             for (File f : dir.listFiles()) {
                 try {
-                    if (f.getName().toLowerCase().endsWith((".js")) && !fileList.contains(new Script(org.dragonet.DragonetServer.instance().getServer(), f))) {
+                    if (f.getName().toLowerCase().endsWith((".js")) && !scripts.contains(new Script(org.dragonet.DragonetServer.instance().getServer(), f))) {
                         Script script;
                         try {
                             script = new Script(server, f);
-                            fileList.add(script);
+                            scripts.add(script);
                             ((MixedPluginManager) server.getPluginManager()).addPlugin(script);
                             System.out.println("Loaded DragonetAPI Script " + script.getName());
                         } catch (InvalidScriptException ex) {
@@ -117,10 +111,6 @@ public class Rhino {
                     server.getLogger().warning(ex.getMessage());
                 }
             }
-
-            return fileList;
         }
-
-        return new ArrayList<>();
     }
 }

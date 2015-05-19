@@ -19,7 +19,11 @@ public class SpawnObjectMessageTranslator extends MessageTranslatorToPE<Translat
 
     @Override
     public PEPacket[] handleSpecific(SpawnObjectMessage packet) {
-        this.getTranslator().cachedSpawnObjects.put(packet.id, packet); //Cache it first :P 
+        switch(packet.type){
+        case 2:
+            this.getTranslator().cachedSpawnObjects.put(packet.id, packet); //Cache it first :P 
+            break;
+        }
         return null;
     }
 

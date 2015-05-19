@@ -132,6 +132,7 @@ public class DragonetServer {
         
         this.logger.info("Starting DAPIS scripts... ");
         this.rhino = new Rhino(this.getServer());
+        this.rhino.loadScripts();
         
         if (config.getBoolean("enable-addon", true)) {
             this.getLogger().info("Enabling DragonetPE Android Addon server... ");
