@@ -14,8 +14,8 @@
 package org.dragonet.rhino;
 
 public class InvalidScriptException extends Exception {
-    private String scriptName;
-    private String cause;
+    private final String scriptName;
+    private final String cause;
 
     public InvalidScriptException(String scriptName, String cause) {
         this.scriptName = scriptName;

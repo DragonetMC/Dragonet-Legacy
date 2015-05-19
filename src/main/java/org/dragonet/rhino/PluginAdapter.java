@@ -119,8 +119,7 @@ public abstract class PluginAdapter implements Plugin {
         config = new YamlConfiguration();
         try {
             config.load(new File(dataFolder, "config.yml"));
-        } catch (IOException ex) {
-        } catch (InvalidConfigurationException ex) {
+        } catch (IOException | InvalidConfigurationException ex) {
         }
     }
 

@@ -130,11 +130,7 @@ public class Script extends PluginAdapter {
         }
         if(String.class.isInstance(ret)){
             String s = (String)ret;
-            if(s.trim().toLowerCase().contains("false")){
-                return false;
-            }else{
-                return true;
-            }
+            return !s.trim().toLowerCase().contains("false");
         }
         getLogger().warning("Script returns a invalid boolean object in onCommand() hook, treating as true. ");
         return true;

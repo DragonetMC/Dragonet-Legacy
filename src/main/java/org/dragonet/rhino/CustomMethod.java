@@ -36,7 +36,7 @@ public class CustomMethod {
     /**
      * Global methods list. This should NEVER be used in a non-static way!
      */
-    public static List<CustomMethod> methods = new ArrayList<CustomMethod>();
+    public static List<CustomMethod> methods = new ArrayList<>();
 
     /**
      * @param method Name of method scripts can call.
@@ -52,6 +52,8 @@ public class CustomMethod {
 
     /**
      * Runs function {@link handler} in script {@link owner}
+     * 
+     * @param arguments Arguments for the function to be ran
      */
     public void run(Object[] arguments) {
         if (!(arguments == null)) {
