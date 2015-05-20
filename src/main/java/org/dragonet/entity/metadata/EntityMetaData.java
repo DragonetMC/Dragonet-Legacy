@@ -37,16 +37,17 @@ public class EntityMetaData {
 
         public final static int DATA_FLAGS = 0;
         public final static int DATA_AIR = 1;
+        public final static int DATA_NAMETAG = 2;
         public final static int DATA_SHOW_NAMETAG = 3;
         public final static int DATA_POTION_COLOR = 7;
         public final static int DATA_POTION_VISIBLE = 8;
         public final static int DATA_NO_AI = 15;
 
         public final static int DATA_FLAG_ONFIRE = 0;
-        public final static int DATA_FLAG_SNEAKING = 1;
-        public final static int DATA_FLAG_RIDING = 2;
-        public final static int DATA_FLAG_ACTION = 4;
-        public final static int DATA_FLAG_INVISIBLE = 5;
+        public final static int DATA_FLAG_SNEAKING = 1 << 1;
+        public final static int DATA_FLAG_RIDING = 1 << 2;
+        public final static int DATA_FLAG_ACTION = 1 << 4;
+        public final static int DATA_FLAG_INVISIBLE = 1 << 5;
     }
 
     public HashMap<Integer, EntityMetaDataObject> map;

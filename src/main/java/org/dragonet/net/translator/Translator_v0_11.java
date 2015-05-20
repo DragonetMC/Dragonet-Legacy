@@ -35,6 +35,7 @@ import net.glowstone.net.message.play.game.BlockChangeMessage;
 import net.glowstone.net.message.play.game.ChatMessage;
 import net.glowstone.net.message.play.game.HealthMessage;
 import net.glowstone.net.message.play.game.MultiBlockChangeMessage;
+import net.glowstone.net.message.play.game.PlayParticleMessage;
 import net.glowstone.net.message.play.game.PositionRotationMessage;
 import net.glowstone.net.message.play.game.StateChangeMessage;
 import net.glowstone.net.message.play.game.TimeMessage;
@@ -118,6 +119,7 @@ public class Translator_v0_11 extends BaseTranslator {
         mapToPE.put(KickMessage.class, new KickMessageTranslator(this, this.getSession()));
         mapToPE.put(MultiBlockChangeMessage.class, new MultiBlockChangeMessageTranslator(this, this.getSession()));
         mapToPE.put(OpenWindowMessage.class, new OpenWindowMessageTranslator(this, this.getSession()));
+        mapToPE.put(PlayParticleMessage.class, new PlayParticlePacketTranslator(this, this.getSession()));
         mapToPE.put(PlayerPositionLookMessage.class, new PlayerPositionLookMessageTranslator(this, this.getSession()));
         mapToPE.put(PlayerPositionMessage.class, new PlayerPositionMessageTranslator(this, this.getSession()));
         mapToPE.put(PositionRotationMessage.class, new PositionRotationMessageTranslator(this, this.getSession()));
