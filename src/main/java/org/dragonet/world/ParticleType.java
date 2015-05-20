@@ -15,7 +15,7 @@ package org.dragonet.world;
 
 import lombok.Getter;
 
-public enum class ParticleType {
+public enum ParticleType {
     EXPLODE(0),
     LARGE_EXPLOSION(1),
     HUGE_EXPLOSION(2),
