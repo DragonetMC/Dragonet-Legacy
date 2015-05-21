@@ -20,7 +20,7 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
-import org.dragonet.net.DragonetSession;
+import org.dragonet.net.inf.mcpe.PEProtocol;
 import org.dragonet.peaddon.DragonetPEAddonServer;
 import org.dragonet.utilities.io.DataIOPair;
 
@@ -35,7 +35,7 @@ public class PEAddonClient implements Runnable {
     boolean running;
 
     private @Getter
-    DragonetSession peSession;
+    PEProtocol peSession;
 
     private DataIOPair io;
 

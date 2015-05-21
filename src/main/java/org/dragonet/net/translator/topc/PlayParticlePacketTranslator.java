@@ -27,7 +27,7 @@ public class PlayParticlePacketTranslator extends MessageTranslatorToPE<Translat
 
     @Override
     public PEPacket[] handleSpecific(PlayParticleMessage packet) {
-        
+        return null; //TODO
     }
 
 }

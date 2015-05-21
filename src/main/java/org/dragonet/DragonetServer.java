@@ -28,7 +28,8 @@ import net.glowstone.util.ServerConfig;
 
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.dragonet.net.NetworkHandler;
+import org.dragonet.net.inf.mcpe.NetworkHandler;
+import org.dragonet.net.SessionManager;
 import org.dragonet.peaddon.DragonetPEAddonServer;
 import org.dragonet.rhino.Script;
 import org.dragonet.statistic.StatisticSender;
@@ -51,6 +52,9 @@ public class DragonetServer {
     @Getter
     private Logger logger;
 
+    @Getter
+    private SessionManager sessionManager;
+    
     @Getter
     private Rhino rhino;
 
@@ -82,6 +86,7 @@ public class DragonetServer {
         pluginFolder = new File(serverConfig.getString(ServerConfig.Key.PLUGIN_FOLDER));
         this.logger = LoggerFactory.getLogger("DragonetServer");
         this.customMaterialManager = new CustomItemManager(this);
+        this.sessionManager = new SessionManager(this);
     }
 
     /**
@@ -122,7 +127,7 @@ public class DragonetServer {
         int port = config.getInt("server-port", 19132);
         this.logger.info("Trying to bind on UDP address " + ip + ":" + port + "... ");
         try {
-            this.networkHandler = new NetworkHandler(this, new InetSocketAddress(ip, port));
+            this.networkHandler = new NetworkHandler(sessionManager, new InetSocketAddress(ip, port));
         } catch (Exception ex) {
             this.getLogger().error("FAILD TO BIND ON THE Minecraft: Pocket Edition PORT " + port + "(UDP)! ");
             this.getLogger().error("CLOSE THE PROGRAM USING THAT PORT OR CHANGE THE PORT TO SOLVE THIS PROBLEM! ");

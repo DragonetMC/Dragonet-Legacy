@@ -10,29 +10,30 @@
  *
  * @author The Dragonet Team
  */
-package org.dragonet.net;
+package org.dragonet.net.inf.mcpe;
 
 import java.io.IOException;
-import java.net.BindException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketAddress;
 import java.util.ArrayDeque;
 import java.util.Queue;
-
-import org.dragonet.DragonetServer;
+import lombok.Getter;
+import org.dragonet.net.SessionManager;
 
 public class NonBlockUDPSocket extends Thread {
 
-    private DragonetServer dragonetServer;
+    @Getter
+    private SessionManager manager;
+    
     private SocketAddress addr;
     private DatagramSocket socket;
     private Queue<DatagramPacket> receivedPacketQueue = new ArrayDeque<>();
     private boolean running;
 
-    public NonBlockUDPSocket(DragonetServer udp, SocketAddress address) throws Exception {
-        this.dragonetServer = udp;
+    public NonBlockUDPSocket(SessionManager manager, SocketAddress address) throws Exception {
+        this.manager = manager;
         addr = address;
         socket = new DatagramSocket(null);
         socket.setBroadcast(true);
@@ -79,10 +80,6 @@ public class NonBlockUDPSocket extends Thread {
         } catch (IOException e) {
             return false;
         }
-    }
-
-    public DragonetServer getServer() {
-        return this.dragonetServer;
     }
 
     public void end() {

@@ -19,8 +19,8 @@ import org.dragonet.net.packet.minecraft.PEPacket;
 
 public abstract class BaseTranslator {
 
-    private @Getter
-    DragonetSession session;
+    @Getter
+    private DragonetSession session;
 
     public BaseTranslator(DragonetSession session) {
         this.session = session;

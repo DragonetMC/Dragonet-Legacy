@@ -14,7 +14,8 @@ package org.dragonet.net.packet;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.dragonet.net.DragonetSession;
+import org.dragonet.net.inf.mcpe.PENetworkClient;
+import org.dragonet.net.inf.mcpe.PEProtocol;
 import org.dragonet.net.packet.minecraft.PEPacket;
 import org.dragonet.utilities.io.ArraySplitter;
 import org.dragonet.utilities.io.PEBinaryReader;
@@ -134,7 +135,7 @@ public class EncapsulatedPacket extends BinaryPacket {
      * @param reliability Packet Reliability
      * @return Wrapped EncapsulatedPacket
      */
-    public static EncapsulatedPacket[] fromPEPacket(DragonetSession session, PEPacket packet, int reliability) {
+    public static EncapsulatedPacket[] fromPEPacket(PENetworkClient session, PEPacket packet, int reliability) {
         if (session == null) {
             return null;
         }

@@ -10,18 +10,21 @@
  *
  * @author The Dragonet Team
  */
-package org.dragonet.net;
+package org.dragonet.net.inf.mcpe;
 
+import org.dragonet.net.inf.mcpe.PEProtocol;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import lombok.Getter;
 import org.apache.commons.lang.ArrayUtils;
-import org.dragonet.DragonetServer;
+import org.dragonet.net.RaknetConstants;
+import org.dragonet.net.SessionManager;
 import org.dragonet.net.packet.RaknetDataPacket;
 import org.dragonet.net.packet.ServerInfoPacket;
 import org.dragonet.utilities.io.PEBinaryReader;
@@ -29,19 +32,19 @@ import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class NetworkHandler {
 
+    @Getter
+    private SessionManager manager;
+
     public final static long serverID = 0x0000000012345678L;
 
-    private @Getter
-    DragonetServer server;
-    private @Getter
-    NonBlockUDPSocket udp;
+    @Getter
+    private NonBlockUDPSocket udp;
+    
+    private final ConcurrentMap<String, PENetworkClient> clients = new ConcurrentHashMap<>();
 
-    private HashMap<String, DragonetSession> sessions;
-
-    public NetworkHandler(DragonetServer server, InetSocketAddress address) throws Exception {
-        this.server = server;
-        this.sessions = new HashMap<>();
-        this.udp = new NonBlockUDPSocket(this.server, address);
+    public NetworkHandler(SessionManager manager, InetSocketAddress address) throws Exception {
+        this.manager = manager;
+        this.udp = new NonBlockUDPSocket(manager, address);
         this.udp.start();
     }
 
@@ -50,11 +53,10 @@ public class NetworkHandler {
         while ((packet = this.udp.receive()) != null) {
             this.processPacket(packet);
         }
-        synchronized (this.sessions) {
-            for (DragonetSession session : this.sessions.values()) {
-                session.onTick();
-            }
-        }
+    }
+    
+    public void remove(SocketAddress sockAddr){
+        clients.remove(sockAddr.toString());
     }
 
     private void processPacket(DatagramPacket packet) {
@@ -66,7 +68,7 @@ public class NetworkHandler {
                     ServerInfoPacket pkReply = new ServerInfoPacket();
                     pkReply.time = reader.readLong();
                     pkReply.serverID = serverID;
-                    pkReply.serverName = this.getServer().getServer().getName();
+                    pkReply.serverName = this.getManager().getServer().getServer().getName();
                     pkReply.encode();
                     this.udp.send(pkReply.getData(), packet.getSocketAddress());
                     break;
@@ -99,8 +101,8 @@ public class NetworkHandler {
                     writer8.writeShort(clientMTU);
                     writer8.writeByte((byte) 0x00);
                     this.send(bos8.toByteArray(), packet.getSocketAddress());
-                    DragonetSession session = new DragonetSession(this.server, packet.getSocketAddress(), clientID, clientMTU);
-                    this.sessions.put(packet.getSocketAddress().toString(), session);
+                    PENetworkClient session = new PENetworkClient(this, packet.getSocketAddress(), clientID, clientMTU);
+                    clients.put(packet.getSocketAddress().toString(), session);
                     //this.server.getServer().getSessionRegistry().add(session);
                     break;
                 case 0x80:
@@ -119,20 +121,20 @@ public class NetworkHandler {
                 case 0x8D:
                 case 0x8E:
                 case 0x8F:
-                    if (this.sessions.containsKey(packet.getSocketAddress().toString())) {
+                    if (this.manager.getSessions().containsKey(getClientKey(packet.getSocketAddress()))) {
                         RaknetDataPacket dataPacket = new RaknetDataPacket(ArrayUtils.subarray(packet.getData(), 1, packet.getLength()));
                         dataPacket.decode();
-                        this.sessions.get(packet.getSocketAddress().toString()).processDataPacket(dataPacket);
+                        clients.get(getClientKey(packet.getSocketAddress())).processDataPacket(dataPacket);
                     }
                     break;
                 case 0xC0:
-                    if (this.sessions.containsKey(packet.getSocketAddress().toString())) {
-                        this.sessions.get(packet.getSocketAddress().toString()).processACKPacket(ArrayUtils.subarray(packet.getData(), 1, packet.getData().length));
+                    if (this.manager.getSessions().containsKey(getClientKey(packet.getSocketAddress()))) {
+                        clients.get(getClientKey(packet.getSocketAddress())).processACKPacket(ArrayUtils.subarray(packet.getData(), 1, packet.getData().length));
                     }
                     break;
                 case 0xA0:
-                    if (this.sessions.containsKey(packet.getSocketAddress().toString())) {
-                        this.sessions.get(packet.getSocketAddress().toString()).processNACKPacket(ArrayUtils.subarray(packet.getData(), 1, packet.getData().length));
+                    if (this.manager.getSessions().containsKey(getClientKey(packet.getSocketAddress()))) {
+                        clients.get(getClientKey(packet.getSocketAddress())).processNACKPacket(ArrayUtils.subarray(packet.getData(), 1, packet.getData().length));
                     }
                     break;
             }
@@ -144,9 +146,7 @@ public class NetworkHandler {
         this.udp.send(buffer, remoteAddr);
     }
 
-    public void removeSession(DragonetSession session) {
-        synchronized (this.sessions) {
-            this.sessions.remove(session.getRemoteAddress().toString());
-        }
+    private String getClientKey(SocketAddress addr) {
+        return "MCPE-" + addr.toString();
     }
 }

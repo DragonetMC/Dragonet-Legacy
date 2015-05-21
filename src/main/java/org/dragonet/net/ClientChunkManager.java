@@ -12,6 +12,7 @@
  */
 package org.dragonet.net;
 
+import org.dragonet.net.inf.mcpe.PEProtocol;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayDeque;
@@ -27,8 +28,8 @@ import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class ClientChunkManager {
 
-    private final @Getter
-    DragonetSession session;
+    @Getter
+    private final DragonetSession session;
 
     private String lastWorld;
 

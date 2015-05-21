@@ -12,11 +12,11 @@ import org.dragonet.net.packet.minecraft.PEPacket;
 
 public abstract class MessageTranslatorToPE<T extends BaseTranslator, P extends Message> {
 
-    private @Getter
-    T translator;
+    @Getter
+    private T translator;
 
-    private @Getter
-    DragonetSession session;
+    @Getter
+    private DragonetSession session;
 
     public MessageTranslatorToPE(T translator, DragonetSession session) {
         this.translator = translator;

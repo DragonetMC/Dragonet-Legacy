@@ -15,25 +15,15 @@ package org.dragonet.net;
 import com.flowpowered.networking.Message;
 import com.flowpowered.networking.exception.ChannelClosedException;
 import io.netty.channel.ChannelFuture;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.crypto.SecretKey;
 import lombok.Getter;
-import lombok.Setter;
 import net.glowstone.EventFactory;
 import net.glowstone.GlowServer;
 import net.glowstone.entity.GlowPlayer;
@@ -42,12 +32,9 @@ import net.glowstone.io.PlayerDataService;
 import net.glowstone.net.GlowSession;
 import net.glowstone.net.message.play.game.UserListItemMessage;
 import net.glowstone.net.protocol.ProtocolType;
-import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.util.Vector;
 import org.dragonet.DragonetServer;
@@ -55,21 +42,12 @@ import org.dragonet.entity.DragonetPlayer;
 import org.dragonet.inventory.InventoryType;
 import org.dragonet.inventory.PEInventorySlot;
 import org.dragonet.inventory.PEWindowConstantID;
-import org.dragonet.net.packet.EncapsulatedPacket;
-import org.dragonet.net.packet.Protocol;
-import org.dragonet.net.packet.RaknetDataPacket;
-import org.dragonet.net.packet.minecraft.AdventureSettingsPacket;
 import org.dragonet.net.packet.minecraft.BatchPacket;
-import org.dragonet.net.packet.minecraft.ClientConnectPacket;
-import org.dragonet.net.packet.minecraft.DisconnectPacket;
-import org.dragonet.net.packet.minecraft.FullChunkPacket;
 import org.dragonet.net.packet.minecraft.LoginPacket;
 import org.dragonet.net.packet.minecraft.LoginStatusPacket;
 import org.dragonet.net.packet.minecraft.MovePlayerPacket;
 import org.dragonet.net.packet.minecraft.PEPacket;
 import org.dragonet.net.packet.minecraft.PEPacketIDs;
-import org.dragonet.net.packet.minecraft.PingPongPacket;
-import org.dragonet.net.packet.minecraft.ServerHandshakePacket;
 import org.dragonet.net.packet.minecraft.SetDifficultyPacket;
 import org.dragonet.net.packet.minecraft.SetHealthPacket;
 import org.dragonet.net.packet.minecraft.SetTimePacket;
@@ -77,368 +55,94 @@ import org.dragonet.net.packet.minecraft.StartGamePacket;
 import org.dragonet.net.packet.minecraft.WindowItemsPacket;
 import org.dragonet.net.translator.BaseTranslator;
 import org.dragonet.net.translator.TranslatorProvider;
-import org.dragonet.utilities.io.PEBinaryReader;
-import org.dragonet.utilities.io.PEBinaryWriter;
 
-public class DragonetSession extends GlowSession {
+public abstract class DragonetSession extends GlowSession {
 
     private final static Pattern patternUsername = Pattern.compile("^[a-zA-Z0-9_]{3,16}$");
 
-    private @Getter
-    DragonetServer dServer;
+    @Getter
+    private DragonetServer dServer;
 
-    private SocketAddress remoteAddress;
-    private String remoteIP;
-    private int remotePort;
-    private InetSocketAddress remoteInetSocketAddress;
+    @Getter
+    private long clientSessionID;
 
-    private int loginStage;
+    @Getter
+    private String username;
 
-    private @Getter
-    long clientID;
-    private @Getter
-    short clientMTU;
+    @Getter
+    private BaseTranslator translator;
 
-    private @Getter
-    long clientSessionID;
-
-    private @Getter
-    int sequenceNum;        //Server->Client
-    private @Getter
-    int lastSequenceNum;    //Server<-Client
-
-    private @Getter
-    @Setter
-    int messageIndex;          //Server->Client
-    private @Getter
-    @Setter
-    int splitID;
-
-    private @Getter
-    String username;
-
-    private RaknetDataPacket queue;
-
-    private ArrayList<Integer> queueACK = new ArrayList<>();
-    private ArrayList<Integer> queueNACK = new ArrayList<>();
-    private HashMap<Integer, RaknetDataPacket> cachedOutgoingPacket = new HashMap<>();
-
-    //Handle spltted packets. 
-    private ConcurrentHashMap<Integer, ByteArrayOutputStream> splits = new ConcurrentHashMap<>();
-    private ConcurrentHashMap<Integer, Integer> splitCounter = new ConcurrentHashMap<>();
-
-    private @Getter
-    BaseTranslator translator;
-
-    private @Getter
-    ClientChunkManager chunkManager;
+    @Getter
+    private ClientChunkManager chunkManager;
 
     private boolean statusActive = true;
 
-    private @Getter
-    int sentAndReceivedChunks = 0;
-    private ArrayList<Integer> chunkPacketIDS = new ArrayList<>();
-
-    private @Getter
-    ArrayDeque<PEPacket> queueAfterChunkSent = new ArrayDeque<>();
-
-    private @Getter
-    long lastPacketReceived;
-
-    public DragonetSession(DragonetServer dServer, SocketAddress remoteAddress, long clientID, short clientMTU) {
+    public DragonetSession(DragonetServer dServer, BaseTranslator translator) {
         super(dServer.getServer());
-        this.dServer = dServer;
-        this.clientID = clientID;
-        this.clientMTU = clientMTU;
-        this.remoteAddress = remoteAddress;
-        this.remoteIP = this.remoteAddress.toString().substring(1, this.remoteAddress.toString().indexOf(":"));
-        this.remotePort = Integer.parseInt(this.remoteAddress.toString().substring(this.remoteAddress.toString().indexOf(":") + 1));
-        this.remoteInetSocketAddress = new InetSocketAddress(this.remoteIP, this.remotePort);
-        this.queue = new RaknetDataPacket(this.sequenceNum);
+        dServer = dServer;
+        this.translator = translator;
         this.chunkManager = new ClientChunkManager(this);
-        this.loginStage = 0;
-        this.lastPacketReceived = System.currentTimeMillis();
     }
 
-    /**
-     * Trigger a tick update for the session
-     */
+    public abstract String getSessionKey();
+
     public void onTick() {
-        sendAllACK();
-        sendAllNACK();
-        if (this.queue.getEncapsulatedPackets().size() > 0) {
-            this.fireQueue();
-        }
         this.chunkManager.onTick();
-        if (this.sentAndReceivedChunks >= 56 && (this.player instanceof Player)) {
-            this.getLogger().info("PE player [" + this.player.getName() + "] has spawned. ");
-            this.sentAndReceivedChunks = -1;
-            this.sendSettings();
-            SetTimePacket pkTime = new SetTimePacket((int) (this.getPlayer().getWorld().getTime() & 0xFFFFFFFF), true);
-            this.send(pkTime);
-            PEPacket pk;
-            while ((pk = this.queueAfterChunkSent.poll()) != null) {
-                this.getLogger().info("Sending queued: " + pk.getClass().getSimpleName());
-                this.send(pk);
-            }
-        }
-        if (System.currentTimeMillis() - this.lastPacketReceived > 15000) {
-            this.disconnect("Timeout! ");
+    }
+
+    public void onPacketReceived(PEPacket packet) {
+        switch (packet.pid()) {
+            case PEPacketIDs.LOGIN_PACKET:
+                LoginPacket packetLogin = (LoginPacket) packet;
+                this.username = packetLogin.username;
+
+                this.translator = TranslatorProvider.getByPEProtocolID(this, packetLogin.protocol1);
+                if (!(this.translator instanceof BaseTranslator)) {
+                    LoginStatusPacket pkLoginStatus = new LoginStatusPacket();
+                    pkLoginStatus.status = LoginStatusPacket.LOGIN_FAILED_CLIENT;
+                    this.send(pkLoginStatus);
+                    this.disconnect("Unsupported game version! ");
+                    break;
+                }
+
+                LoginStatusPacket pkLoginStatus = new LoginStatusPacket();
+                pkLoginStatus.status = 0;
+                this.send(pkLoginStatus);
+
+                this.getLogger().info("Accepted connection by [" + this.username + "]. ");
+
+                Matcher matcher = patternUsername.matcher(this.username);
+                if (!matcher.matches()) {
+                    this.disconnect("Bad username! ");
+                    break;
+                }
+
+                this.setPlayer(new PlayerProfile(this.username, UUID.nameUUIDFromBytes(("OfflinePlayer:" + this.username).getBytes(StandardCharsets.UTF_8))));
+                break;
+            case PEPacketIDs.DISCONNECT_PACKET:
+                this.onDisconnect();
+                break;
+            case PEPacketIDs.BATCH_PACKET:
+                BatchPacket packetBatch = (BatchPacket) packet;
+                if (packetBatch.packets == null || packetBatch.packets.isEmpty()) {
+                    return;
+                }
+                for (PEPacket pk : packetBatch.packets) {
+                    onPacketReceived(pk);
+                }
+                break;
+            default:
+                if (!(this.translator instanceof BaseTranslator)) {
+                    break;
+                }
+                this.dServer.getThreadPool().submit(new ProcessPEPacketTask(this, packet));
+                break;
         }
     }
 
-    private synchronized void sendAllACK() {
-        if (this.queueACK.isEmpty()) {
-            return;
-        }
-        int[] ackSeqs = ArrayUtils.toPrimitive(this.queueACK.toArray(new Integer[0]));
-        Arrays.sort(ackSeqs);
-        this.queueACK.clear();
-        ByteArrayOutputStream allRecBos = new ByteArrayOutputStream();
-        PEBinaryWriter allRecWriter = new PEBinaryWriter(allRecBos);
-        try {
-            int count = ackSeqs.length;
-            int records = 0;
-            if (count > 0) {
-                int pointer = 1;
-                int start = ackSeqs[0];
-                int last = ackSeqs[0];
-                ByteArrayOutputStream recBos = new ByteArrayOutputStream();
-                PEBinaryWriter recWriter;
-                while (pointer < count) {
-                    int current = ackSeqs[pointer++];
-                    int diff = current - last;
-                    if (diff == 1) {
-                        last = current;
-                    } else if (diff > 1) { //Forget about duplicated packets (bad queues?)
-                        recBos.reset();
-                        recWriter = new PEBinaryWriter(recBos);
-                        if (start == last) {
-                            recWriter.writeByte((byte) 0x01);
-                            recWriter.writeTriad(start);
-                            start = last = current;
-                        } else {
-                            recWriter.writeByte((byte) 0x00);
-                            recWriter.writeTriad(start);
-                            recWriter.writeTriad(last);
-                            start = last = current;
-                        }
-                        records++;
-                    }
-                }
-                if (start == last) {
-                    allRecWriter.writeByte((byte) 0x01);
-                    allRecWriter.writeTriad(start);
-                } else {
-                    allRecWriter.writeByte((byte) 0x00);
-                    allRecWriter.writeTriad(start);
-                    allRecWriter.writeTriad(last);
-                }
-                records++;
-            }
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            PEBinaryWriter writer = new PEBinaryWriter(bos);
-            writer.writeByte((byte) 0xC0);
-            writer.writeShort((short) (records & 0xFFFF));
-            writer.write(allRecBos.toByteArray());
-            this.dServer.getNetworkHandler().send(bos.toByteArray(), this.remoteAddress);
-        } catch (IOException e) {
-        }
-    }
+    public abstract void send(PEPacket pk);
 
-    private synchronized void sendAllNACK() {
-        if (this.queueNACK.isEmpty()) {
-            return;
-        }
-        int[] ackSeqs = ArrayUtils.toPrimitive(this.queueNACK.toArray(new Integer[0]));
-        Arrays.sort(ackSeqs);
-        this.queueNACK.clear();
-        ByteArrayOutputStream allRecBos = new ByteArrayOutputStream();
-        PEBinaryWriter allRecWriter = new PEBinaryWriter(allRecBos);
-        try {
-            int count = ackSeqs.length;
-            int records = 0;
-            if (count > 0) {
-                int pointer = 1;
-                int start = ackSeqs[0];
-                int last = ackSeqs[0];
-                ByteArrayOutputStream recBos = new ByteArrayOutputStream();
-                PEBinaryWriter recWriter;
-                while (pointer < count) {
-                    int current = ackSeqs[pointer++];
-                    int diff = current - last;
-                    if (diff == 1) {
-                        last = current;
-                    } else if (diff > 1) { //Forget about duplicated packets (bad queues?)
-                        recBos.reset();
-                        recWriter = new PEBinaryWriter(recBos);
-                        if (start == last) {
-                            recWriter.writeByte((byte) 0x01);
-                            recWriter.writeTriad(start);
-                            start = last = current;
-                        } else {
-                            recWriter.writeByte((byte) 0x00);
-                            recWriter.writeTriad(start);
-                            recWriter.writeTriad(last);
-                            start = last = current;
-                        }
-                        records++;
-                    }
-                }
-                if (start == last) {
-                    allRecWriter.writeByte((byte) 0x01);
-                    allRecWriter.writeTriad(start);
-                } else {
-                    allRecWriter.writeByte((byte) 0x00);
-                    allRecWriter.writeTriad(start);
-                    allRecWriter.writeTriad(last);
-                }
-                records++;
-            }
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            PEBinaryWriter writer = new PEBinaryWriter(bos);
-            writer.writeByte((byte) 0xA0);
-            writer.writeShort((short) (records & 0xFFFF));
-            writer.write(allRecBos.toByteArray());
-            this.dServer.getNetworkHandler().send(bos.toByteArray(), this.remoteAddress);
-        } catch (IOException e) {
-        }
-    }
-
-    /**
-     * Process a ACK packet
-     *
-     * @param buffer The ACK packet binary array
-     */
-    public void processACKPacket(byte[] buffer) {
-        try {
-            PEBinaryReader reader = new PEBinaryReader(new ByteArrayInputStream(buffer));
-            int count = reader.readShort();
-            List<Integer> packets = new ArrayList<>();
-            for (int i = 0; i < count && reader.available() > 0; ++i) {
-                if (reader.readByte() == (byte) 0x00) {
-                    int start = reader.readTriad();
-                    int end = reader.readTriad();
-                    if ((end - start) > 4096) {
-                        end = start + 4096;
-                    }
-                    for (int c = start; c <= end; ++c) {
-                        packets.add(c);
-                    }
-                } else {
-                    packets.add(reader.readTriad());
-                }
-            }
-            int[] seqNums = ArrayUtils.toPrimitive(packets.toArray(new Integer[0]));
-            for (int seq : seqNums) {
-                if (this.cachedOutgoingPacket.containsKey(seq)) {
-                    this.cachedOutgoingPacket.remove(seq);
-                }
-                if (this.chunkPacketIDS.contains(seq)) {
-                    this.sentAndReceivedChunks++;
-                    this.chunkPacketIDS.remove(new Integer(seq));
-                }
-            }
-        } catch (IOException e) {
-        }
-    }
-
-    /**
-     * Process a NACK packet
-     *
-     * @param buffer The NACK packet binary array
-     */
-    public void processNACKPacket(byte[] buffer) {
-        try {
-            PEBinaryReader reader = new PEBinaryReader(new ByteArrayInputStream(buffer));
-            int count = reader.readShort();
-            List<Integer> packets = new ArrayList<>();
-            for (int i = 0; i < count && reader.available() > 0; ++i) {
-                if (reader.readByte() == (byte) 0x00) {
-                    int start = reader.readTriad();
-                    int end = reader.readTriad();
-                    if ((end - start) > 4096) {
-                        end = start + 4096;
-                    }
-                    for (int c = start; c <= end; ++c) {
-                        packets.add(c);
-                    }
-                } else {
-                    packets.add(reader.readTriad());
-                }
-            }
-            int[] seqNums = ArrayUtils.toPrimitive(packets.toArray(new Integer[0]));
-            for (int seq : seqNums) {
-                if (this.cachedOutgoingPacket.containsKey(seq)) {
-                    this.dServer.getNetworkHandler().getUdp().send(this.cachedOutgoingPacket.get(seq).getData(), this.remoteAddress);
-                }
-            }
-        } catch (IOException e) {
-        }
-    }
-
-    /**
-     * Send a packet to the client with a reliability defined
-     *
-     * @param packet Packet to send
-     * @param reliability Packet reliability
-     */
-    public void send(PEPacket packet, int reliability) {
-        if (!(packet instanceof PEPacket)) {
-            return;
-        }
-        /*
-         if (!(packet instanceof FullChunkPacket) && !(packet instanceof StartGamePacket) && !(packet instanceof SetTimePacket) && !(packet instanceof SetDifficultyPacket)
-         && !(packet instanceof LoginStatusPacket) && !(packet instanceof ServerHandshakePacket) && this.sentAndReceivedChunks != -1) {
-         this.queueAfterChunkSent.add(packet);
-         return;
-         }*/
-        packet.encode();
-        if (packet.getData().length > this.clientMTU + 1 && !(packet instanceof BatchPacket)) {
-            //BATCH PACKET
-            BatchPacket pk = new BatchPacket();
-            pk.packets.add(packet);
-            send(pk, reliability);
-            //System.out.println("Using BATCH PACKET for " + packet.getClass().getSimpleName());
-            return;
-        }
-        this.fireQueue();
-        //System.out.println(" >>*>> Sending: " + packet.getClass().getSimpleName());
-        EncapsulatedPacket[] encapsulatedPacket = EncapsulatedPacket.fromPEPacket(this, packet, reliability);
-        for (EncapsulatedPacket ePacket : encapsulatedPacket) {
-            ePacket.encode();
-            /*
-             if (this.queue.getLength() + ePacket.getData().length > this.clientMTU - 24) {
-             this.fireQueue();
-             }
-             */
-            this.queue.getEncapsulatedPackets().add(ePacket);
-            if (this.sentAndReceivedChunks != -1 && (packet instanceof FullChunkPacket) && !this.chunkPacketIDS.contains(this.queue.getSequenceNumber())) {
-                this.chunkPacketIDS.add(this.queue.getSequenceNumber());
-            }
-            this.fireQueue();
-        }
-    }
-
-    /**
-     * *
-     * Send a packet to the client with default packet reliability 2
-     *
-     * @param packet Packet to send
-     */
-    public void send(PEPacket packet) {
-        this.send(packet, 2);
-    }
-
-    private synchronized void fireQueue() {
-        if (this.queue.getEncapsulatedPackets().isEmpty()) {
-            return;
-        }
-        this.cachedOutgoingPacket.put(this.queue.getSequenceNumber(), this.queue);
-        this.queue.encode();
-        this.dServer.getNetworkHandler().getUdp().send(this.queue.getData(), this.remoteAddress);
-        this.queue = new RaknetDataPacket(this.sequenceNum++);
-    }
+    public abstract void send(PEPacket pk, int reliability);
 
     /**
      * Send a message to the client
@@ -481,197 +185,6 @@ public class DragonetSession extends GlowSession {
     public ChannelFuture sendWithFuture(Message message) {
         this.send(message);
         return null;
-    }
-
-    public void processDataPacket(RaknetDataPacket dataPacket) {
-        this.lastPacketReceived = System.currentTimeMillis();
-        if (dataPacket.getSequenceNumber() - this.lastSequenceNum > 1) {
-            for (int i = this.lastSequenceNum + 1; i < dataPacket.getSequenceNumber(); i++) {
-                this.queueNACK.add(i);
-            }
-        }
-        this.lastSequenceNum = dataPacket.getSequenceNumber();
-        this.queueACK.add(dataPacket.getSequenceNumber());
-        if (dataPacket.getEncapsulatedPackets().isEmpty()) {
-            return;
-        }
-        for (EncapsulatedPacket epacket : dataPacket.getEncapsulatedPackets()) {
-            if (epacket.hasSplit) {
-                System.out.println("PROCESSING SPLITTED PACKET ID: " + epacket.splitID + ", Index-" + epacket.splitIndex + ", Count-" + epacket.splitCount);
-                //Handle split packet
-                if (epacket.splitIndex == epacket.splitCount - 1) {
-                    if (splits.containsKey((Integer) epacket.splitID)) {
-                        try {
-                            splits.get((Integer) epacket.splitID).write(epacket.buffer);
-                        } catch (IOException ex) {
-                            ex.printStackTrace();
-                        }
-                        byte[] buff = splits.get((Integer) epacket.splitID).toByteArray();
-                        splits.remove((Integer) epacket.splitID);
-                        splitCounter.remove((Integer) epacket.splitID);
-                        processPacketBuffer(buff);
-                    }
-                } else {
-                    try {
-                        if (epacket.splitIndex == 0) {
-                            ByteArrayOutputStream oup = new ByteArrayOutputStream();
-                            oup.write(epacket.buffer);
-                            splits.put((Integer) epacket.splitID, oup);
-                            splitCounter.put((Integer) epacket.splitID, -1);
-                        } else {
-                            if (splits.containsKey((Integer) epacket.splitID)
-                                    && (splitCounter.get((Integer) epacket.splitID) < epacket.splitIndex)) {
-                                splits.get((Integer) epacket.splitID).write(epacket.buffer);
-                                splitCounter.put((Integer) epacket.splitID, epacket.splitIndex);
-                            }
-                        }
-                    } catch (IOException ex) {
-                    }
-                }
-                continue;
-            }
-            processPacketBuffer(epacket.buffer);
-        }
-    }
-
-    private void processPacketBuffer(byte[] buffer) {
-        PEPacket packet = Protocol.decode(buffer);
-        if (packet == null) {
-            return;
-        }
-        System.out.println("Received Packet: " + packet.getClass().getSimpleName());
-        switch (packet.pid()) {
-            case PEPacketIDs.PING:
-                PingPongPacket pkPong = new PingPongPacket();
-                pkPong.pingID = ((PingPongPacket) packet).pingID;
-                this.send(pkPong, 0);
-                break;
-            case PEPacketIDs.CLIENT_CONNECT:
-                if (this.loginStage != 0) {
-                    break;
-                }
-                this.clientSessionID = ((ClientConnectPacket) packet).sessionID;
-                ServerHandshakePacket pkServerHandshake = new ServerHandshakePacket();
-                pkServerHandshake.addr = this.getAddress().getAddress();
-                pkServerHandshake.port = (short) (0 & 0xFFFF);
-                pkServerHandshake.session = this.clientSessionID;
-                pkServerHandshake.session2 = this.clientSessionID + 1000L;
-                this.loginStage = 1;
-                this.send(pkServerHandshake);
-                break;
-            case PEPacketIDs.CLIENT_HANDSHAKE:
-                if (this.loginStage != 1) {
-                    break;
-                }
-                this.loginStage = 2;
-                break;
-            case PEPacketIDs.LOGIN_PACKET:
-                if (this.loginStage != 2) {
-                    break;
-                }
-                LoginPacket packetLogin = (LoginPacket) packet;
-                this.username = packetLogin.username;
-
-                this.translator = TranslatorProvider.getByPEProtocolID(this, packetLogin.protocol1);
-                if (!(this.translator instanceof BaseTranslator)) {
-                    LoginStatusPacket pkLoginStatus = new LoginStatusPacket();
-                    pkLoginStatus.status = LoginStatusPacket.LOGIN_FAILED_CLIENT;
-                    this.send(pkLoginStatus);
-                    this.disconnect("Unsupported game version! ");
-                    break;
-                }
-
-                LoginStatusPacket pkLoginStatus = new LoginStatusPacket();
-                pkLoginStatus.status = 0;
-                this.send(pkLoginStatus);
-
-                this.getLogger().info("Accepted connection by [" + this.username + "]. ");
-
-                Matcher matcher = patternUsername.matcher(this.username);
-                if (!matcher.matches()) {
-                    this.disconnect("Bad username! ");
-                    break;
-                }
-
-                this.loginStage = 3;
-                this.setPlayer(new PlayerProfile(this.username, UUID.nameUUIDFromBytes(("OfflinePlayer:" + this.username).getBytes(StandardCharsets.UTF_8))));
-                break;
-            case PEPacketIDs.DISCONNECT_PACKET:
-                this.onDisconnect();
-                break;
-            case PEPacketIDs.BATCH_PACKET:
-                BatchPacket packetBatch = (BatchPacket) packet;
-                if (packetBatch.packets == null || packetBatch.packets.isEmpty()) {
-                    return;
-                }
-                for (PEPacket pk : packetBatch.packets) {
-                    if (pk.pid() == PEPacketIDs.LOGIN_PACKET) {
-                        if (this.loginStage != 2) {
-                            break;
-                        }
-                        LoginPacket packetLogin1 = (LoginPacket) pk;
-                        this.username = packetLogin1.username;
-
-                        this.translator = TranslatorProvider.getByPEProtocolID(this, packetLogin1.protocol1);
-                        if (!(this.translator instanceof BaseTranslator)) {
-                            LoginStatusPacket pkLoginStatus1 = new LoginStatusPacket();
-                            pkLoginStatus1.status = LoginStatusPacket.LOGIN_FAILED_CLIENT;
-                            this.send(pkLoginStatus1);
-                            this.disconnect("Unsupported game version! ");
-                            break;
-                        }
-
-                        LoginStatusPacket pkLoginStatus1 = new LoginStatusPacket();
-                        pkLoginStatus1.status = 0;
-                        this.send(pkLoginStatus1);
-
-                        this.getLogger().info("Accepted connection by [" + this.username + "]. ");
-
-                        Matcher matcher1 = patternUsername.matcher(this.username);
-                        if (!matcher1.matches()) {
-                            this.disconnect("Bad username! ");
-                            break;
-                        }
-
-                        this.loginStage = 3;
-                        this.setPlayer(new PlayerProfile(this.username, UUID.nameUUIDFromBytes(("OfflinePlayer:" + this.username).getBytes(StandardCharsets.UTF_8))));
-                        continue;
-                    }
-                    if (!(this.translator instanceof BaseTranslator)) {
-                        break;
-                    }
-                    this.dServer.getThreadPool().submit(new ProcessPEPacketTask(this, pk));
-                }
-                break;
-            default:
-                if (this.loginStage != 3) {
-                    break;
-                }
-                if (!(this.translator instanceof BaseTranslator)) {
-                    break;
-                }
-                this.dServer.getThreadPool().submit(new ProcessPEPacketTask(this, packet));
-                break;
-        }
-    }
-
-    @Override
-    public boolean isActive() {
-        return this.statusActive;
-    }
-
-    public void sendSettings() {
-        if (!(this.getPlayer() instanceof GlowPlayer)) {
-            return;
-        }
-        int flags = 0;
-        if (this.getPlayer().getGameMode().equals(GameMode.ADVENTURE)) {
-            flags |= 0x01;
-        }
-        flags |= 0x20;
-        AdventureSettingsPacket pkAdventure = new AdventureSettingsPacket();
-        pkAdventure.flags = flags;
-        this.send(pkAdventure);
     }
 
     /**
@@ -787,63 +300,6 @@ public class DragonetSession extends GlowSession {
         send(new UserListItemMessage(UserListItemMessage.Action.ADD_PLAYER, entries));
     }
 
-    @Override
-    public void onDisconnect() {
-        this.statusActive = false;
-        this.dServer.getNetworkHandler().removeSession(this);
-        this.getServer().getSessionRegistry().remove((GlowSession) this);
-        if (this.player != null) {
-            this.player.getWorld().getRawPlayers().remove(this.player);
-        }
-        super.onDisconnect();
-    }
-
-    @Override
-    public void disconnect() {
-        this.disconnect("Kicked by the server! ");
-    }
-
-    /**
-     * Disconnects the session with the specified reason. This causes a
-     * KickMessage to be sent. When it has been delivered, the channel is
-     * closed.
-     *
-     * @param reason The reason for disconnection.
-     * @param overrideKick Whether to skip the kick event.
-     */
-    @Override
-    public void disconnect(String reason, boolean overrideKick) {
-        if (player != null && !overrideKick) {
-            PlayerKickEvent event = EventFactory.onPlayerKick(player, reason);
-            if (event.isCancelled()) {
-                return;
-            }
-
-            reason = event.getReason();
-
-            if (event.getLeaveMessage() != null) {
-                this.getServer().broadcastMessage(event.getLeaveMessage());
-            }
-        }
-
-        // log that the player was kicked
-        if (player != null) {
-            GlowServer.logger.info(player.getName() + " kicked: " + reason);
-            this.player.remove();
-        } else {
-            GlowServer.logger.info("[" + this.remoteIP + ":" + this.remotePort + "] kicked: " + reason);
-        }
-
-        this.send(new DisconnectPacket(reason));
-        this.statusActive = false;
-        this.dServer.getNetworkHandler().removeSession(this);
-        this.getServer().getSessionRegistry().remove((GlowSession) this);
-        if (this.player != null) {
-            this.player.getWorld().getRawPlayers().remove(this.player);
-        }
-        this.player = null;
-    }
-
     public void sendInventory() {
         if (this.getPlayer() == null) {
             return;
@@ -934,16 +390,6 @@ public class DragonetSession extends GlowSession {
     }
 
     @Override
-    public InetSocketAddress getAddress() {
-        return this.remoteInetSocketAddress;
-    }
-
-    @Override
-    public String getHostname() {
-        return this.remoteIP;
-    }
-
-    @Override
     public void enableCompression(int threshold) {
     }
 
@@ -956,9 +402,4 @@ public class DragonetSession extends GlowSession {
         //GlowProtocol proto = protocol.getProtocol();
         //super.setProtocol(proto);
     }
-
-    public SocketAddress getRemoteAddress() {
-        return remoteAddress;
-    }
-
 }
