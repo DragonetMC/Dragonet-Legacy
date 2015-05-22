@@ -50,14 +50,7 @@ public class SetWindowContentsMessageTranslator extends MessageTranslatorToPE<Tr
                     pkArmorInv.slots[i - 5] = new PEInventorySlot();
                 }
             }
-            if (this.getSession().getSentAndReceivedChunks() != -1) {
-                //Not fully loaded
-                this.getSession().getQueueAfterChunkSent().add(pkInventory);
-                this.getSession().getQueueAfterChunkSent().add(pkArmorInv);
-            } else {
-                return new PEPacket[]{pkInventory, pkArmorInv};
-            }
-            return null;
+            return new PEPacket[]{pkInventory, pkArmorInv};
         }
         //TODO: Implement other types of inventory
         //switch(this.getSession().getPlayer().)

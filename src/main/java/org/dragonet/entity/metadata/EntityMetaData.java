@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import net.glowstone.entity.GlowPlayer;
+import org.dragonet.entity.metadata.type.ByteArrayMeta;
 import org.dragonet.entity.metadata.type.ByteMeta;
 import org.dragonet.entity.metadata.type.ShortMeta;
 import org.dragonet.utilities.io.PEBinaryWriter;
@@ -39,6 +40,7 @@ public class EntityMetaData {
         public final static int DATA_AIR = 1;
         public final static int DATA_NAMETAG = 2;
         public final static int DATA_SHOW_NAMETAG = 3;
+        public final static int DATA_SILENT = 4;
         public final static int DATA_POTION_COLOR = 7;
         public final static int DATA_POTION_VISIBLE = 8;
         public final static int DATA_NO_AI = 15;
@@ -74,16 +76,26 @@ public class EntityMetaData {
         }
         return null;
     }
+    
+    public static EntityMetaData createDefault(){
+        EntityMetaData data = new EntityMetaData();
+        data.set(EntityMetaData.Constants.DATA_FLAGS, new ByteMeta((byte)0));
+        data.set(EntityMetaData.Constants.DATA_AIR, new ShortMeta((short) 300));
+        data.set(EntityMetaData.Constants.DATA_NAMETAG, new ByteArrayMeta(""));
+        data.set(EntityMetaData.Constants.DATA_SHOW_NAMETAG, new ByteMeta((byte) 0x01));
+        data.set(EntityMetaData.Constants.DATA_SILENT, new ByteMeta((byte)0));
+        data.set(EntityMetaData.Constants.DATA_NO_AI, new ByteMeta((byte)0));
+        return data;
+    }
 
     public static EntityMetaData getMetaDataFromPlayer(GlowPlayer player) {
         byte flags = (byte) 0x00;
         if (player.getFireTicks() > 0) {
             flags |= EntityMetaData.Constants.DATA_FLAG_ACTION;
         }
-        EntityMetaData data = new EntityMetaData();
-        data.set(EntityMetaData.Constants.DATA_FLAGS, new ByteMeta((byte) 0x00));
-        data.set(EntityMetaData.Constants.DATA_SHOW_NAMETAG, new ByteMeta((byte) 0x01));
-        data.set(EntityMetaData.Constants.DATA_AIR, new ShortMeta((short) 300));
+        EntityMetaData data = createDefault();
+        data.set(EntityMetaData.Constants.DATA_FLAGS, new ByteMeta(flags));
+        data.set(EntityMetaData.Constants.DATA_NAMETAG, new ByteArrayMeta(player.getDisplayName()));
         return data;
     }
 }

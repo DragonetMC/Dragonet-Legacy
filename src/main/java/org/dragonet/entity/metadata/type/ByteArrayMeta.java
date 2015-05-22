@@ -14,15 +14,20 @@ package org.dragonet.entity.metadata.type;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import org.apache.commons.io.Charsets;
 import org.dragonet.entity.metadata.EntityMetaData;
 import org.dragonet.entity.metadata.EntityMetaDataObject;
 
 public class ByteArrayMeta implements EntityMetaDataObject {
-
+    
     public byte[] data;
 
     public ByteArrayMeta(byte[] data) {
         this.data = data;
+    }
+    
+    public ByteArrayMeta(String data){
+        this(data.getBytes(Charsets.UTF_8));
     }
 
     @Override

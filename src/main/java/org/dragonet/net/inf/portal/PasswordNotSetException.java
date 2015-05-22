@@ -10,12 +10,20 @@
  *
  * @author The Dragonet Team
  */
-package org.dragonet.utilities;
 
-public final class DragonetVersioning {
+package org.dragonet.net.inf.portal;
 
-    public final static String DRAGONET_VERSION = "0.0.2-preR4";
+public final class PasswordNotSetException extends Exception {
+    public PasswordNotSetException() {
+    }
+    
+    @Override
+    public String getMessage() {
+        return "There is no DragonPortal password set! ";
+    }
 
-    public final static String MINECRAFT_PC_VERSION = "1.8.3";
-    public final static String MINECRAFT_PE_VERSION = "0.11.0 b9-12";
+    @Override
+    public String getLocalizedMessage() {
+        return getMessage();
+    }
 }

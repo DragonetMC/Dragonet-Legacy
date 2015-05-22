@@ -17,10 +17,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
 
 import lombok.Getter;
 import net.glowstone.GlowServer;
@@ -30,6 +32,8 @@ import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.dragonet.net.inf.mcpe.NetworkHandler;
 import org.dragonet.net.SessionManager;
+import org.dragonet.net.inf.portal.DragonPortalServer;
+import org.dragonet.net.inf.portal.PasswordNotSetException;
 import org.dragonet.peaddon.DragonetPEAddonServer;
 import org.dragonet.rhino.Script;
 import org.dragonet.statistic.StatisticSender;
@@ -54,7 +58,7 @@ public class DragonetServer {
 
     @Getter
     private SessionManager sessionManager;
-    
+
     @Getter
     private Rhino rhino;
 
@@ -69,6 +73,12 @@ public class DragonetServer {
 
     @Getter
     private boolean addonSupported;
+
+    @Getter
+    private DragonPortalServer portalServer;
+
+    @Getter
+    private boolean portalSupported;
 
     @Getter
     private CustomItemManager customMaterialManager;
@@ -134,11 +144,11 @@ public class DragonetServer {
             this.getServer().shutdown();
             return;
         }
-        
+
         this.logger.info("Starting DAPIS scripts... ");
         this.rhino = new Rhino(this.getServer());
         this.rhino.loadScripts();
-        
+
         if (config.getBoolean("enable-addon", true)) {
             this.getLogger().info("Enabling DragonetPE Android Addon server... ");
             this.addonServer = new DragonetPEAddonServer(this);
@@ -155,6 +165,30 @@ public class DragonetServer {
             this.addonSupported = false;
             this.getLogger().info("DragonetPE Android Addon support is disabled! ");
         }
+        
+        //DragonPortal server
+        if(config.getBoolean("dragonportal.enabled", false)){
+            this.getLogger().info("Enabling DragonPortal server... ");
+            try {
+                this.portalServer = new DragonPortalServer(this,
+                        config.getString("dragonportal.bind-address", "127.0.0.1"),
+                        config.getInt("dragonportal.bind-port", 25590), 
+                        config.getString("dragonportal.password", "NOT_SET"));
+                this.portalServer.initialize();
+            } catch (UnknownHostException ex) {
+                this.getLogger().error("Faild to create DragonPoral server. ", ex);
+            } catch (IOException ex){
+                this.getLogger().error("Faild to bind DragonPoral server on [" + 
+                        config.getString("dragonportal.bind-address", "127.0.0.1") + ":" + 
+                        config.getInt("dragonportal.bind-port", 25590) + "]. ", ex);
+            } catch (PasswordNotSetException ex){
+                this.getLogger().error(ex.getMessage());
+            }
+            this.portalSupported = true;
+        }else{
+            this.portalSupported = false;
+        }
+        
         //This exists because ScriptAPI.addMethod() must be called AFTER Dragonet initialization
         for (Script s : rhino.getScripts()) {
             this.getLogger().info("[DragonetAPI] Loading script " + s.getUID());
