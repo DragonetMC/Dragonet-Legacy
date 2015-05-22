@@ -12,7 +12,7 @@
  */
 package org.dragonet.net;
 
-import org.dragonet.net.inf.mcpe.PEProtocol;
+import org.dragonet.net.inf.mcpe.MCPESession;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayDeque;

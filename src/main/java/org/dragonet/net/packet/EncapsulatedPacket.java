@@ -15,7 +15,7 @@ package org.dragonet.net.packet;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.dragonet.net.inf.mcpe.PENetworkClient;
-import org.dragonet.net.inf.mcpe.PEProtocol;
+import org.dragonet.net.inf.mcpe.MCPESession;
 import org.dragonet.net.packet.minecraft.PEPacket;
 import org.dragonet.utilities.io.ArraySplitter;
 import org.dragonet.utilities.io.PEBinaryReader;

@@ -33,7 +33,7 @@ import org.dragonet.net.packet.minecraft.PEPacket;
 import org.dragonet.net.packet.minecraft.SetTimePacket;
 import org.dragonet.net.translator.BaseTranslator;
 
-public class PEProtocol extends DragonetSession {
+public class MCPESession extends DragonetSession {
 
     private @Getter
     DragonetServer dServer;
@@ -43,7 +43,7 @@ public class PEProtocol extends DragonetSession {
     private boolean statusActive;
 
 
-    public PEProtocol(DragonetServer dServer, PENetworkClient client, BaseTranslator translator) {
+    public MCPESession(DragonetServer dServer, PENetworkClient client, BaseTranslator translator) {
         super(dServer, translator);
         this.dServer = dServer;
         this.client = client;
