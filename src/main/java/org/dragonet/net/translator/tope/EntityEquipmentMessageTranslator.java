@@ -21,8 +21,9 @@ public class EntityEquipmentMessageTranslator extends MessageTranslatorToPE<Tran
 
     @Override
     public PEPacket[] handleSpecific(EntityEquipmentMessage packet) {
+        if (this.getSession().getPlayer() == null) return null;
         if (!(this.getSession().getPlayer().getWorld().getEntityManager().getEntity(packet.id) instanceof Player)) {
-            return null;
+            return null; //Only process player's equipments for now. 
         }
         switch (packet.slot) {
             case 0: //Held Item
