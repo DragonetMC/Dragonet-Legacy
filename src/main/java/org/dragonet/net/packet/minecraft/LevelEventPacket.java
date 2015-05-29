@@ -18,18 +18,18 @@ import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class LevelEventPacket extends PEPacket {
 
-    private final static byte TAME_FAIL = (byte) 6;
-    private final static byte TAME_SUCCESS = (byte) 7;
-    private final static byte SHAKE_WET = (byte) 8;
-    private final static byte USE_ITEM = (byte) 9;
-    private final static byte EAT_GRASS_ANIMATION = (byte) 10;
-    private final static byte FISH_HOOK_BUBBLE = (byte) 11;
-    private final static byte FISH_HOOK_POSITION = (byte) 12;
-    private final static byte FISH_HOOK_HOOK = (byte) 13;
-    private final static byte FISH_HOOK_TEASE = (byte) 14;
-    private final static byte SQUID_INK_CLOUD = (byte) 15;
-    private final static byte AMBIENT_SOUND = (byte) 16;
-    private final static byte RESPAWN = (byte) 17;
+    public final static byte TAME_FAIL = (byte) 6;
+    public final static byte TAME_SUCCESS = (byte) 7;
+    public final static byte SHAKE_WET = (byte) 8;
+    public final static byte USE_ITEM = (byte) 9;
+    public final static byte EAT_GRASS_ANIMATION = (byte) 10;
+    public final static byte FISH_HOOK_BUBBLE = (byte) 11;
+    public final static byte FISH_HOOK_POSITION = (byte) 12;
+    public final static byte FISH_HOOK_HOOK = (byte) 13;
+    public final static byte FISH_HOOK_TEASE = (byte) 14;
+    public final static byte SQUID_INK_CLOUD = (byte) 15;
+    public final static byte AMBIENT_SOUND = (byte) 16;
+    public final static byte RESPAWN = (byte) 17;
 
     private short eventID;
     private float x;

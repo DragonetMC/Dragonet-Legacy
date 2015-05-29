@@ -45,6 +45,7 @@ public class ItemTranslator_v0_11 implements ItemTranslator {
         for (int i = 91; i <= 92; i++) {
             itemMap_PC_to_PE.put(i, i);
         }
+        //itemMap_PC_to_PE.put(95, 20); //Not sure for STAINED_GLASS -> GLASS
         for (int i = 95; i <= 96; i++) {
             itemMap_PC_to_PE.put(i, i);
         }
@@ -71,6 +72,7 @@ public class ItemTranslator_v0_11 implements ItemTranslator {
         for (int i = 163; i <= 164; i++) {
             itemMap_PC_to_PE.put(i, i);
         }
+        itemMap_PC_to_PE.put(169, 89); //SEA_LANTERN -> GLOWSTONE
         for (int i = 170; i <= 174; i++) {
             itemMap_PC_to_PE.put(i, i);
         }
