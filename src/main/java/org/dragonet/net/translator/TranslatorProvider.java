@@ -20,6 +20,7 @@ public final class TranslatorProvider {
         switch (protocolID) {
             case 25:
             case 26:
+            case 27:
                 return new Translator_v0_11(session);
             default:
                 return null;
