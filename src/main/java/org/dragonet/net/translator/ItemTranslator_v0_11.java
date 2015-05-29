@@ -69,6 +69,7 @@ public class ItemTranslator_v0_11 implements ItemTranslator {
         for (int i = 155; i <= 159; i++) {
             itemMap_PC_to_PE.put(i, i);
         }
+        itemMap_PC_to_PE.put(160, 102); //STAINED_GLASSPANE -> GLASSPANE
         for (int i = 163; i <= 164; i++) {
             itemMap_PC_to_PE.put(i, i);
         }
