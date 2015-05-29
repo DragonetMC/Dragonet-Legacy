@@ -20,7 +20,7 @@ import org.dragonet.net.translator.BaseTranslator;
 
 public final class PortalSession extends DragonetSession {
 
-    public PortalSession(DragonetServer dServer, BaseTranslator translator) {
+    public PortalSession(String username, String remoteIP, int remotePort, DragonetServer dServer, BaseTranslator translator) {
         super(dServer, translator);
     }
 
