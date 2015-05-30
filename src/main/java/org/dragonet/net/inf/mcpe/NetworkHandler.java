@@ -104,7 +104,7 @@ public class NetworkHandler {
                     writer8.writeByte((byte) 0x00);
                     this.send(bos8.toByteArray(), packet.getSocketAddress());
                     PENetworkClient session = new PENetworkClient(this, packet.getSocketAddress(), clientID, clientMTU);
-                    clients.put(packet.getSocketAddress().toString(), session);
+                    clients.put(getClientKey(packet.getSocketAddress()), session);
                     //this.server.getServer().getSessionRegistry().add(session);
                     break;
                 case 0x80:
