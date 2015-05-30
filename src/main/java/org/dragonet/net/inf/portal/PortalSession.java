@@ -21,14 +21,9 @@ import org.dragonet.net.translator.BaseTranslator;
 public final class PortalSession extends DragonetSession {
 
     public PortalSession(String username, String remoteIP, int remotePort, DragonetServer dServer, BaseTranslator translator) {
-        super(dServer, translator);
+        super(dServer, translator, "PORTAL-/" + remoteIP + ":" + remotePort);
     }
-
-    @Override
-    public String getSessionKey() {
-        return "PORTAL-"; //TODO: Remote address. 
-    }
-
+    
     @Override
     public void send(PEPacket pk) {
     }

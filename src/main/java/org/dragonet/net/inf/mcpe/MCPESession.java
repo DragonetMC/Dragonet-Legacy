@@ -44,17 +44,11 @@ public class MCPESession extends DragonetSession {
 
 
     public MCPESession(DragonetServer dServer, PENetworkClient client) {
-        super(dServer, null);
+        super(dServer, null, "MCPE-" + client.getRemoteAddress().toString());
         this.dServer = dServer;
         this.client = client;
     }
     
-
-    @Override
-    public String getSessionKey() {
-        return "MCPE-" + client.getRemoteAddress().toString();
-    }
-
     /**
      * Trigger a tick update for the session
      */

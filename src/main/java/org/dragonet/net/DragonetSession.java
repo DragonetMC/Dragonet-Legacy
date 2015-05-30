@@ -71,17 +71,17 @@ public abstract class DragonetSession extends GlowSession {
     @Getter
     private ClientChunkManager chunkManager;
 
-    private boolean statusActive = true;
+    @Getter
+    private final String sessionKey;
 
-    public DragonetSession(DragonetServer dServer, BaseTranslator translator) {
+    public DragonetSession(DragonetServer dServer, BaseTranslator translator, String sessionKey) {
         super(dServer.getServer());
         this.dServer = dServer;
+        this.sessionKey = sessionKey;
         this.translator = translator;
         this.dServer.getSessionManager().getSessions().put(getSessionKey(), this);
         this.chunkManager = new ClientChunkManager(this);
     }
-
-    public abstract String getSessionKey();
 
     public void onTick() {
         this.chunkManager.onTick();
