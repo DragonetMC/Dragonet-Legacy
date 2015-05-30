@@ -508,8 +508,6 @@ public final class PENetworkClient {
                     break;
                 }
 
-                handler.getManager().getSessions().put(session.getSessionKey(), session);
-                
                 session.setPlayer(new PlayerProfile(this.username, UUID.nameUUIDFromBytes(("OfflinePlayer:" + this.username).getBytes(StandardCharsets.UTF_8))));
                 break;
             default:

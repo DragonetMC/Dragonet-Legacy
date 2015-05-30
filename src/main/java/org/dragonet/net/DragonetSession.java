@@ -77,6 +77,7 @@ public abstract class DragonetSession extends GlowSession {
         super(dServer.getServer());
         this.dServer = dServer;
         this.translator = translator;
+        this.dServer.getSessionManager().getSessions().put(getSessionKey(), this);
         this.chunkManager = new ClientChunkManager(this);
     }
 
