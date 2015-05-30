@@ -66,7 +66,7 @@ public final class PENetworkClient {
 
     @Getter
     private long clientID;
-    
+
     @Getter
     private short clientMTU;
 
@@ -105,14 +105,14 @@ public final class PENetworkClient {
 
     @Getter
     private final long timeConnected;
-    
+
     @Getter
     private long lastPacketReceived;
-    
+
     private final NetworkHandler handler;
-    
+
     /**
-     * The session which this client binds to. 
+     * The session which this client binds to.
      */
     @Getter
     private DragonetSession session;
@@ -132,11 +132,11 @@ public final class PENetworkClient {
     }
 
     public void setSession(DragonetSession session) {
-        if(this.session != null){
+        if (this.session != null) {
             throw new IllegalStateException("There is already a session bound to this session! ");
         }
         this.session = session;
-    }   
+    }
 
     public void onTick() {
         sendAllACK();
@@ -452,7 +452,7 @@ public final class PENetworkClient {
             return;
         }
         System.out.println("Received Packet: " + packet.getClass().getSimpleName());
-        switch(packet.pid()){
+        switch (packet.pid()) {
             case PEPacketIDs.PING:
                 PingPongPacket pkPong = new PingPongPacket();
                 pkPong.pingID = ((PingPongPacket) packet).pingID;
@@ -477,11 +477,12 @@ public final class PENetworkClient {
                 }
                 this.loginStage = 2;
                 break;
+            default:
+                if (session == null) {
+                    disconnect("Network error! ");
+                    return;
+                }
+                session.onPacketReceived(packet);
         }
-        if(session == null){
-            disconnect("Network error! ");
-            return;
-        }
-        session.onPacketReceived(packet);
     }
 }
