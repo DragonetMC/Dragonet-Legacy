@@ -13,6 +13,8 @@ import net.glowstone.block.blocktype.BlockType;
 import net.glowstone.block.entity.TileEntity;
 import net.glowstone.block.itemtype.ItemType;
 import net.glowstone.entity.GlowPlayer;
+import net.glowstone.net.handler.play.player.BlockPlacementHandler;
+import net.glowstone.net.message.play.player.BlockPlacementMessage;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.Event;
@@ -48,7 +50,7 @@ public class UseItemPacketTranslator extends PEPacketTranslatorToPC<Translator_v
     @Override
     public Message[] handleSpecific(UseItemPacket packet) {
         UseItemPacket pkUseItem = (UseItemPacket) packet;
-        if (!(pkUseItem.face > 0 && pkUseItem.face < 6 && (pkUseItem.face & 0xFF) != 0xFF)) {
+        if (!((pkUseItem.face >= 0 && pkUseItem.face < 6) || (pkUseItem.face & 0xFF) == 0xFF)) {
             return null;
         }
 
@@ -75,68 +77,15 @@ public class UseItemPacketTranslator extends PEPacketTranslatorToPC<Translator_v
             getSession().send(pkUpdateBlock);
             return null;
         }
-
-        //Copied from Glowstone class BlockPlacementHandler
-        GlowBlock clicked = this.getSession().getPlayer().getWorld().getBlockAt(pkUseItem.x, pkUseItem.y, pkUseItem.z);
-        GlowPlayer player = this.getSession().getPlayer();
-        ItemStack holding = this.getSession().getPlayer().getInventory().getItemInHand();
-        // check that a block-click wasn't against air
-        if (clicked != null && clicked.getType() == Material.AIR) {
-            // inform the player their perception of reality is wrong
-            player.sendBlockChange(clicked.getLocation(), Material.AIR, (byte) 0);
+        
+        if((packet.face & 0xFF) == 0xFF){
+            GlowBlock block = getSession().getPlayer().getWorld().getBlockAt(packet.x, packet.y, packet.z);
+            EventFactory.onPlayerInteract(getSession().getPlayer(), Action.RIGHT_CLICK_BLOCK, block, convertFace(packet.face));
             return null;
         }
 
-        // call interact event
-        PlayerInteractEvent event = EventFactory.onPlayerInteract(player, Action.RIGHT_CLICK_BLOCK, clicked, (pkUseItem.face & 0xFF) != 0xFF ? convertFace(pkUseItem.face) : BlockFace.UP);
-
-        // attempt to use interacted block
-        // DEFAULT is treated as ALLOW, and sneaking is always considered
-        boolean useInteractedBlock = event.useInteractedBlock() != Event.Result.DENY;
-        if (useInteractedBlock && clicked != null && (!player.isSneaking() || this.getSession().getPlayer().getInventory().getItemInHand() == null)) {
-            BlockType useBlockType = ItemTable.instance().getBlock(clicked.getType());
-            useInteractedBlock = useBlockType.blockInteract(player, clicked, convertFace(pkUseItem.face), new Vector(1, 1, 1));
-        } else {
-            useInteractedBlock = false;
-        }
-
-        // attempt to use item in hand
-        // follows ALLOW/DENY: default to if no block was interacted with
-        if ((event.useItemInHand() == Event.Result.DEFAULT ? !useInteractedBlock : event.useItemInHand() == Event.Result.ALLOW) && holding != null) {
-            // call out to the item type to determine the appropriate right-click action
-            ItemType type = ItemTable.instance().getItem(this.getSession().getPlayer().getInventory().getItemInHand().getType());
-            if (clicked == null) {
-                type.rightClickAir(player, this.getSession().getPlayer().getInventory().getItemInHand());
-            } else {
-                type.rightClickBlock(player, clicked, convertFace(pkUseItem.face), this.getSession().getPlayer().getInventory().getItemInHand(), new Vector(1, 1, 1));
-            }
-        }
-
-        // if anything was actually clicked, make sure the player's up to date
-        // in case something is unimplemented or otherwise screwy on our side
-        if (clicked != null) {
-            player.sendBlockChange(clicked.getLocation(), clicked.getType(), clicked.getData());
-            TileEntity entity = clicked.getTileEntity();
-            if (entity != null) {
-                entity.update(player);
-            }
-            player.sendBlockChange(clicked.getRelative(convertFace(pkUseItem.face)).getLocation(), clicked.getRelative(convertFace(pkUseItem.face)).getType(), clicked.getRelative(convertFace(pkUseItem.face)).getData());
-            TileEntity entity2 = clicked.getTileEntity();
-            if (entity2 != null) {
-                entity2.update(player);
-            }
-        }
-
-        // if there's been a change in the held item, make it valid again
-        if (holding != null) {
-            if (holding.getType().getMaxDurability() > 0 && holding.getDurability() > holding.getType().getMaxDurability()) {
-                holding.setAmount(holding.getAmount() - 1);
-                holding.setDurability((short) 0);
-            }
-            if (holding.getAmount() <= 0) {
-                holding = null;
-            }
-        }
+        //Copied from Glowstone class BlockPlacementHandler
+        new BlockPlacementHandler().handle(getSession(), new BlockPlacementMessage(packet.x, packet.y, packet.z, packet.face, new ItemStack(packet.item, packet.meta), 1, 1, 1));
 
         return null;
     }
