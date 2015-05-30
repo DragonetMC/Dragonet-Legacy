@@ -43,11 +43,12 @@ public class MCPESession extends DragonetSession {
     private boolean statusActive;
 
 
-    public MCPESession(DragonetServer dServer, PENetworkClient client, BaseTranslator translator) {
-        super(dServer, translator);
+    public MCPESession(DragonetServer dServer, PENetworkClient client) {
+        super(dServer, null);
         this.dServer = dServer;
         this.client = client;
     }
+    
 
     @Override
     public String getSessionKey() {

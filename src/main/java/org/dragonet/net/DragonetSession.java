@@ -15,15 +15,13 @@ package org.dragonet.net;
 import com.flowpowered.networking.Message;
 import com.flowpowered.networking.exception.ChannelClosedException;
 import io.netty.channel.ChannelFuture;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.logging.Level;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.crypto.SecretKey;
 import lombok.Getter;
+import lombok.Setter;
 import net.glowstone.EventFactory;
 import net.glowstone.GlowServer;
 import net.glowstone.entity.GlowPlayer;
@@ -43,8 +41,6 @@ import org.dragonet.inventory.InventoryType;
 import org.dragonet.inventory.PEInventorySlot;
 import org.dragonet.inventory.PEWindowConstantID;
 import org.dragonet.net.packet.minecraft.BatchPacket;
-import org.dragonet.net.packet.minecraft.LoginPacket;
-import org.dragonet.net.packet.minecraft.LoginStatusPacket;
 import org.dragonet.net.packet.minecraft.MovePlayerPacket;
 import org.dragonet.net.packet.minecraft.PEPacket;
 import org.dragonet.net.packet.minecraft.PEPacketIDs;
@@ -54,11 +50,10 @@ import org.dragonet.net.packet.minecraft.SetTimePacket;
 import org.dragonet.net.packet.minecraft.StartGamePacket;
 import org.dragonet.net.packet.minecraft.WindowItemsPacket;
 import org.dragonet.net.translator.BaseTranslator;
-import org.dragonet.net.translator.TranslatorProvider;
 
 public abstract class DragonetSession extends GlowSession {
 
-    private final static Pattern patternUsername = Pattern.compile("^[a-zA-Z0-9_]{3,16}$");
+    public final static Pattern PATTERN_USERNAME = Pattern.compile("^[a-zA-Z0-9_]{3,16}$");
 
     @Getter
     private DragonetServer dServer;
@@ -70,6 +65,7 @@ public abstract class DragonetSession extends GlowSession {
     private String username;
 
     @Getter
+    @Setter
     private BaseTranslator translator;
 
     @Getter
@@ -79,7 +75,7 @@ public abstract class DragonetSession extends GlowSession {
 
     public DragonetSession(DragonetServer dServer, BaseTranslator translator) {
         super(dServer.getServer());
-        dServer = dServer;
+        this.dServer = dServer;
         this.translator = translator;
         this.chunkManager = new ClientChunkManager(this);
     }
@@ -92,33 +88,6 @@ public abstract class DragonetSession extends GlowSession {
 
     public void onPacketReceived(PEPacket packet) {
         switch (packet.pid()) {
-            case PEPacketIDs.LOGIN_PACKET:
-                LoginPacket packetLogin = (LoginPacket) packet;
-                this.username = packetLogin.username;
-
-                this.translator = TranslatorProvider.getByPEProtocolID(this, packetLogin.protocol1);
-                if (!(this.translator instanceof BaseTranslator)) {
-                    LoginStatusPacket pkLoginStatus = new LoginStatusPacket();
-                    pkLoginStatus.status = LoginStatusPacket.LOGIN_FAILED_CLIENT;
-                    this.send(pkLoginStatus);
-                    this.disconnect("Unsupported game version! ");
-                    break;
-                }
-
-                LoginStatusPacket pkLoginStatus = new LoginStatusPacket();
-                pkLoginStatus.status = 0;
-                this.send(pkLoginStatus);
-
-                this.getLogger().info("Accepted connection by [" + this.username + "]. ");
-
-                Matcher matcher = patternUsername.matcher(this.username);
-                if (!matcher.matches()) {
-                    this.disconnect("Bad username! ");
-                    break;
-                }
-
-                this.setPlayer(new PlayerProfile(this.username, UUID.nameUUIDFromBytes(("OfflinePlayer:" + this.username).getBytes(StandardCharsets.UTF_8))));
-                break;
             case PEPacketIDs.DISCONNECT_PACKET:
                 this.onDisconnect();
                 break;

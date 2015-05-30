@@ -17,15 +17,18 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import lombok.Getter;
 import lombok.Setter;
+import net.glowstone.entity.meta.profile.PlayerProfile;
 import org.apache.commons.lang.ArrayUtils;
 import org.dragonet.net.DragonetSession;
 import org.dragonet.net.packet.EncapsulatedPacket;
@@ -50,6 +53,9 @@ public final class PENetworkClient {
 
     @Getter
     private SocketAddress remoteAddress;
+    
+    @Getter
+    private String username;
 
     @Getter
     private String remoteIP;
@@ -115,7 +121,7 @@ public final class PENetworkClient {
      * The session which this client binds to.
      */
     @Getter
-    private DragonetSession session;
+    private MCPESession session;
 
     public PENetworkClient(NetworkHandler handler, SocketAddress remoteAddress, long clientID, short clientMTU) {
         this.handler = handler;
@@ -129,13 +135,6 @@ public final class PENetworkClient {
         this.loginStage = 0;
         this.timeConnected = System.currentTimeMillis();
         this.lastPacketReceived = System.currentTimeMillis();
-    }
-
-    public void setSession(DragonetSession session) {
-        if (this.session != null) {
-            throw new IllegalStateException("There is already a session bound to this session! ");
-        }
-        this.session = session;
     }
 
     public void onTick() {
@@ -391,8 +390,7 @@ public final class PENetworkClient {
     }
 
     public void disconnect(String reason) {
-        this.sendPacket(new DisconnectPacket(reason));
-        handler.remove(this.remoteAddress);
+        close(reason);
     }
 
     public void processDataPacket(RaknetDataPacket dataPacket) {
@@ -476,6 +474,43 @@ public final class PENetworkClient {
                     break;
                 }
                 this.loginStage = 2;
+                //handler.remove(remoteAddress);
+                //handler.getManager().
+                break;
+            case PEPacketIDs.LOGIN_PACKET:
+                if(this.loginStage != 2){
+                    this.close("Protocol error! ");
+                    return;
+                }
+                LoginPacket packetLogin = (LoginPacket) packet;
+                this.username = packetLogin.username;
+
+                session = new MCPESession(handler.getManager().getServer(), this);
+                
+                BaseTranslator translator = TranslatorProvider.getByPEProtocolID(session, packetLogin.protocol1);
+                if (!(translator instanceof BaseTranslator)) {
+                    LoginStatusPacket pkLoginStatus = new LoginStatusPacket();
+                    pkLoginStatus.status = LoginStatusPacket.LOGIN_FAILED_CLIENT;
+                    this.sendPacket(pkLoginStatus);
+                    this.disconnect("Unsupported game version! ");
+                    break;
+                }
+
+                LoginStatusPacket pkLoginStatus = new LoginStatusPacket();
+                pkLoginStatus.status = 0;
+                this.sendPacket(pkLoginStatus);
+
+                handler.getManager().getServer().getLogger().info("Accepted connection by [" + this.username + "]. ");
+
+                Matcher matcher = DragonetSession.PATTERN_USERNAME.matcher(this.username);
+                if (!matcher.matches()) {
+                    this.disconnect("Bad username! ");
+                    break;
+                }
+
+                handler.getManager().getSessions().put(session.getSessionKey(), session);
+                
+                session.setPlayer(new PlayerProfile(this.username, UUID.nameUUIDFromBytes(("OfflinePlayer:" + this.username).getBytes(StandardCharsets.UTF_8))));
                 break;
             default:
                 if (session == null) {
@@ -484,5 +519,14 @@ public final class PENetworkClient {
                 }
                 session.onPacketReceived(packet);
         }
+    }
+    
+    private void close(String reason){
+        this.sendPacket(new DisconnectPacket(reason));
+        removeFromHandler();
+    }
+    
+    public void removeFromHandler(){
+        handler.remove(remoteAddress);
     }
 }
