@@ -343,7 +343,6 @@ public final class PENetworkClient {
     }
 
     public void sendPacket(PEPacket packet, int reliability) {
-        System.out.println("Sending packet: " + packet.getClass().getSimpleName());
         if (!(packet instanceof PEPacket)) {
             return;
         }

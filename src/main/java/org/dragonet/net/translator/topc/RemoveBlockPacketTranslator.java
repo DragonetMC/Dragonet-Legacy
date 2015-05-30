@@ -16,12 +16,15 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.dragonet.net.DragonetSession;
 import org.dragonet.net.packet.minecraft.RemoveBlockPacket;
 import org.dragonet.net.translator.PEPacketTranslatorToPC;
 import org.dragonet.net.translator.Translator_v0_11;
+import static org.dragonet.net.translator.topc.UseItemPacketTranslator.convertFace;
 
 public class RemoveBlockPacketTranslator extends PEPacketTranslatorToPC<Translator_v0_11, RemoveBlockPacket> {
 
@@ -37,6 +40,16 @@ public class RemoveBlockPacketTranslator extends PEPacketTranslatorToPC<Translat
         }
         GlowBlock block = this.getSession().getPlayer().getWorld().getBlockAt(pkRemoveBlock.x, pkRemoveBlock.y, pkRemoveBlock.z);
 
+        if(this.getSession().getPlayer().getItemInHand() == null ||
+                this.getSession().getPlayer().getItemInHand().getType().equals(Material.AIR)){
+            // Client won't send UseItemPacket if holding nothing. 
+            PlayerInteractEvent event = EventFactory.onPlayerInteract(this.getSession().getPlayer(), Action.LEFT_CLICK_BLOCK, block, BlockFace.UP);
+            if(event.isCancelled()){
+                this.getSession().getPlayer().sendBlockChange(block.getLocation(), block.getType(), block.getData());
+                return null;
+            }
+        }
+        
         // fire the block break event
         BlockBreakEvent breakEvent = EventFactory.callEvent(new BlockBreakEvent(block, this.getSession().getPlayer()));
         if (breakEvent.isCancelled()) {

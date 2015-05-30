@@ -88,7 +88,7 @@ public class UseItemPacketTranslator extends PEPacketTranslatorToPC<Translator_v
         }
 
         // call interact event
-        PlayerInteractEvent event = EventFactory.onPlayerInteract(player, (pkUseItem.face & 0xFF) != 0xFF ? Action.RIGHT_CLICK_BLOCK : Action.RIGHT_CLICK_AIR, clicked, (pkUseItem.face & 0xFF) != 0xFF ? convertFace(pkUseItem.face) : BlockFace.UP);
+        PlayerInteractEvent event = EventFactory.onPlayerInteract(player, (pkUseItem.face & 0xFF) != 0xFF ? Action.RIGHT_CLICK_BLOCK : Action.LEFT_CLICK_BLOCK, clicked, (pkUseItem.face & 0xFF) != 0xFF ? convertFace(pkUseItem.face) : BlockFace.UP);
 
         // attempt to use interacted block
         // DEFAULT is treated as ALLOW, and sneaking is always considered
