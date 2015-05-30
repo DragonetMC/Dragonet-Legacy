@@ -123,19 +123,19 @@ public class NetworkHandler {
                 case 0x8D:
                 case 0x8E:
                 case 0x8F:
-                    if (this.manager.getSessions().containsKey(getClientKey(packet.getSocketAddress()))) {
+                    if (this.clients.containsKey(getClientKey(packet.getSocketAddress()))) {
                         RaknetDataPacket dataPacket = new RaknetDataPacket(ArrayUtils.subarray(packet.getData(), 1, packet.getLength()));
                         dataPacket.decode();
                         clients.get(getClientKey(packet.getSocketAddress())).processDataPacket(dataPacket);
                     }
                     break;
                 case 0xC0:
-                    if (this.manager.getSessions().containsKey(getClientKey(packet.getSocketAddress()))) {
+                    if (this.clients.containsKey(getClientKey(packet.getSocketAddress()))) {
                         clients.get(getClientKey(packet.getSocketAddress())).processACKPacket(ArrayUtils.subarray(packet.getData(), 1, packet.getData().length));
                     }
                     break;
                 case 0xA0:
-                    if (this.manager.getSessions().containsKey(getClientKey(packet.getSocketAddress()))) {
+                    if (this.clients.containsKey(getClientKey(packet.getSocketAddress()))) {
                         clients.get(getClientKey(packet.getSocketAddress())).processNACKPacket(ArrayUtils.subarray(packet.getData(), 1, packet.getData().length));
                     }
                     break;
