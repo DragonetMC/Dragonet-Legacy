@@ -30,6 +30,12 @@ public final class SessionManager {
     public SessionManager(DragonetServer server) {
         this.server = server;
     }
+    
+    public void onTick(){
+        for(DragonetSession session : sessions.values()){
+            session.onTick();
+        }
+    }
 
     public void removeSessionRaw(DragonetSession session) {
         sessions.remove(session.getSessionKey());

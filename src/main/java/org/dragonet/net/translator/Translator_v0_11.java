@@ -90,8 +90,7 @@ public class Translator_v0_11 extends BaseTranslator {
 
     public ItemTranslator itemTranslator;
 
-    public Translator_v0_11(DragonetSession session) {
-        super(session);
+    public Translator_v0_11() {
         this.cachedWindowType = new int[256];
         this.cachedWindowType[0] = 0;
         for (int i = 1; i < 256; i++) {
@@ -104,7 +103,13 @@ public class Translator_v0_11 extends BaseTranslator {
 
         mapToPE = new ConcurrentHashMap<>();
         mapToPC = new ConcurrentHashMap<>();
+    }
 
+    @Override
+    public void setSession(DragonetSession session) {
+        super.setSession(session);
+        
+        //Initialize
         // [PC => PE]
         mapToPE.put(AnimateEntityMessage.class, new AnimateEntityMessageTranslator(this, this.getSession()));
         mapToPE.put(BlockChangeMessage.class, new BlockChangeMessageTranslator(this, this.getSession()));

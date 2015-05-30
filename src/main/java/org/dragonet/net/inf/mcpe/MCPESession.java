@@ -12,6 +12,7 @@
  */
 package org.dragonet.net.inf.mcpe;
 
+import java.net.InetSocketAddress;
 import lombok.Getter;
 import net.glowstone.EventFactory;
 import net.glowstone.GlowServer;
@@ -25,6 +26,7 @@ import org.dragonet.net.DragonetSession;
 import org.dragonet.net.packet.minecraft.AdventureSettingsPacket;
 import org.dragonet.net.packet.minecraft.PEPacket;
 import org.dragonet.net.packet.minecraft.SetTimePacket;
+import org.dragonet.net.translator.BaseTranslator;
 
 public class MCPESession extends DragonetSession {
 
@@ -36,10 +38,13 @@ public class MCPESession extends DragonetSession {
     private boolean statusActive;
 
 
-    public MCPESession(DragonetServer dServer, PENetworkClient client) {
-        super(dServer, null, "MCPE-" + client.getRemoteAddress().toString());
+    public MCPESession(DragonetServer dServer, PENetworkClient client, BaseTranslator translator) {
+        super(dServer, translator, "MCPE-" + client.getRemoteAddress().toString());
+        translator.setSession(this);
+        
         this.dServer = dServer;
         this.client = client;
+        statusActive = true;
     }
     
     /**
@@ -58,30 +63,20 @@ public class MCPESession extends DragonetSession {
         }
     }
 
-    /**
-     * Send a packet to the client with a reliability defined
-     *
-     * @param packet Packet to send
-     * @param reliability Packet reliability
-     */
     @Override
     public void send(PEPacket packet, int reliability) {
         client.sendPacket(packet, reliability);
     }
 
-    /**
-     * *
-     * Send a packet to the client with default packet reliability 2
-     *
-     * @param packet Packet to send
-     */
     @Override
     public void send(PEPacket packet) {
         this.send(packet, 2);
     }
 
-
-
+    @Override
+    public InetSocketAddress getAddress() {
+        return client.getRemoteInetSocketAddress();
+    }
     
 
     @Override

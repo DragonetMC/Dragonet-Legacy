@@ -170,23 +170,10 @@ public abstract class DragonetSession extends GlowSession {
             throw new IllegalStateException("Cannot set player twice");
         }
 
-        // isActive check here in case player disconnected during authentication
-        if (!isActive()) {
-            // no need to call onDisconnect() since it only does anything if there's a player set
-            return;
-        }
-
         // initialize the player
         PlayerDataService.PlayerReader reader = this.getServer().getPlayerDataService().beginReadingData(profile.getUniqueId());
         //this.player = new GlowPlayer(this, profile, reader);
         this.player = new DragonetPlayer(this, profile, reader);
-
-        // isActive check here in case player disconnected after authentication,
-        // but before the GlowPlayer initialization was completed
-        if (!isActive()) {
-            onDisconnect();
-            return;
-        }
 
         // login event
         PlayerLoginEvent event = EventFactory.onPlayerLogin(player, this.getHostname());

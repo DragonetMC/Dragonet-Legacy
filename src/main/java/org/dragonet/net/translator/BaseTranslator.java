@@ -22,7 +22,10 @@ public abstract class BaseTranslator {
     @Getter
     private DragonetSession session;
 
-    public BaseTranslator(DragonetSession session) {
+    public void setSession(DragonetSession session) {
+        if (this.session != null) {
+            throw new IllegalStateException("Already set a DragonetSession to this translator! ");
+        }
         this.session = session;
     }
 

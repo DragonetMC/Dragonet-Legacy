@@ -203,6 +203,7 @@ public class DragonetServer {
      */
     public void tickUpdate() {
         this.networkHandler.onTick();
+        this.sessionManager.onTick();
         this.rhino.Tick();
     }
 

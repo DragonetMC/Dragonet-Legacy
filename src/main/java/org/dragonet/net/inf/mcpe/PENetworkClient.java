@@ -343,6 +343,7 @@ public final class PENetworkClient {
     }
 
     public void sendPacket(PEPacket packet, int reliability) {
+        System.out.println("Sending packet: " + packet.getClass().getSimpleName());
         if (!(packet instanceof PEPacket)) {
             return;
         }
@@ -479,15 +480,12 @@ public final class PENetworkClient {
                 break;
             case PEPacketIDs.LOGIN_PACKET:
                 if(this.loginStage != 2){
-                    this.close("Protocol error! ");
                     return;
                 }
                 LoginPacket packetLogin = (LoginPacket) packet;
                 this.username = packetLogin.username;
-
-                session = new MCPESession(handler.getManager().getServer(), this);
                 
-                BaseTranslator translator = TranslatorProvider.getByPEProtocolID(session, packetLogin.protocol1);
+                BaseTranslator translator = TranslatorProvider.getByPEProtocolID(packetLogin.protocol1, packetLogin.protocol2);
                 if (!(translator instanceof BaseTranslator)) {
                     LoginStatusPacket pkLoginStatus = new LoginStatusPacket();
                     pkLoginStatus.status = LoginStatusPacket.LOGIN_FAILED_CLIENT;
@@ -495,9 +493,10 @@ public final class PENetworkClient {
                     this.disconnect("Unsupported game version! ");
                     break;
                 }
+                session = new MCPESession(handler.getManager().getServer(), this, translator);
 
                 LoginStatusPacket pkLoginStatus = new LoginStatusPacket();
-                pkLoginStatus.status = 0;
+                pkLoginStatus.status = LoginStatusPacket.LOGIN_SUCCESS;
                 this.sendPacket(pkLoginStatus);
 
                 handler.getManager().getServer().getLogger().info("Accepted connection by [" + this.username + "]. ");
@@ -507,7 +506,8 @@ public final class PENetworkClient {
                     this.disconnect("Bad username! ");
                     break;
                 }
-
+                
+                this.loginStage = 3;
                 session.setPlayer(new PlayerProfile(this.username, UUID.nameUUIDFromBytes(("OfflinePlayer:" + this.username).getBytes(StandardCharsets.UTF_8))));
                 break;
             case PEPacketIDs.BATCH_PACKET:

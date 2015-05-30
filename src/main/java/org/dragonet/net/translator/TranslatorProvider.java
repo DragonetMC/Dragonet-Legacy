@@ -17,12 +17,19 @@ import org.dragonet.utilities.DragonetVersioning;
 
 public final class TranslatorProvider {
 
-    public static BaseTranslator getByPEProtocolID(DragonetSession session, int protocolID) {
-        switch (protocolID) {
-            case DragonetVersioning.MINECRAFT_PE_PROTOCOL:
-                return new Translator_v0_11(session);
-            default:
-                return null;
+    public static BaseTranslator getByPEProtocolID(int protocolID, int maxProtocol) {
+        if (maxProtocol < protocolID) {
+            return null;
         }
+        if (maxProtocol - protocolID > 2000) {
+            return null;
+        }
+        for (int p = maxProtocol; p >= protocolID; p--) {
+            switch (p) {
+                case DragonetVersioning.MINECRAFT_PE_PROTOCOL:
+                    return new Translator_v0_11();
+            }
+        }
+        return null;
     }
 }
