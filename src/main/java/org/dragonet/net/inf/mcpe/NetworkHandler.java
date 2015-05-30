@@ -69,6 +69,8 @@ public class NetworkHandler {
                     pkReply.time = reader.readLong();
                     pkReply.serverID = serverID;
                     pkReply.serverName = this.getManager().getServer().getServer().getName();
+                    pkReply.playerCount = this.getManager().getServer().getServer().getOnlinePlayers().size();
+                    pkReply.maxPlayers = this.getManager().getServer().getServer().getMaxPlayers();
                     pkReply.encode();
                     this.udp.send(pkReply.getData(), packet.getSocketAddress());
                     break;

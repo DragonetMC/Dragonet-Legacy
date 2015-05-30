@@ -13,14 +13,13 @@
 package org.dragonet.net.translator;
 
 import org.dragonet.net.DragonetSession;
+import org.dragonet.utilities.DragonetVersioning;
 
 public final class TranslatorProvider {
 
     public static BaseTranslator getByPEProtocolID(DragonetSession session, int protocolID) {
         switch (protocolID) {
-            case 25:
-            case 26:
-            case 27:
+            case DragonetVersioning.MINECRAFT_PE_PROTOCOL:
                 return new Translator_v0_11(session);
             default:
                 return null;
