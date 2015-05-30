@@ -6,6 +6,7 @@
 package org.dragonet.net.translator.topc;
 
 import com.flowpowered.networking.Message;
+import net.glowstone.net.message.play.player.DiggingMessage;
 import org.bukkit.entity.Player;
 import org.dragonet.net.DragonetSession;
 import org.dragonet.net.packet.minecraft.RemoveBlockPacket;
@@ -23,7 +24,8 @@ public class RemoveBlockPacketTranslator extends PEPacketTranslatorToPC<Translat
         if (!(this.getSession().getPlayer() instanceof Player)) {
             return null;
         }
-        return null;
+        DiggingMessage msgFinishBreak = new DiggingMessage(DiggingMessage.FINISH_DIGGING, packet.x, packet.y, packet.z, 1);
+        return new Message[]{msgFinishBreak};
     }
 
 }

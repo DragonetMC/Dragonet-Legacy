@@ -30,14 +30,14 @@ public class PlayerActionPacketTranslator extends PEPacketTranslatorToPC<Transla
     public Message[] handleSpecific(PlayerActionPacket packet) {
         System.out.println("ACTION = " + packet.action);
         switch (packet.action) {
-            //case PlayerActionPacket.ACTION_START_BREAK:
-            // HACK! 
-            case PlayerActionPacket.ACTION_FINISH_BREAK:
+            case PlayerActionPacket.ACTION_START_BREAK:
                 DiggingMessage msgStartBreak = new DiggingMessage(DiggingMessage.START_DIGGING, packet.x, packet.y, packet.z, packet.face);
-                new DiggingHandler().handle(this.getSession(), msgStartBreak); //Why is this happening, we can't just return a new message! 
+                return new Message[]{msgStartBreak};
+            /*
+            case PlayerActionPacket.ACTION_FINISH_BREAK:
                 DiggingMessage msgFinishBreak = new DiggingMessage(DiggingMessage.FINISH_DIGGING, packet.x, packet.y, packet.z, packet.face);
                 new DiggingHandler().handle(this.getSession(), msgFinishBreak);
-                break;
+            */
         }
         return null;
     }
