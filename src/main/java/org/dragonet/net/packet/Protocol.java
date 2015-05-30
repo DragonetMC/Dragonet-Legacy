@@ -26,6 +26,7 @@ public final class Protocol {
         registerDecoder(PEPacketIDs.MOVE_PLAYER_PACKET, MovePlayerPacket.class);
         registerDecoder(PEPacketIDs.PING, PingPongPacket.class);
         registerDecoder(PEPacketIDs.PLAYER_EQUIPMENT_PACKET, PlayerEquipmentPacket.class);
+        registerDecoder(PEPacketIDs.PLAYER_ACTION_PACKET, PlayerActionPacket.class);
         registerDecoder(PEPacketIDs.REMOVE_BLOCK_PACKET, RemoveBlockPacket.class);
         registerDecoder(PEPacketIDs.UPDATE_BLOCK_PACKET, UpdateBlockPacket.class);
         registerDecoder(PEPacketIDs.USE_ITEM_PACKET, UseItemPacket.class);
