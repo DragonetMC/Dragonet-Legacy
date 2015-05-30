@@ -510,6 +510,15 @@ public final class PENetworkClient {
 
                 session.setPlayer(new PlayerProfile(this.username, UUID.nameUUIDFromBytes(("OfflinePlayer:" + this.username).getBytes(StandardCharsets.UTF_8))));
                 break;
+            case PEPacketIDs.BATCH_PACKET:
+                BatchPacket packetBatch = (BatchPacket) packet;
+                if (packetBatch.packets == null || packetBatch.packets.isEmpty()) {
+                    return;
+                }
+                for (PEPacket pk : packetBatch.packets) {
+                    this.processPacketBuffer(pk.getData());
+                }
+                break;
             default:
                 if (session == null) {
                     disconnect("Network error! ");
