@@ -50,6 +50,7 @@ public class UseItemPacketTranslator extends PEPacketTranslatorToPC<Translator_v
     @Override
     public Message[] handleSpecific(UseItemPacket packet) {
         UseItemPacket pkUseItem = (UseItemPacket) packet;
+        System.out.println("FACE=" + (pkUseItem.face & 0xFF) + ", ITEM=" + packet.item);
         if (!((pkUseItem.face >= 0 && pkUseItem.face < 6) || (pkUseItem.face & 0xFF) == 0xFF)) {
             return null;
         }
@@ -77,15 +78,10 @@ public class UseItemPacketTranslator extends PEPacketTranslatorToPC<Translator_v
             getSession().send(pkUpdateBlock);
             return null;
         }
-        
-        if((packet.face & 0xFF) == 0xFF){
-            GlowBlock block = getSession().getPlayer().getWorld().getBlockAt(packet.x, packet.y, packet.z);
-            EventFactory.onPlayerInteract(getSession().getPlayer(), Action.RIGHT_CLICK_BLOCK, block, convertFace(packet.face));
-            return null;
-        }
+
 
         //Copied from Glowstone class BlockPlacementHandler
-        new BlockPlacementHandler().handle(getSession(), new BlockPlacementMessage(packet.x, packet.y, packet.z, packet.face, new ItemStack(packet.item, packet.meta), 1, 1, 1));
+        new BlockPlacementHandler().handle(getSession(), new BlockPlacementMessage(packet.x, packet.y, packet.z, packet.face, new ItemStack(packet.item, packet.meta), 0, 0, 0));
 
         return null;
     }

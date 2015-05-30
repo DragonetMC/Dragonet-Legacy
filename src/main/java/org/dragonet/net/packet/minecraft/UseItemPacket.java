@@ -53,7 +53,7 @@ public class UseItemPacket extends PEPacket {
             this.x = reader.readInt();
             this.y = reader.readInt();
             this.z = reader.readInt();
-            this.face = reader.readByte() & 0xF;
+            this.face = reader.readByte() & 0xFF;
             this.item = reader.readShort();
             this.meta = reader.readShort();
             this.eid = reader.readLong();
