@@ -1,3 +1,2 @@
 #!/bin/sh
-mvn install
-mvn package
+./gradlew clean build shadowJar remap
