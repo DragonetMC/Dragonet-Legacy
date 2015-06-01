@@ -1,6 +1,0 @@
-checkout:
-    post:
-        - ./start.sh
-test:
-    post:
-        - cp -r build/libs/glowstone*-remapped.jar $CIRCLE_ARTIFACTS/
