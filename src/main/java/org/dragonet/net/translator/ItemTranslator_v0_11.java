@@ -13,6 +13,8 @@
 package org.dragonet.net.translator;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class ItemTranslator_v0_11 implements ItemTranslator {
 
@@ -91,7 +93,11 @@ public class ItemTranslator_v0_11 implements ItemTranslator {
         //TODO: More blocks/items
 
         /* ===== PE to PC ===== */
-        //TODO: Initialize the PE-to-PC map
+        Iterator<Map.Entry<Integer, Integer>> it = itemMap_PC_to_PE.entrySet().iterator();
+        while(it.hasNext()){
+            Map.Entry<Integer, Integer> entry = it.next();
+            itemMap_PE_to_PC.put(entry.getValue(), entry.getKey());
+        }
     }
 
     /**

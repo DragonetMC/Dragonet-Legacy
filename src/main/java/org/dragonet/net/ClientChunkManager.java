@@ -12,7 +12,6 @@
  */
 package org.dragonet.net;
 
-import org.dragonet.net.inf.mcpe.MCPESession;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayDeque;
@@ -72,7 +71,7 @@ public class ClientChunkManager {
              */
             this.chunksLoaded.clear();
             this.chunksQueue.clear();
-            System.out.println("Detected world change: " + this.lastWorld + " -> " + this.getSession().getPlayer().getWorld().getName());
+            //System.out.println("Detected world change: " + this.lastWorld + " -> " + this.getSession().getPlayer().getWorld().getName());
             this.lastWorld = this.getSession().getPlayer().getWorld().getName();
             return;
         }

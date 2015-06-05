@@ -181,6 +181,8 @@ public abstract class DragonetSession extends GlowSession {
             disconnect(event.getKickMessage(), true);
             return;
         }
+        
+        player.join(this, reader);
 
         // Kick other players with the same UUID
         for (GlowPlayer other : getServer().getOnlinePlayers()) {
