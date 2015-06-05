@@ -38,8 +38,7 @@
             <artifactId>bukkit</artifactId>
             <version>${bukkit.version}</version> <!-- Use https://github.com/deathcap/Glowkit/tree/bukkit+glowkit -->
             <type>jar</type>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/Glowkit/target/glowkit-1.8-R1-SNAPSHOT-shaded.jar</systemPath>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.flowpowered</groupId>
@@ -90,7 +89,7 @@
     </dependencies>
     
     <build>
-        <finalName>glowstone++-${project.version}</finalName>
+        <finalName>dragonet-${project.version}</finalName>
 
         <directory>${project.basedir}/target</directory>
 
