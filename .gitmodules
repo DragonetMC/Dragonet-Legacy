@@ -1,0 +1,3 @@
+[submodule "Glowkit"]
+	path = Glowkit
+	url = http://github.com/GlowstonePlusPlus/Glowkit.git
