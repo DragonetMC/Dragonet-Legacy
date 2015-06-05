@@ -9,10 +9,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ScoreboardScoreMessage implements Message {
 
-    private final String target;
-    private final boolean remove;
-    private final String objective;
-    private final int value;
+    public final String target;
+    public final boolean remove;
+    public final String objective;
+    public final int value;
 
     public ScoreboardScoreMessage(String target, String objective, int value) {
         this(target, false, objective, value);

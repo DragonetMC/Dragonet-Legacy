@@ -8,7 +8,7 @@ import java.util.List;
 @Data
 public final class ChunkBulkMessage implements Message {
 
-    private final boolean skyLight;
-    private final List<ChunkDataMessage> entries;
+    public final boolean skyLight;
+    public final List<ChunkDataMessage> entries;
 
 }

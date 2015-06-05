@@ -9,10 +9,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CombatEventMessage implements Message {
 
-    private final Event event;
-    private final int duration;
-    private final int entityID, playerID;
-    private final String message;
+    public final Event event;
+    public final int duration;
+    public final int entityID, playerID;
+    public final String message;
 
     // BEGIN_COMBAT
     public CombatEventMessage(Event event) {

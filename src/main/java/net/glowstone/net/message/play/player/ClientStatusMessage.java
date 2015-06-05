@@ -10,7 +10,7 @@ public final class ClientStatusMessage implements Message {
     public static final int REQUEST_STATS = 1;
     public static final int OPEN_INVENTORY = 2;
 
-    private final int action;
+    public final int action;
 
 }
 

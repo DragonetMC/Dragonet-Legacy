@@ -6,13 +6,13 @@ import lombok.Data;
 @Data
 public final class PlayParticleMessage implements Message {
 
-    private final int particle;
-    private final boolean longDistance;
-    private final float x, y, z;
-    private final float ofsX, ofsY, ofsZ;
-    private final float data;
-    private final int count;
-    private final int[] extData;
+    public final int particle;
+    public final boolean longDistance;
+    public final float x, y, z;
+    public final float ofsX, ofsY, ofsZ;
+    public final float data;
+    public final int count;
+    public final int[] extData;
 
 }
 

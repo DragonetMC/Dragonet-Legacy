@@ -7,7 +7,7 @@ import org.bukkit.inventory.ItemStack;
 @Data
 public final class WindowClickMessage implements Message {
 
-    private final int id, slot, button, transaction, mode;
-    private final ItemStack item;
+    public final int id, slot, button, transaction, mode;
+    public final ItemStack item;
 
 }

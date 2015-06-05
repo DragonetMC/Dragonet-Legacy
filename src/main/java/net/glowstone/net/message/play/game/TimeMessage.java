@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 public final class TimeMessage implements Message {
 
-    private final long worldAge, time;
+    public final long worldAge, time;
 
 }

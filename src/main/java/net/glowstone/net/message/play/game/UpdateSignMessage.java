@@ -7,8 +7,8 @@ import net.glowstone.util.TextMessage;
 @Data
 public final class UpdateSignMessage implements Message {
 
-    private final int x, y, z;
-    private final TextMessage[] message;
+    public final int x, y, z;
+    public final TextMessage[] message;
 
     public UpdateSignMessage(int x, int y, int z, TextMessage[] message) {
         if (message.length != 4) {

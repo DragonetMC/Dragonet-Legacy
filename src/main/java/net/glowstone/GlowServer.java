@@ -5,6 +5,7 @@ import com.avaje.ebean.config.dbplatform.SQLitePlatform;
 import com.avaje.ebeaninternal.server.lib.sql.TransactionIsolation;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import io.netty.util.internal.ConcurrentSet;
 import net.glowstone.block.BuiltinMaterialValueManager;
 import net.glowstone.block.MaterialValueManager;
 import net.glowstone.command.ColorCommand;
@@ -67,6 +68,10 @@ import java.security.KeyPair;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import lombok.Getter;
+import org.dragonet.DragonetServer;
+import org.dragonet.plugin.MixedPluginManager;
+import org.dragonet.utilities.DragonetVersioning;
 
 /**
  * The core class of the Glowstone server.
@@ -88,6 +93,11 @@ public final class GlowServer implements Server {
      * The protocol version supported by the server.
      */
     public static final int PROTOCOL_VERSION = 47;
+    
+    //DRAGONET-Add
+    @Getter
+    private DragonetServer dragonetServer;
+    //DRAGONET-End
 
     /**
      * Creates a new server on TCP port 25565 and starts listening for
@@ -261,7 +271,9 @@ public final class GlowServer implements Server {
     /**
      * The plugin manager of this server.
      */
-    private final SimplePluginManager pluginManager = new SimplePluginManager(this, commandMap);
+    //DRAGONET-Change
+    private final MixedPluginManager pluginManager = new MixedPluginManager(this, commandMap);
+    //DRAGONET-End
 
     /**
      * The plugin type detector of thi server.
@@ -401,7 +413,9 @@ public final class GlowServer implements Server {
     /**
      * A set of all online players.
      */
-    private final Set<GlowPlayer> onlinePlayers = new HashSet<>();
+    //DRAGONET-Change to ConcurrentSet to prevent
+    private final Set<GlowPlayer> onlinePlayers = new ConcurrentSet<>();
+    //DRAGONET-End
 
     /**
      * A view of all online players.
@@ -453,10 +467,19 @@ public final class GlowServer implements Server {
         whitelist.load();
         nameBans.load();
         ipBans.load();
+        
+        //Dragonet-Add
+        this.dragonetServer = new DragonetServer(this);
+        //Dragonet-End
 
         // Start loading plugins
         new LibraryManager(this).run();
         loadPlugins();
+        
+        //DRAGONET-Add (Moved here due to loadPlugins() will clear all the plugins. )
+        this.dragonetServer.initialize();
+        //DRAGONET-End
+        
         enablePlugins(PluginLoadOrder.STARTUP);
 
         // Create worlds
@@ -640,6 +663,10 @@ public final class GlowServer implements Server {
         if (rconServer != null) {
             rconServer.shutdown();
         }
+        
+        //DRAGONET-Add: Shutdown Dragonet
+        dragonetServer.shutdown();
+        //DRAGONET-End
 
         // Save worlds
         for (World world : getWorlds()) {
@@ -833,6 +860,11 @@ public final class GlowServer implements Server {
 
             // Load plugins
             loadPlugins();
+            
+            //DRAGONET-Add: Reload
+            dragonetServer.reload();
+            //DRAGONET-End
+            
             enablePlugins(PluginLoadOrder.STARTUP);
             enablePlugins(PluginLoadOrder.POSTWORLD);
         } catch (Exception ex) {
@@ -842,7 +874,7 @@ public final class GlowServer implements Server {
 
     @Override
     public String toString() {
-        return "GlowServer{name=" + getName() + ",version=" + getVersion() + ",minecraftVersion=" + GAME_VERSION + "}";
+        return "DragonetServer{name=" + getName() + ",version=" + getVersion() + ",minecraftVersion=" + GAME_VERSION + "}";
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -1016,12 +1048,12 @@ public final class GlowServer implements Server {
 
     @Override
     public String getName() {
-        return "Glowstone++";
+        return "Dragonet";
     }
 
     @Override
     public String getVersion() {
-        return getClass().getPackage().getImplementationVersion();
+        return DragonetVersioning.DRAGONET_VERSION;
     }
 
     @Override
@@ -1043,7 +1075,7 @@ public final class GlowServer implements Server {
     // Access to Bukkit API
 
     @Override
-    public PluginManager getPluginManager() {
+    public MixedPluginManager getPluginManager() {
         return pluginManager;
     }
 

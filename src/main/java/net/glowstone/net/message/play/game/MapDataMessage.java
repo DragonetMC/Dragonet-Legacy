@@ -12,9 +12,9 @@ import java.util.List;
 @Data
 public final class MapDataMessage implements Message {
 
-    private final int id, scale;
-    private final List<Icon> icons;
-    private final Section section;
+    public final int id, scale;
+    public final List<Icon> icons;
+    public final Section section;
 
     @RequiredArgsConstructor
     @ToString

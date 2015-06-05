@@ -75,7 +75,9 @@ import org.json.simple.JSONObject;
  * @author Graham Edgecombe
  */
 @DelegateDeserialization(GlowOfflinePlayer.class)
-public final class GlowPlayer extends GlowHumanEntity implements Player {
+//DRAGONET-Removed final
+public class GlowPlayer extends GlowHumanEntity implements Player {
+//DRAGONET-End
 
     /**
      * A static entity id to use when telling the client about itself.

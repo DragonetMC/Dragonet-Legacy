@@ -8,6 +8,6 @@ import java.util.Map;
 
 @Data
 public final class EntityPropertyMessage implements Message {
-    private final int id;
-    private final Map<String, AttributeManager.Property> properties;
+    public final int id;
+    public final Map<String, AttributeManager.Property> properties;
 }

@@ -6,8 +6,8 @@ import lombok.Data;
 @Data
 public final class EncryptionKeyRequestMessage implements Message {
 
-    private final String sessionId;
-    private final byte[] publicKey;
-    private final byte[] verifyToken;
+    public final String sessionId;
+    public final byte[] publicKey;
+    public final byte[] verifyToken;
 
 }

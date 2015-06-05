@@ -169,6 +169,10 @@ public final class GlowScheduler implements BukkitScheduler {
     private void pulse() {
         primaryThread = Thread.currentThread();
 
+        //Dragonet-Add
+        this.server.getDragonetServer().tickUpdate();
+        //Dragonet-End
+        
         // Process player packets
         server.getSessionRegistry().pulse();
 

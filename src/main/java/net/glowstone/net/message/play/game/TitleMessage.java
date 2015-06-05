@@ -9,9 +9,9 @@ import org.bukkit.title.TitleOptions;
 @Data
 public final class TitleMessage implements Message {
 
-    private final Action action;
-    private final TextMessage text;
-    private final int fadeIn, stay, fadeOut;
+    public final Action action;
+    public final TextMessage text;
+    public final int fadeIn, stay, fadeOut;
 
     // TITLE, SUBTITLE
     public TitleMessage(Action action, TextMessage text) {

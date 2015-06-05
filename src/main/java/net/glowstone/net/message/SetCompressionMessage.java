@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public final class SetCompressionMessage implements Message {
 
-    private final int threshold;
+    public final int threshold;
 
 }
 

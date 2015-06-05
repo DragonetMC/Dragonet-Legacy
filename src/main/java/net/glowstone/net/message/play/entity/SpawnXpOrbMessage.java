@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public final class SpawnXpOrbMessage implements Message {
 
-    private final int id, x, y, z;
-    private final short count;
+    public final int id, x, y, z;
+    public final short count;
 
 }

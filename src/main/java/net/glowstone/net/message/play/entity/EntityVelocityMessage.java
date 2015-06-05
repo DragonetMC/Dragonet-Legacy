@@ -9,7 +9,7 @@ import org.bukkit.util.Vector;
 @RequiredArgsConstructor
 public final class EntityVelocityMessage implements Message {
 
-    private final int id, velocityX, velocityY, velocityZ;
+    public final int id, velocityX, velocityY, velocityZ;
 
     public EntityVelocityMessage(int id, Vector velocity) {
         this(id, convert(velocity.getX()), convert(velocity.getY()), convert(velocity.getZ()));

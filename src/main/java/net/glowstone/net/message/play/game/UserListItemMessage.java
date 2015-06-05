@@ -12,8 +12,8 @@ import java.util.UUID;
 @Data
 public final class UserListItemMessage implements Message {
 
-    private final Action action;
-    private final List<Entry> entries;
+    public final Action action;
+    public final List<Entry> entries;
 
     public UserListItemMessage(Action action, List<Entry> entries) {
         this.action = action;
@@ -96,7 +96,7 @@ public final class UserListItemMessage implements Message {
 
     @Data
     public static final class Entry {
-        private final Action action;
+        public final Action action;
         public final UUID uuid;
         public final PlayerProfile profile;
         public final int gameMode;

@@ -10,6 +10,7 @@ import net.glowstone.util.SecurityUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
+import org.dragonet.DragonetServer;
 
 public final class LoginStartHandler implements MessageHandler<GlowSession, LoginStartMessage> {
 
@@ -17,6 +18,13 @@ public final class LoginStartHandler implements MessageHandler<GlowSession, Logi
     public void handle(GlowSession session, LoginStartMessage message) {
         final String name = message.getUsername();
 
+        //Dragonet-Add Check wether mod added custom types
+        if(DragonetServer.instance().getCustomMaterialManager().isMadeChanges()){
+            session.disconnect("We are so sorry, but plugin(s) registered custom items for MCPE, so you can't join from PC! ");
+            return;
+        }
+        //Dragonet-End
+        
         if (session.getServer().getOnlineMode()) {
             // Get necessary information to create our request message
             final String sessionId = session.getSessionId();

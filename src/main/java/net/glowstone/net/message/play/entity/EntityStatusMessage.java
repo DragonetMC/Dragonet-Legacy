@@ -18,7 +18,7 @@ public final class EntityStatusMessage implements Message {
     public static final int ENABLE_REDUCED_DEBUG_INFO = 22;
     public static final int DISABLE_REDUCED_DEBUG_INFO = 23;
 
-    private final int id, status;
+    public final int id, status;
 
     public EntityStatusMessage(int id, EntityEffect effect) {
         this(id, effect.getData());

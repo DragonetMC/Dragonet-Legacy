@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public final class ScoreboardDisplayMessage implements Message {
 
-    private final int position;
-    private final String objective;
+    public final int position;
+    public final String objective;
 
 }

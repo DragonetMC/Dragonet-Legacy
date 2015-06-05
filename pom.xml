@@ -29,6 +29,11 @@
     
     <dependencies>
         <dependency>
+            <groupId>org.mozilla</groupId>
+            <artifactId>rhino</artifactId>
+            <version>1.7R4</version>
+        </dependency>
+        <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm-debug-all</artifactId>
             <version>5.0.3</version>
@@ -86,6 +91,12 @@
             <version>4.11</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.4</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
     
     <build>
@@ -123,7 +134,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>2.15</version>
-	            <executions>
+                <executions>
                     <execution>
                         <phase>compile</phase>
                         <goals>
@@ -144,7 +155,9 @@
                 <executions>
                     <execution>
                         <phase>generate-sources</phase>
-                        <goals><goal>add-source</goal></goals>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
                         <configuration>
                             <sources>
                                 <source>${project.basedir}/src/main/java</source>
@@ -187,8 +200,8 @@
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>2.3</version>
                 <executions>
-                <execution>
-                    <phase>package</phase>
+                    <execution>
+                        <phase>package</phase>
                         <goals>
                             <goal>shade</goal>
                         </goals>

@@ -7,8 +7,8 @@ import lombok.Data;
 @Data
 public final class EncryptionKeyResponseMessage implements AsyncableMessage {
 
-    private final byte[] sharedSecret;
-    private final byte[] verifyToken;
+    public final byte[] sharedSecret;
+    public final byte[] verifyToken;
 
     @Override
     public boolean isAsync() {

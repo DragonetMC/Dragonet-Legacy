@@ -10,10 +10,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ScoreboardObjectiveMessage implements Message {
 
-    private final String name;
-    private final String displayName;
-    private final int action;
-    private final RenderType renderType;
+    public final String name;
+    public final String displayName;
+    public final int action;
+    public final RenderType renderType;
 
     private enum Action {
         CREATE,

@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public final class AttachEntityMessage implements Message {
 
-    private final int id, vehicle;
-    private final boolean leash;
+    public final int id, vehicle;
+    public final boolean leash;
 
 }

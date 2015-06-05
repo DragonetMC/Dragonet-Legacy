@@ -38,13 +38,15 @@ import javax.crypto.SecretKey;
 import java.net.InetSocketAddress;
 import java.util.*;
 import java.util.logging.Level;
+import lombok.Getter;
 
 /**
  * A single connection to the server, which may or may not be associated with a
  * player.
  * @author Graham Edgecombe
  */
-public final class GlowSession extends BasicSession {
+//DRAGONET-Removed final
+public class GlowSession extends BasicSession {
 
     /**
      * The server this session belongs to.
@@ -93,6 +95,9 @@ public final class GlowSession extends BasicSession {
     /**
      * The hostname used to connect.
      */
+    //DRAGONET-Added Getter
+    @Getter
+    //DRAGONET-End
     private String hostname;
 
     /**
@@ -105,7 +110,9 @@ public final class GlowSession extends BasicSession {
     /**
      * The player associated with this session (if there is one).
      */
-    private GlowPlayer player;
+    //DRAGONET-Changed to protected
+    protected GlowPlayer player;
+    //DRAGONET-End
 
     /**
      * The ID of the last ping message sent, used to ensure the client responded correctly.
@@ -127,6 +134,19 @@ public final class GlowSession extends BasicSession {
      */
     private boolean disconnected;
 
+    //Dragonet-Add another constructor
+    /**
+     * Constructor for Dragonet to use
+     *
+     * @param server The GlowStone server instance
+     */
+    public GlowSession(GlowServer server) {
+        super(null, ProtocolType.PLAY.getProtocol());
+        this.server = server;
+        connectionManager = null;
+    }
+    //Dragonet-End
+    
     /**
      * Creates a new session.
      * @param server The server this session belongs to.

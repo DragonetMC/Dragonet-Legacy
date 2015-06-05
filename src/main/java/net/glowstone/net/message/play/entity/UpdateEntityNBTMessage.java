@@ -7,7 +7,7 @@ import net.glowstone.util.nbt.CompoundTag;
 @Data
 public final class UpdateEntityNBTMessage implements Message {
 
-    private final int entityId;
-    private final CompoundTag tag;
+    public final int entityId;
+    public final CompoundTag tag;
 
 }

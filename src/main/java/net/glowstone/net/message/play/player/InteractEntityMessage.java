@@ -8,8 +8,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public final class InteractEntityMessage implements Message {
 
-    private final int id, action;
-    private final float targetX, targetY, targetZ;
+    public final int id, action;
+    public final float targetX, targetY, targetZ;
 
     public InteractEntityMessage(int id, int action) {
         this(id, action, 0, 0, 0);

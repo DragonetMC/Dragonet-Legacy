@@ -11,19 +11,19 @@ import lombok.Data;
 @Data
 public final class ScoreboardTeamMessage implements Message {
 
-    private final String teamName;
-    private final Action action;
+    public final String teamName;
+    public final Action action;
 
     // CREATE and METADATA only
-    private final String displayName;
-    private final String prefix;
-    private final String suffix;
-    private final int flags;
-    private final NameTagVisibility nametagVisibility;
-    private final ChatColor color;
+    public final String displayName;
+    public final String prefix;
+    public final String suffix;
+    public final int flags;
+    public final NameTagVisibility nametagVisibility;
+    public final ChatColor color;
 
     // CREATE, ADD_, and REMOVE_PLAYERS only
-    private final List<String> entries;
+    public final List<String> entries;
 
     public enum Action {
         CREATE,

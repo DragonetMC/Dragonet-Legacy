@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 public final class CloseWindowMessage implements Message {
 
-    private final int id;
+    public final int id;
 
 }

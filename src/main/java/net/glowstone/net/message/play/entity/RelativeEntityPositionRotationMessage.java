@@ -8,8 +8,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public final class RelativeEntityPositionRotationMessage implements Message {
 
-    private final int id, deltaX, deltaY, deltaZ, rotation, pitch;
-    private final boolean onGround;
+    public final int id, deltaX, deltaY, deltaZ, rotation, pitch;
+    public final boolean onGround;
 
     public RelativeEntityPositionRotationMessage(int id, int deltaX, int deltaY, int deltaZ, int rotation, int pitch) {
         this(id, deltaX, deltaY, deltaZ, rotation, pitch, true);
