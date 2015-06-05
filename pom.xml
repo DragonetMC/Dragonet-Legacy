@@ -1,17 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     
     <modelVersion>4.0.0</modelVersion>
-    <groupId>net.glowstoneplusplus</groupId>
-    <artifactId>glowstoneplusplus</artifactId>
-    <version>1.8.6-SNAPSHOT</version>
-    <name>GlowstonePlusPlus</name>
-    <url>https://github.com/GlowstonePlusPlus/GlowstonePlusPlus</url>
-    
-    <scm>
-        <connection>scm:git:git://github.com/GlowstonePlusPlus/GlowstonePlusPlus.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/GlowstonePlusPlus/GlowstonePlusPlus.git</developerConnection>
-        <url>https://github.com/GlowstonePlusPlus/GlowstonePlusPlus</url>
-    </scm>
+    <groupId>org.dragonet</groupId>
+    <artifactId>Dragonet</artifactId>
+    <version>0.0.2-preR4</version>
+    <name>Dragonet</name>
+    <url>https://github.com/DragonetMC/Dragonet</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -44,7 +38,8 @@
             <artifactId>bukkit</artifactId>
             <version>${bukkit.version}</version> <!-- Use https://github.com/deathcap/Glowkit/tree/bukkit+glowkit -->
             <type>jar</type>
-            <scope>compile</scope>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/Glowkit/target/glowkit-1.8-R1-SNAPSHOT-shaded.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.flowpowered</groupId>
