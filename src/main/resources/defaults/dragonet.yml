@@ -1,0 +1,43 @@
+#
+# Dragonet Server Configuration
+#
+
+# If you set to 0.0.0.0, server will listen on all IP addresses that exist on the current system. 
+# The UDP port at server-port must be free to use. 
+server-ip: '0.0.0.0'
+server-port: 19132
+
+player-spawn-chunk-threshold: 36
+
+# Should we enable DragonetPE support? 
+# It may cost a little bit more CPU usage
+# If you enable this, the TCP port at server-port must be free to use. 
+enable-addon: true
+
+# DragonPortal is a fork of BungeeCord to support both MCPC and MCPE
+# clients to use BungeeCord. And DragonPortal needs a TCP port to
+# communicate with Dragonet server. Multiple DragonPortal instances can
+# connect to the same Dragonet server. It works like following figure.
+# Figure of DragonPortal: 
+#                TCP connect to
+#    DragonPortal -------------> Dragonet Server 1
+#                    |---------> Dragonet Server 2
+#                    \---------> Dragonet Server 3
+#
+# DragonPortal download: http://dragonet.org/dragonportal
+#
+# Description for bind-port
+# To prevent hackers connects from the Internet instead of you local
+# network, you should set bind-address to 127.0.0.1 or a local network IP.
+#
+# Description for password
+# Dragonet's DragonPortal server needs a password to be set for
+# DragonPortal software connecting and authenticating. We do
+# this to prevent hackers to fake a DragonPortal software and
+# connect to your Dragonet server with out your permission. 
+dragonportal:
+  enabled: false
+  bind-address: '127.0.0.1'
+  bind-port: 25590
+  password: 'NOT_SET'
+

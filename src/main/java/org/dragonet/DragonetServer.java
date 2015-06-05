@@ -124,7 +124,9 @@ public class DragonetServer {
                         oup.close();
                     }
                 } finally {
-                    inp.close();
+                    if(inp != null){
+                        inp.close();
+                    }
                 }
             } catch (IOException e) {
             }

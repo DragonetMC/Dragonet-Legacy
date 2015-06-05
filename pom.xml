@@ -129,24 +129,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>2.15</version>
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <configLocation>${project.basedir}/etc/checkstyle.xml</configLocation>
-                    <headerLocation>${project.basedir}/LICENSE</headerLocation>
-                </configuration>
-            </plugin>
            
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -280,18 +262,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>2.15</version>
-                <configuration>
-                    <configLocation>${project.basedir}/etc/checkstyle.xml</configLocation>
-                    <headerLocation>${project.basedir}/LICENSE</headerLocation>
-                </configuration>
-            </plugin>
-        </plugins>
-    </reporting>
 </project>
