@@ -1,9 +1,16 @@
 package net.glowstone.entity;
 
 import com.flowpowered.networking.Message;
+import com.google.common.base.Preconditions;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.glowstone.*;
+import net.glowstone.block.GlowBlock;
+import net.glowstone.block.blocktype.BlockBed;
+import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.logging.Level;
 import net.glowstone.block.entity.TileEntity;
 import net.glowstone.constants.*;
 import net.glowstone.entity.meta.ClientSettings;
@@ -16,20 +23,31 @@ import net.glowstone.inventory.InventoryMonitor;
 import net.glowstone.io.PlayerDataService;
 import net.glowstone.net.GlowSession;
 import net.glowstone.net.message.login.LoginSuccessMessage;
+import net.glowstone.net.message.play.entity.AnimateEntityMessage;
 import net.glowstone.net.message.play.entity.DestroyEntitiesMessage;
 import net.glowstone.net.message.play.entity.EntityMetadataMessage;
 import net.glowstone.net.message.play.entity.EntityVelocityMessage;
 import net.glowstone.net.message.play.game.*;
-import net.glowstone.net.message.play.inv.*;
+import net.glowstone.net.message.play.inv.CloseWindowMessage;
+import net.glowstone.net.message.play.inv.OpenWindowMessage;
+import net.glowstone.net.message.play.inv.SetWindowContentsMessage;
+import net.glowstone.net.message.play.inv.SetWindowSlotMessage;
+import net.glowstone.net.message.play.inv.WindowPropertyMessage;
 import net.glowstone.net.message.play.player.PlayerAbilitiesMessage;
 import net.glowstone.net.message.play.player.ResourcePackSendMessage;
+import net.glowstone.net.message.play.player.UseBedMessage;
 import net.glowstone.net.protocol.ProtocolType;
+import net.glowstone.scoreboard.GlowScoreboard;
+import net.glowstone.scoreboard.GlowTeam;
 import net.glowstone.util.StatisticMap;
 import net.glowstone.util.TextMessage;
 import net.glowstone.util.nbt.CompoundTag;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.*;
 import org.bukkit.World.Environment;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
@@ -45,23 +63,19 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.messaging.StandardMessenger;
 import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.title.Title;
+import org.bukkit.title.TitleOptions;
 import org.bukkit.util.BlockVector;
 import org.bukkit.util.Vector;
-
-import java.net.InetSocketAddress;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.logging.Level;
+import org.json.simple.JSONObject;
 
 /**
  * Represents an in-game player.
+ *
  * @author Graham Edgecombe
  */
-
-//Dragonet-Add
 @DelegateDeserialization(GlowOfflinePlayer.class)
-public class GlowPlayer extends GlowHumanEntity implements Player {
-//Dragonet-End
+public final class GlowPlayer extends GlowHumanEntity implements Player {
 
     /**
      * A static entity id to use when telling the client about itself.
@@ -127,7 +141,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
     /**
      * The time the player joined.
      */
-    private final long joinTime;
+    private long joinTime;
 
     /**
      * The settings sent by the client.
@@ -220,9 +234,19 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
     private boolean sleepingIgnored;
 
     /**
+     * The bed in which the player currently lies
+     */
+    private GlowBlock bed;
+
+    /**
      * The bed spawn location of a player
      */
     private Location bedSpawn;
+
+    /**
+     * Whether to use the bed spawn even if there is no bed block.
+     */
+    private boolean bedSpawnForced;
 
     /**
      * The location of the sign the player is currently editing, or null.
@@ -250,10 +274,26 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
     private float walkSpeed = 0.2f;
 
     /**
+     * The scoreboard the player is currently subscribed to.
+     */
+    private GlowScoreboard scoreboard;
+
+    /**
+     * The player's current title, if any
+     */
+    private Title currentTitle = new Title();
+
+    /**
+     * The player's current title options
+     */
+    private TitleOptions titleOptions = new TitleOptions();
+
+    /**
      * Creates a new player and adds it to the world.
+     *
      * @param session The player's session.
      * @param profile The player's profile with name and UUID information.
-     * @param reader The PlayerReader to be used to initialize the player.
+     * @param reader  The PlayerReader to be used to initialize the player.
      */
     public GlowPlayer(GlowSession session, PlayerProfile profile, PlayerDataService.PlayerReader reader) {
         super(initLocation(session, reader), profile);
@@ -272,6 +312,23 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
         session.send(new LoginSuccessMessage(profile.getUniqueId().toString(), profile.getName()));
         session.setProtocol(ProtocolType.PLAY);
 
+        // read data from player reader
+        hasPlayedBefore = reader.hasPlayedBefore();
+        if (hasPlayedBefore) {
+            firstPlayed = reader.getFirstPlayed();
+            lastPlayed = reader.getLastPlayed();
+            bedSpawn = reader.getBedSpawnLocation();
+        } else {
+            firstPlayed = 0;
+            lastPlayed = 0;
+        }
+
+        //creates InventoryMonitor to avoid NullPointerException
+        invMonitor = new InventoryMonitor(getOpenInventory());
+        updateInventory(); // send inventory contents
+    }
+
+    public void join(GlowSession session, PlayerDataService.PlayerReader reader) {
         // send join game
         // in future, handle hardcore, difficulty, and level type
         String type = world.getWorldType().getName().toLowerCase();
@@ -286,16 +343,6 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
         session.send(PluginMessage.fromString("MC|Brand", server.getName()));
         sendSupportedChannels();
 
-        // read data from player reader
-        hasPlayedBefore = reader.hasPlayedBefore();
-        if (hasPlayedBefore) {
-            firstPlayed = reader.getFirstPlayed();
-            lastPlayed = reader.getLastPlayed();
-            bedSpawn = reader.getBedSpawnLocation();
-        } else {
-            firstPlayed = 0;
-            lastPlayed = 0;
-        }
         joinTime = System.currentTimeMillis();
         reader.readData(this);
         reader.close();
@@ -314,6 +361,9 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
         sendSkyDarkness();
         sendAbilities();
 
+        scoreboard = server.getScoreboardManager().getMainScoreboard();
+        scoreboard.subscribe(this);
+
         invMonitor = new InventoryMonitor(getOpenInventory());
         updateInventory(); // send inventory contents
 
@@ -328,8 +378,9 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
     /**
      * Read the location from a PlayerReader for entity initialization. Will
      * fall back to a reasonable default rather than returning null.
+     *
      * @param session The player's session.
-     * @param reader The PlayerReader to get the location from.
+     * @param reader  The PlayerReader to get the location from.
      * @return The location to spawn the player.
      */
     private static Location initLocation(GlowSession session, PlayerDataService.PlayerReader reader) {
@@ -352,6 +403,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     /**
      * Get the network session attached to this player.
+     *
      * @return The GlowSession of the player.
      */
     public GlowSession getSession() {
@@ -360,6 +412,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     /**
      * Get the join time in milliseconds, to be saved as last played time.
+     *
      * @return The player's join time.
      */
     public long getJoinTime() {
@@ -379,6 +432,11 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
         getInventory().getCraftingInventory().removeViewer(this);
         permissions.clearPermissions();
         getServer().setPlayerOnline(this, false);
+
+        if (scoreboard != null) {
+            scoreboard.unsubscribe(this);
+            scoreboard = null;
+        }
         super.remove();
     }
 
@@ -436,6 +494,8 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
                 }
             }
         }
+
+        getAttributeManager().sendMessages(session);
     }
 
     /**
@@ -450,12 +510,14 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
         Map<GlowChunk.Key, Map<BlockVector, BlockChangeMessage>> chunks = new HashMap<>();
         for (BlockChangeMessage message : messages) {
             GlowChunk.Key key = new GlowChunk.Key(message.getX() >> 4, message.getZ() >> 4);
-            Map<BlockVector, BlockChangeMessage> map = chunks.get(key);
-            if (map == null) {
-                map = new HashMap<>();
-                chunks.put(key, map);
+            if (canSeeChunk(key)) {
+                Map<BlockVector, BlockChangeMessage> map = chunks.get(key);
+                if (map == null) {
+                    map = new HashMap<>();
+                    chunks.put(key, map);
+                }
+                map.put(new BlockVector(message.getX(), message.getY(), message.getZ()), message);
             }
-            map.put(new BlockVector(message.getX(), message.getY(), message.getZ()), message);
         }
 
         // send away
@@ -582,6 +644,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
     /**
      * Spawn the player at the given location after they have already joined.
      * Used for changing worlds and respawning after death.
+     *
      * @param location The location to place the player.
      */
     private void spawnAt(Location location) {
@@ -624,13 +687,14 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
         setHealth(getMaxHealth());
 
         // determine spawn destination
-        boolean spawnAtBed = false;
-        Location dest = world.getSpawnLocation();
-        if (bedSpawn != null) {
-            if (bedSpawn.getBlock().getType() == Material.BED_BLOCK) {
-                // todo: spawn next to the bed instead of inside it
-                dest = bedSpawn.clone();
-                spawnAtBed = true;
+        boolean spawnAtBed = true;
+        Location dest = getBedSpawnLocation();
+        if (dest == null) {
+            dest = world.getSpawnLocation();
+            spawnAtBed = false;
+            if (bedSpawn != null) {
+                setBedSpawnLocation(null);
+                sendMessage("Your home bed was missing or obstructed");
             }
         }
 
@@ -654,6 +718,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     /**
      * Checks whether the player can see the given chunk.
+     *
      * @return If the chunk is known to the player's client.
      */
     public boolean canSeeChunk(GlowChunk.Key chunk) {
@@ -662,6 +727,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     /**
      * Checks whether the player can see the given entity.
+     *
      * @return If the entity is known to the player's client.
      */
     public boolean canSeeEntity(GlowEntity entity) {
@@ -670,6 +736,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     /**
      * Open the sign editor interface at the specified location.
+     *
      * @param loc The location to open the editor at
      */
     public void openSignEditor(Location loc) {
@@ -683,6 +750,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
     /**
      * Check that the specified location matches that of the last opened sign
      * editor, and if so, clears the last opened sign editor.
+     *
      * @param loc The location to check
      * @return Whether the location matched.
      */
@@ -697,6 +765,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     /**
      * Get a UserListItemMessage entry representing adding this player.
+     *
      * @return The entry (action ADD_PLAYER) with this player's information.
      */
     public UserListItemMessage.Entry getUserListEntry() {
@@ -731,6 +800,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     /**
      * Set the client settings for this player.
+     *
      * @param settings The new client settings.
      */
     public void setSettings(ClientSettings settings) {
@@ -740,6 +810,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     /**
      * Get this player's client settings.
+     *
      * @return The player's client settings.
      */
     public ClientSettings getSettings() {
@@ -768,7 +839,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     @Override
     public boolean isOnline() {
-        return session.isActive();
+        return session.isActive() && session.isOnline();
     }
 
     @Override
@@ -784,7 +855,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     @Override
     public boolean isWhitelisted() {
-        return server.getWhitelist().containsUUID(getUniqueId());
+        return server.getWhitelist().containsProfile(new PlayerProfile(getName(), getUniqueId()));
     }
 
     @Override
@@ -792,7 +863,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
         if (value) {
             server.getWhitelist().add(this);
         } else {
-            server.getWhitelist().remove(getUniqueId());
+            server.getWhitelist().remove(new PlayerProfile(getName(), getUniqueId()));
         }
     }
 
@@ -829,9 +900,18 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
         if (value) {
             getServer().getOpsList().add(this);
         } else {
-            getServer().getOpsList().remove(getUniqueId());
+            getServer().getOpsList().remove(new PlayerProfile(getName(), getUniqueId()));
         }
         permissions.recalculatePermissions();
+    }
+
+    @Override
+    public List<Message> createSpawnMessage() {
+        List<Message> result = super.createSpawnMessage();
+        if (bed != null) {
+            result.add(new UseBedMessage(getEntityId(), bed.getX(), bed.getY(), bed.getZ()));
+        }
+        return result;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -839,7 +919,14 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     @Override
     public String getDisplayName() {
-        return displayName == null ? getName() : displayName;
+        if (displayName != null) {
+            return displayName;
+        }
+        GlowTeam team = (GlowTeam) getScoreboard().getPlayerTeam(this);
+        if (team != null) {
+            return team.getPlayerDisplayName(getName());
+        }
+        return getName();
     }
 
     @Override
@@ -876,9 +963,40 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
         session.send(new SpawnPositionMessage(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
     }
 
+    /**
+     * Returns whether the player spawns at their bed even if there is no bed block.
+     * @return Whether the player is forced to spawn at their bed.
+     */
+    public boolean isBedSpawnForced() {
+        return bedSpawnForced;
+    }
+
     @Override
     public Location getBedSpawnLocation() {
-        return bedSpawn;
+        if (bedSpawn == null) {
+            return null;
+        }
+
+        // Find head of bed
+        GlowBlock block = (GlowBlock) bedSpawn.getBlock();
+        GlowBlock head = BlockBed.getHead(block);
+        GlowBlock foot = BlockBed.getFoot(block);
+        // If there is a bed, try to find an empty spot next to the bed
+        if (head != null && head.getType() == Material.BED_BLOCK) {
+            Block spawn = BlockBed.getExitLocation(head, foot);
+            return spawn == null ? null : spawn.getLocation().add(0.5, 0.1, 0.5);
+        } else {
+            // If there is no bed and spawning is forced and there is space to spawn
+            if (bedSpawnForced) {
+                Material bottom = head.getType();
+                Material top = head.getRelative(BlockFace.UP).getType();
+                // Do not check floor when forcing spawn
+                if (BlockBed.isValidSpawn(bottom) && BlockBed.isValidSpawn(top)) {
+                    return bedSpawn.clone().add(0.5, 0.1, 0.5); // No blocks are blocking the spawn
+                }
+            }
+            return null;
+        }
     }
 
     @Override
@@ -889,6 +1007,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
     @Override
     public void setBedSpawnLocation(Location location, boolean force) {
         this.bedSpawn = location;
+        this.bedSpawnForced = force;
     }
 
     @Override
@@ -1109,6 +1228,12 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
     }
 
     @Override
+    public void setMaxHealth(double health) {
+        super.setMaxHealth(health);
+        sendHealth();
+    }
+
+    @Override
     public boolean isHealthScaled() {
         return healthScaled;
     }
@@ -1171,6 +1296,12 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
     ////////////////////////////////////////////////////////////////////////////
     // Actions
 
+    /**
+     * Teleport the player.
+     *
+     * @param location The destination to teleport to.
+     * @return Whether the teleport was a success.
+     */
     @Override
     public boolean teleport(Location location) {
         return teleport(location, TeleportCause.UNKNOWN);
@@ -1250,6 +1381,77 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
         return true;
     }
 
+    /**
+     * This player enters the specified bed and is marked as sleeping.
+     * @param block the bed
+     */
+    public void enterBed(GlowBlock block) {
+        Validate.notNull(block, "Bed block cannot be null");
+        Preconditions.checkState(bed == null, "Player already in bed");
+
+        GlowBlock head = BlockBed.getHead(block);
+        GlowBlock foot = BlockBed.getFoot(block);
+        if (EventFactory.callEvent(new PlayerBedEnterEvent(this, head)).isCancelled()) {
+            return;
+        }
+
+        // Occupy the bed
+        BlockBed.setOccupied(head, foot, true);
+        bed = head;
+        sleeping = true;
+        setRawLocation(head.getLocation());
+
+        getSession().send(new UseBedMessage(SELF_ID, head.getX(), head.getY(), head.getZ()));
+        UseBedMessage msg = new UseBedMessage(getEntityId(), head.getX(), head.getY(), head.getZ());
+        for (GlowPlayer p : world.getRawPlayers()) {
+            if (p != this && p.canSeeEntity(this)) {
+                p.getSession().send(msg);
+            }
+        }
+    }
+
+    /**
+     * This player leaves their bed causing them to quit sleeping.
+     * @param setSpawn Whether to set the bed spawn of the player
+     */
+    public void leaveBed(boolean setSpawn) {
+        Preconditions.checkState(bed != null, "Player is not in bed");
+        GlowBlock head = BlockBed.getHead(bed);;
+        GlowBlock foot = BlockBed.getFoot(bed);
+
+        // Determine exit location
+        Block exitBlock = BlockBed.getExitLocation(head, foot);
+        if (exitBlock == null) { // If no empty blocks were found fallback to block above bed
+            exitBlock = head.getRelative(BlockFace.UP);
+        }
+        Location exitLocation = exitBlock.getLocation().add(0.5, 0.1, 0.5); // Use center of block
+
+        // Set their spawn (normally omitted if their bed gets destroyed instead of them leaving it)
+        if (setSpawn) {
+            setBedSpawnLocation(head.getLocation());
+        }
+
+        // Empty the bed
+        BlockBed.setOccupied(head, foot, false);
+        bed = null;
+        sleeping = false;
+
+        // And eject the player
+        setRawLocation(exitLocation);
+        teleported = true;
+
+        // Call event
+        EventFactory.callEvent(new PlayerBedLeaveEvent(this, head));
+
+        getSession().send(new AnimateEntityMessage(SELF_ID, AnimateEntityMessage.OUT_LEAVE_BED));
+        AnimateEntityMessage msg = new AnimateEntityMessage(getEntityId(), AnimateEntityMessage.OUT_LEAVE_BED);
+        for (GlowPlayer p : world.getRawPlayers()) {
+            if (p != this && p.canSeeEntity(this)) {
+                p.getSession().send(msg);
+            }
+        }
+    }
+
     @Override
     public void sendMessage(String message) {
         sendRawMessage(message);
@@ -1269,6 +1471,15 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
+    public void sendActionBarMessage(String message) {
+        // "old" formatting workaround because apparently "new" styling doesn't work as of 01/18/2015
+        JSONObject json = new JSONObject();
+        json.put("text", message);
+        session.send(new ChatMessage(new TextMessage(json), 2));
+    }
+
+    @Override
     public void kickPlayer(String message) {
         session.disconnect(message == null ? "" : message);
     }
@@ -1285,7 +1496,8 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     /**
      * Says a message (or runs a command).
-     * @param text message sent by the player.
+     *
+     * @param text  message sent by the player.
      * @param async whether the message was received asynchronously.
      */
     public void chat(final String text, boolean async) {
@@ -1371,12 +1583,32 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     @Override
     public void playNote(Location loc, Instrument instrument, Note note) {
-        playNote(loc, instrument.getType(), note.getId());
+        Sound sound;
+        switch (instrument) {
+            case PIANO:
+                sound = Sound.NOTE_PIANO;
+                break;
+            case BASS_DRUM:
+                sound = Sound.NOTE_BASS_DRUM;
+                break;
+            case SNARE_DRUM:
+                sound = Sound.NOTE_SNARE_DRUM;
+                break;
+            case STICKS:
+                sound = Sound.NOTE_STICKS;
+                break;
+            case BASS_GUITAR:
+                sound = Sound.NOTE_BASS_GUITAR;
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid instrument");
+        }
+        playSound(loc, sound, 3.0f, note.getId());
     }
 
     @Override
     public void playNote(Location loc, byte instrument, byte note) {
-        session.send(new BlockActionMessage(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), instrument, note, Material.NOTE_BLOCK.getId()));
+        playNote(loc, Instrument.getByType(instrument), new Note(note));
     }
 
     @Override
@@ -1384,6 +1616,10 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
         int id = effect.getId();
         boolean ignoreDistance = effect.isDistanceIgnored();
         session.send(new PlayEffectMessage(id, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), data, ignoreDistance));
+    }
+
+    private void playEffect_(Location loc, Effect effect, int data) { // fix name collision with Spigot below
+        this.playEffect(loc, effect, data);
     }
 
     @Override
@@ -1406,14 +1642,28 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
         session.send(new PlaySoundMessage(sound, x, y, z, volume, pitch));
     }
 
-    @Override
-    public void showParticle(Location loc, Particle particle, float offsetX, float offsetY, float offsetZ, float speed, int amount) {
-        showParticle(loc, particle, null, offsetX, offsetY, offsetZ, speed, amount);
-    }
+    private final Player.Spigot spigot = new Player.Spigot() {
+        @Override
+        public void playEffect(Location location, Effect effect, int id, int data, float offsetX, float offsetY, float offsetZ, float speed, int particleCount, int radius)  {
+            if (effect.getType() == Effect.Type.PARTICLE) {
+                MaterialData material = new MaterialData(id, (byte) data);
+                showParticle(location, effect, material, offsetX, offsetY, offsetZ, speed, particleCount);
+            } else {
+                playEffect_(location, effect, data);
+            }
+        }
+
+    };
 
     @Override
-    public void showParticle(Location loc, Particle particle, MaterialData material, float offsetX, float offsetY, float offsetZ, float speed, int amount) {
-        if (location == null || particle == null) return;
+    public Player.Spigot spigot() {
+        return spigot;
+    }
+
+
+    //@Override
+    public void showParticle(Location loc, Effect particle, MaterialData material, float offsetX, float offsetY, float offsetZ, float speed, int amount) {
+        if (location == null || particle == null || particle.getType() != Effect.Type.PARTICLE) return;
 
         int id = GlowParticle.getId(particle);
         boolean longDistance = GlowParticle.isLongDistance(particle);
@@ -1817,6 +2067,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
     /**
      * Called when a player hidden to this player disconnects.
      * This is necessary so the player is visible again after they reconnected.
+     *
      * @param player The disconnected player
      */
     public void stopHidingDisconnectedPlayer(Player player) {
@@ -1828,12 +2079,21 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     @Override
     public Scoreboard getScoreboard() {
-        return null;
+        return scoreboard;
     }
 
     @Override
     public void setScoreboard(Scoreboard scoreboard) throws IllegalArgumentException, IllegalStateException {
-
+        Validate.notNull(scoreboard, "Scoreboard must not be null");
+        if (!(scoreboard instanceof GlowScoreboard)) {
+            throw new IllegalArgumentException("Scoreboard must be GlowScoreboard");
+        }
+        if (this.scoreboard == null) {
+            throw new IllegalStateException("Player has not loaded or is already offline");
+        }
+        this.scoreboard.unsubscribe(this);
+        this.scoreboard = (GlowScoreboard) scoreboard;
+        this.scoreboard.subscribe(this);
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -1883,6 +2143,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     /**
      * Add a listening channel to this player.
+     *
      * @param channel The channel to add.
      */
     public void addChannel(String channel) {
@@ -1893,6 +2154,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
     /**
      * Remove a listening channel from this player.
+     *
      * @param channel The channel to remove.
      */
     public void removeChannel(String channel) {
@@ -1916,5 +2178,68 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
             }
             session.send(new PluginMessage("REGISTER", buf.array()));
         }
+    }
+
+    public void enchanted(int clicked) {
+        this.level -= clicked + 1;
+        if (level < 0) {
+            this.level = 0;
+            this.experience = 0;
+            this.totalExperience = 0;
+        }
+        setLevel(level);
+        setXpSeed(new Random().nextInt()); //TODO use entity's random instance?
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Titles
+
+    @Override
+    public Title getTitle() {
+        return currentTitle.clone();
+    }
+
+    @Override
+    public TitleOptions getTitleOptions() {
+        return titleOptions.clone();
+    }
+
+    @Override
+    public void setTitle(Title title) {
+        setTitle(title, false);
+    }
+
+    @Override
+    public void setTitle(Title title, boolean forceUpdate) {
+        Validate.notNull(title, "Title cannot be null");
+
+        String oldHeading = currentTitle.getHeading();
+        currentTitle = title;
+
+        if (forceUpdate || !StringUtils.equals(oldHeading, currentTitle.getHeading())) {
+            session.sendAll(TitleMessage.fromTitle(currentTitle));
+        }
+    }
+
+    @Override
+    public void setTitleOptions(TitleOptions options) {
+        if (options == null) {
+            options = new TitleOptions();
+        }
+        titleOptions = options;
+        session.send(TitleMessage.fromOptions(titleOptions));
+    }
+
+    @Override
+    public void clearTitle() {
+        currentTitle = new Title();
+        session.send(new TitleMessage(TitleMessage.Action.CLEAR));
+    }
+
+    @Override
+    public void resetTitle() {
+        currentTitle = new Title(currentTitle.getHeading());
+        titleOptions = new TitleOptions();
+        session.send(new TitleMessage(TitleMessage.Action.RESET));
     }
 }

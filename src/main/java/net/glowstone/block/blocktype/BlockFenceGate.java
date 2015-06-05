@@ -9,6 +9,9 @@ import org.bukkit.material.Gate;
 import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 public class BlockFenceGate extends BlockOpenable {
 
     @Override
@@ -57,6 +60,11 @@ public class BlockFenceGate extends BlockOpenable {
         }
     }
 
+    @Override
+    public Collection<ItemStack> getDrops(GlowBlock block, ItemStack tool) {
+        return Arrays.asList(new ItemStack(block.getType()));
+    }
+
     private static BlockFace getOpenDirection(float yaw, BlockFace oldFacing) {
         BlockFace facingDirection = blockFaceFromYaw(yaw);
 
@@ -64,6 +72,18 @@ public class BlockFenceGate extends BlockOpenable {
             return facingDirection;
         } else {
             return oldFacing;
+        }
+    }
+
+    @Override
+    public void onRedstoneUpdate(GlowBlock block) {
+        GlowBlockState state = block.getState();
+        Gate gate = (Gate) state.getData();
+
+        boolean powered = block.isBlockIndirectlyPowered();
+        if (powered != gate.isOpen()) {
+            gate.setOpen(powered);
+            state.update();
         }
     }
 }

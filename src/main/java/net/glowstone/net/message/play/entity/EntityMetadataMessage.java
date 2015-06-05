@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 public final class EntityMetadataMessage implements Message {
 
-    public final int id;
-    public final List<MetadataMap.Entry> entries;
+    private final int id;
+    private final List<MetadataMap.Entry> entries;
 
 }

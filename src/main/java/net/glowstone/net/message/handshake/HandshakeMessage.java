@@ -6,10 +6,10 @@ import lombok.Data;
 @Data
 public final class HandshakeMessage implements AsyncableMessage {
 
-    public final int version;
-    public final String address;
-    public final int port;
-    public final int state;
+    private final int version;
+    private final String address;
+    private final int port;
+    private final int state;
 
     @Override
     public boolean isAsync() {

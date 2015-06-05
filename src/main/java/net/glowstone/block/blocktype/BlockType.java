@@ -9,6 +9,8 @@ import net.glowstone.block.ItemTable;
 import net.glowstone.block.entity.TileEntity;
 import net.glowstone.block.itemtype.ItemType;
 import net.glowstone.entity.GlowPlayer;
+
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -24,12 +26,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Base class for specific types of blocks.
  */
 public class BlockType extends ItemType {
 
+    protected static final Random random = new Random();
     protected List<ItemStack> drops = null;
 
     ////////////////////////////////////////////////////////////////////////////
@@ -55,6 +59,16 @@ public class BlockType extends ItemType {
         } else {
             return Collections.unmodifiableList(drops);
         }
+    }
+
+    /**
+     * Get the items that will be dropped as if the block would be successfully mined.
+     * This is used f.e. to calculate TNT drops.
+     * @param block The block.
+     * @return The drops from that block.
+     */
+    public Collection<ItemStack> getMinedDrops(GlowBlock block) {
+        return getDrops(block, null);
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -101,8 +115,8 @@ public class BlockType extends ItemType {
      * @param block the block that was placed
      * @param holding the the ItemStack that was being held
      */
-    public void afterPlace(GlowPlayer player, GlowBlock block, ItemStack holding) {
-        // do nothing
+    public void afterPlace(GlowPlayer player, GlowBlock block, ItemStack holding, GlowBlockState oldState) {
+        block.applyPhysics(oldState.getType(), block.getTypeId(), oldState.getRawData(), block.getData());
     }
 
     /**
@@ -126,6 +140,25 @@ public class BlockType extends ItemType {
      */
     public void blockDestroy(GlowPlayer player, GlowBlock block, BlockFace face) {
         // do nothing
+    }
+
+    /**
+     * Called after a player succesfully destroys a block.
+     * @param player The player interacting
+     * @param block The block the player destroyed
+     * @param face The block face
+     */
+    public void afterDestroy(GlowPlayer player, GlowBlock block, BlockFace face, GlowBlockState oldState) {
+        block.applyPhysics(oldState.getType(), block.getTypeId(), oldState.getRawData(), block.getData());
+    }
+
+    /**
+     * Called when the BlockType gets pulsed as requested.
+     * @param block The block that was pulsed pulsed
+     */
+     public void receivePulse(GlowBlock block) {
+        // Cancel if pulse sent to empty block data (caused when updated and not removed).
+        block.getWorld().cancelPulse(block);
     }
 
     /**
@@ -186,15 +219,21 @@ public class BlockType extends ItemType {
 
     /**
      * Called when the BlockType should calculate the current physics.
-     * @param me The block
+     * @param block The block
      */
-    public void updatePhysics(GlowBlock me) {
+    public void updatePhysics(GlowBlock block) {
         // do nothing
     }
 
     @Override
     public final void rightClickBlock(GlowPlayer player, GlowBlock against, BlockFace face, ItemStack holding, Vector clickedLoc) {
         GlowBlock target = against.getRelative(face);
+
+        // prevent building above the height limit
+        if (target.getLocation().getY() >= target.getWorld().getMaxHeight()) {
+            player.sendMessage(ChatColor.RED + "The height limit for this world is " + target.getWorld().getMaxHeight() + " blocks");
+            return;
+        }
 
         // check whether the block clicked against should absorb the placement
         BlockType againstType = ItemTable.instance().getBlock(against.getTypeId());
@@ -234,12 +273,38 @@ public class BlockType extends ItemType {
         target.getWorld().playSound(target.getLocation(), Sound.DIG_WOOD, 1, 1);
 
         // do any after-place actions
-        afterPlace(player, target, holding);
+        afterPlace(player, target, holding, oldState);
 
         // deduct from stack if not in creative mode
         if (player.getGameMode() != GameMode.CREATIVE) {
             holding.setAmount(holding.getAmount() - 1);
         }
+    }
+
+    /**
+     * Called to check if this block can perform random tick updates.
+     * @return Whether this block updates on tick.
+     */
+    public boolean canTickRandomly() {
+        return false;
+    }
+
+    /**
+     * Called when this block needs to be updated.
+     * @param block The block that needs an update
+     */
+    public void updateBlock(GlowBlock block) {
+        // do nothing
+    }
+
+    /**
+     * Called when a player left clicks a block
+     * @param player the player who clicked the block
+     * @param block the block that was clicked
+     * @param holding the ItemStack that was being held
+     */
+    public void leftClickBlock(GlowPlayer player, GlowBlock block, ItemStack holding) {
+        // do nothing
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -288,5 +353,9 @@ public class BlockType extends ItemType {
         } else {
             return BlockFace.EAST;
         }
+    }
+    
+    public void onRedstoneUpdate(GlowBlock block) {
+        // do nothing
     }
 }

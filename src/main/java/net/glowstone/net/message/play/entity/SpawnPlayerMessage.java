@@ -10,11 +10,11 @@ import java.util.UUID;
 @Data
 public final class SpawnPlayerMessage implements Message {
 
-    public final int id;
-    public final UUID uuid;
-    public final int x, y, z;
-    public final int rotation, pitch;
-    public final int item;
-    public final List<MetadataMap.Entry> metadata;
+    private final int id;
+    private final UUID uuid;
+    private final int x, y, z;
+    private final int rotation, pitch;
+    private final int item;
+    private final List<MetadataMap.Entry> metadata;
 
 }

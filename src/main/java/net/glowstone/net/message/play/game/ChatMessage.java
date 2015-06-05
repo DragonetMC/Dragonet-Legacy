@@ -10,8 +10,8 @@ import org.json.simple.JSONObject;
 @RequiredArgsConstructor
 public final class ChatMessage implements Message {
 
-    public final TextMessage text;
-    public final int mode;
+    private final TextMessage text;
+    private final int mode;
 
     public ChatMessage(JSONObject json) {
         this(new TextMessage(json), 0);

@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public final class SpawnLightningStrikeMessage implements Message {
 
-    public final int id, mode, x, y, z;
+    private final int id, mode, x, y, z;
 
     public SpawnLightningStrikeMessage(int id, int x, int y, int z) {
         this(id, 1, x, y, z);

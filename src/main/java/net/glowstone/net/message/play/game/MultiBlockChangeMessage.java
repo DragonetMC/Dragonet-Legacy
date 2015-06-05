@@ -8,7 +8,7 @@ import java.util.List;
 @Data
 public final class MultiBlockChangeMessage implements Message {
 
-    public final int chunkX, chunkZ;
-    public final List<BlockChangeMessage> records;
+    private final int chunkX, chunkZ;
+    private final List<BlockChangeMessage> records;
 
 }

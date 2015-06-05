@@ -6,8 +6,8 @@ import lombok.Data;
 @Data
 public final class HealthMessage implements Message {
 
-    public final float health;
-    public final int food;
-    public final float saturation;
+    private final float health;
+    private final int food;
+    private final float saturation;
 
 }

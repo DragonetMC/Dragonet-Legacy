@@ -5,20 +5,24 @@ import com.avaje.ebean.config.dbplatform.SQLitePlatform;
 import com.avaje.ebeaninternal.server.lib.sql.TransactionIsolation;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
-import io.netty.util.internal.ConcurrentSet;
+import net.glowstone.block.BuiltinMaterialValueManager;
+import net.glowstone.block.MaterialValueManager;
 import net.glowstone.command.ColorCommand;
 import net.glowstone.command.TellrawCommand;
+import net.glowstone.command.TitleCommand;
 import net.glowstone.constants.GlowEnchantment;
 import net.glowstone.constants.GlowPotionEffect;
 import net.glowstone.entity.EntityIdManager;
 import net.glowstone.entity.GlowPlayer;
+import net.glowstone.entity.meta.profile.PlayerProfile;
 import net.glowstone.generator.CakeTownGenerator;
-import net.glowstone.generator.SurfaceGenerator;
-import net.glowstone.generator.UndergroundGenerator;
-import net.glowstone.inventory.CraftingManager;
+import net.glowstone.generator.NetherGenerator;
+import net.glowstone.generator.OverworldGenerator;
 import net.glowstone.inventory.GlowInventory;
 import net.glowstone.inventory.GlowItemFactory;
+import net.glowstone.inventory.crafting.CraftingManager;
 import net.glowstone.io.PlayerDataService;
+import net.glowstone.io.ScoreboardIoService;
 import net.glowstone.map.GlowMapView;
 import net.glowstone.net.GlowNetworkServer;
 import net.glowstone.net.SessionRegistry;
@@ -26,6 +30,7 @@ import net.glowstone.net.query.QueryServer;
 import net.glowstone.net.rcon.RconServer;
 import net.glowstone.scheduler.GlowScheduler;
 import net.glowstone.scheduler.WorldScheduler;
+import net.glowstone.scoreboard.GlowScoreboardManager;
 import net.glowstone.util.*;
 import net.glowstone.util.bans.GlowBanList;
 import net.glowstone.util.bans.UuidListFile;
@@ -47,7 +52,6 @@ import org.bukkit.plugin.*;
 import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.plugin.messaging.Messenger;
 import org.bukkit.plugin.messaging.StandardMessenger;
-import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.util.CachedServerIcon;
 import org.bukkit.util.permissions.DefaultPermissions;
 
@@ -63,10 +67,6 @@ import java.security.KeyPair;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import lombok.Getter;
-import org.dragonet.DragonetServer;
-import org.dragonet.plugin.MixedPluginManager;
-import org.dragonet.utilities.DragonetVersioning;
 
 /**
  * The core class of the Glowstone server.
@@ -82,18 +82,13 @@ public final class GlowServer implements Server {
     /**
      * The game version supported by the server.
      */
-    public static final String GAME_VERSION = "1.8";
+    public static final String GAME_VERSION = "1.8.6";
 
     /**
      * The protocol version supported by the server.
      */
     public static final int PROTOCOL_VERSION = 47;
-  
-    //DRAGONET-Add
-    private @Getter
-    DragonetServer dragonetServer;
-    //DRAGONET-End
-    
+
     /**
      * Creates a new server on TCP port 25565 and starts listening for
      * connections.
@@ -266,10 +261,13 @@ public final class GlowServer implements Server {
     /**
      * The plugin manager of this server.
      */
-    //DRAGONET - Changed to customized MixedPluginManager. 
-    private final PluginManager pluginManager = new MixedPluginManager(this, commandMap);
-    //DRAGONET - END
-    
+    private final SimplePluginManager pluginManager = new SimplePluginManager(this, commandMap);
+
+    /**
+     * The plugin type detector of thi server.
+     */
+    private GlowPluginTypeDetector pluginTypeDetector;
+
     /**
      * The plugin channel messenger for the server.
      */
@@ -283,7 +281,7 @@ public final class GlowServer implements Server {
     /**
      * The scoreboard manager for the server.
      */
-    private final ScoreboardManager scoreboardManager = null;
+    private final GlowScoreboardManager scoreboardManager =   new GlowScoreboardManager(this);
 
     /**
      * The crafting manager for this server.
@@ -400,22 +398,27 @@ public final class GlowServer implements Server {
      */
     private int port;
 
-    //DRAGONET - Change HashSet to ConcurrentSet()
     /**
      * A set of all online players.
      */
-    private final Set<GlowPlayer> onlinePlayers = new ConcurrentSet<>();
-    //DRAGONET - End
-    
+    private final Set<GlowPlayer> onlinePlayers = new HashSet<>();
+
     /**
      * A view of all online players.
      */
     private final Set<GlowPlayer> onlineView = Collections.unmodifiableSet(onlinePlayers);
 
     /**
+     * The {@link net.glowstone.block.MaterialValueManager} of this server.
+     */
+    private MaterialValueManager materialValueManager;
+
+    /**
      * Creates a new server.
      */
     public GlowServer(ServerConfig config) {
+        this.materialValueManager = new BuiltinMaterialValueManager();
+
         this.config = config;
         // stuff based on selected config directory
         opsList = new UuidListFile(config.getFile("ops.json"));
@@ -451,18 +454,9 @@ public final class GlowServer implements Server {
         nameBans.load();
         ipBans.load();
 
-        //Dragonet-Add
-        this.dragonetServer = new DragonetServer(this);
-        //Dragonet-End
-        
         // Start loading plugins
         new LibraryManager(this).run();
         loadPlugins();
-        
-        //DRAGONET-Add (Moved here due to loadPlugins() will clear all the plugins. )
-        this.dragonetServer.initialize();
-        //DRAGONET-End
-        
         enablePlugins(PluginLoadOrder.STARTUP);
 
         // Create worlds
@@ -646,11 +640,7 @@ public final class GlowServer implements Server {
         if (rconServer != null) {
             rconServer.shutdown();
         }
-   
-        //DRAGONET-Add: Shutdown Dragonet Server
-        this.dragonetServer.shutdown();
-        //DRAGONET-End
-        
+
         // Save worlds
         for (World world : getWorlds()) {
             logger.info("Saving world: " + world.getName());
@@ -705,16 +695,21 @@ public final class GlowServer implements Server {
         commandMap.clearCommands();
         commandMap.register("glowstone", new ColorCommand());
         commandMap.register("glowstone", new TellrawCommand());
+        commandMap.register("glowstone", new TitleCommand());
 
         File folder = new File(config.getString(ServerConfig.Key.PLUGIN_FOLDER));
         if (!folder.isDirectory() && !folder.mkdirs()) {
             logger.log(Level.SEVERE, "Could not create plugins directory: " + folder);
         }
 
-        // clear plugins and prepare to load
+        // detect plugin types
+        pluginTypeDetector = new GlowPluginTypeDetector(folder, logger);
+        pluginTypeDetector.scan();
+
+        // clear plugins and prepare to load (Bukkit)
         pluginManager.clearPlugins();
         pluginManager.registerInterface(JavaPluginLoader.class);
-        Plugin[] plugins = pluginManager.loadPlugins(folder);
+        Plugin[] plugins = pluginManager.loadPlugins(pluginTypeDetector.bukkitPlugins.toArray(new File[0]), folder.getPath());
 
         // call onLoad methods
         for (Plugin plugin : plugins) {
@@ -724,6 +719,49 @@ public final class GlowServer implements Server {
                 logger.log(Level.SEVERE, "Error loading " + plugin.getDescription().getFullName(), ex);
             }
         }
+
+        if (pluginTypeDetector.spongePlugins.size() != 0) {
+            boolean hasSponge = false;
+            for (Plugin plugin : plugins) {
+                if (plugin.getName().equals("Bukkit2Sponge")) {
+                    hasSponge = true; // TODO: better detection method, plugin description file annotation APIs?
+                    break;
+                }
+            }
+
+            if (!hasSponge) {
+                logger.log(Level.WARNING, "SpongeAPI plugins found, but no Sponge bridge present! They will be ignored.");
+                for (File file : pluginTypeDetector.spongePlugins) {
+                    logger.log(Level.WARNING, "Ignored SpongeAPI plugin: " + file.getPath());
+                }
+                logger.log(Level.WARNING, "Suggestion: install https://github.com/deathcap/Bukkit2Sponge to load these plugins");
+            }
+        }
+
+        if (pluginTypeDetector.canaryPlugins.size() != 0 ||
+                pluginTypeDetector.forgefPlugins.size() != 0 ||
+                pluginTypeDetector.forgenPlugins.size() != 0 ||
+                pluginTypeDetector.unrecognizedPlugins.size() != 0) {
+            logger.log(Level.WARNING, "Unsupported plugin types found, will be ignored:");
+
+            for (File file : pluginTypeDetector.canaryPlugins)
+                logger.log(Level.WARNING, "Canary plugin not supported: " + file.getPath());
+
+            for (File file : pluginTypeDetector.forgefPlugins)
+                logger.log(Level.WARNING, "Forge plugin not supported: " + file.getPath());
+
+            for (File file : pluginTypeDetector.forgenPlugins)
+                logger.log(Level.WARNING, "Forge plugin not supported: " + file.getPath());
+
+            for (File file : pluginTypeDetector.unrecognizedPlugins)
+                logger.log(Level.WARNING, "Unrecognized plugin not supported: " + file.getPath());
+       }
+
+    }
+
+    // API for Bukkit2Sponge
+    public List<File> getSpongePlugins() {
+        return pluginTypeDetector.spongePlugins;
     }
 
     /**
@@ -792,14 +830,9 @@ public final class GlowServer implements Server {
 
             // Reset crafting
             craftingManager.resetRecipes();
-            
+
             // Load plugins
             loadPlugins();
-            
-            //Dragonet-Add
-            DragonetServer.instance().reload();
-            //Dragonet-End
-            
             enablePlugins(PluginLoadOrder.STARTUP);
             enablePlugins(PluginLoadOrder.POSTWORLD);
         } catch (Exception ex) {
@@ -885,6 +918,14 @@ public final class GlowServer implements Server {
     }
 
     /**
+     * Returns the scoreboard I/O service attached to the first world.
+     * @return The server's scoreboard I/O service
+     */
+    public ScoreboardIoService getScoreboardIoService() {
+        return worlds.getWorlds().get(0).getStorage().getScoreboardIoService();
+    }
+
+    /**
      * Get the threshold to use for network compression defined in the config.
      * @return The compression threshold, or -1 for no compression.
      */
@@ -926,6 +967,10 @@ public final class GlowServer implements Server {
      */
     public boolean useRconColors() {
         return config.getBoolean(ServerConfig.Key.RCON_COLORS);
+    }
+
+    public MaterialValueManager getMaterialValueManager() {
+        return materialValueManager;
     }
 
     /**
@@ -971,26 +1016,17 @@ public final class GlowServer implements Server {
 
     @Override
     public String getName() {
-        //Dragonet-Add
-        return "Dragonet";
-        //Dragonet-End
+        return "Glowstone++";
     }
 
     @Override
     public String getVersion() {
-        //Dragonet-Add
-        //return getClass().getPackage().getImplementationVersion();
-        return DragonetVersioning.DRAGONET_VERSION;
-        //Dragonet-End
+        return getClass().getPackage().getImplementationVersion();
     }
 
     @Override
     public String getBukkitVersion() {
-        //Dragonet-Add
-        //Changed to Dragonet version
-        //return getClass().getPackage().getSpecificationVersion();
-        return "Bukkit API 1.8-R0.1-SNAPSHOT";
-        //Dragonet-End
+        return getClass().getPackage().getSpecificationVersion();
     }
 
     @Override
@@ -1037,7 +1073,7 @@ public final class GlowServer implements Server {
     }
 
     @Override
-    public ScoreboardManager getScoreboardManager() {
+    public GlowScoreboardManager getScoreboardManager() {
         return scoreboardManager;
     }
 
@@ -1207,6 +1243,11 @@ public final class GlowServer implements Server {
         return result;
     }
 
+    public OfflinePlayer getOfflinePlayer(PlayerProfile profile) {
+        OfflinePlayer player = new GlowOfflinePlayer(this, profile);
+        return player;
+    }
+
     @Override
     @Deprecated
     public OfflinePlayer getOfflinePlayer(String name) {
@@ -1214,7 +1255,17 @@ public final class GlowServer implements Server {
         if (onlinePlayer != null) {
             return onlinePlayer;
         }
-        return new GlowOfflinePlayer(this, name);
+        OfflinePlayer result = getPlayerExact(name);
+        if (result == null) {
+            //probably blocking (same player once per minute)
+            PlayerProfile profile = PlayerProfile.getProfile(name);
+            if (profile == null) {
+                result = getOfflinePlayer(new PlayerProfile(name, UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes())));
+            } else {
+                result = getOfflinePlayer(profile);
+            }
+        }
+        return result;
     }
 
     @Override
@@ -1223,7 +1274,11 @@ public final class GlowServer implements Server {
         if (onlinePlayer != null) {
             return onlinePlayer;
         }
-        return new GlowOfflinePlayer(this, uuid);
+        OfflinePlayer result = getPlayer(uuid);
+        if (result == null) {
+            result = new GlowOfflinePlayer(this, uuid);
+        }
+        return result;
     }
 
     @Override
@@ -1253,8 +1308,8 @@ public final class GlowServer implements Server {
     @Override
     public Set<OfflinePlayer> getWhitelistedPlayers() {
         Set<OfflinePlayer> players = new HashSet<>();
-        for (UUID uuid : whitelist.getUUIDs()) {
-            players.add(getOfflinePlayer(uuid));
+        for (PlayerProfile profile : whitelist.getProfiles()) {
+            players.add(getOfflinePlayer(profile));
         }
         return players;
     }
@@ -1334,11 +1389,11 @@ public final class GlowServer implements Server {
 
         // find generator based on environment and world type
         if (environment == Environment.NETHER) {
-            return new UndergroundGenerator();
+            return new NetherGenerator();
         } else if (environment == Environment.THE_END) {
             return new CakeTownGenerator();
         } else {
-            return new SurfaceGenerator();
+            return new OverworldGenerator();
         }
     }
 
@@ -1682,5 +1737,10 @@ public final class GlowServer implements Server {
     @Override
     public boolean getAllowFlight() {
         return config.getBoolean(ServerConfig.Key.ALLOW_FLIGHT);
+    }
+
+    public int getMaxBuildHeight() {
+        return Math.max(64, Math.min(256, config.getInt(ServerConfig.Key
+                .MAX_BUILD_HEIGHT)));
     }
 }

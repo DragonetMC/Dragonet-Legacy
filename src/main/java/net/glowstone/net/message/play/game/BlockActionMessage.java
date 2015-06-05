@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 public final class BlockActionMessage implements Message {
 
-    public final int x, y, z, data1, data2, blockType;
+    private final int x, y, z, data1, data2, blockType;
 
 }

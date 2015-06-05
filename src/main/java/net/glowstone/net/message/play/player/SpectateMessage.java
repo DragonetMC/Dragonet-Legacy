@@ -8,7 +8,7 @@ import java.util.UUID;
 @Data
 public final class SpectateMessage implements Message {
 
-    public final UUID target;
+    private final UUID target;
 
 }
 

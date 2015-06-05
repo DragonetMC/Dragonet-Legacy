@@ -8,8 +8,8 @@ import org.bukkit.Location;
 @EqualsAndHashCode(callSuper = true)
 public final class PlayerPositionLookMessage extends PlayerUpdateMessage {
 
-    public final double x, y, z;
-    public final float yaw, pitch;
+    private final double x, y, z;
+    private final float yaw, pitch;
 
     public PlayerPositionLookMessage(boolean onGround, double x, double y, double z, float yaw, float pitch) {
         super(onGround);

@@ -186,8 +186,7 @@ public final class Explosion {
     }
 
     private double getBlastDurability(GlowBlock block) {
-        // TODO: return the block's blast durability
-        return 2.5;
+        return block.getMaterialValues().getBlastResistance();
     }
 
     private List<Block> toBlockList(Collection<BlockVector> locs) {
@@ -235,7 +234,7 @@ public final class Explosion {
             double basicDamage = calculateDamage(entity, disDivPower);
             int explosionDamage = (int) ((basicDamage * basicDamage + basicDamage) * 4 * (double) power + 1.0D);
 
-            if (!(entity instanceof GlowHumanEntity && ((GlowHumanEntity) entity).getGameMode() == GameMode.CREATIVE)) {
+            if (!(entity instanceof GlowHumanEntity)) {
                 EntityDamageEvent.DamageCause damageCause;
                 if (source == null || source.getType() == EntityType.PRIMED_TNT) {
                     damageCause = EntityDamageEvent.DamageCause.BLOCK_EXPLOSION;
@@ -309,10 +308,10 @@ public final class Explosion {
 
         if (this.power >= 2.0F && this.breakBlocks) {
             // send huge explosion
-            world.showParticle(location, Particle.EXPLOSION_HUGE, 0, 0, 0, 0, 0);
+            world.spigot().playEffect(location, Effect.EXPLOSION_HUGE);
         } else {
             // send large explosion
-            world.showParticle(location, Particle.EXPLOSION_LARGE, 0, 0, 0, 0, 0);
+            world.spigot().playEffect(location, Effect.EXPLOSION_LARGE);
         }
     }
 

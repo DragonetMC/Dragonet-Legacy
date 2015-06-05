@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public final class TransactionMessage implements Message {
 
-    public final int id, transaction;
-    public final boolean accepted;
+    private final int id, transaction;
+    private final boolean accepted;
 
 }

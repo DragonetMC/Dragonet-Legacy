@@ -15,9 +15,14 @@ public class BlockDoubleSlab extends BlockType {
     public Collection<ItemStack> getDrops(GlowBlock block, ItemStack tool) {
         if (block.getType() == Material.WOOD_DOUBLE_STEP ||
                 (tool != null && ToolType.PICKAXE.matches(tool.getType()))) {
-            return Arrays.asList(getDrops(block));
+            return getMinedDrops(block);
         }
         return BlockDropless.EMPTY_STACK;
+    }
+
+    @Override
+    public Collection<ItemStack> getMinedDrops(GlowBlock block) {
+        return Arrays.asList(getDrops(block));
     }
 
     private ItemStack getDrops(GlowBlock block) {
@@ -26,8 +31,8 @@ public class BlockDoubleSlab extends BlockType {
                 return new ItemStack(Material.WOOD_STEP, 2, (short) (block.getData() % 8));
             case DOUBLE_STEP:
                 return new ItemStack(Material.STEP, 2, (short) (block.getData() % 8));
-            case DOUBLE_STEP_2:
-                return new ItemStack(Material.STEP_2, 2);
+            case DOUBLE_STONE_SLAB2:
+                return new ItemStack(Material.STONE_SLAB2, 2);
         }
         GlowServer.logger.warning("BlockDoubleSlab got wrong material: " + block.getType());
         return new ItemStack(Material.STEP, 2);

@@ -111,6 +111,8 @@ public final class GlowItemFactory implements ItemFactory {
             case BOOK_AND_QUILL:
             case WRITTEN_BOOK:
                 return new GlowMetaBook(meta);
+            case ENCHANTED_BOOK:
+                return new GlowMetaEnchantedBook(meta);
             case SKULL_ITEM:
                 return new GlowMetaSkull(meta);
             case BANNER:
@@ -124,6 +126,8 @@ public final class GlowItemFactory implements ItemFactory {
                 return new GlowMetaFirework(meta);
             case FIREWORK_CHARGE:
                 return new GlowMetaFireworkEffect(meta);
+            case POTION:
+                return new GlowMetaPotion(meta);
             default:
                 return new GlowMetaItem(meta);
         }

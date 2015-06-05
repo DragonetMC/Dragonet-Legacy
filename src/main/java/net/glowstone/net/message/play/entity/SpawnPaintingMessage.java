@@ -6,8 +6,8 @@ import lombok.Data;
 @Data
 public final class SpawnPaintingMessage implements Message {
 
-    public final int id;
-    public final String title;
-    public final int x, y, z, facing;
+    private final int id;
+    private final String title;
+    private final int x, y, z, facing;
 
 }

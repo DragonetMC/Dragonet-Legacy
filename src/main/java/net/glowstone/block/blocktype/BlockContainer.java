@@ -31,7 +31,7 @@ public class BlockContainer extends BlockType {
 
     @Override
     public Collection<ItemStack> getDrops(GlowBlock block, ItemStack tool) {
-        LinkedList<ItemStack> drops = new LinkedList<>();
+        Collection<ItemStack> drops = getContentDrops(block);
 
         MaterialMatcher neededTool = getNeededMiningTool(block);
         if (neededTool == null ||
@@ -39,6 +39,18 @@ public class BlockContainer extends BlockType {
             drops.addAll(getBlockDrops(block));
         }
 
+        return drops;
+    }
+
+    @Override
+    public Collection<ItemStack> getMinedDrops(GlowBlock block) {
+        Collection<ItemStack> drops = getContentDrops(block);
+        drops.addAll(getBlockDrops(block));
+        return drops;
+    }
+
+    private Collection<ItemStack> getContentDrops(GlowBlock block) {
+        LinkedList<ItemStack> drops = new LinkedList<>();
         for (ItemStack i : ((TEContainer) block.getTileEntity()).getInventory().getContents()) {
             if (i != null) {
                 drops.add(i);
@@ -53,7 +65,11 @@ public class BlockContainer extends BlockType {
      * @return the drops
      */
     protected Collection<ItemStack> getBlockDrops(GlowBlock block) {
-        return Arrays.asList(new ItemStack(block.getType()));
+        if (drops == null) {
+            return Arrays.asList(new ItemStack(block.getType()));
+        } else {
+            return drops;
+        }
     }
 
     protected MaterialMatcher getNeededMiningTool(GlowBlock block) {

@@ -4,6 +4,7 @@ import com.flowpowered.networking.MessageHandler;
 import net.glowstone.EventFactory;
 import net.glowstone.GlowWorld;
 import net.glowstone.block.GlowBlock;
+import net.glowstone.block.GlowBlockState;
 import net.glowstone.block.ItemTable;
 import net.glowstone.block.blocktype.BlockType;
 import net.glowstone.entity.GlowPlayer;
@@ -55,7 +56,7 @@ public final class DiggingHandler implements MessageHandler<GlowSession, Digging
                 revert = true;
             } else {
                 // emit damage event - cancel by default if holding a sword
-                boolean instaBreak = player.getGameMode() == GameMode.CREATIVE;
+                boolean instaBreak = player.getGameMode() == GameMode.CREATIVE || block.getMaterialValues().getHardness() == 0;
                 BlockDamageEvent damageEvent = new BlockDamageEvent(player, block, player.getItemInHand(), instaBreak);
                 if (player.getGameMode() == GameMode.CREATIVE && holding != null && EnchantmentTarget.WEAPON.includes(holding.getType())) {
                     damageEvent.setCancelled(true);
@@ -111,10 +112,17 @@ public final class DiggingHandler implements MessageHandler<GlowSession, Digging
             }
             // STEP_SOUND actually is the block break particles
             world.playEffectExceptTo(block.getLocation(), Effect.STEP_SOUND, block.getTypeId(), 64, player);
+            GlowBlockState state = block.getState();
             block.setType(Material.AIR);
+            if (blockType != null) {
+                blockType.afterDestroy(player, block, face, state);
+            }
         } else if (revert) {
             // replace the block that wasn't really dug
             BlockPlacementHandler.revert(player, block);
+        } else {
+            BlockType blockType = ItemTable.instance().getBlock(block.getType());
+            blockType.leftClickBlock(player, block, holding);
         }
     }
 }

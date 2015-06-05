@@ -7,14 +7,14 @@ import java.util.Collection;
 
 @Data
 public class ExplosionMessage implements Message {
-    public final float x;
-    public final float y;
-    public final float z;
-    public final float radius;
-    public final float playerMotionX;
-    public final float playerMotionY;
-    public final float playerMotionZ;
-    public final Collection<Record> records;
+    private final float x;
+    private final float y;
+    private final float z;
+    private final float radius;
+    private final float playerMotionX;
+    private final float playerMotionY;
+    private final float playerMotionZ;
+    private final Collection<Record> records;
 
     @Override
     public String toString() {
@@ -26,6 +26,6 @@ public class ExplosionMessage implements Message {
 
     @Data
     public static class Record {
-        public final byte x, y, z;
+        private final byte x, y, z;
     }
 }

@@ -3,11 +3,15 @@ package net.glowstone.net.pipeline;
 import com.flowpowered.networking.ConnectionManager;
 import com.flowpowered.networking.Message;
 import com.flowpowered.networking.session.Session;
+
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.timeout.IdleStateEvent;
 
 import java.util.concurrent.atomic.AtomicReference;
+
+import net.glowstone.net.GlowSession;
 
 /**
  * Experimental pipeline component, based on flow-net's MessageHandler.
@@ -41,12 +45,18 @@ public final class MessageHandler extends SimpleChannelInboundHandler<Message> {
     public void channelInactive(ChannelHandlerContext ctx) {
         Session session = this.session.get();
         session.onDisconnect();
-        connectionManager.sessionInactivated(session);
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Message i) {
         session.get().messageReceived(i);
+    }
+
+    @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        if (evt instanceof IdleStateEvent) {
+            ((GlowSession) session.get()).idle(); // todo: find a more elegant way to do this in the future
+        }
     }
 
     @Override

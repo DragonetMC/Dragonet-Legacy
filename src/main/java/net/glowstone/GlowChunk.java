@@ -363,6 +363,14 @@ public final class GlowChunk implements Chunk {
     }
 
     /**
+     * Get all ChunkSection of this chunk.
+     * @return The chunk sections array.
+     */
+    public ChunkSection[] getSections() {
+        return sections;
+    }
+
+    /**
      * Attempt to get the tile entity located at the given coordinates.
      * @param x The X coordinate.
      * @param z The Z coordinate.
@@ -750,7 +758,7 @@ public final class GlowChunk implements Chunk {
         // biomes
         if (entireChunk) {
             for (int i = 0; i < 256; ++i) {
-                tileData[pos++] = 0;
+                tileData[pos++] = biomes[i];
             }
         }
 

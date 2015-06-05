@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public final class StatusPingMessage implements AsyncableMessage {
 
-    public final long time;
+    private final long time;
 
     @Override
     public boolean isAsync() {

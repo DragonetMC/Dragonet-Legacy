@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 public final class CameraMessage implements Message {
 
-    public final int cameraId;
+    private final int cameraId;
 
 }

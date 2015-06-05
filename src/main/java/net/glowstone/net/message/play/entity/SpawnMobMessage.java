@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 public final class SpawnMobMessage implements Message {
 
-    public final int id, type, x, y, z, rotation, pitch, headPitch, velX, velY, velZ;
-    public final List<MetadataMap.Entry> metadata;
-    
+    private final int id, type, x, y, z, rotation, pitch, headPitch, velX, velY, velZ;
+    private final List<MetadataMap.Entry> metadata;
+
 }

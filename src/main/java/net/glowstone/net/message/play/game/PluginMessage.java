@@ -13,8 +13,8 @@ import java.util.logging.Level;
 @Data
 public final class PluginMessage implements Message {
 
-    public final String channel;
-    public final byte[] data;
+    private final String channel;
+    private final byte[] data;
 
     public static PluginMessage fromString(String channel, String text) {
         ByteBuf buf = Unpooled.buffer(5 + text.length());

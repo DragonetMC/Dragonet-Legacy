@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 public final class ServerDifficultyMessage implements Message {
 
-    public final int difficulty;
+    private final int difficulty;
 
 }

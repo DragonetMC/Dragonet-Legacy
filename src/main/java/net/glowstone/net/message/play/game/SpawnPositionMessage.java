@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 public final class SpawnPositionMessage implements Message {
 
-    public final int x, y, z;
+    private final int x, y, z;
 
 }

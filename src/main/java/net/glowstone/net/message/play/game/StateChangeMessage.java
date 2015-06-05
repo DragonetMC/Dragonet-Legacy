@@ -8,8 +8,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public final class StateChangeMessage implements Message {
 
-    public final int reason;
-    public final float value;
+    private final int reason;
+    private final float value;
 
     public StateChangeMessage(Reason reason, float value) {
         this.reason = reason.ordinal();

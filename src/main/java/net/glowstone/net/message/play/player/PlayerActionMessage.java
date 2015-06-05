@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public final class PlayerActionMessage implements Message {
 
-    public final int id, action, jumpBoost;
+    private final int id, action, jumpBoost;
 
 }
 

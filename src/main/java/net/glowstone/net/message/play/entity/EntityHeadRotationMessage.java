@@ -6,8 +6,8 @@ import lombok.Data;
 @Data
 public final class EntityHeadRotationMessage implements Message {
 
-    public final int id;
-    public final int rotation;
+    private final int id;
+    private final int rotation;
 
 }
 

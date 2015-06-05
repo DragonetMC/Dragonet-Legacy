@@ -8,6 +8,6 @@ import java.util.List;
 @Data
 public final class DestroyEntitiesMessage implements Message {
 
-    public final List<Integer> ids;
+    private final List<Integer> ids;
 
 }

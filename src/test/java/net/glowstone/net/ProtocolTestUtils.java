@@ -32,9 +32,7 @@ public final class ProtocolTestUtils {
 
     public static List<MetadataMap.Entry> getMetadataEntry() {
         List<MetadataMap.Entry> list = new ArrayList<>();
-        //Dragonet-ADD
         list.add(new MetadataMap.Entry(MetadataIndex.AGE, (byte) 1));
-        //Dragonet-END
         return list;
     }
 

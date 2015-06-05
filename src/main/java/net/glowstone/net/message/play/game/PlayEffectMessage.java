@@ -6,9 +6,9 @@ import lombok.Data;
 @Data
 public final class PlayEffectMessage implements Message {
 
-    public final int id;
-    public final int x, y, z;
-    public final int data;
-    public final boolean ignoreDistance;
+    private final int id;
+    private final int x, y, z;
+    private final int data;
+    private final boolean ignoreDistance;
 
 }

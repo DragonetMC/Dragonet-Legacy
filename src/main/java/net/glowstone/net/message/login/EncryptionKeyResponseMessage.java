@@ -1,12 +1,18 @@
 package net.glowstone.net.message.login;
 
-import com.flowpowered.networking.Message;
+import com.flowpowered.networking.AsyncableMessage;
+
 import lombok.Data;
 
 @Data
-public final class EncryptionKeyResponseMessage implements Message {
+public final class EncryptionKeyResponseMessage implements AsyncableMessage {
 
-    public final byte[] sharedSecret;
-    public final byte[] verifyToken;
+    private final byte[] sharedSecret;
+    private final byte[] verifyToken;
+
+    @Override
+    public boolean isAsync() {
+        return true;
+    }
 
 }

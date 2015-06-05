@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 public final class PingMessage implements Message {
 
-    public final int pingId;
+    private final int pingId;
 
 }

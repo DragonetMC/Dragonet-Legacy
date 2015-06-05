@@ -20,6 +20,8 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Criterias;
 
 import java.util.*;
 
@@ -39,11 +41,6 @@ public abstract class GlowLivingEntity extends GlowEntity implements LivingEntit
      * The entity's health.
      */
     protected double health;
-
-    /**
-     * The entity's maximum health.
-     */
-    protected double maxHealth;
 
     /**
      * The magnitude of the last damage the entity took.
@@ -96,14 +93,20 @@ public abstract class GlowLivingEntity extends GlowEntity implements LivingEntit
     private EquipmentMonitor equipmentMonitor = new EquipmentMonitor(this);
 
     /**
+     * The LivingEntity's AttributeManager.
+     */
+    private final AttributeManager attributeManager;
+
+    /**
      * Creates a mob within the specified world.
      *
      * @param location The location.
      */
     public GlowLivingEntity(Location location) {
         super(location);
-        resetMaxHealth();
-        health = maxHealth;
+        attributeManager = new AttributeManager(this);
+        attributeManager.setProperty(AttributeManager.Key.KEY_MAX_HEALTH, 20);
+        health = AttributeManager.Key.KEY_MAX_HEALTH.getDef();
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -139,6 +142,9 @@ public abstract class GlowLivingEntity extends GlowEntity implements LivingEntit
             damage(4, EntityDamageEvent.DamageCause.VOID);
         }
 
+        if (isWithinSolidBlock())
+                damage(1, EntityDamageEvent.DamageCause.SUFFOCATION);
+
         // potion effects
         List<PotionEffect> effects = new ArrayList<>(potionEffects.values());
         for (PotionEffect effect : effects) {
@@ -173,7 +179,13 @@ public abstract class GlowLivingEntity extends GlowEntity implements LivingEntit
             messages.add(new EntityEquipmentMessage(id, change.slot, change.item));
         }
 
+        attributeManager.applyMessages(messages);
+
         return messages;
+    }
+
+    public AttributeManager getAttributeManager() {
+        return attributeManager;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -301,7 +313,7 @@ public abstract class GlowLivingEntity extends GlowEntity implements LivingEntit
     ////////////////////////////////////////////////////////////////////////////
     // Line of Sight
 
-    private List<Block> getLineOfSight(HashSet<Byte> transparent, int maxDistance, int maxLength) {
+    private List<Block> getLineOfSight(Set<Material> transparent, int maxDistance, int maxLength) {
         // same limit as CraftBukkit
         if (maxDistance > 120) {
             maxDistance = 120;
@@ -315,13 +327,13 @@ public abstract class GlowLivingEntity extends GlowEntity implements LivingEntit
             if (maxLength != 0 && blocks.size() > maxLength) {
                 blocks.removeFirst();
             }
-            int id = block.getTypeId();
+            Material material = block.getType();
             if (transparent == null) {
-                if (id != 0) {
+                if (material != Material.AIR) {
                     break;
                 }
             } else {
-                if (!transparent.contains((byte) id)) {
+                if (!transparent.contains(material)) {
                     break;
                 }
             }
@@ -329,19 +341,57 @@ public abstract class GlowLivingEntity extends GlowEntity implements LivingEntit
         return blocks;
     }
 
+    private List<Block> getLineOfSight(HashSet<Byte> transparent, int maxDistance, int maxLength) {
+        Set<Material> materials = new HashSet<Material>();
+        Iterator<Byte> itr = transparent.iterator();
+
+        while (itr.hasNext()) {
+            byte b = itr.next().byteValue();
+            materials.add(Material.getMaterial((int) b));
+        }
+
+        return getLineOfSight(materials, maxDistance, maxLength);
+    }
+
+    @Override
+    public List<Block> getLineOfSight(Set<Material> transparent, int maxDistance) {
+        return getLineOfSight(transparent, maxDistance, 0);
+    }
+
+    @Deprecated
     @Override
     public List<Block> getLineOfSight(HashSet<Byte> transparent, int maxDistance) {
         return getLineOfSight(transparent, maxDistance, 0);
     }
 
+
+    @Deprecated
     @Override
     public Block getTargetBlock(HashSet<Byte> transparent, int maxDistance) {
-        return getLineOfSight(transparent, maxDistance, 1).get(0);
+        return getLineOfSight(transparent, maxDistance).get(0);
     }
 
     @Override
+    public Block getTargetBlock(Set<Material> materials, int maxDistance) {
+        return getLineOfSight(materials, maxDistance).get(0);
+    }
+
+    @Deprecated
+    @Override
     public List<Block> getLastTwoTargetBlocks(HashSet<Byte> transparent, int maxDistance) {
         return getLineOfSight(transparent, maxDistance, 2);
+    }
+
+    @Override
+    public List<Block> getLastTwoTargetBlocks(Set<Material> materials, int maxDistance) {
+        return getLineOfSight(materials, maxDistance, 2);
+    }
+
+    /**
+     * Returns whether the entity's eye location is within a solid block
+     */
+    public boolean isWithinSolidBlock() {
+        return getEyeLocation().getBlock().getType().isSolid();
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -385,8 +435,16 @@ public abstract class GlowLivingEntity extends GlowEntity implements LivingEntit
     @Override
     public void setHealth(double health) {
         if (health < 0) health = 0;
-        if (health > maxHealth) health = maxHealth;
+        if (health > getMaxHealth()) health = getMaxHealth();
         this.health = health;
+
+        //TODO: Once Glowstone has proper entity support, entities can have UUID names on the scoreboard
+        if (this instanceof GlowPlayer) {
+            GlowPlayer player = (GlowPlayer) this;
+            for (Objective objective: getServer().getScoreboardManager().getMainScoreboard().getObjectivesByCriteria(Criterias.HEALTH)) {
+                objective.getScore(player.getName()).setScore((int) health);
+            }
+        }
     }
 
     @Override
@@ -407,7 +465,7 @@ public abstract class GlowLivingEntity extends GlowEntity implements LivingEntit
     @Override
     public void damage(double amount, Entity source, EntityDamageEvent.DamageCause cause) {
         // invincibility timer
-        if (noDamageTicks > 0 || health <= 0) {
+        if (noDamageTicks > 0 || health <= 0 || !canTakeDamage(cause)) {
             return;
         } else {
             noDamageTicks = maxNoDamageTicks;
@@ -463,17 +521,17 @@ public abstract class GlowLivingEntity extends GlowEntity implements LivingEntit
 
     @Override
     public double getMaxHealth() {
-        return maxHealth;
+        return attributeManager.getPropertyValue(AttributeManager.Key.KEY_MAX_HEALTH);
     }
 
     @Override
     public void setMaxHealth(double health) {
-        maxHealth = health;
+        attributeManager.setProperty(AttributeManager.Key.KEY_MAX_HEALTH, health);
     }
 
     @Override
     public void resetMaxHealth() {
-        maxHealth = 20;
+        setMaxHealth(20);
     }
 
     @Override

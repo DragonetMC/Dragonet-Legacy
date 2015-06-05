@@ -7,7 +7,7 @@ import org.json.simple.JSONObject;
 @Data
 public final class StatusResponseMessage implements Message {
 
-    public final String json;
+    private final String json;
 
     public StatusResponseMessage(JSONObject json) {
         this.json = json.toJSONString();

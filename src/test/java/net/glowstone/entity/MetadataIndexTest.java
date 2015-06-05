@@ -36,8 +36,9 @@ public class MetadataIndexTest {
     }
 
     /**
-     * Tests that no two MetadataIndex entries can overlap on a single entity.
-     * Will not catch failure for entities without any metadata keys defined.
+     * Tests that no two MetadataIndex entries can overlap on a single
+     * entity. Will not catch failure for entities without any metadata
+     * keys defined.
      */
     @Test
     public void testNoOverlap() {

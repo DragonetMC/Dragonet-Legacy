@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public final class IncomingChatMessage implements AsyncableMessage {
 
-    public final String text;
+    private final String text;
 
     @Override
     public boolean isAsync() {

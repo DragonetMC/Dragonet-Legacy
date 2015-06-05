@@ -3,15 +3,7 @@
 *.iml
 *.ipr
 *.iws
-.nb-gradle
-.gradle
 build
-
-worlds
-logs
-plugins
-config
-
 out
 classes
 nbproject
@@ -23,3 +15,7 @@ target
 !.gitmodules
 !.mailmap
 !.gitattributes
+worlds
+logs
+config
+dependency-reduced-pom.xml

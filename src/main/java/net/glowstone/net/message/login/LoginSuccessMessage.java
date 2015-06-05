@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public final class LoginSuccessMessage implements Message {
 
-    public final String uuid;
-    public final String username;
+    private final String uuid;
+    private final String username;
 
 }

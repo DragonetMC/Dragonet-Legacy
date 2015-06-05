@@ -116,16 +116,8 @@ public final class EventFactory {
     @SuppressWarnings("deprecation")
     public static AsyncPlayerChatEvent onPlayerChat(boolean async, Player player, String message) {
         // call async event
-        //Dragonet-Add
-    	//Call event
-    	boolean cancelled = org.dragonet.DragonetServer.instance().getRhino().onChatSending(player, message);
-    	//Dragonet-End
         final Set<Player> recipients = new HashSet<>(player.getServer().getOnlinePlayers());
         final AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(async, player, message, recipients);
-        //Dragonet-Add
-        event.setCancelled(cancelled);
-    	//Dragonet-End
-        // call async event
         callEvent(event);
 
         // call sync event only if needed
@@ -145,23 +137,14 @@ public final class EventFactory {
     }
 
     public static PlayerJoinEvent onPlayerJoin(Player player) {
-        //Dragonet-Add
-        org.dragonet.DragonetServer.instance().getRhino().onConnect(player);
-        //Dragonet-End
         return callEvent(new PlayerJoinEvent(player, ChatColor.YELLOW + player.getName() + " joined the game"));
     }
 
     public static PlayerKickEvent onPlayerKick(Player player, String reason) {
-        //Dragonet-Add
-        org.dragonet.DragonetServer.instance().getRhino().onKick(player, reason);
-        //Dragonet-End
         return callEvent(new PlayerKickEvent(player, reason, null));
     }
 
     public static PlayerQuitEvent onPlayerQuit(Player player) {
-        //Dragonet-Add
-        org.dragonet.DragonetServer.instance().getRhino().onQuit(player);
-        //Dragonet-End
         return callEvent(new PlayerQuitEvent(player, ChatColor.YELLOW + player.getName() + " left the game"));
     }
 
@@ -170,12 +153,6 @@ public final class EventFactory {
     }
 
     public static PlayerInteractEvent onPlayerInteract(Player player, Action action, Block clicked, BlockFace face) {
-        //Dragonet-Add
-        if(!clicked.isEmpty())
-        {
-            org.dragonet.DragonetServer.instance().getRhino().useItem(clicked.getX(), clicked.getY(), clicked.getZ(), face.name(), clicked.getType().name(), player);
-        }
-        //Dragonet-End
         return callEvent(new PlayerInteractEvent(player, action, player.getItemInHand(), clicked, face));
     }
 

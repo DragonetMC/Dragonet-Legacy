@@ -9,13 +9,13 @@ import org.bukkit.util.Vector;
 @RequiredArgsConstructor
 public final class EntityVelocityMessage implements Message {
 
-    public final int id, velocityX, velocityY, velocityZ;
+    private final int id, velocityX, velocityY, velocityZ;
 
     public EntityVelocityMessage(int id, Vector velocity) {
         this(id, convert(velocity.getX()), convert(velocity.getY()), convert(velocity.getZ()));
     }
 
-    public static int convert(double val) {
+    private static int convert(double val) {
         return (int) (val * 8000);
     }
 

@@ -6,8 +6,8 @@ import lombok.Data;
 @Data
 public final class ResourcePackStatusMessage implements Message {
 
-    public final String hash;
-    public final int result;
+    private final String hash;
+    private final int result;
 
 }
 

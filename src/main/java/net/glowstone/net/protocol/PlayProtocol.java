@@ -6,6 +6,7 @@ import net.glowstone.net.codec.play.entity.*;
 import net.glowstone.net.codec.play.game.*;
 import net.glowstone.net.codec.play.inv.*;
 import net.glowstone.net.codec.play.player.*;
+import net.glowstone.net.codec.play.scoreboard.*;
 import net.glowstone.net.handler.play.game.*;
 import net.glowstone.net.handler.play.inv.*;
 import net.glowstone.net.handler.play.player.*;
@@ -15,6 +16,7 @@ import net.glowstone.net.message.play.entity.*;
 import net.glowstone.net.message.play.game.*;
 import net.glowstone.net.message.play.inv.*;
 import net.glowstone.net.message.play.player.*;
+import net.glowstone.net.message.play.scoreboard.*;
 
 public final class PlayProtocol extends GlowProtocol {
     public PlayProtocol() {
@@ -57,6 +59,7 @@ public final class PlayProtocol extends GlowProtocol {
         outbound(0x07, RespawnMessage.class, RespawnCodec.class);
         outbound(0x08, PositionRotationMessage.class, PositionRotationCodec.class);
         outbound(0x09, HeldItemMessage.class, HeldItemCodec.class);
+        outbound(0x0A, UseBedMessage.class, UseBedCodec.class);
         outbound(0x0B, AnimateEntityMessage.class, AnimateEntityCodec.class);
         outbound(0x0C, SpawnPlayerMessage.class, SpawnPlayerCodec.class);
         outbound(0x0D, CollectItemMessage.class, CollectItemCodec.class);
@@ -77,6 +80,7 @@ public final class PlayProtocol extends GlowProtocol {
         outbound(0x1D, EntityEffectMessage.class, EntityEffectCodec.class);
         outbound(0x1E, EntityRemoveEffectMessage.class, EntityRemoveEffectCodec.class);
         outbound(0x1F, ExperienceMessage.class, ExperienceCodec.class);
+        outbound(0x20, EntityPropertyMessage.class, EntityPropertyCodec.class);
         outbound(0x21, ChunkDataMessage.class, ChunkDataCodec.class);
         outbound(0x22, MultiBlockChangeMessage.class, MultiBlockChangeCodec.class);
         outbound(0x23, BlockChangeMessage.class, BlockChangeCodec.class);
@@ -102,6 +106,10 @@ public final class PlayProtocol extends GlowProtocol {
         outbound(0x38, UserListItemMessage.class, UserListItemCodec.class);
         outbound(0x39, PlayerAbilitiesMessage.class, PlayerAbilitiesCodec.class);
         outbound(0x3A, TabCompleteResponseMessage.class, TabCompleteResponseCodec.class);
+        outbound(0x3B, ScoreboardObjectiveMessage.class, ScoreboardObjectiveCodec.class);
+        outbound(0x3C, ScoreboardScoreMessage.class, ScoreboardScoreCodec.class);
+        outbound(0x3D, ScoreboardDisplayMessage.class, ScoreboardDisplayCodec.class);
+        outbound(0x3E, ScoreboardTeamMessage.class, ScoreboardTeamCodec.class);
         outbound(0x3F, PluginMessage.class, PluginMessageCodec.class);
         outbound(0x40, KickMessage.class, KickCodec.class);
         outbound(0x41, ServerDifficultyMessage.class, ServerDifficultyCodec.class);

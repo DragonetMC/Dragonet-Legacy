@@ -13,14 +13,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Represents a monster such as a creeper.
- * @author Graham Edgecombe
+ * Represents a creature entity such as a pig.
  */
-
-//Dragonet-ADD
 public class GlowCreature extends GlowLivingEntity implements Creature {
-//Dragonet-END
-    
+
     /**
      * The type of monster.
      */
@@ -75,5 +71,4 @@ public class GlowCreature extends GlowLivingEntity implements Creature {
     public LivingEntity getTarget() {
         return target;
     }
-
 }

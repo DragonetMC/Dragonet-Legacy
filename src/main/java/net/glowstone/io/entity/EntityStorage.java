@@ -2,6 +2,7 @@ package net.glowstone.io.entity;
 
 import net.glowstone.GlowWorld;
 import net.glowstone.entity.GlowEntity;
+import net.glowstone.entity.passive.GlowChicken;
 import net.glowstone.io.nbt.NbtSerialization;
 import net.glowstone.util.nbt.CompoundTag;
 import org.bukkit.Location;
@@ -36,8 +37,18 @@ public final class EntityStorage {
      */
     static {
         bind(new PlayerStore());
+
+        // LivingEntities - Passive Entities
+        bind(new BatStore());
+        bind(new AgeableStore<>(GlowChicken.class, "Chicken"));
+        bind(new HorseStore());
+        bind(new PigStore());
+        bind(new RabbitStore());
+        bind(new SheepStore());
+
         bind(new ItemStore());
         bind(new TNTPrimedStorage());
+        bind(new ItemFrameStore());
     }
 
     /**
@@ -97,11 +108,6 @@ public final class EntityStorage {
      */
     private static EntityStore<?> find(Class<? extends GlowEntity> clazz, String type) {
         EntityStore<?> store = classTable.get(clazz);
-        //Dragonet-Add Check parent class
-        if (store == null) {
-            store = classTable.get(clazz.getSuperclass());
-        }
-        //Dragonet-End
         if (store == null) {
             // todo: maybe try to look up a parent class's store if one isn't found
             throw new IllegalArgumentException("Unknown entity type to " + type + ": " + clazz);

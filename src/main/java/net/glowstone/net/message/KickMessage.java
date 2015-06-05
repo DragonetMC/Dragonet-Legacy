@@ -9,7 +9,7 @@ import net.glowstone.util.TextMessage;
 @RequiredArgsConstructor
 public final class KickMessage implements Message {
 
-    public final TextMessage text;
+    private final TextMessage text;
 
     public KickMessage(String text) {
         this(new TextMessage(text));

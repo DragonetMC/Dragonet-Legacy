@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 public final class CollectItemMessage implements Message {
 
-    public final int id, collector;
+    private final int id, collector;
 
 }

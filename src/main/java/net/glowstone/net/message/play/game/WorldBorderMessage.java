@@ -9,12 +9,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class WorldBorderMessage implements Message {
 
-    public final Action action;
-    public final double radius;
-    public final double oldRadius, newRadius;
-    public final long speed;
-    public final double x, z;
-    public final int portalTeleportBoundary, warningTime, warningBlocks;
+    private final Action action;
+    private final double radius;
+    private final double oldRadius, newRadius;
+    private final long speed;
+    private final double x, z;
+    private final int portalTeleportBoundary, warningTime, warningBlocks;
 
     // SET_SIZE
     public WorldBorderMessage(Action action, double radius) {

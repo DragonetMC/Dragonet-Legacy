@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public final class HeldItemMessage implements Message {
 
-    public final int slot;
+    private final int slot;
 
 }
 

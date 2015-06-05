@@ -10,7 +10,7 @@ import org.bukkit.Location;
 @Data
 public class PlayerUpdateMessage implements Message {
 
-    public final boolean onGround;
+    private final boolean onGround;
 
     public void update(Location location) {
         // do nothing

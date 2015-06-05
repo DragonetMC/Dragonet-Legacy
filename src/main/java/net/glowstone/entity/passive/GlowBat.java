@@ -1,43 +1,60 @@
- /* GNU LESSER GENERAL PUBLIC LICENSE
- *                       Version 3, 29 June 2007
- *
- * Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/>
- * Everyone is permitted to copy and distribute verbatim copies
- * of this license document, but changing it is not allowed.
- *
- * You can view LICENCE file for details. 
- */
-
 package net.glowstone.entity.passive;
 
-import net.glowstone.entity.GlowAnimal;
+import com.flowpowered.networking.Message;
+import net.glowstone.entity.GlowAmbient;
+import net.glowstone.entity.meta.MetadataIndex;
+import net.glowstone.entity.meta.MetadataMap;
+import net.glowstone.net.message.play.entity.EntityHeadRotationMessage;
+import net.glowstone.net.message.play.entity.EntityMetadataMessage;
+import net.glowstone.net.message.play.entity.SpawnMobMessage;
+import net.glowstone.util.Position;
 import org.bukkit.Location;
 import org.bukkit.entity.Bat;
 import org.bukkit.entity.EntityType;
 
-/**
- *
- * @author TheMCPEGamer
- */
-public class GlowBat extends GlowAnimal implements Bat
-{
-    private Boolean isAwake = true;
-    
-    public GlowBat(Location loc)
-    {
-        super(loc, EntityType.BAT);
-        setSize(0.3F, 0.3F);
+import java.util.LinkedList;
+import java.util.List;
+
+public class GlowBat extends GlowAmbient implements Bat {
+
+    private boolean isAwake;
+
+    public GlowBat(Location location) {
+        super(location);
     }
 
     @Override
-    public boolean isAwake()
-    {
+    public List<Message> createSpawnMessage() {
+        List<Message> result = new LinkedList<>();
+
+        // spawn mob
+        int x = Position.getIntX(location);
+        int y = Position.getIntY(location);
+        int z = Position.getIntZ(location);
+        int yaw = Position.getIntYaw(location);
+        int pitch = Position.getIntPitch(location);
+        result.add(new SpawnMobMessage(id, getType().getTypeId(), x, y, z, yaw, pitch, pitch, 0, 0, 0, metadata.getEntryList()));
+
+        // head facing
+        result.add(new EntityHeadRotationMessage(id, yaw));
+        MetadataMap map = new MetadataMap(GlowBat.class);
+        map.set(MetadataIndex.BAT_HANGING, (byte) (this.isAwake ? 1 : 0));
+        result.add(new EntityMetadataMessage(id, map.getEntryList()));
+        return result;
+    }
+
+    @Override
+    public boolean isAwake() {
         return isAwake;
     }
 
     @Override
-    public void setAwake(boolean awake)
-    {
-        this.isAwake = awake;
+    public void setAwake(boolean isAwake) {
+        this.isAwake = isAwake;
+    }
+
+    @Override
+    public EntityType getType() {
+        return EntityType.BAT;
     }
 }

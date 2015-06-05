@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public final class RespawnMessage implements Message {
 
-    public final int dimension, difficulty, mode;
-    public final String levelType;
+    private final int dimension, difficulty, mode;
+    private final String levelType;
 
 }
