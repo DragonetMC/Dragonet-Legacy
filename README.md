@@ -17,6 +17,9 @@ Right now, The Dragonet Team is working on a GUI wrapper for the server, it will
 ##Where is the Dragonet GitHub Wiki?
 [Here!](https://github.com/TheMCPEGamer/Dragonet/wiki)<br>
 
+##So what's the deal with the Android app?
+We have an android app in development! However it is not for creating a server. @RandomAltThing will also be making a separate app to host the server on your device!
+
 ##Download
 You may download pre-compiled binaries at our website:
 [http://dragonet.org/](http://dragonet.org/)<br> 
