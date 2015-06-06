@@ -1,4 +1,4 @@
-# Glowstone++ is an OPEN Open Source Project
+# Dragonet is an OPEN Open Source Project
 
 -----------------------------------------
 
