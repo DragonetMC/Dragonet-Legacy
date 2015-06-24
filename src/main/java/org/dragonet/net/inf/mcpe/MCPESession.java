@@ -52,9 +52,9 @@ public class MCPESession extends DragonetSession {
      */
     @Override
     public void onTick() {
-        client.onTick();
+        //client.onTick(); <- We don't tick here, in NetworkHandler already did. 
         super.onTick();
-        if (client.getSentAndReceivedChunks() >= 56 && (this.player instanceof Player)) { //TODO: Change 
+        if (client.getSentAndReceivedChunks() >= dServer.getPlayerSpawnThreshold()*dServer.getPlayerSpawnThreshold() && (this.player instanceof Player)) { //TODO: Change 
             this.getLogger().info("PE player [" + this.player.getName() + "] has spawned. ");
             client.setSentAndReceivedChunks(-1);
             this.sendSettings();

@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import lombok.Getter;
@@ -51,6 +53,9 @@ public class NetworkHandler {
         DatagramPacket packet = null;
         while ((packet = this.udp.receive()) != null) {
             this.processPacket(packet);
+        }
+        for(PENetworkClient cli : clients.values()){
+            cli.onTick();
         }
     }
     
