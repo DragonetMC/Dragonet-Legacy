@@ -35,6 +35,7 @@ import org.dragonet.net.SessionManager;
 import org.dragonet.net.inf.portal.DragonPortalServer;
 import org.dragonet.net.inf.portal.PasswordNotSetException;
 import org.dragonet.peaddon.DragonetPEAddonServer;
+import org.dragonet.plugin.php.PHPManager;
 import org.dragonet.rhino.Script;
 import org.dragonet.statistic.StatisticSender;
 import org.dragonet.utilities.DragonetVersioning;
@@ -61,6 +62,9 @@ public class DragonetServer {
 
     @Getter
     private Rhino rhino;
+    
+    @Getter
+    private PHPManager php;
 
     @Getter
     private NetworkHandler networkHandler;
@@ -105,9 +109,9 @@ public class DragonetServer {
      */
     public void initialize() {
         /* Uncomment following 3 lines when release */
-        this.logger.info("Sending statistic... ");
-        StatisticSender statSender = new StatisticSender(DragonetVersioning.DRAGONET_VERSION, System.currentTimeMillis());
-        statSender.sendStatistic();
+        //this.logger.info("Sending statistic... ");
+        //StatisticSender statSender = new StatisticSender(DragonetVersioning.DRAGONET_VERSION, System.currentTimeMillis());
+        //statSender.sendStatistic();
         this.logger.info("Starting Dragonet Server version " + DragonetVersioning.DRAGONET_VERSION + "... ");
         File fileConfig = new File(this.server.getConfigDir() + File.separator + "dragonet.yml");
         if (!fileConfig.exists()) {
@@ -150,6 +154,8 @@ public class DragonetServer {
         this.logger.info("Starting DAPIS scripts... ");
         this.rhino = new Rhino(this.getServer());
         this.rhino.loadScripts();
+        
+        this.php = new PHPManager(this.getServer());
 
         if (config.getBoolean("enable-addon", true)) {
             this.getLogger().info("Enabling DragonetPE Android Addon server... ");
