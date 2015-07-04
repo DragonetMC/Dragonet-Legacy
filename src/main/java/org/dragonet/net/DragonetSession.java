@@ -15,6 +15,8 @@ package org.dragonet.net;
 import com.flowpowered.networking.Message;
 import com.flowpowered.networking.exception.ChannelClosedException;
 import io.netty.channel.ChannelFuture;
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -44,6 +46,7 @@ import org.dragonet.net.packet.minecraft.BatchPacket;
 import org.dragonet.net.packet.minecraft.MovePlayerPacket;
 import org.dragonet.net.packet.minecraft.PEPacket;
 import org.dragonet.net.packet.minecraft.PEPacketIDs;
+import org.dragonet.net.packet.minecraft.RedirectServerPacket;
 import org.dragonet.net.packet.minecraft.SetDifficultyPacket;
 import org.dragonet.net.packet.minecraft.SetHealthPacket;
 import org.dragonet.net.packet.minecraft.SetTimePacket;
@@ -73,6 +76,9 @@ public abstract class DragonetSession extends GlowSession {
 
     @Getter
     private final String sessionKey;
+    
+    @Getter
+    private boolean redirected;
 
     public DragonetSession(DragonetServer dServer, BaseTranslator translator, String sessionKey) {
         super(dServer.getServer());
@@ -346,6 +352,16 @@ public abstract class DragonetSession extends GlowSession {
             }
         }
         return true;
+    }
+    
+    public void redirectToServer(InetAddress addr, short port){
+        if(redirected = true) return;
+        RedirectServerPacket pk = new RedirectServerPacket();
+        pk.ipv4 = Inet4Address.class.isInstance(addr);
+        pk.ip = addr.getAddress();
+        pk.port = port;
+        send(pk);
+        redirected = true;
     }
 
     @Override

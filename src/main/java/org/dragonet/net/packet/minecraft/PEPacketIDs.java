@@ -83,4 +83,6 @@ public final class PEPacketIDs {
     public final static byte FULL_CHUNK_DATA_PACKET = (byte) 0xaf;
     public final static byte SET_DIFFICULTY_PACKET = (byte) 0xb0;
     public final static byte BATCH_PACKET = (byte) 0xb1;
+    
+    public final static byte REDIRECT_SERVER = (byte) 0x1b;
 }
