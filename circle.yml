@@ -4,12 +4,10 @@ checkout:
         # clone the Glowkit submodule (see https://circleci.com/docs/configuration)
         - git submodule sync
         - git submodule update --init
-        # setup for mvn dependency:resolve (see http://stackoverflow.com/questions/7772556/maven-fails-to-resolve-dependency)
-        - (cd Glowkit && mvn install)
 
 test:
     post:
-        - cp -r target/glowstone*.jar $CIRCLE_ARTIFACTS/
+        - cp -r Dragonet-core/target/*.jar $CIRCLE_ARTIFACTS/
 # deploy to test server
 #deployment:
 #  devel:
