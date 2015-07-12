@@ -1,7 +1,9 @@
 Dragonet
 ========
 
-The universal Minecraft server, supports both `Minecraft PC` and `Minecraft PE` clients. 
+The universal Minecraft server, supports both `Minecraft PC` and `Minecraft PE` clients.  
+
+[Build status indicator](https://circleci.com/gh/DragonetMC/Dragonet/tree/master.svg?style=badge)  
 
 #### Supported Plugins
 Currently it supports Bukkit plugins, Sponge plugins(non-mod) and DAPIS Javascript plugins. 
@@ -22,7 +24,9 @@ We have an android app in development! However it is not for creating a server. 
 
 ##Download
 You may download pre-compiled binaries at our website:
-[http://dragonet.org/](http://dragonet.org/)<br> 
+[http://dragonet.org/](http://dragonet.org/)<br>
+You can also get development builds from the CircleCI page.
+Last build: [![Build status indicator](https://circleci.com/gh/DragonetMC/Dragonet/tree/master.svg?style=svg)](https://circleci.com/gh/DragonetMC/Dragonet/tree/master)
 
 ###Credits & Licencing
 Dragonet software: `A universal Minecraft server that supports both Minecraft for PC and Minecraft: Pocket Edition. `<br>
