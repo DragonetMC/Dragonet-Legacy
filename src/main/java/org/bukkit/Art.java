@@ -2,7 +2,7 @@ package org.bukkit;
 
 import java.util.HashMap;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 import com.google.common.collect.Maps;
 

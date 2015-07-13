@@ -8,7 +8,7 @@ import org.junit.Test;
 
 public class ArtTest {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void getByNullName() {
         Art.getByName(null);
     }

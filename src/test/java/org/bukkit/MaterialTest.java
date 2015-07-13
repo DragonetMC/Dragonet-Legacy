@@ -53,7 +53,7 @@ public class MaterialTest {
         }
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void matchMaterialByNull() {
         Material.matchMaterial(null);
     }

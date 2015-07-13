@@ -1,6 +1,6 @@
 package org.bukkit.title;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 /**
  * Represents the options for the title on a player

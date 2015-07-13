@@ -18,22 +18,22 @@ public class StringUtilTest {
         StringUtil.startsWithIgnoreCase("String", null);
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected=NullPointerException.class)
     public void nullStringTest() {
         StringUtil.startsWithIgnoreCase(null, "String");
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected=NullPointerException.class)
     public void nullCollectionTest() {
         StringUtil.copyPartialMatches("Token", ImmutableList.<String>of(), null);
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected=NullPointerException.class)
     public void nullIterableTest() {
         StringUtil.copyPartialMatches("Token", null, new ArrayList<String>());
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected=NullPointerException.class)
     public void nullTokenTest() {
         StringUtil.copyPartialMatches(null, ImmutableList.<String>of(), new ArrayList<String>());
     }
@@ -54,7 +54,7 @@ public class StringUtilTest {
         StringUtil.copyPartialMatches("token", ImmutableList.of("token1", "token2"), ImmutableList.of());
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected=NullPointerException.class)
     public void copyNullTest() {
         StringUtil.copyPartialMatches("token", Arrays.asList("token1", "token2", null), new ArrayList<String>());
     }
