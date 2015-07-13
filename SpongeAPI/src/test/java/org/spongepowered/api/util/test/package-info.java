@@ -22,11 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.spongepowered.api.util.gen;
+@NonnullByDefault
+package org.spongepowered.api.util.test;
 
-/**
- * An immutable version of a {@link org.spongepowered.api.world.extent.BiomeArea}.
- */
-public interface ImmutableBiomeBuffer extends BiomeBuffer {
-
-}
+import org.spongepowered.api.util.annotation.NonnullByDefault;

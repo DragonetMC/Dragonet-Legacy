@@ -22,62 +22,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.spongepowered.api.util.gen;
+package org.spongepowered.api.world.extent;
 
 import com.flowpowered.math.vector.Vector2i;
+import org.spongepowered.api.util.PositionOutOfBoundsException;
 import org.spongepowered.api.world.biome.BiomeType;
-import org.spongepowered.api.world.extent.BiomeArea;
 
 /**
- * An buffer for {@link BiomeType} data. This buffer has no direct relation to
- * the world and changes to it are not synchronized to the world.
+ * An area containing biomes that can be accessed and modified.
  *
- * <p>Unlike {@link BiomeArea}, buffers are guaranteed to be loaded in memory as
- * a whole. Calling methods like {@link #getBiome(Vector2i)} will never result
- * in new terrain being generated. As a result of this, biome buffers are much
- * more restricted in size than a {@link BiomeArea}.</p>
+ * @see BiomeArea
  */
-public interface BiomeBuffer {
+public interface MutableBiomeArea extends BiomeArea {
 
     /**
-     * Gets the biome location with the lowest x and y that is still a valid
-     * position for {@link #getBiome(Vector2i)}.
-     *
-     * @return The lowest biome location
-     */
-    Vector2i getBiomeMin();
-
-    /**
-     * Gets the biome location with the highest x and y that is still a valid
-     * position for {@link #getBiome(Vector2i)}.
-     *
-     * @return The highest biome location.
-     */
-    Vector2i getBiomeMax();
-
-    /**
-     * Gets the size of the area. Defined as <code>{@link #getBiomeMax()} -
-     * {@link #getBiomeMin()} + (1, 1)</code>.
-     *
-     * @return The size
-     */
-    Vector2i getBiomeSize();
-
-    /**
-     * Get an object representing the biome at the given position.
+     * Sets the biome at the given position in the world.
      *
      * @param position The position
-     * @return The biome
+     * @param biome The biome
+     * @throws PositionOutOfBoundsException If the position is outside of the
+     *     bounds of the area
      */
-    BiomeType getBiome(Vector2i position);
+    void setBiome(Vector2i position, BiomeType biome);
 
     /**
-     * Gets the {@link BiomeType} at the given location.
+     * Sets the biome at the given position in the world.
      *
      * @param x The X position
      * @param z The Z position
-     * @return The biome
+     * @param biome The biome
+     * @throws PositionOutOfBoundsException If the position is outside of the
+     *     bounds of the area
      */
-    BiomeType getBiome(int x, int z);
-
+    void setBiome(int x, int z, BiomeType biome);
 }
