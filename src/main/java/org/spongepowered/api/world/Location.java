@@ -25,11 +25,13 @@
 package org.spongepowered.api.world;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static org.spongepowered.api.data.DataQuery.of;
 
 import com.flowpowered.math.vector.Vector2i;
 import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
+import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
@@ -52,6 +54,8 @@ import org.spongepowered.api.world.extent.Extent;
 
 import java.util.Collection;
 
+import javax.annotation.Nullable;
+
 /**
  * A position within a particular {@link Extent}.
  *
@@ -70,8 +74,13 @@ import java.util.Collection;
 public final class Location implements DataHolder {
 
     private final Extent extent;
-    private final Vector3d position;
-    private final Vector3i blockPosition;
+    // Lazily computed, either position or blockPosition is set by the constructor
+    @Nullable
+    private Vector3d position = null;
+    @Nullable
+    private Vector3i blockPosition = null;
+    @Nullable
+    private Vector2i biomePosition = null;
 
     /**
      * Create a new instance.
@@ -80,10 +89,8 @@ public final class Location implements DataHolder {
      * @param position The position
      */
     public Location(Extent extent, Vector3d position) {
-        checkNotNull(position, "position");
         this.extent = checkNotNull(extent, "extent");
-        this.position = position;
-        this.blockPosition = position.floor().toInt();
+        this.position = checkNotNull(position, "position");
     }
 
     /**
@@ -102,13 +109,11 @@ public final class Location implements DataHolder {
      * Create a new instance.
      *
      * @param extent The extent
-     * @param position The position
+     * @param blockPosition The position
      */
-    public Location(Extent extent, Vector3i position) {
-        checkNotNull(position, "position");
+    public Location(Extent extent, Vector3i blockPosition) {
         this.extent = checkNotNull(extent, "extent");
-        this.position = position.toDouble();
-        this.blockPosition = position;
+        this.blockPosition = checkNotNull(blockPosition, "blockPosition");
     }
 
     /**
@@ -138,6 +143,10 @@ public final class Location implements DataHolder {
      * @return The underlying position
      */
     public Vector3d getPosition() {
+        if (this.position == null) {
+            checkState(this.blockPosition != null);
+            this.position = getBlockPosition().toDouble();
+        }
         return this.position;
     }
 
@@ -147,17 +156,23 @@ public final class Location implements DataHolder {
      * @return The underlying block position
      */
     public Vector3i getBlockPosition() {
+        if (this.blockPosition == null) {
+            checkState(this.position != null);
+            this.blockPosition = getPosition().floor().toInt();
+        }
         return this.blockPosition;
     }
 
     /**
-     * Gets the underlying biome position. This method creates a new
-     * {@link Vector2i} every time.
+     * Gets the underlying biome position.
      *
      * @return The underlying biome position
      */
     public Vector2i getBiomePosition() {
-        return getBlockPosition().toVector2(true);
+        if (this.biomePosition == null) {
+            this.biomePosition = getBlockPosition().toVector2(true);
+        }
+        return this.biomePosition;
     }
 
     /**
@@ -308,7 +323,7 @@ public final class Location implements DataHolder {
     }
 
     /**
-     * Gets the block at this location. Calls {@link #getBiomePosition()}.
+     * Gets the block at this location.
      *
      * @return The biome at this location
      */
@@ -324,7 +339,7 @@ public final class Location implements DataHolder {
      *
      * @return The type of block
      */
-    public BlockType getType() {
+    public BlockType getBlockType() {
         return getExtent().getBlockType(getBlockPosition());
     }
 
@@ -333,7 +348,7 @@ public final class Location implements DataHolder {
      *
      * @return The current block state
      */
-    public BlockState getState() {
+    public BlockState getBlock() {
         return getExtent().getBlock(getBlockPosition());
     }
 
@@ -342,7 +357,7 @@ public final class Location implements DataHolder {
      *
      * @return True if the block at this position has tile entity data, false otherwise
      */
-    boolean hasTileEntity() {
+    public boolean hasTileEntity() {
         return getExtent().getTileEntity(getBlockPosition()).isPresent();
     }
 
@@ -356,24 +371,24 @@ public final class Location implements DataHolder {
     }
 
     /**
-     * Replace the block state at this position with a new state.
+     * Replace the block at this position with a new state.
      *
      * <p>This will remove any extended block data at the given position.</p>
      *
      * @param state The new block state
      */
-    public void replaceWith(BlockState state) {
+    public void setBlock(BlockState state) {
         getExtent().setBlock(getBlockPosition(), state);
     }
 
     /**
-     * Replace the block at this position by a new type.
+     * Replace the block type at this position by a new type.
      *
      * <p>This will remove any extended block data at the given position.</p>
      *
      * @param type The new type
      */
-    public void replaceWith(BlockType type) {
+    public void setBlockType(BlockType type) {
         getExtent().setBlockType(getBlockPosition(), type);
     }
 
@@ -385,7 +400,7 @@ public final class Location implements DataHolder {
      *
      * @param snapshot The snapshot
      */
-    public void replaceWith(BlockSnapshot snapshot) {
+    public void setBlockSnapshot(BlockSnapshot snapshot) {
         getExtent().setBlockSnapshot(getBlockPosition(), snapshot);
     }
 
@@ -395,7 +410,7 @@ public final class Location implements DataHolder {
      * <p>This will remove any extended block data at the given position.</p>
      */
     @SuppressWarnings("ConstantConditions")
-    public void remove() {
+    public void removeBlock() {
         getExtent().setBlockType(getBlockPosition(), BlockTypes.AIR);
     }
 
@@ -407,7 +422,7 @@ public final class Location implements DataHolder {
     /**
      * Simulates the interaction with this object as if a player had done so.
      */
-    public void interact() {
+    public void interactBlock() {
         getExtent().interactBlock(getBlockPosition());
     }
 
@@ -417,7 +432,7 @@ public final class Location implements DataHolder {
      *
      * @param itemStack The item
      */
-    public void interactWith(ItemStack itemStack) {
+    public void interactBlockWith(ItemStack itemStack) {
         getExtent().interactBlockWith(getBlockPosition(), itemStack);
     }
 
@@ -426,7 +441,7 @@ public final class Location implements DataHolder {
      *
      * @return Whether the block was destroyed
      */
-    public boolean dig() {
+    public boolean digBlock() {
         return getExtent().digBlock(getBlockPosition());
     }
 
@@ -437,7 +452,7 @@ public final class Location implements DataHolder {
      * @param itemStack The tool
      * @return Whether the block was destroyed
      */
-    public boolean digWith(ItemStack itemStack) {
+    public boolean digBlockWith(ItemStack itemStack) {
         return getExtent().digBlockWith(getBlockPosition(), itemStack);
     }
 
@@ -446,7 +461,7 @@ public final class Location implements DataHolder {
      *
      * @return The time in ticks
      */
-    public int getDigTime() {
+    public int getBlockDigTime() {
         return getExtent().getBlockDigTime(getBlockPosition());
     }
 
@@ -456,7 +471,7 @@ public final class Location implements DataHolder {
      * @param itemStack The item to pretend-dig with
      * @return The time in ticks
      */
-    public int getDigTimeWith(ItemStack itemStack) {
+    public int getBlockDigTimeWith(ItemStack itemStack) {
         return getExtent().getBlockDigTimeWith(getBlockPosition(), itemStack);
     }
 
@@ -478,7 +493,7 @@ public final class Location implements DataHolder {
      *
      * @return A light level, nominally between 0 and 15, inclusive
      */
-    public byte getLuminance() {
+    public int getLuminance() {
         return getExtent().getLuminance(getBlockPosition());
     }
 
@@ -490,7 +505,7 @@ public final class Location implements DataHolder {
      *
      * @return A light level, nominally between 0 and 15, inclusive
      */
-    public byte getLuminanceFromSky() {
+    public int getLuminanceFromSky() {
         return getExtent().getLuminanceFromSky(getBlockPosition());
     }
 
@@ -502,7 +517,7 @@ public final class Location implements DataHolder {
      *
      * @return A light level, nominally between 0 and 15, inclusive
      */
-    public byte getLuminanceFromGround() {
+    public int getLuminanceFromGround() {
         return getExtent().getLuminanceFromGround(getBlockPosition());
     }
 
@@ -511,7 +526,7 @@ public final class Location implements DataHolder {
      *
      * @return Whether powered
      */
-    public boolean isPowered() {
+    public boolean isBlockPowered() {
         return getExtent().isBlockPowered(getBlockPosition());
     }
 
@@ -520,7 +535,7 @@ public final class Location implements DataHolder {
      *
      * @return Whether powered
      */
-    public boolean isIndirectlyPowered() {
+    public boolean isBlockIndirectlyPowered() {
         return getExtent().isBlockPowered(getBlockPosition());
     }
 
@@ -530,7 +545,7 @@ public final class Location implements DataHolder {
      * @param direction The direction
      * @return Whether powered
      */
-    public boolean isFacePowered(Direction direction) {
+    public boolean isBlockFacePowered(Direction direction) {
         return getExtent().isBlockFacePowered(getBlockPosition(), direction);
     }
 
@@ -540,7 +555,7 @@ public final class Location implements DataHolder {
      * @param direction The direction
      * @return Whether powered
      */
-    public boolean isFaceIndirectlyPowered(Direction direction) {
+    public boolean isBlockFaceIndirectlyPowered(Direction direction) {
         return getExtent().isBlockFaceIndirectlyPowered(getBlockPosition(), direction);
     }
 
@@ -549,7 +564,7 @@ public final class Location implements DataHolder {
      *
      * @return Faces powered
      */
-    public Collection<Direction> getPoweredFaces() {
+    public Collection<Direction> getPoweredBlockFaces() {
         return getExtent().getPoweredBlockFaces(getBlockPosition());
     }
 
@@ -558,7 +573,7 @@ public final class Location implements DataHolder {
      *
      * @return Faces indirectly powered
      */
-    public Collection<Direction> getIndirectlyPoweredFaces() {
+    public Collection<Direction> getIndirectlyPoweredBlockFaces() {
         return getExtent().getIndirectlyPoweredBlockFaces(getBlockPosition());
     }
 
@@ -567,7 +582,7 @@ public final class Location implements DataHolder {
      *
      * @return Blocks movement
      */
-    public boolean isPassable() {
+    public boolean isBlockPassable() {
         return getExtent().isBlockPassable(getBlockPosition());
     }
 
@@ -577,7 +592,7 @@ public final class Location implements DataHolder {
      * @param direction The face of the block to check
      * @return Is flammable
      */
-    public boolean isFaceFlammable(Direction direction) {
+    public boolean isBlockFaceFlammable(Direction direction) {
         return getExtent().isBlockFlammable(getBlockPosition(), direction);
     }
 
@@ -589,7 +604,7 @@ public final class Location implements DataHolder {
      *
      * @return A snapshot
      */
-    public BlockSnapshot getSnapshot() {
+    public BlockSnapshot getBlockSnapshot() {
         return getExtent().getBlockSnapshot(getBlockPosition());
     }
 
@@ -618,7 +633,7 @@ public final class Location implements DataHolder {
      *
      * @param update The ScheduledBlockUpdate to remove
      */
-    void removeScheduledUpdate(ScheduledBlockUpdate update) {
+    public void removeScheduledUpdate(ScheduledBlockUpdate update) {
         getExtent().removeScheduledUpdate(getBlockPosition(), update);
     }
 
@@ -674,15 +689,30 @@ public final class Location implements DataHolder {
 
     @Override
     public DataContainer toContainer() {
-        DataContainer container = new MemoryDataContainer();
-        if (getExtent() instanceof World) {
-            container.set(of("WorldName"), ((World) getExtent()).getName());
-        }
-        container.set(of("BlockType"), this.getExtent().getBlockType(getBlockPosition()).getId());
-        container.set(of("x"), this.getX());
-        container.set(of("y"), this.getY());
-        container.set(of("z"), this.getZ());
-        container.set(of("Manipulators"), getManipulators());
-        return container;
+        return new MemoryDataContainer()
+                .set(of("ExtentUUID"), getExtent().getUniqueId())
+                .set(of("X"), getX())
+                .set(of("Y"), getY())
+                .set(of("Z"), getZ());
     }
+
+    @Override
+    public String toString() {
+        return "Location{" + getPosition() + " in " + getExtent() + "}";
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(this.extent, this.getPosition());
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof Location)) {
+            return false;
+        }
+        Location otherLoc = (Location) other;
+        return otherLoc.extent.equals(this.extent) && otherLoc.getPosition().equals(this.getPosition());
+    }
+
 }

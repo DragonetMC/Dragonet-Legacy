@@ -22,40 +22,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.spongepowered.api.util.gen;
+package org.spongepowered.api.extra.skylands;
 
-import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.block.BlockType;
-import org.spongepowered.api.world.extent.BlockVolume;
+import com.flowpowered.math.vector.Vector2i;
+import org.spongepowered.api.world.biome.BiomeTypes;
+import org.spongepowered.api.world.extent.MutableBiomeArea;
+import org.spongepowered.api.world.gen.BiomeGenerator;
 
 /**
- * A mutable buffer for {@link BlockType} data. This buffer has no direct relation
- * to the world and changes to it are not synchronized to the world.
+ * A biome generator for a Skylands look-alike.
  */
-public interface MutableBlockBuffer extends BlockBuffer, BlockVolume {
+public class SkylandsBiomeGenerator implements BiomeGenerator {
 
-    /**
-     * Fills the entire buffer with the given block.
-     *
-     * @param block The block to fill with
-     */
-    void fill(BlockState block);
-
-    /**
-     * Sets all horizontal layers between {@code y} (inclusive) and 
-     * {@code y+height} (exclusive) to the given block type.
-     *
-     * @param y The starting Y position
-     * @param height The height
-     * @param block The block type
-     */
-    void setHorizontalLayer(int y, int height, BlockState block);
-
-    /**
-     * Returns an immutable copy of this block buffer.
-     *
-     * @return An immutable copy
-     */
-    ImmutableBlockBuffer getImmutableClone();
-
+    @Override
+    @SuppressWarnings("ConstantConditions")
+    public void generateBiomes(MutableBiomeArea buffer) {
+        // TODO: temporary, custom biome maybe?
+        final Vector2i min = buffer.getBiomeMin();
+        final Vector2i max = buffer.getBiomeMax();
+        for (int yy = min.getY(); yy <= max.getY(); yy++) {
+            for (int xx = min.getX(); xx <= max.getX(); xx++) {
+                buffer.setBiome(xx, yy, BiomeTypes.PLAINS);
+            }
+        }
+    }
 }

@@ -29,7 +29,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Optional;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 import java.lang.reflect.Method;
@@ -154,9 +153,11 @@ public class AccessorFirstStrategy implements PropertySearchStrategy {
                 String name;
 
                 Method leastSpecificMethod;
-                if ((name = getAccessorName(method)) != null && ((leastSpecificMethod = accessorHierarchyBottoms.get(name)) == null || leastSpecificMethod.getReturnType() != method.getReturnType())) {
+                if ((name = getAccessorName(method)) != null && ((leastSpecificMethod = accessorHierarchyBottoms.get(name)) == null
+                                                                 || leastSpecificMethod.getReturnType() != method.getReturnType())) {
                     accessors.put(name, method);
-                    if (accessorHierarchyBottoms.get(name) == null || method.getReturnType().isAssignableFrom(accessorHierarchyBottoms.get(name).getReturnType())) {
+                    if (accessorHierarchyBottoms.get(name) == null
+                        || method.getReturnType().isAssignableFrom(accessorHierarchyBottoms.get(name).getReturnType())) {
                         accessorHierarchyBottoms.put(name, method);
                     }
                 } else if ((name = getMutatorName(method)) != null) {
