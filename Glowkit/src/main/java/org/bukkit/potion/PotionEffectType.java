@@ -3,7 +3,7 @@ package org.bukkit.potion;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 /**
  * Represents a type of potion and its effect on an entity.

@@ -2,7 +2,7 @@ package org.bukkit.potion;
 
 import java.util.Collection;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
@@ -405,7 +405,7 @@ public class Potion {
         if ((damage & SPLASH_BIT) > 0) {
             potion = potion.splash();
         }
-        if ((damage & EXTENDED_BIT) > 0) {
+        if ((!type.equals(PotionType.INSTANT_DAMAGE) || type.equals(PotionType.FIRE_RESISTANCE)) && (damage & EXTENDED_BIT) > 0) {
             potion = potion.extend();
         }
         return potion;

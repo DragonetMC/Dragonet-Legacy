@@ -85,7 +85,7 @@ public class PotionTest {
         assertTrue((potion.toDamageValue() & 0x3F) == (PotionType.POISON.getDamageValue() | 0x20));
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected=NullPointerException.class)
     public void nullType() {
         new Potion(null, 2);
     }
@@ -101,13 +101,13 @@ public class PotionTest {
         potion.setLevel(3);
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected=NullPointerException.class)
     public void nullStack() {
         Potion potion = new Potion(PotionType.POISON);
         potion.apply((ItemStack) null);
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected=NullPointerException.class)
     public void nullEntity() {
         Potion potion = new Potion(PotionType.POISON);
         potion.apply((LivingEntity) null);

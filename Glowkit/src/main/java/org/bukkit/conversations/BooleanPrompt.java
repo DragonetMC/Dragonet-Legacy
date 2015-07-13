@@ -1,7 +1,7 @@
 package org.bukkit.conversations;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.BooleanUtils;
 
 /**
  * BooleanPrompt is the base class for any prompt that requires a boolean
