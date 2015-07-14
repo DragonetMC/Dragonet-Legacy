@@ -4,7 +4,7 @@ checkout:
         # compile bukkit
         - (cd Glowkit && mvn install)
         # deal with Maven's periodical panic attacks
-        - mvn package
+        - (cd Dragonet && mvn package)
 test:
     post:
         - cp -r Dragonet-core/target/*.jar $CIRCLE_ARTIFACTS/
