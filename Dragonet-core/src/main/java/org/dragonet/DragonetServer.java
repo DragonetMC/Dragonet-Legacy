@@ -70,9 +70,6 @@ public class DragonetServer {
     private ExecutorService threadPool;
 
     @Getter
-    private DragonetPEAddonServer addonServer;
-
-    @Getter
     private boolean addonSupported;
 
     @Getter
