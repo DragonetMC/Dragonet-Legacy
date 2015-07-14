@@ -11,7 +11,7 @@
 
     <groupId>org.bukkit</groupId>
     <artifactId>bukkit</artifactId>
-    <version>1.8.6-R0.1-SNAPSHOT</version>
+    <version>1.8.7-R0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Bukkit</name>
@@ -31,7 +31,7 @@
             <url>https://hub.spigotmc.org/nexus/content/repositories/releases/</url>
         </repository>
         <snapshotRepository>
-            <id>spigotmc-releases</id>
+            <id>spigotmc-snapshots</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
@@ -47,6 +47,13 @@
     -->
 
     <dependencies>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.4</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- Keep lang2 for compatibility for now. This may be removed in the future. -->
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
@@ -67,6 +74,7 @@
             <version>17.0</version>
             <scope>compile</scope>
         </dependency>
+        <!-- bundled with Minecraft, should be kept in sync -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
@@ -81,7 +89,7 @@
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-            <version>1.14</version>
+            <version>1.15</version>
             <scope>compile</scope>
         </dependency>
         <!-- testing -->

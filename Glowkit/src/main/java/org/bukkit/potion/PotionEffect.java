@@ -3,7 +3,7 @@ package org.bukkit.potion;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.LivingEntity;

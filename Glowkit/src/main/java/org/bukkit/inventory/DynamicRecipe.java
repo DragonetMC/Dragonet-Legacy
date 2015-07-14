@@ -1,6 +1,6 @@
 package org.bukkit.inventory;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 /**
  * Represents a dynamic recipe.
