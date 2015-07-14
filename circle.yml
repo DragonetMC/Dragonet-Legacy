@@ -6,7 +6,7 @@ checkout:
         # get outta there!
         - cd ..
         # deal with Maven's periodical panic attacks
-        - (cd Dragonet && mvn package)
+        - (cd Dragonet-core && mvn package)
 test:
     post:
         - cp -r Dragonet-core/target/*.jar $CIRCLE_ARTIFACTS/
