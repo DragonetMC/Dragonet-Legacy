@@ -2,14 +2,13 @@ package net.glowstone.scoreboard;
 
 import com.flowpowered.networking.Message;
 import com.google.common.collect.ImmutableSet;
-import net.glowstone.GlowServer;
 import net.glowstone.constants.GlowDisplaySlot;
 import net.glowstone.entity.GlowPlayer;
 import net.glowstone.net.message.play.scoreboard.ScoreboardDisplayMessage;
 import net.glowstone.net.message.play.scoreboard.ScoreboardObjectiveMessage;
 import net.glowstone.net.message.play.scoreboard.ScoreboardScoreMessage;
 import net.glowstone.net.message.play.scoreboard.ScoreboardTeamMessage;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.scoreboard.*;
@@ -260,6 +259,11 @@ public final class GlowScoreboard implements Scoreboard {
     public Team getPlayerTeam(OfflinePlayer player) throws IllegalArgumentException {
         Validate.notNull(player, "Player cannot be null");
         return playerTeamMap.get(player);
+    }
+
+    @Override
+    public Team getEntryTeam(String teamName) throws IllegalArgumentException {
+        return getTeam(teamName); // TODO: is this the same as getTeam?
     }
 
     public Team getTeam(String teamName) throws IllegalArgumentException {
