@@ -3,6 +3,7 @@ package net.glowstone.scoreboard;
 import com.flowpowered.networking.Message;
 import com.google.common.collect.ImmutableSet;
 import net.glowstone.constants.GlowDisplaySlot;
+import net.glowstone.GlowServer;
 import net.glowstone.entity.GlowPlayer;
 import net.glowstone.net.message.play.scoreboard.ScoreboardDisplayMessage;
 import net.glowstone.net.message.play.scoreboard.ScoreboardObjectiveMessage;
