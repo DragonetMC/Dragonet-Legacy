@@ -17,12 +17,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
-import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.EnumMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Level;
 
 import lombok.Getter;
 import net.glowstone.GlowServer;
@@ -34,7 +32,6 @@ import org.dragonet.net.inf.mcpe.NetworkHandler;
 import org.dragonet.net.SessionManager;
 import org.dragonet.net.inf.portal.DragonPortalServer;
 import org.dragonet.net.inf.portal.PasswordNotSetException;
-import org.dragonet.peaddon.DragonetPEAddonServer;
 import org.dragonet.plugin.php.PHPManager;
 import org.dragonet.rhino.Script;
 import org.dragonet.statistic.StatisticSender;
@@ -156,23 +153,6 @@ public class DragonetServer {
         this.rhino.loadScripts();
         
         this.php = new PHPManager(this.getServer());
-
-        if (config.getBoolean("enable-addon", true)) {
-            this.getLogger().info("Enabling DragonetPE Android Addon server... ");
-            this.addonServer = new DragonetPEAddonServer(this);
-            try {
-                this.addonServer.initialize();
-            } catch (IOException ex) {
-                this.getLogger().error("FAILD TO BIND ON THE PEAddon PORT " + this.getNetworkHandler().getUdp().getServerPort() + "(TCP), OTHER PROGRAM MAY USING IT. ");
-                this.getLogger().error("CLOSE THE PROGRAM USING THAT PORT OR DISABLE PEAddon SUPPORT TO FIX THIS PROBLEM! ");
-                this.getServer().shutdown();
-                return;
-            }
-            this.addonSupported = true;
-        } else {
-            this.addonSupported = false;
-            this.getLogger().info("DragonetPE Android Addon support is disabled! ");
-        }
         
         //DragonPortal server
         if(config.getBoolean("dragonportal.enabled", false)){
