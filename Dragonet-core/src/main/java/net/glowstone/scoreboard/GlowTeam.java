@@ -150,6 +150,11 @@ public final class GlowTeam implements Team {
         return deathMessageVisibility;
     }
 
+    @Override
+    public boolean hasEntry(String s) throws IllegalArgumentException, IllegalStateException {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     public void setDeathMessageVisibility(NameTagVisibility deathMessageVisibility) throws IllegalStateException, IllegalArgumentException {
         Validate.notNull(deathMessageVisibility, "NameTagVisibility cannot be null!");
         checkValid();
