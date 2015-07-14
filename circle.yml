@@ -3,6 +3,8 @@ checkout:
     post:
         # compile bukkit
         - (cd Glowkit && mvn install)
+        # get outta there!
+        - cd ..
         # deal with Maven's periodical panic attacks
         - (cd Dragonet && mvn package)
 test:
