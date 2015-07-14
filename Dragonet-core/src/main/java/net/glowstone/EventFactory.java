@@ -126,7 +126,7 @@ public final class EventFactory {
         event.setCancelled(cancelled);
     	//Dragonet-End
         callEvent(event);
-
+        
         // call sync event only if needed
         if (PlayerChatEvent.getHandlerList().getRegisteredListeners().length > 0) {
             // initialize event to match current state from async event

@@ -1,0 +1,79 @@
+====[The Class We Edited/Changed]====
+
+===[net.glowstone.GlowServer]===
+81-86: Added dragonet instance getter, set dragonet instance to a private variable. 
+
+~268: Changed SimplePluginManager to Dragonet's MixedPluginManager in order to let Rhino load scripts as plugins dynamically. 
+
+~400: Changed onlinePlayers variable to ConcurrentSet instead of HashSet. 
+
+611-613: Added stopping MCPE server call into shutdown() method
+
+757-759: Added reload Dragonet server method into reload();
+
+933-935: Changed getName() to return "Dragonet"
+
+940-950: Changed getVersion() to return "DragonetVersioning.DRAGONET_VERSION" and getBukkitVersion() to return "Bukkit API 1.8-R0.1-SNAPSHOT"
+
+===[net.glowstone.inventory.CraftingManager]===
+88: Implemented CraftingManager.removeItems() for Glowstone
+
+===[net.glowstone.scheduler.GlowScheduler]===
+177-179: Added tick trigger
+
+
+
+===[net.glowstone.entity.GlowPlayer]
+83: Removed final from class
+
+
+
+===[net.glowstone.net.GlowSession]===
+45-47: Removed final on class
+
+117-119: Changed player variable into protected
+
+92-94: Added @Getter at hostname variable
+
+148-157: Added another constructor
+
+
+
+===[net.glowstone.net.handler.login.LoginStartHandler]===
+21-26: Added checker for custom items for MCPE
+
+
+
+===[net.glowstone.net.message.*]===
+Every class: Changed every variable to public in order to read/write
+
+
+
+===[net.glowstone.io.entity.EntityStorage]===
+102-106: Added checking parent class on EntityStore<?> find(Class<? extends GlowEntity> clazz, String type)
+
+
+
+===[net.glowstone.EventFactory]===
+118-EOF: Hooks for most DragonetAPI functions
+
+
+=== [net.glowstone.entity.passive.GlowCow]===
+=== [net.glowstone.entity.passive.GlowMooshroom]===
+=== [net.glowstone.entity.passive.GlowSquid]===
+
+
+===[net.glowstone.entity.meta.MetadataIndex]===
+26-28: Changed parameter #2 of AGE to BYTE instead of INT
+
+
+
+===[net.glowstone.entity.GlowCreature]===
+20-22: Removed final
+
+
+===[(Test Package) net.glowstone.net.ProtocolTestUtils]===
+35-37: Cast the 1 to a byte
+
+===[net.glowstone.entity.GlowEntity]===
+511-525: Added a setSize method

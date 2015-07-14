@@ -133,7 +133,7 @@ public class GlowSession extends BasicSession {
      * If the connection has been disconnected
      */
     private boolean disconnected;
-
+    
     //Dragonet-Add another constructor
     /**
      * Constructor for Dragonet to use
@@ -146,7 +146,7 @@ public class GlowSession extends BasicSession {
         connectionManager = null;
     }
     //Dragonet-End
-    
+
     /**
      * Creates a new session.
      * @param server The server this session belongs to.

@@ -5,7 +5,6 @@ import com.avaje.ebean.config.dbplatform.SQLitePlatform;
 import com.avaje.ebeaninternal.server.lib.sql.TransactionIsolation;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
-import io.netty.util.internal.ConcurrentSet;
 import net.glowstone.block.BuiltinMaterialValueManager;
 import net.glowstone.block.MaterialValueManager;
 import net.glowstone.command.ColorCommand;
@@ -35,7 +34,7 @@ import net.glowstone.scoreboard.GlowScoreboardManager;
 import net.glowstone.util.*;
 import net.glowstone.util.bans.GlowBanList;
 import net.glowstone.util.bans.UuidListFile;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.bukkit.*;
 import org.bukkit.World.Environment;
 import org.bukkit.command.*;
@@ -87,18 +86,19 @@ public final class GlowServer implements Server {
     /**
      * The game version supported by the server.
      */
-    public static final String GAME_VERSION = "1.8.6";
+    public static final String GAME_VERSION = "1.8.7";
 
     /**
      * The protocol version supported by the server.
      */
     public static final int PROTOCOL_VERSION = 47;
-    
+
     //DRAGONET-Add
     @Getter
     private DragonetServer dragonetServer;
     //DRAGONET-End
 
+    
     /**
      * Creates a new server on TCP port 25565 and starts listening for
      * connections.
@@ -413,9 +413,7 @@ public final class GlowServer implements Server {
     /**
      * A set of all online players.
      */
-    //DRAGONET-Change to ConcurrentSet to prevent
-    private final Set<GlowPlayer> onlinePlayers = new ConcurrentSet<>();
-    //DRAGONET-End
+    private final Set<GlowPlayer> onlinePlayers = new HashSet<>();
 
     /**
      * A view of all online players.
@@ -467,19 +465,10 @@ public final class GlowServer implements Server {
         whitelist.load();
         nameBans.load();
         ipBans.load();
-        
-        //Dragonet-Add
-        this.dragonetServer = new DragonetServer(this);
-        //Dragonet-End
 
         // Start loading plugins
         new LibraryManager(this).run();
         loadPlugins();
-        
-        //DRAGONET-Add (Moved here due to loadPlugins() will clear all the plugins. )
-        this.dragonetServer.initialize();
-        //DRAGONET-End
-        
         enablePlugins(PluginLoadOrder.STARTUP);
 
         // Create worlds
@@ -663,11 +652,11 @@ public final class GlowServer implements Server {
         if (rconServer != null) {
             rconServer.shutdown();
         }
-        
+
         //DRAGONET-Add: Shutdown Dragonet
         dragonetServer.shutdown();
         //DRAGONET-End
-
+        
         // Save worlds
         for (World world : getWorlds()) {
             logger.info("Saving world: " + world.getName());
@@ -986,6 +975,14 @@ public final class GlowServer implements Server {
     }
 
     /**
+     * Get whether to populate chunks when they are anchored.
+     * @return Whether to populate chunks when they are anchored.
+     */
+    public boolean populateAnchoredChunks() {
+        return config.getBoolean(ServerConfig.Key.POPULATE_ANCHORED_CHUNKS);
+    }
+
+    /**
      * Get whether parsing of data provided by a proxy is enabled.
      * @return True if a proxy is providing data to use.
      */
@@ -1075,7 +1072,7 @@ public final class GlowServer implements Server {
     // Access to Bukkit API
 
     @Override
-    public MixedPluginManager getPluginManager() {
+    public PluginManager getPluginManager() {
         return pluginManager;
     }
 
