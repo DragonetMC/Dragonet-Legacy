@@ -169,6 +169,11 @@ public final class GlowTeam implements Team {
         return ImmutableSet.copyOf(players);
     }
 
+    @Override
+    public Set<String> getEntries() throws IllegalStateException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     public int getSize() throws IllegalStateException {
         checkValid();
         return players.size();
@@ -179,6 +184,11 @@ public final class GlowTeam implements Team {
         checkValid();
         players.add(player);
         scoreboard.setPlayerTeam(player, this);
+    }
+
+    @Override
+    public void addEntry(String s) throws IllegalStateException, IllegalArgumentException {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public ChatColor getColor() {
@@ -200,6 +210,11 @@ public final class GlowTeam implements Team {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean removeEntry(String s) throws IllegalStateException, IllegalArgumentException {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public boolean hasPlayer(OfflinePlayer player) throws IllegalArgumentException, IllegalStateException {
