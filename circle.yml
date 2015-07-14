@@ -1,9 +1,11 @@
 
 checkout:
     post:
-        - (cd Glowkit && mvn install)
+        # clone the Glowkit submodule (see https://circleci.com/docs/configuration)
+        - git submodule sync
+        - git submodule update --init
         # deal with Maven's periodical panic attacks
-        - mvn package
+        - mvn install
 test:
     post:
         - cp -r Dragonet-core/target/*.jar $CIRCLE_ARTIFACTS/
