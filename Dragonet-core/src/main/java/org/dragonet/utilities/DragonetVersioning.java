@@ -16,7 +16,7 @@ public final class DragonetVersioning {
 
     public final static String DRAGONET_VERSION = "0.0.2-preR6";
 
-    public final static String MINECRAFT_PC_VERSION = "1.8.6";
+    public final static String MINECRAFT_PC_VERSION = "1.8.7";
     public final static String MINECRAFT_PE_VERSION = "0.11.1 alpha";
     
     public final static int MINECRAFT_PE_PROTOCOL = 27;
