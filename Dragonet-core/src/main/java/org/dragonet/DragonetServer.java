@@ -60,8 +60,8 @@ public class DragonetServer {
     @Getter
     private Rhino rhino;
     
-    @Getter
-    private PHPManager php;
+    //@Getter
+    //private PHPManager php;
 
     @Getter
     private NetworkHandler networkHandler;
@@ -103,9 +103,9 @@ public class DragonetServer {
      */
     public void initialize() {
         /* Uncomment following 3 lines when release */
-        //this.logger.info("Sending statistic... ");
-        //StatisticSender statSender = new StatisticSender(DragonetVersioning.DRAGONET_VERSION, System.currentTimeMillis());
-        //statSender.sendStatistic();
+        this.logger.info("Sending statistic... ");
+        StatisticSender statSender = new StatisticSender(DragonetVersioning.DRAGONET_VERSION, System.currentTimeMillis());
+        statSender.sendStatistic();
         this.logger.info("Starting Dragonet Server version " + DragonetVersioning.DRAGONET_VERSION + "... ");
         File fileConfig = new File(this.server.getConfigDir() + File.separator + "dragonet.yml");
         if (!fileConfig.exists()) {
@@ -149,7 +149,7 @@ public class DragonetServer {
         this.rhino = new Rhino(this.getServer());
         this.rhino.loadScripts();
         
-        this.php = new PHPManager(this.getServer());
+        //this.php = new PHPManager(this.getServer());
         
         //DragonPortal server
         if(config.getBoolean("dragonportal.enabled", false)){

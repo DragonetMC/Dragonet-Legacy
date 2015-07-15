@@ -468,7 +468,17 @@ public final class GlowServer implements Server {
 
         // Start loading plugins
         new LibraryManager(this).run();
+        
+        //Dragonet-Add 
+        this.dragonetServer = new DragonetServer(this); 
+        //Dragonet-End 
+
         loadPlugins();
+        
+        //DRAGONET-Add (Moved here due to loadPlugins() will clear all the plugins. ) 
+        this.dragonetServer.initialize(); 
+        //DRAGONET-End 
+
         enablePlugins(PluginLoadOrder.STARTUP);
 
         // Create worlds
