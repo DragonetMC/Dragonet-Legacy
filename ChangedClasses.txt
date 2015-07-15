@@ -15,8 +15,6 @@
 
 940-950: Changed getVersion() to return "DragonetVersioning.DRAGONET_VERSION" and getBukkitVersion() to return "Bukkit API 1.8-R0.1-SNAPSHOT"
 
-===[net.glowstone.inventory.CraftingManager]===
-88: Implemented CraftingManager.removeItems() for Glowstone
 
 ===[net.glowstone.scheduler.GlowScheduler]===
 177-179: Added tick trigger
