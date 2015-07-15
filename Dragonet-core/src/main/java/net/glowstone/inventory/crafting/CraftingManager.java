@@ -2,6 +2,7 @@ package net.glowstone.inventory.crafting;
 
 import com.google.common.collect.Iterators;
 import net.glowstone.GlowServer;
+import net.glowstone.inventory.GlowCraftingInventory;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -9,7 +10,6 @@ import org.bukkit.inventory.*;
 
 import java.io.InputStream;
 import java.util.*;
-import org.dragonet.inventory.ItemList;
 
 /**
  * Manager for crafting and smelting recipes
@@ -85,29 +85,26 @@ public final class CraftingManager implements Iterable<Recipe> {
     }
 
     /**
-     * Remove enough items from the given item list to form the given recipe.
+     * Remove a layer of items from the crafting matrix and recipe result.
      * @param items The items to remove the ingredients from.
-     * @param recipe A recipe known to match the items.
+     * @param inv The inventory to remove the items from.
      */
-    public void removeItems(ItemStack[] items, Recipe recipe) {
-        //DRAGONET - Implemented removeItems() method for Glowstone. 
-        ItemList lst = new ItemList(items);
-        if (recipe instanceof ShapedRecipe) {
-            ShapedRecipe shaped = (ShapedRecipe) recipe;
-            for (String itemChar : shaped.getShape()) {
-                ItemStack ingredient = shaped.getIngredientMap().get(new Character(itemChar.charAt(0)));
-                if (ingredient == null) {
-                    continue;
+    public void removeItems(ItemStack[] items, GlowCraftingInventory inv) {
+        for (int i = 0; i < items.length; i++) {
+            if (items[i] != null) {
+                int amount = items[i].getAmount();
+                if (!(amount <= 0)) {
+                    items[i].setAmount(amount - 1);
+                    if (items[i].getAmount() == 0) {
+                        inv.setItem(i + 1, null);
+                    }
+                } else {
+                    inv.setItem(i + 1, null);
                 }
-                lst.tryToRemove(ingredient);
             }
         }
-        for(int i = 0; i < items.length; i++){
-            items[i] = lst.getItems().get(i);
-        }
-        //DRAGONET - END
     }
-    
+
     /**
      * Get the amount of layers in the crafting matrix.
      * @param items The items in the crafting matrix.
