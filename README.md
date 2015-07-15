@@ -31,10 +31,7 @@ Last build: [![Build status indicator](https://circleci.com/gh/DragonetMC/Dragon
 ###Credits & Licencing
 Dragonet software: "A universal Minecraft server that supports both Minecraft for PC and Minecraft: Pocket Edition. "<br>
 Dragonet's code is under `org.dragonet` package and they are under LGPL v3. <br>
-
 GlowStone software: `A Minecraft server that written from zero and no Mojang code included. `<br>
 Glowstone's code is under `net.glowstone` package and they are under MIT Licence. <br><br>
-
 Files under `org.dragonet.net.raklib` is a port of PocketMine's RakLib library. <br />
-
 Demo server is proudly provided by `MC Server Bank`(http://mcserverbank.com/). <br>
