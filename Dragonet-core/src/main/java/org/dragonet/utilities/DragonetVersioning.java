@@ -14,7 +14,7 @@ package org.dragonet.utilities;
 
 public final class DragonetVersioning {
 
-    public final static String DRAGONET_VERSION = "0.0.2-preR6";
+    public final static String DRAGONET_VERSION = "0.0.2-preR7";
 
     public final static String MINECRAFT_PC_VERSION = "1.8.7";
     public final static String MINECRAFT_PE_VERSION = "0.11.1 alpha";

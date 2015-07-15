@@ -56,27 +56,30 @@ public class GlowCraftingInventory extends GlowInventory implements CraftingInve
 
     @Override
     public void handleShiftClick(GlowPlayer player, InventoryView view, int clickedSlot, ItemStack clickedItem) {
-        GlowInventory playerInv = player.getInventory();
         if (getSlotType(view.convertSlot(clickedSlot)) == SlotType.RESULT) {
             // If the player clicked on the result give it to them
             Recipe recipe = getRecipe();
             if (recipe == null) {
                 return; // No complete recipe in crafting grid
             }
-            clickedItem = recipe.getResult();
 
-            // Place the items in the player's inventory (right to left). tryToFillSlots takes care of filling inventory.
+            // Set to correct amount (tricking the client and click handler)
+            int recipeAmount = ((GlowServer) Bukkit.getServer()).getCraftingManager().getLayers(getMatrix());
+            clickedItem.setAmount(clickedItem.getAmount() * recipeAmount);
+
+            // Place the items in the player's inventory (right to left)
             player.getInventory().tryToFillSlots(clickedItem, 8, -1, 35, 8);
 
             // Craft the items, removing the ingredients from the crafting matrix
-            CraftingManager cm = ((GlowServer) Bukkit.getServer()).getCraftingManager();
-            craft(cm, recipe);
-
+            for (int i = 0; i < recipeAmount; i++) {
+                craft();
+            }
         } else {
             // Clicked in the crafting grid, no special handling required (just place them left to right)
             clickedItem = player.getInventory().tryToFillSlots(clickedItem, 9, 36, 0, 9);
             view.setItem(clickedSlot, clickedItem);
         }
+
     }
 
     @Override
@@ -85,7 +88,7 @@ public class GlowCraftingInventory extends GlowInventory implements CraftingInve
     }
 
     /**
-     * Remove a layer of items from the inventory according to the current recipe.
+     * Remove a layer of items from the inventory.
      */
     public void craft() {
         ItemStack[] matrix = getMatrix();
@@ -93,19 +96,16 @@ public class GlowCraftingInventory extends GlowInventory implements CraftingInve
         Recipe recipe = cm.getCraftingRecipe(matrix);
 
         if (recipe != null) {
-            craft(cm, recipe);
+            craft(cm);
         }
     }
 
     /**
-     * Remove a layer of items from the inventory according to the current recipe.
-     * This makes no check for whether the supplied recipe is valid for the
-     * current crafting matrix. These checks must be performed beforehand.
+     * Remove a layer of items from the inventory.
      */
-    protected void craft(CraftingManager cm, Recipe recipe) {
+    protected void craft(CraftingManager cm) {
         ItemStack[] matrix = getMatrix();
-        cm.removeItems(matrix, recipe);
-        setMatrix(matrix);
+        cm.removeItems(matrix, this);
     }
 
     @Override
@@ -147,3 +147,4 @@ public class GlowCraftingInventory extends GlowInventory implements CraftingInve
     }
 
 }
+
