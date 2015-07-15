@@ -13,14 +13,8 @@ Currently it supports Bukkit plugins, Sponge plugins(non-mod) and DAPIS Javascri
 ##Is this fully working now?
 Yes, mostly! But you may expirence some bugs and issues because this software is still in heavy development stage. 
 
-##Where do I grab the GUI version?
-Right now, The Dragonet Team is working on a GUI wrapper for the server, it will be released when we are done with 0.0.2!
-
 ##Where is the Dragonet GitHub Wiki?
-[Here!](https://github.com/TheMCPEGamer/Dragonet/wiki)<br>
-
-##So what's the deal with the Android app?
-We have an android app in development! However it is not for creating a server. @RandomAltThing will also be making a separate app to host the server on your device!
+[Here!](https://github.com/DragonetMC/Dragonet/wiki)<br>
 
 ##Download
 You may download pre-compiled binaries at our website:
