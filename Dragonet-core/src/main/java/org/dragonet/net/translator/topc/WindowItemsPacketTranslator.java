@@ -50,13 +50,12 @@ public class WindowItemsPacketTranslator extends PEPacketTranslatorToPC<Translat
         return null;
     }
     
-        /**
+    /**
      * Remove enough items from the given item list to form the given recipe.
      * @param items The items to remove the ingredients from.
      * @param recipe A recipe known to match the items.
      */
     public void removeItems(ItemStack[] items, Recipe recipe) {
-        //DRAGONET - Implemented removeItems() method for Glowstone. 
         ItemList lst = new ItemList(items);
         if (recipe instanceof ShapedRecipe) {
             ShapedRecipe shaped = (ShapedRecipe) recipe;
@@ -71,7 +70,6 @@ public class WindowItemsPacketTranslator extends PEPacketTranslatorToPC<Translat
         for(int i = 0; i < items.length; i++){
             items[i] = lst.getItems().get(i);
         }
-        //DRAGONET - END
     }
 
     public void emptyCrafting() {
