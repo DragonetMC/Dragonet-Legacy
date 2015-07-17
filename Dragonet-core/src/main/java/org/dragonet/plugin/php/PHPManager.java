@@ -21,5 +21,6 @@ public final class PHPManager {
     
     public void loadScripts(){
         //TODO
+        server.getLogger().warn("** PHP plugin support isn't finished yet, plugins written in PHP won't load. ");
     }
 }
