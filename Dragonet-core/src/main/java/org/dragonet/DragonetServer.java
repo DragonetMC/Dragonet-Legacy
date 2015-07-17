@@ -145,7 +145,7 @@ public class DragonetServer {
         if (RELEASE) {
             try {
                 metrics = new DragonetMetrics(this);
-                metrics.enable();
+                metrics.start();
             } catch (IOException ex) {
                 this.logger.error("Faild to send statistics! ");
             }
@@ -226,12 +226,6 @@ public class DragonetServer {
 
     public void shutdown() {
         this.logger.info("Stopping Dragonet server... ");
-        if (RELEASE && metrics != null) {
-            try {
-                metrics.disable();
-            } catch (IOException ex) {
-            }
-        }
         this.networkHandler.getUdp().end();
         this.threadPool.shutdown();
     }
