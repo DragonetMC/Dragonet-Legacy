@@ -8,14 +8,18 @@ package org.dragonet.plugin.php;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import net.glowstone.GlowServer;
+import org.dragonet.DragonetServer;
 
 public final class PHPManager {
-    private GlowServer server;
+    private DragonetServer server;
     
     private final ConcurrentMap<String, PHPPlugin> plugins = new ConcurrentHashMap<>();
     
-    public PHPManager(GlowServer server) {
+    public PHPManager(DragonetServer server) {
         this.server = server;
+    }
+    
+    public void loadScripts(){
+        //TODO
     }
 }

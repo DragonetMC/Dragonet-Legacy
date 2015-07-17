@@ -9,6 +9,15 @@ server-port: 19132
 
 player-spawn-chunk-threshold: 36
 
+# Plugin support configuration
+plugin-support:
+    # Enable DAPIS Javascript plugins? 
+    dapis: true
+
+    # Enable PHP plugins? 
+    php: true
+
+
 # DragonPortal is a fork of BungeeCord to support both MCPC and MCPE
 # clients to use BungeeCord. And DragonPortal needs a TCP port to
 # communicate with Dragonet server. Multiple DragonPortal instances can
