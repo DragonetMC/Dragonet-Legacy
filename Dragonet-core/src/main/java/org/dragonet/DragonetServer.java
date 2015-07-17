@@ -21,7 +21,6 @@ import java.net.UnknownHostException;
 import java.util.EnumMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Level;
 
 import lombok.Getter;
 import net.glowstone.GlowServer;
