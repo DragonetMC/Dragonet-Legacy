@@ -38,6 +38,10 @@
 			<layout>default</layout>
 			<url>http://repo.spongepowered.org/maven</url>
 		</repository>
+	<repository>
+		<id>snapshot-repo</id>
+		<url>http://repo.blockserver.org</url>
+	</repository>
     </repositories>
     
     <dependencies>
@@ -101,6 +105,11 @@
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
             <type>jar</type>
+        </dependency>
+        <dependency>
+        	<groupId>net.beaconpe.jraklib</groupId>
+        	<artifactId>JRakLib</artifactId>
+        	<version>1.0.1</version>
         </dependency>
     </dependencies>
     
