@@ -23,6 +23,9 @@ public final class InventoryType {
         public final static byte CRAFTING = (byte) 0x4;
         public final static byte WORKBENCH = (byte) 0x5;
         public final static byte STONECUTTER = (byte) 0x6;
+        public final static byte BREWING_STAND = (byte) 0x7;
+        public final static byte ANVIL = (byte) 0x8;
+        public final static byte ENCHANT_TABLE = (byte) 0x9;
 
         public final static byte toPEInventory(byte bytePC, int slots) {
             switch (bytePC) {

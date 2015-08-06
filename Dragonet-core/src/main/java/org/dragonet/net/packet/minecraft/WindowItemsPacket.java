@@ -28,7 +28,7 @@ public class WindowItemsPacket extends PEPacket {
 
     @Override
     public int pid() {
-        return PEPacketIDs.WINDOW_ITEMS_PACKET;
+        return PEPacketIDs.WINDOW_SET_CONTENT_PACKET;
     }
 
     @Override

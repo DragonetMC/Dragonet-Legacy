@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 
 public class DragonetServer {
 
-    private final static boolean RELEASE = true;
+    private final static boolean RELEASE = false;
 
     private static DragonetServer INSTANCE;
 

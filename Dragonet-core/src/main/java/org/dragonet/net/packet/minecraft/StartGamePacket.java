@@ -19,6 +19,7 @@ import org.dragonet.utilities.io.PEBinaryWriter;
 public class StartGamePacket extends PEPacket {
 
     public int seed;
+    public byte dimension;
     public int generator;
     public int gamemode;
     public long eid;
@@ -41,6 +42,7 @@ public class StartGamePacket extends PEPacket {
             PEBinaryWriter writer = new PEBinaryWriter(bos);
             writer.writeByte((byte) (this.pid() & 0xFF));
             writer.writeInt(this.seed);
+            writer.writeByte(this.dimension);
             writer.writeInt(this.generator);
             writer.writeInt(this.gamemode);
             writer.writeLong(this.eid);

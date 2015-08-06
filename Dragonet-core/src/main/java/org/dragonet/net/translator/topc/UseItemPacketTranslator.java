@@ -22,6 +22,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
+import org.dragonet.inventory.PEInventorySlot;
 import org.dragonet.net.DragonetSession;
 import org.dragonet.net.packet.minecraft.PlayerEquipmentPacket;
 import org.dragonet.net.packet.minecraft.UpdateBlockPacket;
@@ -57,13 +58,15 @@ public class UseItemPacketTranslator extends PEPacketTranslatorToPC<Translator_v
 
         //Check the slot
         ItemStack test_holding = this.getSession().getPlayer().getInventory().getItemInHand();
-        if (packet.item != this.getTranslator().getItemTranslator().translateToPE(test_holding.getTypeId())
-                || packet.meta != test_holding.getDurability()) {
+        if (packet.item.id != this.getTranslator().getItemTranslator().translateToPE(test_holding.getTypeId())
+                || packet.item.meta != test_holding.getDurability()) {
             //Not same, resend slot
             PlayerEquipmentPacket pkRet = new PlayerEquipmentPacket();
             pkRet.eid = this.getSession().getPlayer().getEntityId();
-            pkRet.item = (short) (this.getTranslator().getItemTranslator().translateToPE(test_holding.getTypeId()) & 0xFFFF);
-            pkRet.meta = test_holding.getDurability();
+            pkRet.item = new PEInventorySlot((short)0, (byte)0, (short)0);
+            pkRet.item.id = (short) (this.getTranslator().getItemTranslator().translateToPE(test_holding.getTypeId()) & 0xFFFF);
+            pkRet.item.count = (byte)(test_holding.getAmount() & 0xFF);
+            pkRet.item.meta = test_holding.getDurability();
             pkRet.selectedSlot = this.getSession().getPlayer().getInventory().getHeldItemSlot();
             //Resend block
             UpdateBlockPacket pkUpdateBlock = new UpdateBlockPacket();
@@ -81,7 +84,7 @@ public class UseItemPacketTranslator extends PEPacketTranslatorToPC<Translator_v
 
 
         //Copied from Glowstone class BlockPlacementHandler
-        new BlockPlacementHandler().handle(getSession(), new BlockPlacementMessage(packet.x, packet.y, packet.z, packet.face, new ItemStack(packet.item, packet.meta), 0, 0, 0));
+        new BlockPlacementHandler().handle(getSession(), new BlockPlacementMessage(packet.x, packet.y, packet.z, packet.face, new ItemStack(packet.item.id, packet.item.meta), 0, 0, 0));
 
         return null;
     }

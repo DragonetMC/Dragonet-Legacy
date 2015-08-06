@@ -16,6 +16,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.UUID;
 
 public class PEBinaryReader implements Closeable {
 
@@ -65,6 +66,12 @@ public class PEBinaryReader implements Closeable {
         }
         addr.port = readShort();
         return addr;
+    }
+    
+    public UUID readUUID() throws IOException {
+        long first = readLong();
+        long last = readLong();
+        return new UUID(first, last);
     }
 
     public String readString() throws IOException {

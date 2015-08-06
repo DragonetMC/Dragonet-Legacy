@@ -19,8 +19,8 @@ import org.dragonet.utilities.io.PEBinaryWriter;
 public class SetSpawnPositionPacket extends PEPacket {
 
     public int x;
-    public int z;
     public int y;
+    public int z;
 
     @Override
     public int pid() {
@@ -34,8 +34,8 @@ public class SetSpawnPositionPacket extends PEPacket {
             PEBinaryWriter writer = new PEBinaryWriter(bos);
             writer.writeByte((byte) (this.pid() & 0xFF));
             writer.writeInt(this.x);
+            writer.writeInt(this.y);
             writer.writeInt(this.z);
-            writer.writeByte((byte) (this.y & 0xFF));
             this.setData(bos.toByteArray());
         } catch (IOException e) {
         }

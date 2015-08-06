@@ -20,8 +20,23 @@ public class FullChunkPacket extends PEPacket {
 
     public int chunkX;
     public int chunkZ;
+    public ChunkOrder order;
     public byte[] chunkData;
 
+    public enum ChunkOrder{
+        COLUMNS((byte)0),
+        LAYERS((byte)1);
+        private byte type;
+        
+        ChunkOrder(byte t){
+            this.type = t;
+        }
+
+        public byte getType() {
+            return type;
+        }
+    }
+    
     @Override
     public int pid() {
         return PEPacketIDs.FULL_CHUNK_DATA_PACKET;
@@ -35,6 +50,7 @@ public class FullChunkPacket extends PEPacket {
             writer.writeByte((byte) (this.pid() & 0xFF));
             writer.writeInt(chunkX);
             writer.writeInt(chunkZ);
+            writer.writeByte(order != null ? order.getType() : (byte)0); //Default to COLUMNS
             writer.writeInt(chunkData.length);
             writer.write(chunkData);
             this.setData(bos.toByteArray());

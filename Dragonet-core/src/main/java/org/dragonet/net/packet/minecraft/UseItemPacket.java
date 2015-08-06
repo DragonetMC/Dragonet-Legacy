@@ -14,6 +14,7 @@ package org.dragonet.net.packet.minecraft;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import org.dragonet.inventory.PEInventorySlot;
 import org.dragonet.utilities.io.PEBinaryReader;
 
 public class UseItemPacket extends PEPacket {
@@ -22,9 +23,7 @@ public class UseItemPacket extends PEPacket {
     public int y;
     public int z;
     public int face;
-    public short item;
-    public short meta;
-    public long eid;
+    public PEInventorySlot item;
     public float fx;
     public float fy;
     public float fz;
@@ -54,16 +53,13 @@ public class UseItemPacket extends PEPacket {
             this.y = reader.readInt();
             this.z = reader.readInt();
             this.face = reader.readByte() & 0xFF;
-            this.item = reader.readShort();
-            this.meta = reader.readShort();
-            this.eid = reader.readLong();
             this.fx = reader.readFloat();
             this.fy = reader.readFloat();
             this.fz = reader.readFloat();
             this.posX = reader.readFloat();
             this.posY = reader.readFloat();
             this.posZ = reader.readFloat();
-
+            this.item = PEInventorySlot.readSlot(reader);
         } catch (IOException e) {
         }
     }

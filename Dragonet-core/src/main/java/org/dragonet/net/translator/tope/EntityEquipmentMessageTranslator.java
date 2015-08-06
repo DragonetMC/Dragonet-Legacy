@@ -7,6 +7,7 @@ package org.dragonet.net.translator.tope;
 
 import net.glowstone.net.message.play.entity.EntityEquipmentMessage;
 import org.bukkit.entity.Player;
+import org.dragonet.inventory.PEInventorySlot;
 import org.dragonet.net.DragonetSession;
 import org.dragonet.net.packet.minecraft.PEPacket;
 import org.dragonet.net.packet.minecraft.PlayerEquipmentPacket;
@@ -30,11 +31,9 @@ public class EntityEquipmentMessageTranslator extends MessageTranslatorToPE<Tran
                 PlayerEquipmentPacket pkEquipment = new PlayerEquipmentPacket();
                 pkEquipment.eid = packet.id;
                 if (packet.stack != null) {
-                    pkEquipment.item = (short) (packet.stack.getTypeId() & 0xFFFF);
-                    pkEquipment.meta = (short) (packet.stack.getDurability() & 0xFFFF);
+                    pkEquipment.item = new PEInventorySlot((short) (packet.stack.getTypeId() & 0xFFFF)   ,(byte)(packet.stack.getAmount() & 0xFF) ,(short) (packet.stack.getDurability() & 0xFFFF));
                 } else {
-                    pkEquipment.item = 0;
-                    pkEquipment.meta = 0;
+                    pkEquipment.item = new PEInventorySlot();
                 }
                 pkEquipment.slot = (byte) 0;
                 return new PEPacket[]{pkEquipment};

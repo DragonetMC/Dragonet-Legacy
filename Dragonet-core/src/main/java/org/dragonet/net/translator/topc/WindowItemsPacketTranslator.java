@@ -25,9 +25,9 @@ public class WindowItemsPacketTranslator extends PEPacketTranslatorToPC<Translat
 
     @Override
     public Message[] handleSpecific(WindowItemsPacket packet) {
-        if (packet.windowID != PEWindowConstantID.PLAYER_CRAFTING) {
-            return null; //We only handle crafting for now. 
-        }
+        //Since MCPE sends crafting packets, this packet only indicates item moving/transfering. 
+        return null;
+        /*
         if (packet.slots.length < 9) {
             emptyCrafting();
             return null;
@@ -48,6 +48,7 @@ public class WindowItemsPacketTranslator extends PEPacketTranslatorToPC<Translat
         this.removeItems(this.getSession().getPlayer().getInventory().getContents(), recipe);
         emptyCrafting();
         return null;
+        */
     }
     
     /**
@@ -70,22 +71,5 @@ public class WindowItemsPacketTranslator extends PEPacketTranslatorToPC<Translat
         for(int i = 0; i < items.length; i++){
             items[i] = lst.getItems().get(i);
         }
-    }
-
-    public void emptyCrafting() {
-        WindowItemsPacket pk = new WindowItemsPacket();
-        pk.windowID = PEWindowConstantID.PLAYER_CRAFTING;
-        pk.slots = new PEInventorySlot[]{
-            new PEInventorySlot((short) 0, (byte) 0, (short) 0),
-            new PEInventorySlot((short) 0, (byte) 0, (short) 0),
-            new PEInventorySlot((short) 0, (byte) 0, (short) 0),
-            new PEInventorySlot((short) 0, (byte) 0, (short) 0),
-            new PEInventorySlot((short) 0, (byte) 0, (short) 0),
-            new PEInventorySlot((short) 0, (byte) 0, (short) 0),
-            new PEInventorySlot((short) 0, (byte) 0, (short) 0),
-            new PEInventorySlot((short) 0, (byte) 0, (short) 0),
-            new PEInventorySlot((short) 0, (byte) 0, (short) 0),};
-        this.getSession().sendInventory();
-        this.getSession().send(pk);
     }
 }

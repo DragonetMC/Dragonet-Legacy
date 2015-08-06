@@ -12,7 +12,13 @@
  */
 package org.dragonet.inventory;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import net.glowstone.util.nbt.CompoundTag;
+import net.glowstone.util.nbt.NBTInputStream;
+import net.glowstone.util.nbt.NBTOutputStream;
+import org.bukkit.inventory.ItemStack;
 import org.dragonet.utilities.io.PEBinaryReader;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
@@ -21,6 +27,7 @@ public class PEInventorySlot {
     public short id;
     public byte count;
     public short meta;
+    public CompoundTag nbt;
 
     public PEInventorySlot() {
         this((short) 0, (byte) 0, (short) 0);
@@ -30,19 +37,62 @@ public class PEInventorySlot {
         this.id = id;
         this.count = count;
         this.meta = meta;
+        nbt = new CompoundTag();
     }
 
+    public PEInventorySlot(short id, byte count, short meta, CompoundTag nbt) {
+        this.id = id;
+        this.count = count;
+        this.meta = meta;
+        this.nbt = nbt;
+    }
+    
+    
+
     public static PEInventorySlot readSlot(PEBinaryReader reader) throws IOException {
-        short id = reader.readShort();
+        short id = (short)(reader.readShort() & 0xFFFF); //Unsigned
+        if(id <= 0){
+            return new PEInventorySlot((short)0, (byte)0, (short)0);
+        }
         byte count = reader.readByte();
         short meta = reader.readShort();
-        return new PEInventorySlot(id, count, meta);
+        short lNbt = reader.readShort();
+        if(lNbt <= 0){
+            return new PEInventorySlot(id, count, meta);
+        }
+        byte[] nbtData = reader.read(lNbt);
+        NBTInputStream nbtin = new NBTInputStream(new ByteArrayInputStream(nbtData));
+        CompoundTag nbt = nbtin.readCompound();
+        nbtin.close();
+        return new PEInventorySlot(id, count, meta, nbt);
     }
 
     public static void writeSlot(PEBinaryWriter writer, PEInventorySlot slot) throws IOException {
-        writer.writeShort(slot.id);
+        writer.writeShort(slot.id == 0 ? (short)0xFFFF : slot.id);
         writer.writeByte(slot.count);
         writer.writeShort(slot.meta);
+        if(slot.nbt == null){
+            writer.writeShort((short) 0);
+        }else{
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            NBTOutputStream nos = new NBTOutputStream(bos);
+            nos.writeTag(slot.nbt);
+            byte[] nbtdata = bos.toByteArray();
+            writer.writeShort((short)(nbtdata.length & 0xFFFF));
+            writer.write(nbtdata);
+        }
+    }
+    
+    public static PEInventorySlot fromItemStack(ItemStack item){
+        PEInventorySlot slot = new PEInventorySlot();
+        slot.id = (short)(item.getTypeId() & 0xFFFF);
+        if(slot.id <= 0){
+            return slot;
+        }
+        slot.count = (byte)(item.getAmount() & 0xFF);
+        slot.meta = (short)(item.getDurability() & 0xFFFF);
+        //TODO: NBT data
+        return slot;
     }
 
     @Override

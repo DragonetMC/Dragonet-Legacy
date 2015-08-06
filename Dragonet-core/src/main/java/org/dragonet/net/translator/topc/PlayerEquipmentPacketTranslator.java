@@ -38,7 +38,7 @@ public class PlayerEquipmentPacketTranslator extends PEPacketTranslatorToPC<Tran
             return null;
         }
         if (this.getSession().getPlayer().getGameMode().equals(GameMode.CREATIVE)) {
-            this.getSession().getPlayer().getInventory().setItemInHand(new ItemStack(pkEquipment.item, 1, pkEquipment.meta, (byte) 0));
+            this.getSession().getPlayer().getInventory().setItemInHand(new ItemStack(pkEquipment.item.id, 1, pkEquipment.item.meta, (byte) 0));
             return null;
         }
         int slot = pkEquipment.slot - 9;
@@ -52,7 +52,7 @@ public class PlayerEquipmentPacketTranslator extends PEPacketTranslatorToPC<Tran
                 this.getSession().sendInventory();
                 return null;
             }
-            if (item.getTypeId() == pkEquipment.item) {
+            if (item.getTypeId() == pkEquipment.item.id) {
                 this.getSession().getPlayer().getInventory().setHeldItemSlot(slot + 9);
             }
             this.getSession().sendInventory();
@@ -63,7 +63,7 @@ public class PlayerEquipmentPacketTranslator extends PEPacketTranslatorToPC<Tran
                 this.getSession().sendInventory();
                 return null;
             }
-            if (item.getTypeId() == pkEquipment.item) {
+            if (item.getTypeId() == pkEquipment.item.id) {
                 this.getSession().getPlayer().getInventory().setHeldItemSlot(slot - 27);
             } else {
                 this.getSession().sendInventory();

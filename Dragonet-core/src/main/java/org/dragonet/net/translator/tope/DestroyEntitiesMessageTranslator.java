@@ -5,6 +5,7 @@
  */
 package org.dragonet.net.translator.tope;
 
+import java.util.UUID;
 import net.glowstone.net.message.play.entity.DestroyEntitiesMessage;
 import org.apache.commons.lang.ArrayUtils;
 import org.dragonet.net.DragonetSession;
@@ -31,7 +32,7 @@ public class DestroyEntitiesMessageTranslator extends MessageTranslatorToPE<Tran
                 ((RemoveEntityPacket) pkRemoveEntity[i]).eid = ids[i];
             } else {
                 pkRemoveEntity[i] = new RemovePlayerPacket();
-                ((RemovePlayerPacket) pkRemoveEntity[i]).clientID = 0;
+                ((RemovePlayerPacket) pkRemoveEntity[i]).uuid = new UUID(0L, 0L);
                 ((RemovePlayerPacket) pkRemoveEntity[i]).eid = ids[i];
                 this.getTranslator().cachedPlayerEntities.remove(new Integer(ids[i]));
             }

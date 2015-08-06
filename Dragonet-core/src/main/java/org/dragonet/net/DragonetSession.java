@@ -46,9 +46,9 @@ import org.dragonet.net.packet.minecraft.BatchPacket;
 import org.dragonet.net.packet.minecraft.MovePlayerPacket;
 import org.dragonet.net.packet.minecraft.PEPacket;
 import org.dragonet.net.packet.minecraft.PEPacketIDs;
-import org.dragonet.net.packet.minecraft.RedirectServerPacket;
 import org.dragonet.net.packet.minecraft.SetDifficultyPacket;
 import org.dragonet.net.packet.minecraft.SetHealthPacket;
+import org.dragonet.net.packet.minecraft.SetSpawnPositionPacket;
 import org.dragonet.net.packet.minecraft.SetTimePacket;
 import org.dragonet.net.packet.minecraft.StartGamePacket;
 import org.dragonet.net.packet.minecraft.WindowItemsPacket;
@@ -76,9 +76,6 @@ public abstract class DragonetSession extends GlowSession {
 
     @Getter
     private final String sessionKey;
-    
-    @Getter
-    private boolean redirected;
 
     public DragonetSession(DragonetServer dServer, BaseTranslator translator, String sessionKey) {
         super(dServer.getServer());
@@ -190,7 +187,7 @@ public abstract class DragonetSession extends GlowSession {
             disconnect(event.getKickMessage(), true);
             return;
         }
-        
+
         player.join(this, reader);
 
         // Kick other players with the same UUID
@@ -227,14 +224,13 @@ public abstract class DragonetSession extends GlowSession {
         SetTimePacket pkTime = new SetTimePacket((int) (this.getPlayer().getWorld().getTime() & 0xFFFFFFFF), false);
         this.send(pkTime);
 
-        /*
-         //Send Spawn Position
-         SetSpawnPositionPacket pkSpawnPos = new SetSpawnPositionPacket();
-         pkSpawnPos.x = this.player.getLocation().getBlockX();
-         pkSpawnPos.y = this.player.getLocation().getBlockY();
-         pkSpawnPos.z = this.player.getLocation().getBlockZ();
-         this.send(pkSpawnPos);
-         */
+        //Send Spawn Position
+        SetSpawnPositionPacket pkSpawnPos = new SetSpawnPositionPacket();
+        pkSpawnPos.x = this.player.getLocation().getBlockX();
+        pkSpawnPos.y = this.player.getLocation().getBlockY();
+        pkSpawnPos.z = this.player.getLocation().getBlockZ();
+        this.send(pkSpawnPos);
+
         //Send Health
         SetHealthPacket pkHealth = new SetHealthPacket((int) Math.floor(this.getPlayer().getHealth()));
         this.send(pkHealth);
@@ -355,16 +351,6 @@ public abstract class DragonetSession extends GlowSession {
             }
         }
         return true;
-    }
-    
-    public void redirectToServer(InetAddress addr, short port){
-        if(redirected = true) return;
-        RedirectServerPacket pk = new RedirectServerPacket();
-        pk.ipv4 = Inet4Address.class.isInstance(addr);
-        pk.ip = addr.getAddress();
-        pk.port = port;
-        send(pk);
-        redirected = true;
     }
 
     @Override

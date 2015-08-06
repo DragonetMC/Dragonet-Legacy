@@ -14,13 +14,15 @@ package org.dragonet.net.packet.minecraft;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.UUID;
 import org.dragonet.entity.metadata.EntityMetaData;
+import org.dragonet.inventory.PEInventorySlot;
 import org.dragonet.utilities.DefaultSkin;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class AddPlayerPacket extends PEPacket {
 
-    public long clientID;
+    public UUID uuid;
     public String username;
     public long eid;
     public float x;
@@ -31,10 +33,7 @@ public class AddPlayerPacket extends PEPacket {
     public float speedZ;
     public float yaw;
     public float pitch;
-    public short item;
-    public short meta;
-    public boolean slim;
-    public byte[] skin;
+    public PEInventorySlot item;
     public EntityMetaData metadata;
 
     @Override
@@ -48,7 +47,7 @@ public class AddPlayerPacket extends PEPacket {
         PEBinaryWriter writer = new PEBinaryWriter(bos);
         try {
             writer.writeByte((byte) (this.pid() & 0xFF));
-            writer.writeLong(this.clientID);
+            writer.writeUUID(uuid);
             writer.writeString(this.username);
             writer.writeLong(this.eid);
             writer.writeFloat(this.x);
@@ -60,11 +59,7 @@ public class AddPlayerPacket extends PEPacket {
             writer.writeFloat(this.yaw);
             writer.writeFloat(this.yaw); //Head rotation
             writer.writeFloat(this.pitch);
-            writer.writeShort(this.item);
-            writer.writeShort(this.meta);
-            writer.writeByte(this.slim ? (byte) 1 : (byte) 0);
-            writer.writeShort((short) (DefaultSkin.getDefaultSkin().length & 0xFFFF)); //DEFAULT SKIN
-            writer.write(DefaultSkin.getDefaultSkin());
+            PEInventorySlot.writeSlot(writer, this.item);
             writer.write(this.metadata.encode());
             this.setData(bos.toByteArray());
         } catch (IOException e) {

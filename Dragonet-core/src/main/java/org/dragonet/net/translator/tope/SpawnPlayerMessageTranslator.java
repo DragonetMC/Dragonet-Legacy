@@ -38,7 +38,7 @@ public class SpawnPlayerMessageTranslator extends MessageTranslatorToPE<Translat
         byte[] skin = DefaultSkin.getDefaultSkin();
 
         AddPlayerPacket pkAddPlayer = new AddPlayerPacket();
-        pkAddPlayer.clientID = packet.getId();
+        pkAddPlayer.uuid = packet.getUuid();
         pkAddPlayer.eid = packet.getId();
         pkAddPlayer.username = this.getSession().getServer().getPlayer(packet.getUuid()).getDisplayName();
         pkAddPlayer.x = (float) packet.getX() / 32;
@@ -50,8 +50,6 @@ public class SpawnPlayerMessageTranslator extends MessageTranslatorToPE<Translat
         pkAddPlayer.speedZ = 0.0f;
         pkAddPlayer.yaw = ((float)packet.getRotation() / 256) * 360;
         pkAddPlayer.pitch = ((float)packet.getPitch() / 256) * 360;
-        pkAddPlayer.skin = skin;
-        pkAddPlayer.slim = false;
         pkAddPlayer.metadata = EntityMetaData.getMetaDataFromPlayer((GlowPlayer) this.getSession().getPlayer().getWorld().getEntityManager().getEntity(packet.getId()));
         return new PEPacket[]{pkAddPlayer};
     }

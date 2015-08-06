@@ -18,6 +18,47 @@ import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class LevelEventPacket extends PEPacket {
 
+    public static class Events {
+
+        public final static short EVENT_SOUND_CLICK = (short) 1000;
+        public final static short EVENT_SOUND_CLICK_FAIL = (short) 1001;
+        public final static short EVENT_SOUND_SHOOT = (short) 1002;
+        public final static short EVENT_SOUND_DOOR = (short) 1003;
+        public final static short EVENT_SOUND_FIZZ = (short) 1004;
+
+        public final static short EVENT_SOUND_GHAST = (short) 1007;
+        public final static short EVENT_SOUND_GHAST_SHOOT = (short) 1008;
+        public final static short EVENT_SOUND_BLAZE_SHOOT = (short) 1009;
+
+        public final static short EVENT_SOUND_DOOR_BUMP = (short) 1010;
+        public final static short EVENT_SOUND_DOOR_CRASH = (short) 1012;
+
+        public final static short EVENT_SOUND_BAT_FLY = (short) 1015;
+        public final static short EVENT_SOUND_ZOMBIE_INFECT = (short) 1016;
+        public final static short EVENT_SOUND_ZOMBIE_HEAL = (short) 1017;
+
+        public final static short EVENT_SOUND_ANVIL_BREAK = (short) 1020;
+        public final static short EVENT_SOUND_ANVIL_USE = (short) 1021;
+        public final static short EVENT_SOUND_ANVIL_FALL = (short) 1022;
+
+        public final static short EVENT_PARTICLE_SHOOT = (short) 2000;
+        public final static short EVENT_PARTICLE_DESTROY = (short) 2001;
+        public final static short EVENT_PARTICLE_SPLASH = (short) 2002;
+        public final static short EVENT_PARTICLE_EYE_DESPAWN = (short) 2003;
+        public final static short EVENT_PARTICLE_SPAWN = (short) 2004;
+
+        public final static short EVENT_START_RAIN = (short) 3001;
+        public final static short EVENT_START_THUNDER = (short) 3002;
+        public final static short EVENT_STOP_RAIN = (short) 3003;
+        public final static short EVENT_STOP_THUNDER = (short) 3004;
+
+        public final static short EVENT_SET_DATA = (short) 4000;
+
+        public final static short EVENT_PLAYERS_SLEEPING = (short) 9800;
+
+        public final static short EVENT_ADD_PARTICLE_MASK = (short) 0x4000;
+    }
+
     public final static byte TAME_FAIL = (byte) 6;
     public final static byte TAME_SUCCESS = (byte) 7;
     public final static byte SHAKE_WET = (byte) 8;

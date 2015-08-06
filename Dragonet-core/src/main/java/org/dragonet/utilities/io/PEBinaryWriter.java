@@ -19,6 +19,7 @@ import java.io.OutputStream;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
+import java.util.UUID;
 
 public class PEBinaryWriter implements Flushable, Closeable {
 
@@ -51,6 +52,11 @@ public class PEBinaryWriter implements Flushable, Closeable {
     @Override
     public void close() throws IOException {
         os.close();
+    }
+    
+    public void writeUUID(UUID uuid) throws IOException {
+        writeLong(uuid.getMostSignificantBits());
+        writeLong(uuid.getLeastSignificantBits());
     }
 
     public void writeString(String string) throws IOException {

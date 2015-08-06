@@ -7,9 +7,6 @@ package org.dragonet.net.packet.minecraft;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,14 +38,16 @@ public class BatchPacket extends PEPacket {
     public void encode() {
         try {
             //Combine all packets
-            ByteArrayOutputStream packetCombiner = new ByteArrayOutputStream();
+            ByteArrayOutputStream packetCombinerData = new ByteArrayOutputStream();
+            PEBinaryWriter packetCombiner = new PEBinaryWriter(packetCombinerData);
             for (PEPacket pk : packets) {
                 pk.encode();
+                packetCombiner.writeInt(pk.getData().length);
                 packetCombiner.write(pk.getData());
             }
             Deflater def = new Deflater(7);
             def.reset();
-            def.setInput(packetCombiner.toByteArray());
+            def.setInput(packetCombinerData.toByteArray());
             def.finish();
             byte[] deflateBuffer = new byte[65535];
             int size = def.deflate(deflateBuffer);
@@ -82,14 +81,20 @@ public class BatchPacket extends PEPacket {
                 return;
             }
             inf.end();
+            
+            
+            PEBinaryReader dataReader = new PEBinaryReader(new ByteArrayInputStream(decompressedPayload));
             int offset = 0;
             while (offset < decompressedSize) {
-                PEPacket pk = Protocol.decode(Arrays.copyOfRange(decompressedPayload, offset, decompressedSize));
+                int pkLen = dataReader.readInt();
+                offset += 4;
+                byte[] pkData = dataReader.read(pkLen);
+                offset += pkLen;
+                PEPacket pk = Protocol.decode(pkData);
                 if (pk == null || pk.getLength() == 0) {
                     packets.clear();
                     return;
                 }
-                offset += pk.getLength();
                 packets.add(pk);
             }
             this.setLength(reader.totallyRead());

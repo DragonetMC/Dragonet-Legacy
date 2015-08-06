@@ -15,14 +15,14 @@ package org.dragonet.net.packet.minecraft;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import org.dragonet.inventory.PEInventorySlot;
 import org.dragonet.utilities.io.PEBinaryReader;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class PlayerEquipmentPacket extends PEPacket {
 
     public long eid;
-    public short item;
-    public short meta;
+    public PEInventorySlot item;
     public int slot;
     public int selectedSlot;
 
@@ -35,7 +35,7 @@ public class PlayerEquipmentPacket extends PEPacket {
 
     @Override
     public int pid() {
-        return PEPacketIDs.PLAYER_EQUIPMENT_PACKET;
+        return PEPacketIDs.MOB_EQUIPMENT_PACKET;
     }
 
     @Override
@@ -45,8 +45,7 @@ public class PlayerEquipmentPacket extends PEPacket {
             PEBinaryWriter writer = new PEBinaryWriter(bos);
             writer.writeByte((byte) (this.pid() & 0xFF));
             writer.writeLong(eid);
-            writer.writeShort(item);
-            writer.writeShort(meta);
+            PEInventorySlot.writeSlot(writer, item);
             writer.writeByte((byte) (slot & 0xFF));
             writer.writeByte((byte) (selectedSlot & 0xFF));
             this.setData(bos.toByteArray());
@@ -61,9 +60,9 @@ public class PlayerEquipmentPacket extends PEPacket {
             PEBinaryReader reader = new PEBinaryReader(new ByteArrayInputStream(this.getData()));
             reader.readByte();
             this.eid = reader.readLong();
-            this.item = reader.readShort();
-            this.meta = reader.readShort();
+            this.item = PEInventorySlot.readSlot(reader);
             this.slot = reader.readByte() & 0xFF;
+            this.selectedSlot = reader.readByte() & 0xFF;
             this.setLength(reader.totallyRead());
         } catch (IOException e) {
         }

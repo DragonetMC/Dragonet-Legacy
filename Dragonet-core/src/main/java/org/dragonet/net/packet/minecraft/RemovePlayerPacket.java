@@ -14,12 +14,13 @@ package org.dragonet.net.packet.minecraft;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.UUID;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class RemovePlayerPacket extends PEPacket {
 
     public long eid;
-    public long clientID;
+    public UUID uuid;
 
     @Override
     public int pid() {
@@ -33,7 +34,7 @@ public class RemovePlayerPacket extends PEPacket {
             PEBinaryWriter writer = new PEBinaryWriter(bos);
             writer.writeByte((byte) (this.pid() & 0xFF));
             writer.writeLong(this.eid);
-            writer.writeLong(this.clientID);
+            writer.writeUUID(this.uuid);
             this.setData(bos.toByteArray());
         } catch (IOException e) {
         }
