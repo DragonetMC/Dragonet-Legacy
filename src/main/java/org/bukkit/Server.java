@@ -308,23 +308,17 @@ public interface Server extends PluginMessageRecipient {
      * <p>
      * This method may not return objects for offline players.
      *
-     * @deprecated Use {@link #getPlayer(UUID)} as player names are no longer
-     *     guaranteed to be unique
      * @param name the name to look up
      * @return a player if one was found, null otherwise
      */
-    @Deprecated
     public Player getPlayer(String name);
 
     /**
      * Gets the player with the exact given name, case insensitive.
      *
-     * @deprecated Use {@link #getPlayer(UUID)} as player names are no longer
-     *     guaranteed to be unique
      * @param name Exact name of the player to retrieve
      * @return a player object if one was found, null otherwise
      */
-    @Deprecated
     public Player getPlayerExact(String name);
 
     /**
@@ -334,12 +328,9 @@ public interface Server extends PluginMessageRecipient {
      * This list is not sorted in any particular order. If an exact match is
      * found, the returned list will only contain a single result.
      *
-     * @deprecated Use {@link #getPlayer(UUID)} as player names are no longer
-     *     guaranteed to be unique
      * @param name the (partial) name to match
      * @return list of all possible players
      */
-    @Deprecated
     public List<Player> matchPlayer(String name);
 
     /**
@@ -920,4 +911,47 @@ public interface Server extends PluginMessageRecipient {
      */
     @Deprecated
     UnsafeValues getUnsafe();
+
+    public class Spigot
+    {
+
+        public org.bukkit.configuration.file.YamlConfiguration getConfig()
+        {
+            throw new UnsupportedOperationException( "Not supported yet." );
+        }
+
+        // PaperSpigot start - Add getTPS method
+        public double[] getTPS()
+        {
+            throw new UnsupportedOperationException( "Not supported yet." );
+        }
+        // PaperSpigot end
+
+        /**
+         * Sends the component to the player
+         *
+         * @param component the components to send
+         */
+        public void broadcast(net.md_5.bungee.api.chat.BaseComponent component) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        /**
+         * Sends an array of components as a single message to the player
+         *
+         * @param components the components to send
+         */
+        public void broadcast(net.md_5.bungee.api.chat.BaseComponent... components) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        /**
+         * Restart the server. If the server administrator has not configured restarting, the server will stop.
+         */
+        public void restart() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+    }
+
+    Spigot spigot();
 }

@@ -129,6 +129,15 @@ public interface World extends PluginMessageRecipient, Metadatable {
      */
     public Chunk getChunkAt(Block block);
 
+    // PaperSpigot start - Async chunk load API
+    public static interface ChunkLoadCallback {
+        public void onLoad(Chunk chunk);
+    }
+    public void getChunkAtAsync(int x, int z, ChunkLoadCallback cb);
+    public void getChunkAtAsync(Location location, ChunkLoadCallback cb);
+    public void getChunkAtAsync(Block block, ChunkLoadCallback cb);
+    // PaperSpigot end
+
     /**
      * Checks if the specified {@link Chunk} is loaded
      *
@@ -1228,11 +1237,34 @@ public interface World extends PluginMessageRecipient, Metadatable {
         {
             throw new UnsupportedOperationException( "Not supported yet." );
         }
+        
+        /**
+         * Strikes lightning at the given {@link Location} and possibly without sound
+         *
+         * @param loc The location to strike lightning
+         * @param isSilent Whether this strike makes no sound
+         * @return The lightning entity.
+         */        
+        public LightningStrike strikeLightning(Location loc, boolean isSilent)
+        {
+            throw new UnsupportedOperationException( "Not supported yet." );
+        }
+        
+        /**
+         * Strikes lightning at the given {@link Location} without doing damage and possibly without sound
+         *
+         * @param loc The location to strike lightning
+         * @param isSilent Whether this strike makes no sound
+         * @return The lightning entity.
+         */
+        public LightningStrike strikeLightningEffect(Location loc, boolean isSilent)
+        {
+            throw new UnsupportedOperationException( "Not supported yet." );
+        }
     }
 
     Spigot spigot();
     // Spigot end
-
 
     /**
      * Gets the world border for this world.
