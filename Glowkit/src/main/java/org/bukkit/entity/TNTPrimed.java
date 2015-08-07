@@ -35,4 +35,11 @@ public interface TNTPrimed extends Explosive {
      * @return the source of this primed TNT
      */
     public Entity getSource();
+
+    /**
+     * Gets the source block location of the primed TNT.
+     *
+     * @return the source block location the TNT was spawned from
+     */
+    public org.bukkit.Location getSourceLoc();
 }

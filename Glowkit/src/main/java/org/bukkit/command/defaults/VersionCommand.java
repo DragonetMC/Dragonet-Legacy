@@ -185,7 +185,22 @@ public class VersionCommand extends BukkitCommand {
     private void obtainVersion() {
         String version = Bukkit.getVersion();
         if (version == null) version = "Custom";
-        if (version.startsWith("git-Spigot-")) {
+        // PaperSpigot start
+        if (version.startsWith("git-PaperSpigot-")) {
+            String[] parts = version.substring("git-PaperSpigot-".length()).split("-");
+            int cbVersions = getDistance("craftbukkit", parts[1].substring(0, parts[1].indexOf(' ')));
+            int paperSpigotVersions = getDistance("paperspigot", parts[0]);
+            if (cbVersions == -1 || paperSpigotVersions == -1) {
+                setVersionMessage("Error obtaining version information");
+            } else {
+                if (cbVersions == 0 && paperSpigotVersions == 0) {
+                    setVersionMessage("You are running the latest version");
+                } else {
+                    setVersionMessage("You are " + (cbVersions + paperSpigotVersions) + " version(s) behind");
+                }
+            }
+        } else if (version.startsWith("git-Spigot-")) {
+        // PaperSpigot end
             String[] parts = version.substring("git-Spigot-".length()).split("-");
             int cbVersions = getDistance("craftbukkit", parts[1].substring(0, parts[1].indexOf(' ')));
             int spigotVersions = getDistance("spigot", parts[0]);
@@ -235,7 +250,7 @@ public class VersionCommand extends BukkitCommand {
     private static int getDistance(String repo, String hash) {
         try {
             BufferedReader reader = Resources.asCharSource(
-                    new URL("https://hub.spigotmc.org/stash/rest/api/1.0/projects/SPIGOT/repos/" + repo + "/commits?since=" + URLEncoder.encode(hash, "UTF-8") + "&withCounts=true"),
+                    new URL("https://hub.spigotmc.org/stash/rest/api/1.0/projects/PAPER/repos/" + repo + "/commits?since=" + URLEncoder.encode(hash, "UTF-8") + "&withCounts=true"), // PaperSpigot
                     Charsets.UTF_8
             ).openBufferedStream();
             try {

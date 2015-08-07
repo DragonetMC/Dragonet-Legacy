@@ -1,6 +1,6 @@
 Bukkit
 ======
-A plugin API for [Minecraft](https://minecraft.net/) servers, with updates from [SpigotMC](http://www.spigotmc.org/) and [GlowstoneMC](https://github.com/GlowstoneMC/Glowkit).
+A plugin API for [Minecraft](https://minecraft.net/) servers, with updates from [Paper](https://hub.spigotmc.org/stash/projects/PAPER), [SpigotMC](http://www.spigotmc.org/) and [GlowstoneMC](https://github.com/GlowstoneMC/Glowkit).
 
 Bug Reporting
 -------------

@@ -3,20 +3,26 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.bukkit</groupId>
-    <artifactId>bukkit</artifactId>
-    <version>1.8.7-R0.1-SNAPSHOT</version>
+    <groupId>net.glowstone</groupId>
+    <artifactId>glowkit</artifactId>
+    <version>1.8.8-R0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>Bukkit</name>
-    <url>http://www.bukkit.org/</url>
-    <description>A plugin API for Minecraft servers.</description>
+    <name>Glowkit</name>
+    <url>https://github.com/GlowstonePlusPlus/Glowkit</url>
+    <description>An enhanced plugin API for Minecraft servers.</description>
 
     <properties>
-        <maven.compiler.source>1.6</maven.compiler.source>
-        <maven.compiler.target>1.6</maven.compiler.target>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <scm>
+        <developerConnection>scm:git:git@github.com:GlowstonePlusPlus/Glowkit.git</developerConnection>
+        <connection>scm:git:git://github.com/GlowstonePlusPlus/Glowkit.git</connection>
+        <url>https://github.com/GlowstonePlusPlus/Glowkit/tree/bukkit+glowkit/</url>
+    </scm>
 
     <!-- just until we get deployment to central approved -->
     <distributionManagement>
@@ -47,7 +53,7 @@
             <version>3.4</version>
             <scope>compile</scope>
         </dependency>
-        <!-- Keep lang2 for compatibility for now. This may be removed in the future. -->
+        <!-- Keep lang2 for plugin compatibility for now. This may be removed in the future. -->
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
@@ -72,7 +78,7 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-          <version>2.2.4</version>
+            <version>2.2.4</version>
         </dependency>
         <dependency>
             <groupId>org.avaje</groupId>
@@ -86,6 +92,14 @@
             <version>1.15</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>net.md-5</groupId>
+            <artifactId>bungeecord-chat</artifactId>
+            <version>1.8-SNAPSHOT</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+
         <!-- testing -->
         <dependency>
             <groupId>junit</groupId>
@@ -108,33 +122,33 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.3.2</version>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                 </configuration>
             </plugin>
-<!-- reverted since it is causing this error my system:
-     "The package org.bukkit.material collides with a type"
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                - versions after this appear to be broken -
-                <version>3.1</version>
-                <configuration>
-                    - we use the Eclipse compiler as it doesn't need a JDK -
-                    <compilerId>eclipse</compilerId>
-                    - source and target are ignored if this isn't true -
-                    <optimize>true</optimize>
-                </configuration>
-                <dependencies>
-                    - we need our custom version as it fixes some bugs on case sensitive file systems -
-                    <dependency>
-                        <groupId>org.codehaus.plexus</groupId>
-                        <artifactId>plexus-compiler-eclipse</artifactId>
-                        <version>2.5.0-spigotmc</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-            -->
+            <!-- reverted since it is causing this error my system:
+                 "The package org.bukkit.material collides with a type"
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-compiler-plugin</artifactId>
+                            - versions after this appear to be broken -
+                            <version>3.1</version>
+                            <configuration>
+                                - we use the Eclipse compiler as it doesn't need a JDK -
+                                <compilerId>eclipse</compilerId>
+                                - source and target are ignored if this isn't true -
+                                <optimize>true</optimize>
+                            </configuration>
+                            <dependencies>
+                                - we need our custom version as it fixes some bugs on case sensitive file systems -
+                                <dependency>
+                                    <groupId>org.codehaus.plexus</groupId>
+                                    <artifactId>plexus-compiler-eclipse</artifactId>
+                                    <version>2.5.0-spigotmc</version>
+                                </dependency>
+                            </dependencies>
+                        </plugin>
+                        -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>animal-sniffer-maven-plugin</artifactId>

@@ -126,18 +126,6 @@ public enum Effect {
     BONEMEAL_USE(2005, Type.VISUAL),
 
     /**
-     * Explosion particles
-     */
-    EXPLOSION("explode", Type.PARTICLE),
-    /**
-     * A larger version of the explode particle
-     */
-    EXPLOSION_LARGE("largeexplode", Type.PARTICLE),
-    /**
-     * The biggest explosion particle effect
-     */
-    EXPLOSION_HUGE("hugeexplosion", Type.PARTICLE),
-    /**
      * The spark that comes off a fireworks
      */
     FIREWORKS_SPARK("fireworksSpark", Type.PARTICLE),
@@ -145,10 +133,6 @@ public enum Effect {
      * The water bubble particles that appear in water, guardian laser beams and fishing.
      */
     BUBBLE("bubble", Type.PARTICLE),
-    /**
-     * Water particles
-     */
-    SPLASH("splash", Type.PARTICLE),
     /**
      * The particle on the end of the fishing line, or the hook.
      */
@@ -158,10 +142,6 @@ public enum Effect {
      */
     SUSPENDED("suspended", Type.PARTICLE),
     /**
-     * Small gray particles
-     */
-    VOID_FOG("depthsuspend", Type.PARTICLE),
-    /**
      * Critical hit particles
      */
     CRIT("crit", Type.PARTICLE),
@@ -169,23 +149,6 @@ public enum Effect {
      * Blue critical hit particles
      */
     MAGIC_CRIT("magicCrit", Type.PARTICLE),
-    /**
-     * Smoke particles
-     */
-    PARTICLE_SMOKE("smoke", Type.PARTICLE),
-    /**
-     * The smoke particles that appears on blazes, minecarts
-     * with furnaces and fire
-     */
-    LARGE_SMOKE("largesmoke", Type.PARTICLE),
-    /**
-     * A puff of white potion swirls
-     */
-    SPELL("spell", Type.PARTICLE),
-    /**
-     * A puff of white stars
-     */
-    INSTANT_SPELL("instantSpell", Type.PARTICLE),
     /**
      * Multicolored potion effect particles
      */
@@ -195,29 +158,17 @@ public enum Effect {
      */
     POTION_SWIRL_TRANSPARENT("mobSpellAmbient", Type.PARTICLE),
     /**
+     * A puff of white potion swirls
+     */
+    SPELL("spell", Type.PARTICLE),
+    /**
+     * A puff of white stars
+     */
+    INSTANT_SPELL("instantSpell", Type.PARTICLE),
+    /**
      * A puff of purple particles
      */
     WITCH_MAGIC("witchMagic", Type.PARTICLE),
-    /**
-     * The water drip particle that appears on blocks under water
-     */
-    WATERDRIP("dripWater", Type.PARTICLE),
-    /**
-     * The lava drip particle that appears on blocks under lava
-     */
-    LAVADRIP("dripLava", Type.PARTICLE),
-    /**
-     * The particle that appears when hitting a villager
-     */
-    VILLAGER_THUNDERCLOUD("angryVillager", Type.PARTICLE),
-    /**
-     * The particle that appears when trading with a villager
-     */
-    HAPPY_VILLAGER("happyVillager", Type.PARTICLE),
-    /**
-     * Small gray particles
-     */
-    SMALL_SMOKE("townaura", Type.PARTICLE),
     /**
      * The note that appears above note blocks
      */
@@ -243,6 +194,34 @@ public enum Effect {
      */
     FOOTSTEP("footstep", Type.PARTICLE),
     /**
+     * Water particles
+     */
+    SPLASH("splash", Type.PARTICLE),
+    /**
+     * Smoke particles
+     */
+    PARTICLE_SMOKE("smoke", Type.PARTICLE),
+    /**
+     * The biggest explosion particle effect
+     */
+    EXPLOSION_HUGE("hugeexplosion", Type.PARTICLE),
+    /**
+     * A larger version of the explode particle
+     */
+    EXPLOSION_LARGE("largeexplode", Type.PARTICLE),
+    /**
+     * Explosion particles
+     */
+    EXPLOSION("explode", Type.PARTICLE),
+    /**
+     * Small gray particles
+     */
+    VOID_FOG("depthsuspend", Type.PARTICLE),
+    /**
+     * Small gray particles
+     */
+    SMALL_SMOKE("townaura", Type.PARTICLE),
+    /**
      * A puff of white smoke
      */
     CLOUD("cloud", Type.PARTICLE),
@@ -254,6 +233,14 @@ public enum Effect {
      * Snowball breaking
      */
     SNOWBALL_BREAK("snowballpoof", Type.PARTICLE),
+    /**
+     * The water drip particle that appears on blocks under water
+     */
+    WATERDRIP("dripWater", Type.PARTICLE),
+    /**
+     * The lava drip particle that appears on blocks under lava
+     */
+    LAVADRIP("dripLava", Type.PARTICLE),
     /**
      * White particles
      */
@@ -270,6 +257,19 @@ public enum Effect {
      * The crossed out circle particle that appears on barriers.
      */
     BARRIER("barrier", Type.PARTICLE),
+    /**
+     * The particle that appears when hitting a villager
+     */
+    VILLAGER_THUNDERCLOUD("angryVillager", Type.PARTICLE),
+    /**
+     * The particle that appears when trading with a villager
+     */
+    HAPPY_VILLAGER("happyVillager", Type.PARTICLE),
+    /**
+     * The smoke particles that appears on blazes, minecarts
+     * with furnaces and fire
+     */
+    LARGE_SMOKE("largesmoke", Type.PARTICLE),
     /**
      * The particles generated when a tool breaks.
      * This particle requires a Material so that the client can select the correct texture.
@@ -297,7 +297,6 @@ public enum Effect {
      * The particle used when an elder guardian appears.
      */
     MOB_APPEARANCE("mobappearance", Type.PARTICLE);
-    ;
 
     private final int id;
     private final Type type;
@@ -341,7 +340,7 @@ public enum Effect {
         this.id = 0;
         this.data = null;
         this.distanceIgnored = false;
-     }
+    }
 
     /**
      * Gets the ID for this effect.
@@ -400,7 +399,31 @@ public enum Effect {
         return BY_ID.get(id);
     }
 
-   /**
+    static {
+        for (Effect effect : values()) {
+            if (effect.type == Type.PARTICLE) {
+                BY_NAME.put(effect.particleName, effect);
+            }
+         }
+     }
+
+    static {
+        for (Effect effect : values()) {
+            if (effect.type != Type.PARTICLE) {
+                BY_ID.put(effect.id, effect);
+            }
+        }
+    }
+
+    static {
+        for (Effect effect : values()) {
+            if (effect.type != Type.PARTICLE) {
+                BY_ID.put(effect.id, effect);
+            }
+        }
+    }
+
+    /**
      * Gets the Effect associated with the given name.
      *
      * @param name name of the Effect to return
@@ -414,14 +437,6 @@ public enum Effect {
         for (Effect effect : values()) {
             if (effect.type == Type.PARTICLE) {
                 BY_NAME.put(effect.particleName, effect);
-            }
-         }
-     }
-
-    static {
-        for (Effect effect : values()) {
-            if (effect.type != Type.PARTICLE) {
-                BY_ID.put(effect.id, effect);
             }
         }
     }
