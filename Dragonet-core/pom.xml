@@ -21,36 +21,36 @@
             <url>https://oss.sonatype.org/content/repositories/public/</url>
         </repository>
         <repository>
-        	<id>glowstone-snap</id>
-        	<name>Glowstone Snapshots</name>
-        	<layout>default</layout>
-        	<url>http://repo.glowstone.net/content/repositories/snapshots/</url>
+            <id>glowstone-snap</id>
+            <name>Glowstone Snapshots</name>
+            <layout>default</layout>
+            <url>http://repo.glowstone.net/content/repositories/snapshots/</url>
         </repository>
         <repository>
-        	<id>caucho</id>
-        	<name>Caucho Snapshot repo</name>
-        	<layout>default</layout>
-        	<url>http://caucho.com/m2-snapshot</url>
+            <id>caucho</id>
+            <name>Caucho Snapshot repo</name>
+            <layout>default</layout>
+            <url>http://caucho.com/m2-snapshot</url>
         </repository>
-		<repository>
-			<id>sponge</id>
-			<name>SpongePowered repo</name>
-			<layout>default</layout>
-			<url>http://repo.spongepowered.org/maven</url>
-		</repository>
+        <repository>
+            <id>sponge</id>
+            <name>SpongePowered repo</name>
+            <layout>default</layout>
+            <url>http://repo.spongepowered.org/maven</url>
+        </repository>
     </repositories>
     
     <dependencies>
         <dependency>
-		<groupId>com.caucho</groupId>
-		<artifactId>quercus</artifactId>
-		<version>4.0-SNAPSHOT</version>
+            <groupId>com.caucho</groupId>
+            <artifactId>quercus</artifactId>
+            <version>4.0-SNAPSHOT</version>
         </dependency>
-	<dependency>
-		<groupId>org.spongepowered</groupId>
-		<artifactId>spongeapi</artifactId>
-		<version>2.1-SNAPSHOT</version>
-	</dependency>
+        <dependency>
+            <groupId>org.spongepowered</groupId>
+            <artifactId>spongeapi</artifactId>
+            <version>2.1-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>org.mozilla</groupId>
             <artifactId>rhino</artifactId>
