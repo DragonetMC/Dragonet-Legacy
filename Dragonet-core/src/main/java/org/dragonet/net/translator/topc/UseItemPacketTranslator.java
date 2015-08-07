@@ -84,7 +84,7 @@ public class UseItemPacketTranslator extends PEPacketTranslatorToPC<Translator_v
 
 
         //Copied from Glowstone class BlockPlacementHandler
-        new BlockPlacementHandler().handle(getSession(), new BlockPlacementMessage(packet.x, packet.y, packet.z, packet.face, new ItemStack(packet.item.id, packet.item.meta), 0, 0, 0));
+        new BlockPlacementHandler().handle(getSession(), new BlockPlacementMessage(packet.x, packet.y, packet.z, packet.face, test_holding, 0, 0, 0));
 
         return null;
     }
