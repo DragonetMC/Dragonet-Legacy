@@ -103,10 +103,12 @@ public final class InventoryType {
 
         public final static int CHEST = 27;
         public final static int DOUBLE_CHEST = 27 + 27;
-        public final static int PLAYER = 36;
+        public final static int PLAYER = 40; //27+9+4
         public final static int FURNACE = 3;
         public final static int CRAFTING = 5;
         public final static int WORKBENCH = 10;
         public final static int STONECUTTER = 10;
+        public final static int ANVIL = 3;
+        
     }
 }

@@ -112,10 +112,10 @@ public class ChatPacket extends PEPacket {
             reader.readByte(); //PID
             this.type = TextType.fromNum(reader.readByte());
             switch (this.type) {
+                case POPUP:
                 case CHAT:
                     this.source = reader.readString();
                 case RAW:
-                case POPUP:
                 case TIP:
                     this.message = reader.readString();
                     break;

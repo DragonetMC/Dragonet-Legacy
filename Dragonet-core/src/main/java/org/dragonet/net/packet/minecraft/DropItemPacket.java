@@ -21,8 +21,7 @@ public class DropItemPacket extends PEPacket {
         return PEPacketIDs.DROP_ITEM_PACKET;
     }
 
-    public long eid;
-    public byte unknown;
+    public byte type;
     public PEInventorySlot slot;
 
     @Override
@@ -34,8 +33,7 @@ public class DropItemPacket extends PEPacket {
         try {
             PEBinaryReader reader = new PEBinaryReader(new ByteArrayInputStream(this.getData()));
             reader.readByte(); //PID
-            this.eid = reader.readLong();
-            this.unknown = reader.readByte();
+            this.type = reader.readByte();
             this.slot = PEInventorySlot.readSlot(reader);
             this.setLength(reader.totallyRead());
         } catch (IOException e) {

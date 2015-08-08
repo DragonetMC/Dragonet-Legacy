@@ -91,7 +91,15 @@ public class PEInventorySlot {
         }
         slot.count = (byte)(item.getAmount() & 0xFF);
         slot.meta = (short)(item.getDurability() & 0xFFFF);
-        //TODO: NBT data
+        
+        if(item.getItemMeta().getDisplayName() != null){
+            slot.nbt = new CompoundTag();
+            
+            CompoundTag display = new CompoundTag();
+            display.putString("Name", item.getItemMeta().getDisplayName());
+            
+            slot.nbt.putCompound("display", display);
+        }
         return slot;
     }
 

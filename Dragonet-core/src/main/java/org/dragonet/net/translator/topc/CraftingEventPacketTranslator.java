@@ -26,7 +26,7 @@ public class CraftingEventPacketTranslator extends PEPacketTranslatorToPC<Transl
 
     @Override
     public Message[] handleSpecific(CraftingEventPacket packet) {
-        //TODO
+        //TODO: From ln.2561
         return null;
     }
 

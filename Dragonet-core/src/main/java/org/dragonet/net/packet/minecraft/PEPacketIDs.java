@@ -17,7 +17,7 @@ public final class PEPacketIDs {
     /**
      * Actual Minecraft: PE protocol version
      */
-    public final static byte CURRENT_PROTOCOL = 31;
+    public final static byte CURRENT_PROTOCOL = 33;
 
     public final static byte PING = (byte) 0x00;
     public final static byte PONG = (byte) 0x00;
