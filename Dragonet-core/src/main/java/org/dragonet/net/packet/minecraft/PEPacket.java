@@ -12,11 +12,18 @@
  */
 package org.dragonet.net.packet.minecraft;
 
+import lombok.Getter;
+import lombok.Setter;
+import org.dragonet.net.inf.mcpe.NetworkChannel;
 import org.dragonet.net.packet.BinaryPacket;
 
 public abstract class PEPacket extends BinaryPacket {
 
     private int length;
+
+    @Getter
+    @Setter
+    private NetworkChannel channel = NetworkChannel.CHANNEL_NONE;
 
     public abstract int pid();
 

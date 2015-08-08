@@ -23,6 +23,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.dragonet.DragonetServer;
 import org.dragonet.net.DragonetSession;
+import org.dragonet.net.inf.mcpe.jraklib.JRakLibInterface;
 import org.dragonet.net.packet.minecraft.AdventureSettingsPacket;
 import org.dragonet.net.packet.minecraft.PEPacket;
 import org.dragonet.net.packet.minecraft.SetTimePacket;
@@ -33,11 +34,22 @@ public class MCPESession extends DragonetSession {
     private @Getter
     DragonetServer dServer;
 
+    @Deprecated
     private PENetworkClient client;
+    private JRakLibInterface raklibInterface;
 
     private boolean statusActive;
 
+    public MCPESession(DragonetServer dServer, String identifier, JRakLibInterface rakLibInterface, BaseTranslator translator){
+        super(dServer, translator, "MCPE-" + identifier);
+        translator.setSession(this);
 
+        this.dServer = dServer;
+        this.raklibInterface = rakLibInterface;
+        statusActive = true;
+    }
+
+    @Deprecated
     public MCPESession(DragonetServer dServer, PENetworkClient client, BaseTranslator translator) {
         super(dServer, translator, "MCPE-" + client.getRemoteAddress().toString());
         translator.setSession(this);
