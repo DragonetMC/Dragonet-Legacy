@@ -25,6 +25,7 @@ public class CloseWindowMessageTranslator extends MessageTranslatorToPE<Translat
         }
         WindowClosePacket pkCloseWindow = new WindowClosePacket();
         pkCloseWindow.windowID = (byte) (packet.id & 0xFF);
+        getSession().getOpenedWindows().remove(packet.id);
         return new PEPacket[]{pkCloseWindow};
     }
 

@@ -36,6 +36,7 @@ public class OpenWindowMessageTranslator extends MessageTranslatorToPE<Translato
         pkOpenWindow.x = this.getSession().getPlayer().getLocation().getBlockX();
         pkOpenWindow.y = this.getSession().getPlayer().getLocation().getBlockY();
         pkOpenWindow.z = this.getSession().getPlayer().getLocation().getBlockZ();
+        getSession().getOpenedWindows().add(packet.id);
         this.getTranslator().cachedWindowType[packet.id & 0xFF] = typePE;
         return new PEPacket[]{pkOpenWindow};
     }

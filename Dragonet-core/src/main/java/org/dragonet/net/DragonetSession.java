@@ -15,10 +15,10 @@ package org.dragonet.net;
 import com.flowpowered.networking.Message;
 import com.flowpowered.networking.exception.ChannelClosedException;
 import io.netty.channel.ChannelFuture;
-import java.net.Inet4Address;
-import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 import javax.crypto.SecretKey;
@@ -76,6 +76,9 @@ public abstract class DragonetSession extends GlowSession {
 
     @Getter
     private final String sessionKey;
+    
+    @Getter
+    private final Set<Integer> openedWindows = new HashSet<>(); //We track this. 
 
     public DragonetSession(DragonetServer dServer, BaseTranslator translator, String sessionKey) {
         super(dServer.getServer());

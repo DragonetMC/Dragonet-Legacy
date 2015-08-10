@@ -48,6 +48,7 @@ public class EntityMetaData {
         public final static int DATA_FLAG_ONFIRE = 0;
         public final static int DATA_FLAG_SNEAKING = 1 << 1;
         public final static int DATA_FLAG_RIDING = 1 << 2;
+        public final static int DATA_FLAG_SPRINTING = 1 << 3;
         public final static int DATA_FLAG_ACTION = 1 << 4;
         public final static int DATA_FLAG_INVISIBLE = 1 << 5;
     }
@@ -92,6 +93,12 @@ public class EntityMetaData {
         byte flags = (byte) 0x00;
         if (player.getFireTicks() > 0) {
             flags |= EntityMetaData.Constants.DATA_FLAG_ACTION;
+        }
+        if(player.isSprinting()){
+            flags |= EntityMetaData.Constants.DATA_FLAG_SPRINTING;
+        }
+        if(player.isSneaking()){
+            flags |= EntityMetaData.Constants.DATA_FLAG_SNEAKING;
         }
         EntityMetaData data = createDefault();
         data.set(EntityMetaData.Constants.DATA_FLAGS, new ByteMeta(flags));
