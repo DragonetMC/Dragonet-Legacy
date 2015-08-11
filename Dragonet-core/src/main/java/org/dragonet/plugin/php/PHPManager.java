@@ -30,6 +30,7 @@ public final class PHPManager {
     public PHPManager(DragonetServer server) {
         this.server = server;
         context = new QuercusContext();
+        context.setUnicodeSemantics(true);
         context.start();
         env = new Env(context);
         env.start();
