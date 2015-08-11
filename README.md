@@ -18,10 +18,10 @@ Yes, mostly! But you may expirence some bugs and issues because this software is
 #### For Minecraft PE: 69.30.240.250 and default port 19132
 Servers are proudly sponsored by [MCServerBank](http://mcserverbank.com). 
 
-##Where is the Dragonet GitHub Wiki?
-[Here!](https://github.com/DragonetMC/Dragonet/wiki)<br>
+### About Bukkit Essentials
+####If you are looking for Bukkit Essentials, you should use [Spigot Essentials](https://hub.spigotmc.org/jenkins/job/Spigot-Essentials/). 
 
-##Download
+## Download
 You may download pre-compiled binaries at our website:
 [http://dragonet.org/](http://dragonet.org/)<br>
 You can also get development builds from the [CircleCI](https://circleci.com/gh/DragonetMC/Dragonet/tree/master) page.  
