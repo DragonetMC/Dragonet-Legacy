@@ -30,11 +30,11 @@ public final class PHPManager {
     public PHPManager(DragonetServer server) {
         this.server = server;
         context = new QuercusContext();
+        context.start();
         env = new Env(context);
         env.start();
         env.setTimeLimit(-1);
         //env.addAutoloadFunction(  , true);
-        context.start();
     }
     
     public void loadScripts(){
