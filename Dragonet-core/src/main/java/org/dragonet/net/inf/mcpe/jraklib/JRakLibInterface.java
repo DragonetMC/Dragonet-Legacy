@@ -12,9 +12,10 @@ import org.dragonet.net.packet.minecraft.BatchPacket;
 import org.dragonet.net.packet.minecraft.PEPacket;
 
 import java.net.InetSocketAddress;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.Getter;
+import org.dragonet.net.inf.mcpe.PENetworkClient;
 
 /**
  * The Interface for communicating with JRakLib.
@@ -28,25 +29,42 @@ public class JRakLibInterface implements ServerInstance{
     @Getter
     private SessionManager manager;
     
-    private Map<DragonetSession, String> identifierMap = new HashMap<>();
+    private final Map<String, PENetworkClient> clientMap = new ConcurrentHashMap<>();
+    private final Map<PENetworkClient, String> idMap = new ConcurrentHashMap<>();
 
-    public JRakLibInterface(SessionManager manager, InetSocketAddress address){
+    public JRakLibInterface(SessionManager manager, InetSocketAddress address) throws Exception {
         this.manager = manager;
         this.rakLibServer = new JRakLibServer(new JRakLibLogger(manager.getServer().getLogger()), address.getPort(), address.getHostString());
         this.handler = new ServerHandler(rakLibServer, this);
+        if(rakLibServer.isAlive() == false || rakLibServer.isInterrupted() || rakLibServer.isShutdown()){
+            //DEAD
+            throw new Exception("Faild to bind on port! ");
+        }
         manager.getServer().getLogger().info("JRakLib Server started on: "+address.toString());
+    }
+    
+    public void shutdown(){
+        handler.shutdown();
+        rakLibServer.shutdown();
     }
 
     @Override
     public void openSession(String identifier, String address, int port, long clientID) {
         manager.getServer().getLogger().debug("("+identifier+") New session with clientID: "+clientID);
-        //TODO: Add your DragonetSession's, players here
+        PENetworkClient client = new PENetworkClient(this, identifier);
+        clientMap.put(identifier, client);
+        idMap.put(client, identifier);
     }
 
     @Override
     public void closeSession(String identifier, String reason) {
         manager.getServer().getLogger().debug("("+identifier+") Session closed with reason: "+reason);
-        //TODO: Remove dragonet sessions, players here.
+        if(!clientMap.containsKey(identifier)) return;
+        PENetworkClient client = clientMap.get(identifier);
+        client.disconnect(reason);
+        
+        clientMap.remove(identifier);
+        idMap.remove(client);
     }
 
     @Override
@@ -77,8 +95,8 @@ public class JRakLibInterface implements ServerInstance{
      * @param packet The Packet being sent.
      * @param immediate If the packet should be sent immediately (no compression, skips packet queues)
      */
-    public void sendPacket(DragonetSession session, PEPacket packet, boolean immediate){
-        if(identifierMap.containsKey(session)){
+    public void sendPacket(PENetworkClient session, PEPacket packet, boolean immediate){
+        if(clientMap.containsKey(session)){
             if(packet.getData() == null){
                 packet.encode();
             }
@@ -98,7 +116,7 @@ public class JRakLibInterface implements ServerInstance{
             } else {
                 pk.reliability = 3;
             }
-            handler.sendEncapsulated(identifierMap.get(session), pk, (byte) ((byte) 0 | (immediate ? JRakLib.PRIORITY_IMMEDIATE : JRakLib.PRIORITY_NORMAL)));
+            handler.sendEncapsulated(session.getRaklibClientID(), pk, (byte) ((byte) 0 | (immediate ? JRakLib.PRIORITY_IMMEDIATE : JRakLib.PRIORITY_NORMAL)));
         } else {
             throw new IllegalArgumentException("Invalid session: "+session.toString());
         }

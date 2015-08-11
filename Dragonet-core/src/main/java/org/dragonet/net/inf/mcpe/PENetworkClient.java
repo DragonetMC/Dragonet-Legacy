@@ -126,6 +126,10 @@ public final class PENetworkClient {
     
     private void close(String reason){
         this.sendPacket(new DisconnectPacket(reason));
+        if(session != null){
+            session.disconnect(reason);
+            inf.getManager().removeSessionRaw(session);
+        }
     }
 
 }
