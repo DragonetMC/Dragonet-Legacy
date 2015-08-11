@@ -6,22 +6,11 @@
 package org.dragonet.net.translator.topc;
 
 import com.flowpowered.networking.Message;
-import net.glowstone.EventFactory;
-import net.glowstone.block.GlowBlock;
-import net.glowstone.block.ItemTable;
-import net.glowstone.block.blocktype.BlockType;
-import net.glowstone.block.entity.TileEntity;
-import net.glowstone.block.itemtype.ItemType;
-import net.glowstone.entity.GlowPlayer;
 import net.glowstone.net.handler.play.player.BlockPlacementHandler;
 import net.glowstone.net.message.play.player.BlockPlacementMessage;
-import org.bukkit.Material;
+import net.glowstone.net.message.play.player.PlayerSwingArmMessage;
 import org.bukkit.block.BlockFace;
-import org.bukkit.event.Event;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
 import org.dragonet.inventory.PEInventorySlot;
 import org.dragonet.net.DragonetSession;
 import org.dragonet.net.packet.minecraft.PlayerEquipmentPacket;
@@ -52,8 +41,14 @@ public class UseItemPacketTranslator extends PEPacketTranslatorToPC<Translator_v
     public Message[] handleSpecific(UseItemPacket packet) {
         UseItemPacket pkUseItem = (UseItemPacket) packet;
         System.out.println("FACE=" + (pkUseItem.face & 0xFF) + ", ITEM=" + packet.item);
-        if (!((pkUseItem.face >= 0 && pkUseItem.face < 6) || (pkUseItem.face & 0xFF) == 0xFF)) {
+        if(pkUseItem.face == 0xFF){
+            //Air touch
+            
             return null;
+        }
+        if (!(pkUseItem.face >= 0 && pkUseItem.face < 6)) {
+            PlayerSwingArmMessage msg = new PlayerSwingArmMessage();   //Left click air
+            return new Message[]{msg};
         }
 
         //Check the slot
