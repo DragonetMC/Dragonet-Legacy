@@ -14,10 +14,10 @@ package org.dragonet.utilities;
 
 public final class DragonetVersioning {
 
-    public final static String DRAGONET_VERSION = "0.0.3-preR1";
+    public final static String DRAGONET_VERSION = "BlueSky(0.0.3) preR1";
 
-    public final static String MINECRAFT_PC_VERSION = "1.8.7";
-    public final static String MINECRAFT_PE_VERSION = "0.12.0"; //Need to update to 0.12.1
+    public final static String MINECRAFT_PC_VERSION = "1.8.8";
+    public final static String MINECRAFT_PE_VERSION = "0.12.1";
 
     
     public final static int MINECRAFT_PE_PROTOCOL = 30;
