@@ -43,12 +43,11 @@ public class UseItemPacketTranslator extends PEPacketTranslatorToPC<Translator_v
         System.out.println("FACE=" + (pkUseItem.face & 0xFF) + ", ITEM=" + packet.item);
         if(pkUseItem.face == 0xFF){
             //Air touch
-            
-            return null;
-        }
-        if (!(pkUseItem.face >= 0 && pkUseItem.face < 6)) {
             PlayerSwingArmMessage msg = new PlayerSwingArmMessage();   //Left click air
             return new Message[]{msg};
+        }
+        if (!(pkUseItem.face >= 0 && pkUseItem.face < 6)) {
+            return null;
         }
 
         //Check the slot
