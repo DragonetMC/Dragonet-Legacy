@@ -14,15 +14,16 @@ import org.bukkit.command.CommandSender;
 import org.dragonet.plugin.PluginAdapter;
 
 public class PHPPlugin extends PluginAdapter {
-    private QuercusContext context;
+    private final PHPManager manager;
 
-    public PHPPlugin(GlowServer server, File path) throws IllegalArgumentException {
+    public PHPPlugin(GlowServer server, File path, PHPManager manager) throws IllegalArgumentException {
         super(server);
+        this.manager = manager;
         if(path.isDirectory()){
             throw new IllegalArgumentException("Input file can not be directory, must be a PHP file. ");
         }
-        if(!path.getName().toLowerCase().endsWith(".php")){
-            throw new IllegalArgumentException("Input file must be a PHP file. ");
+        if(!path.getName().toLowerCase().endsWith(".zip")){
+            throw new IllegalArgumentException("Input file must be a ZIP file. ");
         }
         //TODO: Detect type, load
     }

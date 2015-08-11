@@ -8,6 +8,7 @@ package org.dragonet.net.packet.minecraft;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import org.dragonet.inventory.PEInventorySlot;
+import org.dragonet.net.inf.mcpe.NetworkChannel;
 import org.dragonet.utilities.io.PEBinaryReader;
 
 public class DropItemPacket extends PEPacket {
@@ -31,6 +32,7 @@ public class DropItemPacket extends PEPacket {
     @Override
     public void decode() {
         try {
+            setChannel(NetworkChannel.CHANNEL_ENTITY_SPAWNING);
             PEBinaryReader reader = new PEBinaryReader(new ByteArrayInputStream(this.getData()));
             reader.readByte(); //PID
             this.type = reader.readByte();

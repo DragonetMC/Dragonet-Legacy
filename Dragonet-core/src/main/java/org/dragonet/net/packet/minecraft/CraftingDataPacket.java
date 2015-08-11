@@ -23,6 +23,7 @@ import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.dragonet.inventory.PEInventorySlot;
+import org.dragonet.net.inf.mcpe.NetworkChannel;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class CraftingDataPacket extends PEPacket {
@@ -52,6 +53,7 @@ public class CraftingDataPacket extends PEPacket {
     public void encode() {
         enchants = 0;
         try {
+            setChannel(NetworkChannel.CHANNEL_WORLD_EVENTS);
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PEBinaryWriter writer = new PEBinaryWriter(bos);
             writer.writeByte((byte) (this.pid() & 0xFF));
