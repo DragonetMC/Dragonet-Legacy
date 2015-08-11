@@ -65,7 +65,7 @@ public final class PENetworkClient {
         close(reason);
     }
 
-    private void processPacketBuffer(byte[] buffer) {
+    public void processPacketBuffer(byte[] buffer) {
         PEPacket packet = Protocol.decode(buffer);
         if (packet == null) {
             return;
