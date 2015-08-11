@@ -26,7 +26,8 @@ public class ChatPacket extends PEPacket {
         CHAT(1),
         TRANSLATION(2),
         POPUP(3),
-        TIP(4);
+        TIP(4),
+        SYSTEM(5);
 
         private int type;
 
@@ -50,6 +51,8 @@ public class ChatPacket extends PEPacket {
                     return POPUP;
                 case 4:
                     return TIP;
+                case 5:
+                    return SYSTEM;
                 default:
                     return RAW;
             }
@@ -81,11 +84,12 @@ public class ChatPacket extends PEPacket {
             writer.writeByte((byte) (this.pid() & 0xFF));
             writer.writeByte((byte) (this.type.getType() & 0xFF));
             switch (this.type) {
+                case POPUP:
                 case CHAT:
                     writer.writeString(this.source);
                 case RAW:
-                case POPUP:
                 case TIP:
+                case SYSTEM:
                     writer.writeString(this.message);
                     break;
                 case TRANSLATION:
@@ -117,6 +121,7 @@ public class ChatPacket extends PEPacket {
                     this.source = reader.readString();
                 case RAW:
                 case TIP:
+                case SYSTEM:
                     this.message = reader.readString();
                     break;
                 case TRANSLATION:
