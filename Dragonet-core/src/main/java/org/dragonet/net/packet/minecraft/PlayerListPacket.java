@@ -16,6 +16,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import lombok.Data;
+import org.dragonet.net.inf.mcpe.NetworkChannel;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class PlayerListPacket extends PEPacket {
@@ -32,6 +33,7 @@ public class PlayerListPacket extends PEPacket {
     @Override
     public void encode() {
         try {
+            setChannel(NetworkChannel.CHANNEL_TEXT);
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PEBinaryWriter writer = new PEBinaryWriter(bos);
             writer.writeByte((byte) (this.pid() & 0xFF));

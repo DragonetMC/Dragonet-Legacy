@@ -15,6 +15,7 @@ package org.dragonet.net.packet.minecraft;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import org.dragonet.net.inf.mcpe.NetworkChannel;
 import org.dragonet.utilities.io.PEBinaryReader;
 
 public class RemoveBlockPacket extends PEPacket {
@@ -40,6 +41,7 @@ public class RemoveBlockPacket extends PEPacket {
     @Override
     public void decode() {
         try {
+            setChannel(NetworkChannel.CHANNEL_WORLD_EVENTS);
             PEBinaryReader reader = new PEBinaryReader(new ByteArrayInputStream(this.getData()));
             reader.readByte();
             this.eid = reader.readLong();
