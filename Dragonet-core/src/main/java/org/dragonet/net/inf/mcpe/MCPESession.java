@@ -35,27 +35,18 @@ public class MCPESession extends DragonetSession {
     DragonetServer dServer;
 
     @Deprecated
-    private PENetworkClient client;
-    private JRakLibInterface raklibInterface;
+    private final PENetworkClient client;
+    private final JRakLibInterface raklibInterface;
 
     private boolean statusActive;
 
-    public MCPESession(DragonetServer dServer, String identifier, JRakLibInterface rakLibInterface, BaseTranslator translator){
-        super(dServer, translator, "MCPE-" + identifier);
+    public MCPESession(DragonetServer dServer, PENetworkClient client, JRakLibInterface rakLibInterface, BaseTranslator translator){
+        super(dServer, translator, "MCPE-" + client.getRaklibClientID());
         translator.setSession(this);
 
+        this.client = client;
         this.dServer = dServer;
         this.raklibInterface = rakLibInterface;
-        statusActive = true;
-    }
-
-    @Deprecated
-    public MCPESession(DragonetServer dServer, PENetworkClient client, BaseTranslator translator) {
-        super(dServer, translator, "MCPE-" + client.getRemoteAddress().toString());
-        translator.setSession(this);
-        
-        this.dServer = dServer;
-        this.client = client;
         statusActive = true;
     }
     
@@ -66,13 +57,14 @@ public class MCPESession extends DragonetSession {
     public void onTick() {
         //client.onTick(); <- We don't tick here, in NetworkHandler already did. 
         super.onTick();
-        if (client.getSentAndReceivedChunks() >= dServer.getPlayerSpawnThreshold()*dServer.getPlayerSpawnThreshold() && (this.player instanceof Player)) { //TODO: Change 
+        /*
+        if (SPAWNED) { //TODO: Detect spawn and send stuffs
             this.getLogger().info("PE player [" + this.player.getName() + "] has spawned. ");
-            client.setSentAndReceivedChunks(-1);
             this.sendSettings();
             SetTimePacket pkTime = new SetTimePacket((int) (this.getPlayer().getWorld().getTime() & 0xFFFFFFFF), true);
             this.send(pkTime);
         }
+        */
     }
 
     @Override
@@ -87,7 +79,7 @@ public class MCPESession extends DragonetSession {
 
     @Override
     public InetSocketAddress getAddress() {
-        return client.getRemoteInetSocketAddress();
+        return null;
     }
     
 
@@ -154,7 +146,7 @@ public class MCPESession extends DragonetSession {
             GlowServer.logger.info(player.getName() + " kicked: " + reason);
             this.player.remove();
         } else {
-            GlowServer.logger.info("[" + client.getRemoteIP() + ":" + client.getRemotePort() + "] kicked: " + reason);
+            GlowServer.logger.info("[MCPE Network ID " + client.getRaklibClientID() + "] kicked: " + reason);
         }
 
         client.disconnect(reason);

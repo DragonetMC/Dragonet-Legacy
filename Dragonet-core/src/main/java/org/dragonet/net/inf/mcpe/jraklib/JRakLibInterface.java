@@ -14,6 +14,7 @@ import org.dragonet.net.packet.minecraft.PEPacket;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Getter;
 
 /**
  * The Interface for communicating with JRakLib.
@@ -24,7 +25,9 @@ public class JRakLibInterface implements ServerInstance{
     private JRakLibServer rakLibServer;
     private ServerHandler handler;
 
+    @Getter
     private SessionManager manager;
+    
     private Map<DragonetSession, String> identifierMap = new HashMap<>();
 
     public JRakLibInterface(SessionManager manager, InetSocketAddress address){

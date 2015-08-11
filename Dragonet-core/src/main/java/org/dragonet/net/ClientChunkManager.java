@@ -21,6 +21,7 @@ import lombok.Getter;
 import net.glowstone.GlowChunkSnapshot;
 import net.glowstone.entity.GlowPlayer;
 import org.dragonet.ChunkLocation;
+import org.dragonet.net.inf.mcpe.NetworkChannel;
 import org.dragonet.net.packet.minecraft.FullChunkPacket;
 import org.dragonet.net.packet.minecraft.LoginStatusPacket;
 import org.dragonet.utilities.io.PEBinaryWriter;
