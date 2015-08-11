@@ -62,8 +62,8 @@
             <version>5.0.3</version>
         </dependency>
         <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>bukkit</artifactId>
+            <groupId>net.glowstone</groupId>
+            <artifactId>glowkit</artifactId>
             <version>${bukkit.version}</version>
         </dependency>
         <dependency>
