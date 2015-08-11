@@ -1,9 +1,10 @@
 package net.glowstone.block;
 
-import java.util.ArrayList;
 import net.glowstone.GlowChunk;
 import net.glowstone.GlowServer;
 import net.glowstone.GlowWorld;
+import net.glowstone.block.blocktype.BlockRedstone;
+import net.glowstone.block.blocktype.BlockRedstoneTorch;
 import net.glowstone.block.blocktype.BlockType;
 import net.glowstone.block.entity.TileEntity;
 import net.glowstone.entity.GlowPlayer;
@@ -16,22 +17,15 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.Button;
+import org.bukkit.material.Diode;
+import org.bukkit.material.Lever;
 import org.bukkit.metadata.MetadataStore;
 import org.bukkit.metadata.MetadataStoreBase;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import net.glowstone.block.blocktype.BlockRedstone;
-import net.glowstone.block.blocktype.BlockRedstoneTorch;
-import org.bukkit.material.Button;
-import org.bukkit.material.Diode;
-import org.bukkit.material.Lever;
+import java.util.*;
 
 /**
  * Represents a single block in a world.
@@ -67,13 +61,13 @@ public final class GlowBlock implements Block {
      */
     private static final MetadataStore<Block> metadata = new BlockMetadataStore();
 
-    private final GlowChunk chunk;
+    private GlowWorld world;
     private final int x;
     private final int y;
     private final int z;
 
     public GlowBlock(GlowChunk chunk, int x, int y, int z) {
-        this.chunk = chunk;
+        world = chunk.getWorld();
         this.x = x;
         this.y = y;
         this.z = z;
@@ -83,12 +77,12 @@ public final class GlowBlock implements Block {
     // Basics
     @Override
     public GlowWorld getWorld() {
-        return chunk.getWorld();
+        return world;
     }
 
     @Override
     public GlowChunk getChunk() {
-        return chunk;
+        return (GlowChunk) world.getChunkAt(this);
     }
 
     @Override
@@ -124,7 +118,7 @@ public final class GlowBlock implements Block {
     }
 
     public TileEntity getTileEntity() {
-        return chunk.getEntity(x & 0xf, y, z & 0xf);
+        return ((GlowChunk) world.getChunkAt(this)).getEntity(x & 0xf, y, z & 0xf);
     }
 
     @Override
@@ -197,7 +191,7 @@ public final class GlowBlock implements Block {
 
     @Override
     public int getTypeId() {
-        return chunk.getType(x & 0xf, z & 0xf, y);
+        return ((GlowChunk) world.getChunkAt(this)).getType(x & 0xf, z & 0xf, y);
     }
 
     @Override
@@ -236,12 +230,12 @@ public final class GlowBlock implements Block {
         Material oldTypeId = getType();
         byte oldData = getData();
 
-        chunk.setType(x & 0xf, z & 0xf, y, type);
-        chunk.setMetaData(x & 0xf, z & 0xf, y, data);
+        ((GlowChunk) world.getChunkAt(this)).setType(x & 0xf, z & 0xf, y, type);
+        ((GlowChunk) world.getChunkAt(this)).setMetaData(x & 0xf, z & 0xf, y, data);
 
         if (oldTypeId == Material.DOUBLE_PLANT && this.getRelative(BlockFace.UP).getType() == Material.DOUBLE_PLANT) {
-            chunk.setType(x & 0xf, z & 0xf, y + 1, 0);
-            chunk.setMetaData(x & 0xf, z & 0xf, y, 0);
+            ((GlowChunk) world.getChunkAt(this)).setType(x & 0xf, z & 0xf, y + 1, 0);
+            ((GlowChunk) world.getChunkAt(this)).setMetaData(x & 0xf, z & 0xf, y, 0);
             BlockChangeMessage bcmsg = new BlockChangeMessage(x, y + 1, z, 0, 0);
             for (GlowPlayer p : getWorld().getRawPlayers()) {
                 p.sendBlockChange(bcmsg);
@@ -293,7 +287,7 @@ public final class GlowBlock implements Block {
     // Data and light getters/setters
     @Override
     public byte getData() {
-        return (byte) chunk.getMetaData(x & 0xf, z & 0xf, y);
+        return (byte) ((GlowChunk) world.getChunkAt(this)).getMetaData(x & 0xf, z & 0xf, y);
     }
 
     @Override
@@ -304,7 +298,7 @@ public final class GlowBlock implements Block {
     @Override
     public void setData(byte data, boolean applyPhysics) {
         byte oldData = getData();
-        chunk.setMetaData(x & 0xf, z & 0xf, y & 0x7f, data);
+        ((GlowChunk) world.getChunkAt(this)).setMetaData(x & 0xf, z & 0xf, y & 0x7f, data);
         if (applyPhysics) {
             applyPhysics(getType(), getTypeId(), oldData, data);
         }
@@ -321,12 +315,12 @@ public final class GlowBlock implements Block {
 
     @Override
     public byte getLightFromSky() {
-        return chunk.getSkyLight(x & 0xf, z & 0xf, y);
+        return ((GlowChunk) world.getChunkAt(this)).getSkyLight(x & 0xf, z & 0xf, y);
     }
 
     @Override
     public byte getLightFromBlocks() {
-        return chunk.getBlockLight(x & 0xf, z & 0xf, y);
+        return ((GlowChunk) world.getChunkAt(this)).getBlockLight(x & 0xf, z & 0xf, y);
     }
 
     ////////////////////////////////////////////////////////////////////////////

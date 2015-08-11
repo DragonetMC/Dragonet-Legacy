@@ -4,12 +4,7 @@ import com.flowpowered.networking.MessageHandler;
 import net.glowstone.EventFactory;
 import net.glowstone.GlowServer;
 import net.glowstone.entity.GlowPlayer;
-import net.glowstone.inventory.DragTracker;
-import net.glowstone.inventory.GlowCraftingInventory;
-import net.glowstone.inventory.GlowInventory;
-import net.glowstone.inventory.GlowInventoryView;
-import net.glowstone.inventory.GlowPlayerInventory;
-import net.glowstone.inventory.WindowClickLogic;
+import net.glowstone.inventory.*;
 import net.glowstone.net.GlowSession;
 import net.glowstone.net.message.play.inv.TransactionMessage;
 import net.glowstone.net.message.play.inv.WindowClickMessage;
@@ -197,7 +192,7 @@ public final class WindowClickHandler implements MessageHandler<GlowSession, Win
             }
 
             int cursorAmount = cursor == null ? 0 : cursor.getAmount();
-            if (slotItem != null && cursorAmount + slotItem.getAmount() < slotItem.getMaxStackSize()) {
+            if (slotItem != null && cursorAmount + slotItem.getAmount() <= slotItem.getMaxStackSize()) {
                 // if the player can take the whole result
                 if (WindowClickLogic.isPickupAction(action) || WindowClickLogic.isPlaceAction(action)) {
                     // always take the whole crafting result out of the crafting inventories

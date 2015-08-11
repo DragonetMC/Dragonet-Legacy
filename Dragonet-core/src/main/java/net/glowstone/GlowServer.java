@@ -5,6 +5,7 @@ import com.avaje.ebean.config.dbplatform.SQLitePlatform;
 import com.avaje.ebeaninternal.server.lib.sql.TransactionIsolation;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import io.netty.util.internal.ConcurrentSet;
 import net.glowstone.block.BuiltinMaterialValueManager;
 import net.glowstone.block.MaterialValueManager;
 import net.glowstone.command.ColorCommand;
@@ -86,19 +87,18 @@ public final class GlowServer implements Server {
     /**
      * The game version supported by the server.
      */
-    public static final String GAME_VERSION = "1.8.7";
+    public static final String GAME_VERSION = "1.8.8";
 
     /**
      * The protocol version supported by the server.
      */
     public static final int PROTOCOL_VERSION = 47;
-
+    
     //DRAGONET-Add
     @Getter
     private DragonetServer dragonetServer;
     //DRAGONET-End
 
-    
     /**
      * Creates a new server on TCP port 25565 and starts listening for
      * connections.
@@ -413,7 +413,7 @@ public final class GlowServer implements Server {
     /**
      * A set of all online players.
      */
-    private final Set<GlowPlayer> onlinePlayers = new HashSet<>();
+    private final Set<GlowPlayer> onlinePlayers = new ConcurrentSet<>();
 
     /**
      * A view of all online players.
@@ -478,7 +478,8 @@ public final class GlowServer implements Server {
         //DRAGONET-Add (Moved here due to loadPlugins() will clear all the plugins. ) 
         this.dragonetServer.initialize(); 
         //DRAGONET-End 
-
+        
+        loadPlugins();
         enablePlugins(PluginLoadOrder.STARTUP);
 
         // Create worlds
@@ -662,11 +663,11 @@ public final class GlowServer implements Server {
         if (rconServer != null) {
             rconServer.shutdown();
         }
-
+        
         //DRAGONET-Add: Shutdown Dragonet
         dragonetServer.shutdown();
         //DRAGONET-End
-        
+
         // Save worlds
         for (World world : getWorlds()) {
             logger.info("Saving world: " + world.getName());
@@ -873,7 +874,7 @@ public final class GlowServer implements Server {
 
     @Override
     public String toString() {
-        return "DragonetServer{name=" + getName() + ",version=" + getVersion() + ",minecraftVersion=" + GAME_VERSION + "}";
+        return "GlowServer{name=" + getName() + ",version=" + getVersion() + ",minecraftVersion=" + GAME_VERSION + "}";
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -1065,7 +1066,7 @@ public final class GlowServer implements Server {
 
     @Override
     public String getBukkitVersion() {
-        return getClass().getPackage().getSpecificationVersion();
+        return "Bukkit API 1.8.8-R0.1-SNAPSHOT";
     }
 
     @Override
@@ -1120,6 +1121,11 @@ public final class GlowServer implements Server {
     @Deprecated
     public UnsafeValues getUnsafe() {
         return unsafeAccess;
+    }
+
+    @Override
+    public Spigot spigot() {
+        return null;
     }
 
     @Override

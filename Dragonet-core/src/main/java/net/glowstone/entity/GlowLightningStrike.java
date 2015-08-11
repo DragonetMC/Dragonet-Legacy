@@ -2,11 +2,11 @@ package net.glowstone.entity;
 
 import com.flowpowered.networking.Message;
 import net.glowstone.EventFactory;
+import net.glowstone.GlowWorld;
 import net.glowstone.block.GlowBlock;
 import net.glowstone.entity.physics.BoundingBox;
 import net.glowstone.net.message.play.entity.SpawnLightningStrikeMessage;
 import net.glowstone.util.Position;
-import net.glowstone.GlowWorld;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -134,5 +134,9 @@ public class GlowLightningStrike extends GlowWeather implements LightningStrike 
                 state.update(true);
             }
         }
+    }
+
+    public LightningStrike.Spigot spigot() {
+        return null;
     }
 }

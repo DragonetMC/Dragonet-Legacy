@@ -1,10 +1,10 @@
 package net.glowstone.net.message.play.scoreboard;
 
 import com.flowpowered.networking.Message;
-import org.bukkit.scoreboard.RenderType;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.scoreboard.RenderType;
 
 @Data
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
@@ -15,7 +15,7 @@ public final class ScoreboardObjectiveMessage implements Message {
     public final int action;
     public final RenderType renderType;
 
-    private enum Action {
+    public enum Action {
         CREATE,
         REMOVE,
         UPDATE

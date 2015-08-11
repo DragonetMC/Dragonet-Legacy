@@ -30,6 +30,7 @@ public class BlockSlab extends BlockType {
             return;
         } else if (blockType == Material.STONE_SLAB2) {
             state.setType(Material.DOUBLE_STONE_SLAB2);
+            state.setRawData((byte) holding.getDurability());
             return;
         }
 
@@ -41,6 +42,10 @@ public class BlockSlab extends BlockType {
                 ((Step) data).setInverted(true);
             } else if ((data instanceof WoodenStep)) {
                 ((WoodenStep) data).setInverted(true);
+            } else if (data.getItemType() == Material.STONE_SLAB2) {
+                Step slab = new Step(Material.STONE_SLAB2);
+                slab.setInverted(true);
+                data = slab;
             }
             state.setData(data);
         }

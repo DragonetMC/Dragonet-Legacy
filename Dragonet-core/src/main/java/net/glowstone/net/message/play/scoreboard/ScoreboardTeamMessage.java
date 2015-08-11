@@ -1,12 +1,11 @@
 package net.glowstone.net.message.play.scoreboard;
 
 import com.flowpowered.networking.Message;
+import lombok.Data;
 import org.bukkit.ChatColor;
 import org.bukkit.scoreboard.NameTagVisibility;
 
 import java.util.List;
-
-import lombok.Data;
 
 @Data
 public final class ScoreboardTeamMessage implements Message {
@@ -33,7 +32,7 @@ public final class ScoreboardTeamMessage implements Message {
         REMOVE_PLAYERS
     }
 
-    private ScoreboardTeamMessage(String teamName, Action action, String displayName, String prefix, String suffix, boolean friendlyFire, boolean seeInvisible, NameTagVisibility nametagVisibility, ChatColor color, List<String> entries) {
+    public ScoreboardTeamMessage(String teamName, Action action, String displayName, String prefix, String suffix, boolean friendlyFire, boolean seeInvisible, NameTagVisibility nametagVisibility, ChatColor color, List<String> entries) {
         this.teamName = teamName;
         this.action = action;
         this.displayName = displayName;

@@ -15,7 +15,7 @@ public final class EntityVelocityMessage implements Message {
         this(id, convert(velocity.getX()), convert(velocity.getY()), convert(velocity.getZ()));
     }
 
-    private static int convert(double val) {
+    public static int convert(double val) {
         return (int) (val * 8000);
     }
 

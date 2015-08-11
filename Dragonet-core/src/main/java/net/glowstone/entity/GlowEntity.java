@@ -7,17 +7,14 @@ import net.glowstone.GlowServer;
 import net.glowstone.GlowWorld;
 import net.glowstone.entity.meta.MetadataIndex;
 import net.glowstone.entity.meta.MetadataMap;
+import net.glowstone.entity.objects.GlowItemFrame;
 import net.glowstone.entity.physics.BoundingBox;
 import net.glowstone.entity.physics.EntityBoundingBox;
-import net.glowstone.entity.objects.GlowItemFrame;
 import net.glowstone.net.message.play.entity.*;
 import net.glowstone.net.message.play.player.InteractEntityMessage;
 import net.glowstone.util.Position;
 import org.apache.commons.lang3.Validate;
-import org.bukkit.EntityEffect;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -35,6 +32,7 @@ import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -401,8 +399,35 @@ public abstract class GlowEntity implements Entity {
         if (location.getWorld() != world) {
             throw new IllegalArgumentException("Cannot setRawLocation to a different world (got " + location.getWorld() + ", expected " + world + ")");
         }
+
+        if (location.equals(previousLocation)) {
+            return;
+        }
+
         world.getEntityManager().move(this, location);
         Position.copyLocation(location, this.location);
+
+        if (this instanceof GlowPlayer) {
+            if (((GlowPlayer) this).getGameMode() == GameMode.CREATIVE) {
+                return;
+            }
+        }
+
+        // check if the entity is climbing, or in a liquid
+        if (location.getBlock().getType() != Material.AIR) {
+            fallDistance = 0;
+            return;
+        }
+
+        if (location.getY() < previousLocation.getY()) {
+            fallDistance += previousLocation.getY() - location.getY();
+            // check if entity is on the ground and did not fall the sufficient amount
+            if (new Location(location.getWorld(), location.getX(), location.getY() - 1, location.getZ()).getBlock().getType().isSolid() && !(fallDistance > 3)) {
+                fallDistance = 0;
+            }
+        } else if (location.getY() > previousLocation.getY()) {
+            fallDistance = 0;
+        }
     }
 
     /**

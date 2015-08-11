@@ -7,10 +7,6 @@ import io.netty.buffer.Unpooled;
 import net.glowstone.*;
 import net.glowstone.block.GlowBlock;
 import net.glowstone.block.blocktype.BlockBed;
-import java.net.InetSocketAddress;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.logging.Level;
 import net.glowstone.block.entity.TileEntity;
 import net.glowstone.constants.*;
 import net.glowstone.entity.meta.ClientSettings;
@@ -28,11 +24,7 @@ import net.glowstone.net.message.play.entity.DestroyEntitiesMessage;
 import net.glowstone.net.message.play.entity.EntityMetadataMessage;
 import net.glowstone.net.message.play.entity.EntityVelocityMessage;
 import net.glowstone.net.message.play.game.*;
-import net.glowstone.net.message.play.inv.CloseWindowMessage;
-import net.glowstone.net.message.play.inv.OpenWindowMessage;
-import net.glowstone.net.message.play.inv.SetWindowContentsMessage;
-import net.glowstone.net.message.play.inv.SetWindowSlotMessage;
-import net.glowstone.net.message.play.inv.WindowPropertyMessage;
+import net.glowstone.net.message.play.inv.*;
 import net.glowstone.net.message.play.player.PlayerAbilitiesMessage;
 import net.glowstone.net.message.play.player.ResourcePackSendMessage;
 import net.glowstone.net.message.play.player.UseBedMessage;
@@ -51,8 +43,10 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.*;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.InventoryView;
@@ -68,6 +62,11 @@ import org.bukkit.title.TitleOptions;
 import org.bukkit.util.BlockVector;
 import org.bukkit.util.Vector;
 import org.json.simple.JSONObject;
+
+import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.logging.Level;
 
 /**
  * Represents an in-game player.
@@ -400,6 +399,37 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
         return "GlowPlayer{name=" + getName() + "}";
     }
 
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Damages
+
+    @Override
+    public void damage(double amount) {
+        if (getGameMode().equals(GameMode.CREATIVE)) {
+            return;
+        }
+        damage(amount, DamageCause.CUSTOM);
+    }
+
+    @Override
+    public void damage(double amount, Entity cause) {
+        if (getGameMode().equals(GameMode.CREATIVE)) {
+            return;
+        }
+        super.damage(amount, cause);
+        sendHealth();
+    }
+
+    @Override
+    public void damage(double amount, DamageCause cause) {
+        if (getGameMode().equals(GameMode.CREATIVE) && !cause.equals(DamageCause.VOID)) {
+            return;
+        }
+        super.damage(amount, cause);
+        sendHealth();
+    }
+
+
     ////////////////////////////////////////////////////////////////////////////
     // Internals
 
@@ -596,7 +626,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
         }
 
         // second step: package chunks into bulk packets
-        final int maxSize = 0x1fff00;  // slightly under protocol max size of 0x200000
+        final int maxSize = 0x1fffef;  // slightly under protocol max size of 0x200000
         final boolean skylight = world.getEnvironment() == World.Environment.NORMAL;
         List<ChunkDataMessage> messages = new LinkedList<>();
         int bulkSize = 6; // size of bulk header
@@ -1252,6 +1282,21 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
     }
 
     @Override
+    public Entity getSpectatorTarget() {
+        return null;
+    }
+
+    @Override
+    public void setSpectatorTarget(Entity entity) {
+
+    }
+
+    @Override
+    public void sendTitle(String title, String subtitle) {
+
+    }
+
+    @Override
     public void setHealthScale(double scale) throws IllegalArgumentException {
         healthScaled = true;
         healthScale = scale;
@@ -1786,7 +1831,7 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
 
         if (server.getAnnounceAchievements()) {
             // todo: make message fancier (hover, translated names)
-            server.broadcastMessage(getName() + " earned achievement " + ChatColor.GREEN + "[" + achievement.name() + "]");
+            server.broadcastMessage(getName() + " has just earned the achievement " + ChatColor.GREEN + "[" + GlowAchievement.getFancyName(achievement) + "]");
         }
         return true;
     }
@@ -2179,6 +2224,9 @@ public class GlowPlayer extends GlowHumanEntity implements Player {
                 buf.writeByte(0);
             }
             session.send(new PluginMessage("REGISTER", buf.array()));
+            if (buf.refCnt() > 0) {
+                buf.release(buf.refCnt());
+            }
         }
     }
 

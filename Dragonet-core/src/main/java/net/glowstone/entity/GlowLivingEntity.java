@@ -18,10 +18,10 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scoreboard.Criterias;
+import org.bukkit.scoreboard.Objective;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Criterias;
 
 import java.util.*;
 
@@ -391,7 +391,7 @@ public abstract class GlowLivingEntity extends GlowEntity implements LivingEntit
      * Returns whether the entity's eye location is within a solid block
      */
     public boolean isWithinSolidBlock() {
-        return getEyeLocation().getBlock().getType().isSolid();
+        return getEyeLocation().getBlock().getType().isOccluding();
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -654,6 +654,28 @@ public abstract class GlowLivingEntity extends GlowEntity implements LivingEntit
     @Override
     public Collection<PotionEffect> getActivePotionEffects() {
         return Collections.unmodifiableCollection(potionEffects.values());
+    }
+
+    @Override
+    public void setOnGround(boolean onGround) {
+        super.setOnGround(onGround);
+        if (onGround && getFallDistance() > 3) {
+            float damage = this.getFallDistance() - 3;
+            damage = Math.round(damage);
+            if (damage == 0) {
+                setFallDistance(0);
+                return;
+            }
+            EntityDamageEvent ev = new EntityDamageEvent(this, EntityDamageEvent.DamageCause.FALL, damage);
+            this.getServer().getPluginManager().callEvent(ev);
+            if (ev.isCancelled()) {
+                setFallDistance(0);
+                return;
+            }
+            this.setLastDamageCause(ev);
+            this.damage(ev.getDamage());
+        }
+        this.setFallDistance(0);
     }
 
     ////////////////////////////////////////////////////////////////////////////

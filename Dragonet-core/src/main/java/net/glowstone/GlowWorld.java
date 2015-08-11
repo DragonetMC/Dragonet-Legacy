@@ -1,15 +1,11 @@
 package net.glowstone;
 
 import lombok.ToString;
-import net.glowstone.GlowChunk.*;
+import net.glowstone.GlowChunk.ChunkSection;
 import net.glowstone.block.GlowBlock;
 import net.glowstone.block.ItemTable;
 import net.glowstone.block.blocktype.BlockType;
-import net.glowstone.constants.GlowBiome;
-import net.glowstone.constants.GlowBiomeClimate;
-import net.glowstone.constants.GlowEffect;
-import net.glowstone.constants.GlowParticle;
-import net.glowstone.constants.GlowTree;
+import net.glowstone.constants.*;
 import net.glowstone.entity.*;
 import net.glowstone.entity.objects.GlowItem;
 import net.glowstone.entity.physics.BoundingBox;
@@ -21,7 +17,6 @@ import net.glowstone.net.message.play.entity.EntityStatusMessage;
 import net.glowstone.net.message.play.player.ServerDifficultyMessage;
 import net.glowstone.util.BlockStateDelegate;
 import net.glowstone.util.GameRuleManager;
-
 import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
@@ -500,7 +495,9 @@ public final class GlowWorld implements World {
         }
 
         for (GlowEntity entity : players) {
-            entity.pulse();
+            if (entity != null) {
+                entity.pulse();
+            }
         }
 
         for (GlowEntity entity : temp) {
@@ -556,7 +553,9 @@ public final class GlowWorld implements World {
                     time = 0;
                     for (GlowPlayer player : players) {
                         player.sendTime();
-                        player.leaveBed(true);
+                        if (player.isSleeping()) {
+                            player.leaveBed(true);
+                        }
                     }
                     setStorm(false);
                     setThundering(false);
@@ -1031,6 +1030,21 @@ public final class GlowWorld implements World {
         return getChunkAt(block.getX() >> 4, block.getZ() >> 4);
     }
 
+    @Override
+    public void getChunkAtAsync(int x, int z, ChunkLoadCallback cb) {
+
+    }
+
+    @Override
+    public void getChunkAtAsync(Location location, ChunkLoadCallback cb) {
+
+    }
+
+    @Override
+    public void getChunkAtAsync(Block block, ChunkLoadCallback cb) {
+
+    }
+
     ////////////////////////////////////////////////////////////////////////////
     // Chunk loading and unloading
 
@@ -1199,7 +1213,9 @@ public final class GlowWorld implements World {
         double ys = random.nextFloat() * 0.7F + (1.0F - 0.7F) * 0.5D;
         double zs = random.nextFloat() * 0.7F + (1.0F - 0.7F) * 0.5D;
         location = location.clone().add(xs, ys, zs);
-        return dropItem(location, item);
+        GlowItem dropItem = new GlowItem(location, item);
+        dropItem.setVelocity(new Vector(0, 0.1F, 0));
+        return dropItem;
     }
 
     @Override

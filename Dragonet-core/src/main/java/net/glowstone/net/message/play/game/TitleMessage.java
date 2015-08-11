@@ -51,7 +51,7 @@ public final class TitleMessage implements Message {
         return new TitleMessage(Action.TIMES, options.getFadeInTime(), options.getVisibleTime(), options.getFadeOutTime());
     }
 
-    private static TextMessage asTextMessage(String rawString) {
+    public static TextMessage asTextMessage(String rawString) {
         if (rawString == null) rawString = "";
         return new TextMessage(rawString);
     }

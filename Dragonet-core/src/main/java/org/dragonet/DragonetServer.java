@@ -85,9 +85,6 @@ public class DragonetServer {
     private boolean enabledDragonPortal;
 
     @Getter
-    private CustomItemManager customMaterialManager;
-
-    @Getter
     private int playerSpawnThreshold;
 
     @Getter
@@ -101,7 +98,6 @@ public class DragonetServer {
         ServerConfig serverConfig = new ServerConfig(server.getConfigDir(), new File(server.getConfigDir(), "glowstone.yml"), new EnumMap<ServerConfig.Key, Object>(ServerConfig.Key.class));
         pluginFolder = new File(serverConfig.getString(ServerConfig.Key.PLUGIN_FOLDER));
         this.logger = LoggerFactory.getLogger("DragonetServer");
-        this.customMaterialManager = new CustomItemManager(this);
         this.sessionManager = new SessionManager(this);
     }
 

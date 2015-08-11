@@ -1,7 +1,9 @@
 ====[The Class We Edited/Changed]====
 
 ===[net.glowstone.GlowServer]===
-81-86: Added dragonet instance getter, set dragonet instance to a private variable. 
+81-86: Added Dragonet instance getter, set dragonet instance to a private variable. 
+
+~470: Added Dragonet initialization. 
 
 ~268: Changed SimplePluginManager to Dragonet's MixedPluginManager in order to let Rhino load scripts as plugins dynamically. 
 
@@ -37,11 +39,6 @@
 
 
 
-===[net.glowstone.net.handler.login.LoginStartHandler]===
-21-26: Added checker for custom items for MCPE
-
-
-
 ===[net.glowstone.net.message.*]===
 Every class: Changed every variable to public in order to read/write
 
@@ -61,17 +58,6 @@ Every class: Changed every variable to public in order to read/write
 === [net.glowstone.entity.passive.GlowSquid]===
 
 
-===[net.glowstone.entity.meta.MetadataIndex]===
-26-28: Changed parameter #2 of AGE to BYTE instead of INT
-
-
-
-===[net.glowstone.entity.GlowCreature]===
-20-22: Removed final
-
-
-===[(Test Package) net.glowstone.net.ProtocolTestUtils]===
-35-37: Cast the 1 to a byte
 
 ===[net.glowstone.entity.GlowEntity]===
 511-525: Added a setSize method
