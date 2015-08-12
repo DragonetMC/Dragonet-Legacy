@@ -5,7 +5,6 @@ import net.beaconpe.jraklib.protocol.EncapsulatedPacket;
 import net.beaconpe.jraklib.server.JRakLibServer;
 import net.beaconpe.jraklib.server.ServerHandler;
 import net.beaconpe.jraklib.server.ServerInstance;
-import org.dragonet.net.DragonetSession;
 import org.dragonet.net.SessionManager;
 import org.dragonet.net.inf.mcpe.NetworkChannel;
 import org.dragonet.net.packet.minecraft.BatchPacket;
@@ -41,6 +40,15 @@ public class JRakLibInterface implements ServerInstance{
             throw new Exception("Faild to bind on port! ");
         }
         manager.getServer().getLogger().info("JRakLib Server started on: "+address.toString());
+    }
+    
+    public void onTick(){
+        while(handler.handlePacket()){}
+        
+        if(rakLibServer.getState() == Thread.State.TERMINATED){
+            manager.getServer().getLogger().error("Minecraft: PE networking handler stopped unexpectly! ");
+            handler.shutdown();
+        }
     }
     
     public void shutdown(){

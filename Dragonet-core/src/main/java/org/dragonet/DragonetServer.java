@@ -215,6 +215,7 @@ public class DragonetServer {
      * Trigger a tick update
      */
     public void tickUpdate() {
+        network.onTick();
         sessionManager.onTick();
         rhino.Tick();
     }

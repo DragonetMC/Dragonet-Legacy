@@ -52,6 +52,7 @@ public class StartGamePacket extends PEPacket {
             writer.writeFloat(this.x);
             writer.writeFloat(this.y);
             writer.writeFloat(this.z);
+            writer.writeByte((byte)0);
             this.setData(bos.toByteArray());
         } catch (IOException e) {
         }
