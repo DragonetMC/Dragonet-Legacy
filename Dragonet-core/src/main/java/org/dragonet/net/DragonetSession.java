@@ -77,7 +77,7 @@ public abstract class DragonetSession extends GlowSession {
 
     @Getter
     private final String sessionKey;
-    
+
     @Getter
     private final Set<Integer> openedWindows = new HashSet<>(); //We track this. 
 
@@ -202,10 +202,6 @@ public abstract class DragonetSession extends GlowSession {
             }
         }
 
-        player.getWorld().getRawPlayers().add(player);
-
-        GlowServer.logger.log(Level.INFO, "{0} [{1}] connected from Minecraft PE, UUID: {2}", new Object[]{player.getName(), this.getAddress(), player.getUniqueId()});
-
         //Send the StartGamePacket
         StartGamePacket pkStartGame = new StartGamePacket();
         pkStartGame.seed = 0;
@@ -243,6 +239,10 @@ public abstract class DragonetSession extends GlowSession {
         SetDifficultyPacket pkDifficulty = new SetDifficultyPacket();
         pkDifficulty.difficulty = this.getServer().getDifficulty().getValue();
         this.send(pkDifficulty);
+
+        player.getWorld().getRawPlayers().add(player);
+
+        GlowServer.logger.log(Level.INFO, "{0} [{1}] connected from Minecraft PE, UUID: {2}", new Object[]{player.getName(), this.getAddress(), player.getUniqueId()});
 
         //Preprare chunks
         this.chunkManager.prepareLoginChunks();
