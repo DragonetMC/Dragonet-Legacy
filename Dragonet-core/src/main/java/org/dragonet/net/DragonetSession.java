@@ -220,6 +220,9 @@ public abstract class DragonetSession extends GlowSession {
         pkStartGame.z = (float) this.player.getLocation().getZ();
         this.send(pkStartGame);
 
+        //Send crafting recipie list
+        sendRecipies();
+        
         //Send Time
         SetTimePacket pkTime = new SetTimePacket((int) (this.getPlayer().getWorld().getTime() & 0xFFFFFFFF), false);
         this.send(pkTime);
@@ -355,6 +358,10 @@ public abstract class DragonetSession extends GlowSession {
             }
         }
         return true;
+    }
+    
+    public void sendRecipies(){
+        //TODO
     }
 
     @Override
