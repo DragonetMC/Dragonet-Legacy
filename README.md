@@ -14,8 +14,8 @@ Currently it supports Bukkit plugins, Sponge plugins(non-mod) and DAPIS Javascri
 Yes, mostly! But you may expirence some bugs and issues because this software is still in heavy development stage. 
 
 ## Demo Server
-##### Always Running LatestDragonet 0.0.3 Development Build. 
-##### Installed Bukkit Essentials plugins for only demo cases. 
+`Always Running Latest Dragonet 0.0.3 Development Build. `
+`Installed Bukkit Essentials plugins for only demo purpose. `
 #### For Minecraft PC: 69.30.240.250:26792
 #### For Minecraft PE: 69.30.240.250 and default port 19132
 Servers are proudly sponsored by [MCServerBank](http://mcserverbank.com). 
