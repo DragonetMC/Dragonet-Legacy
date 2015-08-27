@@ -16,8 +16,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.Getter;
 import org.dragonet.net.inf.mcpe.PENetworkClient;
-import org.dragonet.net.packet.ServerInfoPacket;
-import org.dragonet.utilities.io.PEBinaryReader;
+import org.dragonet.utilities.DragonetVersioning;
 
 /**
  * The Interface for communicating with JRakLib.
@@ -37,7 +36,7 @@ public class JRakLibInterface implements ServerInstance{
     public JRakLibInterface(SessionManager manager, InetSocketAddress address) throws Exception {
         this.manager = manager;
         this.rakLibServer = new JRakLibServer(new JRakLibLogger(manager.getServer().getLogger()), address.getPort(), address.getHostString());
-        rakLibServer.setName(this.manager.getServer().getServer().getName() + " (Dragonet)");
+        rakLibServer.setName("MCPE;" + manager.getServer().getServer().getServerName() + " (Dragonet " + DragonetVersioning.DRAGONET_VERSION + ");" + DragonetVersioning.MINECRAFT_PE_PROTOCOL + ";MCPC " + DragonetVersioning.MINECRAFT_PC_VERSION + ", MCPE " + DragonetVersioning.MINECRAFT_PE_VERSION + ";-1;" + manager.getServer().getServer().getMaxPlayers());
         this.handler = new ServerHandler(rakLibServer, this);
         if(rakLibServer.isAlive() == false || rakLibServer.isInterrupted() || rakLibServer.isShutdown()){
             //DEAD
@@ -90,19 +89,6 @@ public class JRakLibInterface implements ServerInstance{
     @Override
     public void handleRaw(String address, int port, byte[] payload) {
         manager.getServer().getLogger().debug("("+address+":"+port+", RAW) PACKET IN: "+dumpHexFromBytes(payload));
-        if(payload.length > 1 + 8 && (payload[0] == (byte)0x01 || payload[0] == (byte)0x02)){   //UNCONNECTED_PING
-            try{
-                PEBinaryReader r = new PEBinaryReader(new ByteArrayInputStream(payload));
-                r.readByte();               //ID
-                long time = r.readLong();
-                ServerInfoPacket pk = new ServerInfoPacket();
-                pk.maxPlayers = manager.getServer().getServer().getMaxPlayers();
-                pk.playerCount = manager.getServer().getServer().getOnlinePlayers().size();
-                pk.serverName = manager.getServer().getServer().getServerName();
-                pk.encode();
-                handler.sendRaw(address, (short)port, pk.getData());
-            }catch(Exception e){}
-;        }
     }
 
     @Override
