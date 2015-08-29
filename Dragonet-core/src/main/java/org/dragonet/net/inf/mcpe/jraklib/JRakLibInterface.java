@@ -36,13 +36,15 @@ public class JRakLibInterface implements ServerInstance{
     public JRakLibInterface(SessionManager manager, InetSocketAddress address) throws Exception {
         this.manager = manager;
         this.rakLibServer = new JRakLibServer(new JRakLibLogger(manager.getServer().getLogger()), address.getPort(), address.getHostString());
-        rakLibServer.setName("MCPE;" + manager.getServer().getServer().getServerName() + " (Dragonet " + DragonetVersioning.DRAGONET_VERSION + ");" + DragonetVersioning.MINECRAFT_PE_PROTOCOL + ";MCPC " + DragonetVersioning.MINECRAFT_PC_VERSION + ", MCPE " + DragonetVersioning.MINECRAFT_PE_VERSION + ";-1;" + manager.getServer().getServer().getMaxPlayers());
+        //rakLibServer.setName("MCPE;" + manager.getServer().getServer().getServerName() + " (Dragonet " + DragonetVersioning.DRAGONET_VERSION + ");" + DragonetVersioning.MINECRAFT_PE_PROTOCOL + ";MCPC " + DragonetVersioning.MINECRAFT_PC_VERSION + ", MCPE " + DragonetVersioning.MINECRAFT_PE_VERSION + ";-1;" + manager.getServer().getServer().getMaxPlayers());
+        //^^^ Set the JRakLib Thread name to the Server list MOTD lol
         this.handler = new ServerHandler(rakLibServer, this);
         if(rakLibServer.isAlive() == false || rakLibServer.isInterrupted() || rakLibServer.isShutdown()){
             //DEAD
             throw new Exception("Faild to bind on port! ");
         }
         manager.getServer().getLogger().info("JRakLib Server started on: "+address.toString());
+        handler.sendOption("name", "MCPE;" + manager.getServer().getServer().getServerName() + " (Dragonet " + DragonetVersioning.DRAGONET_VERSION + ");" + DragonetVersioning.MINECRAFT_PE_PROTOCOL + ";MCPC " + DragonetVersioning.MINECRAFT_PC_VERSION + ", MCPE " + DragonetVersioning.MINECRAFT_PE_VERSION + ";-1;" + manager.getServer().getServer().getMaxPlayers());
     }
     
     public void onTick(){
@@ -126,7 +128,7 @@ public class JRakLibInterface implements ServerInstance{
                 pk.orderChannel = packet.getChannel().getAsByte();
                 pk.orderIndex = 0;
             } else {
-                pk.reliability = 3;
+                pk.reliability = 2;
             }
             handler.sendEncapsulated(session.getRaklibClientID(), pk, (byte) ((byte) 0 | (immediate || packet.getChannel() == NetworkChannel.CHANNEL_PRIORITY ? JRakLib.PRIORITY_IMMEDIATE : JRakLib.PRIORITY_NORMAL)));
         } else {

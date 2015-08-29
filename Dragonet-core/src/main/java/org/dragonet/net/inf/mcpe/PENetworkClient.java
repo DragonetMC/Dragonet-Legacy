@@ -59,6 +59,7 @@ public final class PENetworkClient {
             return;
         }
         //TODO
+        inf.sendPacket(this, packet, false);
     }
 
     public void disconnect(String reason) {
