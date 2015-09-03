@@ -17,7 +17,6 @@ public final class PEPacketIDs {
     /**
      * Actual Minecraft: PE protocol version
      */
-    public final static byte CURRENT_PROTOCOL = 34;
 
     public static final byte LOGIN_PACKET = (byte) 0x8f;
     public static final byte PLAY_STATUS_PACKET = (byte) 0x90;
