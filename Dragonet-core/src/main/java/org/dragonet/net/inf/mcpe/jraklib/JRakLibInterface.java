@@ -63,7 +63,7 @@ public class JRakLibInterface implements ServerInstance{
 
     @Override
     public void openSession(String identifier, String address, int port, long clientID) {
-        manager.getServer().getLogger().debug("("+identifier+") New session with clientID: "+clientID);
+        manager.getServer().getLogger().info("("+identifier+") New session with clientID: "+clientID);
         PENetworkClient client = new PENetworkClient(this, identifier);
         clientMap.put(identifier, client);
         idMap.put(client, identifier);
@@ -71,7 +71,7 @@ public class JRakLibInterface implements ServerInstance{
 
     @Override
     public void closeSession(String identifier, String reason) {
-        manager.getServer().getLogger().debug("("+identifier+") Session closed with reason: "+reason);
+        manager.getServer().getLogger().info("("+identifier+") Session closed with reason: "+reason);
         if(!clientMap.containsKey(identifier)) return;
         PENetworkClient client = clientMap.get(identifier);
         client.disconnect(reason);
@@ -82,15 +82,15 @@ public class JRakLibInterface implements ServerInstance{
 
     @Override
     public void handleEncapsulated(String identifier, EncapsulatedPacket encapsulatedPacket, int flags) {
-        manager.getServer().getLogger().debug("("+identifier+") PACKET IN: "+dumpHexFromBytes(encapsulatedPacket.buffer));
         if(!clientMap.containsKey(identifier)) return;
+        manager.getServer().getLogger().info("("+identifier+") PACKET IN: "+dumpHexFromBytes(encapsulatedPacket.buffer));
         PENetworkClient client = clientMap.get(identifier);
         client.processPacketBuffer(encapsulatedPacket.buffer);
     }
 
     @Override
     public void handleRaw(String address, int port, byte[] payload) {
-        manager.getServer().getLogger().debug("("+address+":"+port+", RAW) PACKET IN: "+dumpHexFromBytes(payload));
+        manager.getServer().getLogger().info("("+address+":"+port+", RAW) PACKET IN: "+dumpHexFromBytes(payload));
     }
 
     @Override

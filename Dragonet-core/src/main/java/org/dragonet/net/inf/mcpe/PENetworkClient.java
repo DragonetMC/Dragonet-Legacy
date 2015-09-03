@@ -26,7 +26,6 @@ import org.dragonet.net.packet.minecraft.LoginPacket;
 import org.dragonet.net.packet.minecraft.LoginStatusPacket;
 import org.dragonet.net.packet.minecraft.PEPacket;
 import org.dragonet.net.packet.minecraft.PEPacketIDs;
-import org.dragonet.net.packet.minecraft.PingPongPacket;
 import org.dragonet.net.translator.BaseTranslator;
 import org.dragonet.net.translator.TranslatorProvider;
 
@@ -73,11 +72,6 @@ public final class PENetworkClient {
         }
         System.out.println("Received Packet: " + packet.getClass().getSimpleName());
         switch (packet.pid()) {
-            case PEPacketIDs.PING:
-                PingPongPacket pkPong = new PingPongPacket();
-                pkPong.pingID = ((PingPongPacket) packet).pingID;
-                this.sendPacket(pkPong, 0);
-                break;
             case PEPacketIDs.LOGIN_PACKET:
                 LoginPacket packetLogin = (LoginPacket) packet;
                 this.username = packetLogin.username;

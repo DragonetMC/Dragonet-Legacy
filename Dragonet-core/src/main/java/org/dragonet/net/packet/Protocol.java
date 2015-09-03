@@ -18,13 +18,10 @@ public final class Protocol {
         registerDecoder(PEPacketIDs.DISCONNECT_PACKET, DisconnectPacket.class);
         registerDecoder(PEPacketIDs.BATCH_PACKET, BatchPacket.class);
         registerDecoder(PEPacketIDs.TEXT_PACKET, ChatPacket.class);
-        registerDecoder(PEPacketIDs.CLIENT_CONNECT, ClientConnectPacket.class);
-        registerDecoder(PEPacketIDs.CLIENT_HANDSHAKE, ClientHandshakePacket.class);
         registerDecoder(PEPacketIDs.DISCONNECT_PACKET, DisconnectPacket.class);
         registerDecoder(PEPacketIDs.DROP_ITEM_PACKET, DropItemPacket.class);
         registerDecoder(PEPacketIDs.LOGIN_PACKET, LoginPacket.class);
         registerDecoder(PEPacketIDs.MOVE_PLAYER_PACKET, MovePlayerPacket.class);
-        registerDecoder(PEPacketIDs.PING, PingPongPacket.class);
         registerDecoder(PEPacketIDs.MOB_EQUIPMENT_PACKET, PlayerEquipmentPacket.class);
         registerDecoder(PEPacketIDs.PLAYER_ACTION_PACKET, PlayerActionPacket.class);
         registerDecoder(PEPacketIDs.REMOVE_BLOCK_PACKET, RemoveBlockPacket.class);
