@@ -195,8 +195,10 @@ public abstract class DragonetSession extends GlowSession {
         player.join(this, reader);
 
         // Kick other players with the same UUID
+        // Dragonet-Add: or same username
         for (GlowPlayer other : getServer().getOnlinePlayers()) {
-            if (other != player && other.getUniqueId().equals(player.getUniqueId())) {
+            if ((other != player && other.getUniqueId().equals(player.getUniqueId()))
+                || other.getName().equalsIgnoreCase(player.getName())) {
                 other.getSession().disconnect("You logged in from another location.", true);
                 break;
             }
