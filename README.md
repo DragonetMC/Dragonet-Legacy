@@ -34,4 +34,4 @@ Dragonet's code is under `org.dragonet` package and they are under LGPL v3. <br>
 Glowstone software: `A Minecraft server that written from zero and no Mojang code included. `<br>
 Glowstone++ software: `A Glowstone fork by @GlowstonePlusPlus team. `<br />
 Glowstone++'s code is under `net.glowstone` package and they are under MIT Licence. <br>
-#### Demo server is proudly provided by `[MC Server Bank](http://mcserverbank.com/)`. <br>
+#### Demo server is proudly provided by [MC Server Bank](http://mcserverbank.com/). <br>
