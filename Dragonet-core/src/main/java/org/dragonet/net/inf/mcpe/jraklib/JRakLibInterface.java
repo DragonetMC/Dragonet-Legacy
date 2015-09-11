@@ -39,12 +39,12 @@ public class JRakLibInterface implements ServerInstance{
         //rakLibServer.setName("MCPE;" + manager.getServer().getServer().getServerName() + " (Dragonet " + DragonetVersioning.DRAGONET_VERSION + ");" + DragonetVersioning.MINECRAFT_PE_PROTOCOL + ";MCPC " + DragonetVersioning.MINECRAFT_PC_VERSION + ", MCPE " + DragonetVersioning.MINECRAFT_PE_VERSION + ";-1;" + manager.getServer().getServer().getMaxPlayers());
         //^^^ Set the JRakLib Thread name to the Server list MOTD lol
         this.handler = new ServerHandler(rakLibServer, this);
-        if(rakLibServer.isAlive() == false || rakLibServer.isInterrupted() || rakLibServer.isShutdown()){
+        if(!rakLibServer.isAlive() || rakLibServer.isInterrupted() || rakLibServer.isShutdown()){
             //DEAD
             throw new Exception("Faild to bind on port! ");
         }
         manager.getServer().getLogger().info("JRakLib Server started on: "+address.toString());
-        handler.sendOption("name", "MCPE;" + manager.getServer().getServer().getServerName() + " (Dragonet " + DragonetVersioning.DRAGONET_VERSION + ");" + DragonetVersioning.MINECRAFT_PE_PROTOCOL + ";MCPC " + DragonetVersioning.MINECRAFT_PC_VERSION + ", MCPE " + DragonetVersioning.MINECRAFT_PE_VERSION + ";-1;" + manager.getServer().getServer().getMaxPlayers());
+        handler.sendOption("name", "MCPE;" + manager.getServer().getServer().getServerName() + " (Dragonet " + DragonetVersioning.DRAGONET_VERSION + ");" + DragonetVersioning.MINECRAFT_PE_PROTOCOL + ";" + DragonetVersioning.MINECRAFT_PE_VERSION + ";-1;" + manager.getServer().getServer().getMaxPlayers());
     }
     
     public void onTick(){
@@ -63,7 +63,7 @@ public class JRakLibInterface implements ServerInstance{
 
     @Override
     public void openSession(String identifier, String address, int port, long clientID) {
-        manager.getServer().getLogger().info("("+identifier+") New session with clientID: "+clientID);
+        manager.getServer().getLogger().info("(" + identifier + ") New session with clientID: " + clientID);
         PENetworkClient client = new PENetworkClient(this, identifier);
         clientMap.put(identifier, client);
         idMap.put(client, identifier);
@@ -71,7 +71,7 @@ public class JRakLibInterface implements ServerInstance{
 
     @Override
     public void closeSession(String identifier, String reason) {
-        manager.getServer().getLogger().info("("+identifier+") Session closed with reason: "+reason);
+        manager.getServer().getLogger().info("(" + identifier + ") Session closed with reason: " + reason);
         if(!clientMap.containsKey(identifier)) return;
         PENetworkClient client = clientMap.get(identifier);
         client.disconnect(reason);
@@ -90,7 +90,7 @@ public class JRakLibInterface implements ServerInstance{
 
     @Override
     public void handleRaw(String address, int port, byte[] payload) {
-        manager.getServer().getLogger().info("("+address+":"+port+", RAW) PACKET IN: "+dumpHexFromBytes(payload));
+        manager.getServer().getLogger().info("(" + address + ":" + port + ", RAW) PACKET IN: " + dumpHexFromBytes(payload));
     }
 
     @Override
