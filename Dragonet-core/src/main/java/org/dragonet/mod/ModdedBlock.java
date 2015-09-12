@@ -10,8 +10,8 @@
  *
  * @author The Dragonet Team
  */
-package org.dragonet.item;
+package org.dragonet.mod;
 
-public class ModBlockType extends ModItemType {
+public class ModdedBlock extends ModdedItem {
 
 }
