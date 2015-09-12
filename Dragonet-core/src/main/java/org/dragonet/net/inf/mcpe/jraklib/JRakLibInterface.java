@@ -51,7 +51,7 @@ public class JRakLibInterface implements ServerInstance{
         while(handler.handlePacket()){}
         
         if(rakLibServer.getState() == Thread.State.TERMINATED){
-            manager.getServer().getLogger().error("Minecraft: PE networking handler stopped unexpectly! ");
+            manager.getServer().getLogger().error("Minecraft: PE networking handler stopped unexpectly! Did the server crash? ");
             handler.shutdown();
         }
     }

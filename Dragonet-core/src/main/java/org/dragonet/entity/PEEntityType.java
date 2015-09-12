@@ -21,6 +21,7 @@ public class PEEntityType {
         VILLAGER (15),
         SQUID (17),
         ZOMBIE (32),
+		CREEPER (33),
         PRIMED_TNT (65),
         FALLING_BLOCK (66),
         ARROW (80),

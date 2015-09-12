@@ -11,7 +11,7 @@
  * @author The Dragonet Team
  */
 
-package org.dragonet.world;
+package org.dragonet;
 
 import lombok.Getter;
 
@@ -58,14 +58,8 @@ public enum ParticleType {
     DROPLET(39),
     TAKE(40),
     MOB_APPPERANCE(41);
-    
-    @Getter
-    private int typePC;
-    
-    @Getter
-    private int typePE;
-    
-    private ParticleType(int typePC/*, int typePE*/){
+  
+  public ParticleType(int typePC/*, int typePE*/){
         this.typePC = typePC;
         //this.typePE = typePE;
     }

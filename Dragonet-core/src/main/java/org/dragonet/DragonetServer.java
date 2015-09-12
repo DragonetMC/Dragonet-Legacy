@@ -148,7 +148,7 @@ public class DragonetServer {
         }
 
         this.logger.info("Current Minecraft PC Version: " + DragonetVersioning.MINECRAFT_PC_VERSION);
-        this.logger.info("Current Minecraft: Pocket Edition Version: " + DragonetVersioning.MINECRAFT_PE_VERSION);
+        this.logger.info("Current Minecraft: PE Version: " + DragonetVersioning.MINECRAFT_PE_VERSION);
         this.threadPool = Executors.newFixedThreadPool(64);
         String ip = config.getString("server-ip", "0.0.0.0");
         int port = config.getInt("server-port", 19132);
@@ -225,7 +225,11 @@ public class DragonetServer {
         network.shutdown();
         threadPool.shutdown();
     }
-
+	
+	
+	public SessionManager getSessionManager(){
+		return sessionManager;
+	}
     /**
      * Reload the server. Currently only used to re-scan Rhino scripts, but
      * could be useful later.
