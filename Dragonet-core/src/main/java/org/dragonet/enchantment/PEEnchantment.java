@@ -67,9 +67,30 @@ package org.dragonet.enchantment;
      public final static int SLOT_SHOVEL = 0b10000000000;
      public final static int SLOT_FISHING_ROD = 0b100000000000;
      public final static int SLOT_CARROT_STICK = 0b1000000000000;
+     
+     private int id;
+     private int level = 1;
+     private String name;
 	 
-	 public PEEnchantment(){
-		 //TODO
+	 public PEEnchantment(int id, String name){
+		 this.id = id;
+		 this.name = name;
+	 }
+	 
+	 public int getId(){
+	 	return id;
+	 }
+	 
+	 public String getName(){
+	 	return name;
+	 }
+	 
+	 public int getLevel(){
+	 	return level;
+	 }
+	 
+	 public void setLevel(int value){
+	 	this.level = level;
 	 }
 	 
 }
