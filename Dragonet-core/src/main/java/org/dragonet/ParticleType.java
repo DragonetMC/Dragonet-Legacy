@@ -10,12 +10,12 @@
  *
  * @author The Dragonet Team
  */
-
 package org.dragonet;
 
 import lombok.Getter;
 
 public enum ParticleType {
+
     EXPLODE(0),
     LARGE_EXPLOSION(1),
     HUGE_EXPLOSION(2),
@@ -58,11 +58,15 @@ public enum ParticleType {
     DROPLET(39),
     TAKE(40),
     MOB_APPPERANCE(41);
-  
-  public ParticleType(int typePC/*, int typePE*/){
+
+    @Getter
+    private int typePC;
+
+    @Getter
+    private int typePE;
+
+    ParticleType(int typePC/*, int typePE*/) {
         this.typePC = typePC;
         //this.typePE = typePE;
     }
-    
-    
 }
