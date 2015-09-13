@@ -38,7 +38,7 @@ public class MCPESession extends DragonetSession {
 
     private boolean statusActive;
 
-    public MCPESession(DragonetServer dServer, PENetworkClient client, JRakLibInterface rakLibInterface, BaseTranslator translator){
+    public MCPESession(DragonetServer dServer, PENetworkClient client, JRakLibInterface rakLibInterface, BaseTranslator translator) {
         super(dServer, translator, "MCPE-" + client.getRaklibClientID());
         translator.setSession(this);
 
@@ -47,7 +47,7 @@ public class MCPESession extends DragonetSession {
         this.raklibInterface = rakLibInterface;
         statusActive = true;
     }
-    
+
     /**
      * Trigger a tick update for the session
      */
@@ -56,13 +56,13 @@ public class MCPESession extends DragonetSession {
         //client.onTick(); <- We don't tick here, in NetworkHandler already did. 
         super.onTick();
         /*
-        if (SPAWNED) { //TODO: Detect spawn and send stuffs
-            this.getLogger().info("PE player [" + this.player.getName() + "] has spawned. ");
-            this.sendSettings();
-            SetTimePacket pkTime = new SetTimePacket((int) (this.getPlayer().getWorld().getTime() & 0xFFFFFFFF), true);
-            this.send(pkTime);
-        }
-        */
+         if (SPAWNED) { //TODO: Detect spawn and send stuffs
+         this.getLogger().info("PE player [" + this.player.getName() + "] has spawned. ");
+         this.sendSettings();
+         SetTimePacket pkTime = new SetTimePacket((int) (this.getPlayer().getWorld().getTime() & 0xFFFFFFFF), true);
+         this.send(pkTime);
+         }
+         */
     }
 
     @Override
@@ -77,9 +77,9 @@ public class MCPESession extends DragonetSession {
 
     @Override
     public InetSocketAddress getAddress() {
-        return null;
+        String[] part = client.getRaklibClientID().split(":");
+        return new InetSocketAddress(part[0], Integer.parseInt(part[1]));
     }
-    
 
     @Override
     public boolean isActive() {
@@ -156,6 +156,5 @@ public class MCPESession extends DragonetSession {
         }
         this.player = null;
     }
-
 
 }

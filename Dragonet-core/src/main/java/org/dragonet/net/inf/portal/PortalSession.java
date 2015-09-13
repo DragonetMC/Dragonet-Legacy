@@ -13,15 +13,19 @@
 
 package org.dragonet.net.inf.portal;
 
+import java.net.InetSocketAddress;
 import org.dragonet.DragonetServer;
 import org.dragonet.net.DragonetSession;
 import org.dragonet.net.packet.minecraft.PEPacket;
 import org.dragonet.net.translator.BaseTranslator;
 
 public final class PortalSession extends DragonetSession {
-
+    
+    private final InetSocketAddress remoteAddress;
+    
     public PortalSession(String username, String remoteIP, int remotePort, DragonetServer dServer, BaseTranslator translator) {
         super(dServer, translator, "PORTAL-/" + remoteIP + ":" + remotePort);
+        remoteAddress = new InetSocketAddress(remoteIP, remotePort);
     }
     
     @Override
@@ -32,4 +36,8 @@ public final class PortalSession extends DragonetSession {
     public void send(PEPacket pk, int reliability) {
     }
 
+    @Override
+    public InetSocketAddress getAddress() {
+        return remoteAddress;
+    }
 }

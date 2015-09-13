@@ -15,6 +15,7 @@ package org.dragonet.net;
 import com.flowpowered.networking.Message;
 import com.flowpowered.networking.exception.ChannelClosedException;
 import io.netty.channel.ChannelFuture;
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -192,8 +193,6 @@ public abstract class DragonetSession extends GlowSession {
             return;
         }
 
-        player.join(this, reader);
-
         // Kick other players with the same UUID
         // Dragonet-Add: or same username
         for (GlowPlayer other : getServer().getOnlinePlayers()) {
@@ -203,6 +202,8 @@ public abstract class DragonetSession extends GlowSession {
                 break;
             }
         }
+        
+        player.join(this, reader);
 
         //Send the StartGamePacket
         StartGamePacket pkStartGame = new StartGamePacket();
@@ -379,4 +380,8 @@ public abstract class DragonetSession extends GlowSession {
         //GlowProtocol proto = protocol.getProtocol();
         //super.setProtocol(proto);
     }
+
+    @Override
+    public abstract InetSocketAddress getAddress();
+    
 }
