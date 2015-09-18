@@ -158,6 +158,8 @@ public class DragonetServer {
         } catch (Exception ex) {
             this.getLogger().error("FAILD TO BIND ON THE Minecraft: Pocket Edition PORT " + port + "(UDP)! ");
             this.getLogger().error("CLOSE THE PROGRAM USING THAT PORT OR CHANGE THE PORT TO SOLVE THIS PROBLEM! ");
+            this.getLogger().error("ERROR MESSAGE: " + ex.getMessage());
+            ex.printStackTrace();
             this.getServer().shutdown();
             return;
         }
@@ -221,7 +223,7 @@ public class DragonetServer {
 
     public void shutdown() {
         logger.info("Stopping Dragonet server... ");
-        network.shutdown();
+        if(network != null) network.shutdown();
         threadPool.shutdown();
     }
 	

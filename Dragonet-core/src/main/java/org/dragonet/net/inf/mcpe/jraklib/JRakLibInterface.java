@@ -33,18 +33,12 @@ public class JRakLibInterface implements ServerInterface {
     private final Map<String, PENetworkClient> clientMap = new ConcurrentHashMap<>();
 
     public JRakLibInterface(SessionManager manager, InetSocketAddress address) throws Exception {
-        RakNetServer.ServerOptions options = new RakNetServer.ServerOptions();
-        options.maxPacketsPerTick = 1024;
-        options.workerThreads = 16;
-        options.disconnectInvalidProtocol = true;
-        options.sendBufferSize = 8192;
-        options.portChecking = true;
-        options.name = getServerName();
         this.manager = manager;
-        this.rakLibServer = new RakNetServer(LoggerFactory.getLogger("JRakLibPlus"), address, options, this);
-        //rakLibServer.setName("MCPE;" + manager.getServer().getServer().getServerName() + " (Dragonet " + DragonetVersioning.DRAGONET_VERSION + ");" + DragonetVersioning.MINECRAFT_PE_PROTOCOL + ";MCPC " + DragonetVersioning.MINECRAFT_PC_VERSION + ", MCPE " + DragonetVersioning.MINECRAFT_PE_VERSION + ";-1;" + manager.getServer().getServer().getMaxPlayers());
-        //^^^ Set the JRakLib Thread name to the Server list MOTD lol
         
+        RakNetServer.ServerOptions options = new RakNetServer.ServerOptions();
+        options.disconnectInvalidProtocol = false;
+        options.name = getServerName();
+        this.rakLibServer = new RakNetServer(manager.getServer().getLogger(), address, options, this);
         rakLibServer.start();
         manager.getServer().getLogger().info("JRakLibPlus Server started on: " + address.toString());
     }
