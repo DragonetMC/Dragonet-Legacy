@@ -38,6 +38,10 @@
             <layout>default</layout>
             <url>http://repo.spongepowered.org/maven</url>
         </repository>
+        <repository>
+            <id>BlockServerProject Maven</id>
+            <url>https://raw.githubusercontent.com/BlockServerProject/MavenRepository/master/snapshots</url>
+        </repository>
     </repositories>
     
     <dependencies>

@@ -12,6 +12,7 @@
  */
 package org.dragonet.net.inf.mcpe;
 
+import io.github.jython234.jraklibplus.server.NioSession;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -30,8 +31,10 @@ import org.dragonet.net.translator.BaseTranslator;
 import org.dragonet.net.translator.TranslatorProvider;
 
 public final class PENetworkClient {
+    
+    
     @Getter
-    private final String raklibClientID;
+    private final NioSession raknetSession;
     
     @Getter
     private String username;
@@ -44,9 +47,9 @@ public final class PENetworkClient {
     @Getter
     private MCPESession session;
 
-    public PENetworkClient(JRakLibInterface inf, String raklibClientID) {
+    public PENetworkClient(JRakLibInterface inf, NioSession raknetSession) {
         this.inf = inf;
-        this.raklibClientID = raklibClientID;
+        this.raknetSession = raknetSession;
     }
 
     public void sendPacket(PEPacket packet) {
