@@ -39,7 +39,7 @@ public class JRakLibInterface implements ServerInterface {
         options.disconnectInvalidProtocol = true;
         options.sendBufferSize = 8192;
         options.portChecking = true;
-        options.name = "MCPE;" + manager.getServer().getServer().getServerName() + " (Dragonet " + DragonetVersioning.DRAGONET_VERSION + ");" + DragonetVersioning.MINECRAFT_PE_PROTOCOL + ";" + DragonetVersioning.MINECRAFT_PE_VERSION + ";-1;" + manager.getServer().getServer().getMaxPlayers();
+        options.name = getServerName();
         this.manager = manager;
         this.rakLibServer = new RakNetServer(LoggerFactory.getLogger("JRakLibPlus"), address, options, this);
         //rakLibServer.setName("MCPE;" + manager.getServer().getServer().getServerName() + " (Dragonet " + DragonetVersioning.DRAGONET_VERSION + ");" + DragonetVersioning.MINECRAFT_PE_PROTOCOL + ";MCPC " + DragonetVersioning.MINECRAFT_PC_VERSION + ", MCPE " + DragonetVersioning.MINECRAFT_PE_VERSION + ";-1;" + manager.getServer().getServer().getMaxPlayers());
@@ -47,6 +47,14 @@ public class JRakLibInterface implements ServerInterface {
         
         rakLibServer.start();
         manager.getServer().getLogger().info("JRakLibPlus Server started on: " + address.toString());
+    }
+    
+    public void onTick(){
+        rakLibServer.getOptions().name = getServerName();
+    }
+    
+    private String getServerName(){
+        return "MCPE;" + manager.getServer().getServer().getServerName() + " (Dragonet " + DragonetVersioning.DRAGONET_VERSION + ");" + DragonetVersioning.MINECRAFT_PE_PROTOCOL + ";" + DragonetVersioning.MINECRAFT_PE_VERSION + ";" + manager.getServer().getServer().getOnlinePlayers().size() + ";" + manager.getServer().getServer().getMaxPlayers();
     }
     
     public void shutdown() {
