@@ -41,14 +41,11 @@ public class JRakLibInterface implements ServerInterface {
         options.portChecking = true;
         options.name = "MCPE;" + manager.getServer().getServer().getServerName() + " (Dragonet " + DragonetVersioning.DRAGONET_VERSION + ");" + DragonetVersioning.MINECRAFT_PE_PROTOCOL + ";" + DragonetVersioning.MINECRAFT_PE_VERSION + ";-1;" + manager.getServer().getServer().getMaxPlayers();
         this.manager = manager;
-
         this.rakLibServer = new RakNetServer(LoggerFactory.getLogger("JRakLibPlus"), address, options, this);
         //rakLibServer.setName("MCPE;" + manager.getServer().getServer().getServerName() + " (Dragonet " + DragonetVersioning.DRAGONET_VERSION + ");" + DragonetVersioning.MINECRAFT_PE_PROTOCOL + ";MCPC " + DragonetVersioning.MINECRAFT_PC_VERSION + ", MCPE " + DragonetVersioning.MINECRAFT_PE_VERSION + ";-1;" + manager.getServer().getServer().getMaxPlayers());
         //^^^ Set the JRakLib Thread name to the Server list MOTD lol
-        if (!rakLibServer.isAlive() || rakLibServer.isInterrupted()) {
-            //DEAD
-            throw new Exception("Faild to bind on port! ");
-        }
+        
+        rakLibServer.start();
         manager.getServer().getLogger().info("JRakLibPlus Server started on: " + address.toString());
     }
 
