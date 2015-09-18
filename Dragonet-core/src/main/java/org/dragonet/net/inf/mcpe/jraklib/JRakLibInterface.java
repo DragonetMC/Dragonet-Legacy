@@ -48,14 +48,7 @@ public class JRakLibInterface implements ServerInterface {
         rakLibServer.start();
         manager.getServer().getLogger().info("JRakLibPlus Server started on: " + address.toString());
     }
-
-    public void onTick() {
-        if (rakLibServer.getState() == Thread.State.TERMINATED) {
-            manager.getServer().getLogger().error("Minecraft: PE networking handler stopped unexpectly! Did the server crash? ");
-            manager.getServer().getServer().shutdown();
-        }
-    }
-
+    
     public void shutdown() {
         try {
             rakLibServer.shutdown();
