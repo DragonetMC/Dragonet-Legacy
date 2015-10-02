@@ -46,9 +46,14 @@ public class JRakLibInterface implements ServerInstance {
 
         manager.getServer().getLogger().info("JRakLibPlus Server started on: " + address.toString());
     }
+    
+    private long lastTimeSendOption;
 
     public void onTick() {
-        handler.sendOption("name", getServerName());
+        if(System.currentTimeMillis() - lastTimeSendOption > 1000){
+            handler.sendOption("name", getServerName());
+            lastTimeSendOption = System.currentTimeMillis();
+        }
         int cnt = 0;
         while(cnt < 2400 && handler.handlePacket()){
             cnt++;

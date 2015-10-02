@@ -219,6 +219,7 @@ public class DragonetServer {
     public void tickUpdate() {
         sessionManager.onTick();
         rhino.Tick();
+        network.onTick();
     }
 
     public void shutdown() {
