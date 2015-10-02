@@ -1,10 +1,5 @@
 package org.dragonet.net.inf.mcpe.jraklib;
 
-import io.github.jython234.jraklibplus.protocol.raknet.EncapsulatedPacket;
-import io.github.jython234.jraklibplus.protocol.raknet.Reliability;
-import io.github.jython234.jraklibplus.server.NioSession;
-import io.github.jython234.jraklibplus.server.RakNetServer;
-import io.github.jython234.jraklibplus.server.ServerInterface;
 import org.dragonet.net.SessionManager;
 import org.dragonet.net.inf.mcpe.NetworkChannel;
 import org.dragonet.net.packet.minecraft.BatchPacket;
@@ -14,18 +9,25 @@ import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.Getter;
+import net.beaconpe.jraklib.JRakLib;
+import net.beaconpe.jraklib.Logger;
+import net.beaconpe.jraklib.protocol.EncapsulatedPacket;
+import net.beaconpe.jraklib.server.JRakLibServer;
+import net.beaconpe.jraklib.server.ServerHandler;
+import net.beaconpe.jraklib.server.ServerInstance;
 import org.dragonet.net.inf.mcpe.PENetworkClient;
 import org.dragonet.utilities.DragonetVersioning;
-import org.slf4j.LoggerFactory;
 
 /**
  * The Interface for communicating with JRakLib.
  *
  * @author jython234
  */
-public class JRakLibInterface implements ServerInterface {
+public class JRakLibInterface implements ServerInstance {
 
-    private RakNetServer rakLibServer;
+    private JRakLibServer rakLibServer;
+
+    private ServerHandler handler;
 
     @Getter
     private SessionManager manager;
@@ -34,41 +36,42 @@ public class JRakLibInterface implements ServerInterface {
 
     public JRakLibInterface(SessionManager manager, InetSocketAddress address) throws Exception {
         this.manager = manager;
-        
-        RakNetServer.ServerOptions options = new RakNetServer.ServerOptions();
-        options.disconnectInvalidProtocol = false;
-        options.name = getServerName();
-        this.rakLibServer = new RakNetServer(manager.getServer().getLogger(), address, options, this);
-        rakLibServer.start();
+
+        this.rakLibServer = new JRakLibServer(new JRakLibLogger(manager.getServer().getLogger()), address.getPort(), address.getHostString());
+        this.handler = new ServerHandler(rakLibServer, this);
+        if (rakLibServer.isAlive() == false || rakLibServer.isInterrupted() || rakLibServer.isShutdown()) {
+            //DEAD
+            throw new Exception("Faild to bind on port! ");
+        }
+
         manager.getServer().getLogger().info("JRakLibPlus Server started on: " + address.toString());
     }
-    
-    public void onTick(){
-        rakLibServer.getOptions().name = getServerName();
-    }
-    
-    private String getServerName(){
-        return "MCPE;" + manager.getServer().getServer().getServerName() + " (Dragonet " + DragonetVersioning.DRAGONET_VERSION + ");" + DragonetVersioning.MINECRAFT_PE_PROTOCOL + ";" + DragonetVersioning.MINECRAFT_PE_VERSION + ";" + manager.getServer().getServer().getOnlinePlayers().size() + ";" + manager.getServer().getServer().getMaxPlayers();
-    }
-    
-    public void shutdown() {
-        try {
-            rakLibServer.shutdown();
-        } catch (InterruptedException ex) {
+
+    public void onTick() {
+        handler.sendOption("name", getServerName());
+        int cnt = 0;
+        while(cnt < 2400 && handler.handlePacket()){
+            cnt++;
         }
     }
 
+    private String getServerName() {
+        return "MCPE;" + manager.getServer().getServer().getServerName() + " (Dragonet " + DragonetVersioning.DRAGONET_VERSION + ");" + DragonetVersioning.MINECRAFT_PE_PROTOCOL + ";" + DragonetVersioning.MINECRAFT_PE_VERSION + ";" + manager.getServer().getServer().getOnlinePlayers().size() + ";" + manager.getServer().getServer().getMaxPlayers();
+    }
+
+    public void shutdown() {
+        rakLibServer.shutdown();
+    }
+
     @Override
-    public void sessionOpened(NioSession session) {
-        String identifier = session.getAddress().toString();
-        manager.getServer().getLogger().info("(" + identifier + ") New session with clientID: " + session.getID());
-        PENetworkClient client = new PENetworkClient(this, session);
+    public void openSession(String identifier, String address, int port, long clientID) {
+        manager.getServer().getLogger().info("(" + identifier + ") New session with clientID: " + clientID);
+        PENetworkClient client = new PENetworkClient(this, identifier, clientID, new InetSocketAddress(address, port));
         clientMap.put(identifier, client);
     }
 
     @Override
-    public void sessionClosed(NioSession session, String reason) {
-        String identifier = session.getAddress().toString();
+    public void closeSession(String identifier, String reason) {
         manager.getServer().getLogger().info("(" + identifier + ") Session closed with reason: " + reason);
         if (!clientMap.containsKey(identifier)) {
             return;
@@ -80,14 +83,17 @@ public class JRakLibInterface implements ServerInterface {
     }
 
     @Override
-    public void handleEncapsulatedPacket(EncapsulatedPacket encapsulatedPacket, NioSession session) {
-        String identifier = session.getAddress().toString();
+    public void handleEncapsulated(String identifier, EncapsulatedPacket encapsulatedPacket, int flags) {
         if (!clientMap.containsKey(identifier)) {
             return;
         }
-        manager.getServer().getLogger().info("(" + identifier + ") PACKET IN: " + dumpHexFromBytes(encapsulatedPacket.payload));
+        manager.getServer().getLogger().info("(" + identifier + ") PACKET IN: " + dumpHexFromBytes(encapsulatedPacket.buffer));
         PENetworkClient client = clientMap.get(identifier);
-        client.processPacketBuffer(encapsulatedPacket.payload);
+        client.processPacketBuffer(encapsulatedPacket.buffer);
+    }
+    
+    @Override
+    public void handleRaw(String address, int port, byte[] payload) {
     }
 
     /**
@@ -109,16 +115,17 @@ public class JRakLibInterface implements ServerInterface {
             sendPacket(session, bp, false);
         }
         EncapsulatedPacket pk = new EncapsulatedPacket();
-        pk.payload = packet.getData();
+        pk.buffer = packet.getData();
         pk.messageIndex = 0;
         if (packet.getChannel() != NetworkChannel.CHANNEL_NONE) {
-            pk.reliability = Reliability.RELIABLE_ORDERED;
+            pk.reliability = 2;
             pk.orderChannel = packet.getChannel().getAsByte();
             pk.orderIndex = 0;
         } else {
-            pk.reliability = Reliability.RELIABLE;
+            pk.reliability = 2;
         }
-        session.getRaknetSession().addEncapsulatedToQueue(pk, immediate);
+        handler.sendEncapsulated(session.getRaknetSession(), pk, (byte) ((byte) 0 | (immediate || packet.getChannel() == NetworkChannel.CHANNEL_PRIORITY ? JRakLib.PRIORITY_IMMEDIATE : JRakLib.PRIORITY_NORMAL)));
+
     }
 
     public static String dumpHexFromBytes(byte[] bytes) {
@@ -127,5 +134,18 @@ public class JRakLibInterface implements ServerInterface {
             sb.append(String.format("%02X", b) + " ");
         }
         return sb.toString();
+    }
+
+    @Override
+    public void notifyACK(String string, int i) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void exceptionCaught(String string, String string1) {
+    }
+
+    @Override
+    public void handleOption(String string, String string1) {
     }
 }

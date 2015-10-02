@@ -39,7 +39,7 @@ public class MCPESession extends DragonetSession {
     private boolean statusActive;
 
     public MCPESession(DragonetServer dServer, PENetworkClient client, JRakLibInterface rakLibInterface, BaseTranslator translator) {
-        super(dServer, translator, "MCPE-" + client.getRaknetSession().getAddress().toString());
+        super(dServer, translator, "MCPE-" + client.getRaknetSession());
         translator.setSession(this);
 
         this.client = client;
@@ -77,7 +77,7 @@ public class MCPESession extends DragonetSession {
 
     @Override
     public InetSocketAddress getAddress() {
-        return new InetSocketAddress(client.getRaknetSession().getIpAddress(), client.getRaknetSession().getPort());
+        return client.getRemoteAddress();
     }
 
     @Override
@@ -143,7 +143,7 @@ public class MCPESession extends DragonetSession {
             GlowServer.logger.info(player.getName() + " kicked: " + reason);
             this.player.remove();
         } else {
-            GlowServer.logger.info("[MCPE Network ID " + client.getRaknetSession().getAddress().toString() + "] kicked: " + reason);
+            GlowServer.logger.info("[MCPE Network ID " + client.getRaknetSession()+ "] kicked: " + reason);
         }
 
         client.disconnect(reason);
