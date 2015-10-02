@@ -214,7 +214,7 @@ public abstract class DragonetSession extends GlowSession {
         } else {
             pkStartGame.gamemode = 0;
         }
-        pkStartGame.eid = 0;//this.player.getEntityId();
+        pkStartGame.eid = this.player.getEntityId();
         pkStartGame.spawnX = this.player.getWorld().getSpawnLocation().getBlockX();
         pkStartGame.spawnY = this.player.getWorld().getSpawnLocation().getBlockY();
         pkStartGame.spawnZ = this.player.getWorld().getSpawnLocation().getBlockZ();

@@ -1,5 +1,7 @@
 package org.dragonet.net.inf.mcpe.jraklib;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import org.dragonet.net.SessionManager;
 import org.dragonet.net.inf.mcpe.NetworkChannel;
 import org.dragonet.net.packet.minecraft.BatchPacket;
@@ -10,7 +12,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.Getter;
 import net.beaconpe.jraklib.JRakLib;
-import net.beaconpe.jraklib.Logger;
 import net.beaconpe.jraklib.protocol.EncapsulatedPacket;
 import net.beaconpe.jraklib.server.JRakLibServer;
 import net.beaconpe.jraklib.server.ServerHandler;
@@ -92,14 +93,12 @@ public class JRakLibInterface implements ServerInstance {
         if (!clientMap.containsKey(identifier)) {
             return;
         }
-        manager.getServer().getLogger().info("(" + identifier + ") PACKET IN: " + dumpHexFromBytes(encapsulatedPacket.buffer));
+        byte[] data = encapsulatedPacket.buffer.array();
+        manager.getServer().getLogger().info("(" + identifier + ") PACKET IN: " + dumpHexFromBytes(data));
         PENetworkClient client = clientMap.get(identifier);
-        client.processPacketBuffer(encapsulatedPacket.buffer);
+        client.processPacketBuffer(data);
     }
-    
-    @Override
-    public void handleRaw(String address, int port, byte[] payload) {
-    }
+
 
     /**
      * Wraps <code>bytes</code> into an encapsulated packet and sends it.
@@ -120,7 +119,7 @@ public class JRakLibInterface implements ServerInstance {
             sendPacket(session, bp, false);
         }
         EncapsulatedPacket pk = new EncapsulatedPacket();
-        pk.buffer = packet.getData();
+        pk.buffer = Unpooled.wrappedBuffer(packet.getData());
         pk.messageIndex = 0;
         if (packet.getChannel() != NetworkChannel.CHANNEL_NONE) {
             pk.reliability = 2;
@@ -152,5 +151,10 @@ public class JRakLibInterface implements ServerInstance {
 
     @Override
     public void handleOption(String string, String string1) {
+    }
+
+    @Override
+    public void handleRaw(String string, int i, ByteBuf bb) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
