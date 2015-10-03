@@ -20,6 +20,8 @@ import java.util.Deque;
 import lombok.Getter;
 import net.glowstone.GlowChunkSnapshot;
 import net.glowstone.entity.GlowPlayer;
+import net.glowstone.util.nbt.CompoundTag;
+import net.glowstone.util.nbt.NBTOutputStream;
 import org.dragonet.ChunkLocation;
 import org.dragonet.net.inf.mcpe.NetworkChannel;
 import org.dragonet.net.packet.minecraft.FullChunkPacket;
@@ -210,7 +212,8 @@ public class ClientChunkManager {
                 for (int z = 0; z < 16; z++) {
                     for (int y = 0; y < 128; y++) {
                         if (chunk.getBlockTypeId(x, y, z) != 0) {
-                            writer.writeByte((byte) (this.getSession().getTranslator().getItemTranslator().translateToPE(chunk.getBlockTypeId(x, y, z)) & 0xFF));
+                            //writer.writeByte((byte) (this.getSession().getTranslator().getItemTranslator().translateToPE(chunk.getBlockTypeId(x, y, z)) & 0xFF));
+                            writer.writeByte((byte) 0x00);
                         } else {
                             writer.writeByte((byte) 0x00);
                         }
@@ -266,35 +269,27 @@ public class ClientChunkManager {
                 writer.writeByte((byte) 0xB2);
                 writer.writeByte((byte) 0x4A);
             }
-            /*
-             Deflater deflater = new Deflater(7);
-             deflater.reset();
-             deflater.setInput(totalData.toByteArray());
-             deflater.finish();
-             byte[] bufferDeflate = new byte[65536];
-             int deflatedSize = deflater.deflate(bufferDeflate);
-             */
+            
+            
+            //TODO: Extra data
+            writer.switchEndianness();
+            writer.writeInt(0);     //WARNING: This is a count for extra data and THIS IS A LITTLE-ENDIAN INT
+            //... Write data
+            writer.switchEndianness();
+            
+            //TODO: Tiles(NBT)
+            {
+                NBTOutputStream n = new NBTOutputStream(totalData);
+                n.writeTag(new CompoundTag());
+            }
+            
             FullChunkPacket packet = new FullChunkPacket();
             packet.chunkX = chunkX;
             packet.chunkZ = chunkZ;
             packet.chunkData = totalData.toByteArray();
             //packet.compressedData = ArrayUtils.subarray(bufferDeflate, 0, deflatedSize);
             this.getSession().send(packet);
-            //System.out.println("Sent chunk! " + chunkX + ", " + chunkZ);
-
-            /*
-             File outfile = new File("D:/temp/a/chunk_" + chunkX + "-" + chunkZ + ".bin");
-             DataOutputStream out = null;
-             try {
-             out = new DataOutputStream(new FileOutputStream(outfile));
-             packet.encode();
-             out.write(packet.getData());
-             out.close();
-             } catch (Exception e) {
-             // TODO Auto-generated catch block
-             e.printStackTrace();
-             }
-             */
+            System.out.println("Sent chunk! " + chunkX + ", " + chunkZ);
         } catch (IOException e) {
         }
     }

@@ -109,6 +109,8 @@ public class JRakLibInterface implements ServerInstance {
      * compression, skips packet queues)
      */
     public void sendPacket(PENetworkClient session, PEPacket packet, boolean immediate) {
+        if(packet == null) return;
+        System.out.println("Sending packet: " + packet.getClass().getSimpleName());
         if (packet.getData() == null) {
             packet.encode();
         }
@@ -142,7 +144,6 @@ public class JRakLibInterface implements ServerInstance {
 
     @Override
     public void notifyACK(String string, int i) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -155,6 +156,5 @@ public class JRakLibInterface implements ServerInstance {
 
     @Override
     public void handleRaw(String string, int i, ByteBuf bb) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
