@@ -2,6 +2,7 @@
 checkout:
     post:
         # compile bukkit
+        - git clone --recursive git://github.com/DragonetMC/Dragonet.git
         - (cd Glowkit && mvn install)
 test:
     post:
