@@ -6,7 +6,6 @@ checkout:
         - git submodule update --init --recursive
         - (cd GlowstonePlusPlus/Glowkit && mvn install)
         - (cd GlowstonePlusPlus-upstream && mvn install)
-        - ls src/main/java
         - mvn install
         - (cd GlowstonePlusPlus && mvn install)
         - mvn package
