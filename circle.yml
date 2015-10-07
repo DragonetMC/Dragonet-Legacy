@@ -3,14 +3,7 @@ checkout:
     post:
         # compile bukkit
         - git clone --recursive git://github.com/DragonetMC/Dragonet.git
-        - (cd Glowkit && mvn install)
+        - (cd GlowstonePlusPlus/Glowkit && mvn install)
 test:
     post:
         - cp -r Dragonet-core/target/*.jar $CIRCLE_ARTIFACTS/
-# deploy to test server
-#deployment:
-#  devel:
-#    branch: master
-#    commands:
-#      - scp -P 2299 $CIRCLE_ARTIFACTS/glowstone++-1.8.6-SNAPSHOT.jar slog@therealms.us:glowstone.jar
-#      - ssh slog@therealms.us -p 2299 './start.sh'
