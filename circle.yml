@@ -6,4 +6,4 @@ checkout:
         - (cd GlowstonePlusPlus/Glowkit && mvn install)
 test:
     post:
-        - cp -r Dragonet-core/target/*.jar $CIRCLE_ARTIFACTS/
+        - cp target/*.jar $CIRCLE_ARTIFACTS/
