@@ -77,7 +77,7 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
         <dependency>
             <groupId>net.glowstone</groupId>
             <artifactId>glowkit</artifactId>
-            <version>{bukkit.version}</version>
+            <version>${bukkit.version}</version>
         </dependency>
         <dependency>
             <groupId>jline</groupId>
