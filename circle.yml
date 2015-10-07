@@ -5,7 +5,7 @@ checkout:
         - git submodule sync
         - git submodule update --init --recursive
         - (cd GlowstonePlusPlus/Glowkit && mvn install)
-        - (cd .. && mvn install)
+        - (cd GlowstonePlusPlus && mvn install)
 test:
     post:
         - cp -r Dragonet-core/target/*.jar $CIRCLE_ARTIFACTS/
