@@ -1,13 +1,10 @@
 
 checkout:
     post:
-        # compile g++
         - git submodule sync
         - git submodule update --init --recursive
         - (cd GlowstonePlusPlus/Glowkit && mvn install)
-        - (cd GlowstonePlusPlus-upstream && mvn install)
-        - mvn install
-        - (cd GlowstonePlusPlus && mvn install)
+	- mv GlowstonePlusPlus/src/main/java/net src/main/java
         - mvn package
 test:
     post:
