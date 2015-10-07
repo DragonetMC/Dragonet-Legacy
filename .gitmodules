@@ -4,3 +4,6 @@
 [submodule "GlowstonePlusPlus"]
 	path = GlowstonePlusPlus
 	url = https://github.com/DragonetMC/GlowstonePlusPlus.git
+[submodule "GlowstonePlusPlus-upstream"]
+	path = GlowstonePlusPlus-upstream
+	url = https://github.com/GlowstonePlusPlus/GlowstonePlusPlus.git
