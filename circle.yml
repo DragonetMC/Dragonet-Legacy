@@ -1,9 +1,11 @@
 
 checkout:
     post:
-        # compile bukkit
-        - git clone --recursive git://github.com/DragonetMC/Dragonet.git
+        # compile g++
+        - git submodule sync
+        - git submodule update --init --recursive
         - (cd GlowstonePlusPlus/Glowkit && mvn install)
+        - (cd GlowstonePlusPlus && mvn install)
 test:
     post:
         - cp -r Dragonet-core/target/*.jar $CIRCLE_ARTIFACTS/
