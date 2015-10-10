@@ -269,19 +269,22 @@ public class ClientChunkManager {
                 writer.writeByte((byte) 0xB2);
                 writer.writeByte((byte) 0x4A);
             }
-            
-            
+
             //TODO: Extra data
-            writer.switchEndianness();
-            writer.writeInt(0);     //WARNING: This is a count for extra data and THIS IS A LITTLE-ENDIAN INT
-            //... Write data
-            writer.switchEndianness();
-            
-            //TODO: Tiles(NBT)
             {
-                NBTOutputStream n = new NBTOutputStream(totalData);
-                n.writeTag(new CompoundTag());
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                NBTOutputStream n = new NBTOutputStream(bos);
+                n.writeTag(new CompoundTag());  //TODO
+
+                //Write them in
+                writer.switchEndianness();
+                writer.writeInt(bos.toByteArray().length);     //WARNING: This is a count for extra data and THIS IS A LITTLE-ENDIAN INT
+                writer.write(bos.toByteArray());
+                writer.switchEndianness();
             }
+
+            //TODO: Tiles(NBT)
+            
             
             FullChunkPacket packet = new FullChunkPacket();
             packet.chunkX = chunkX;
