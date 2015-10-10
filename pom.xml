@@ -143,6 +143,7 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
                         <configuration>
                             <sources>
                                 <source>${project.basedir}/src/main/java</source>
+                                <source>${project.basedir}/GlowstonePlusPlus/src/main/java</source>
                             </sources>
                         </configuration>
                     </execution>
