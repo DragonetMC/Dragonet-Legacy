@@ -17,6 +17,7 @@ import net.beaconpe.jraklib.server.JRakLibServer;
 import net.beaconpe.jraklib.server.ServerHandler;
 import net.beaconpe.jraklib.server.ServerInstance;
 import org.dragonet.net.inf.mcpe.PENetworkClient;
+import org.dragonet.net.packet.minecraft.UpdateBlockPacket;
 import org.dragonet.utilities.DragonetVersioning;
 
 /**
@@ -55,10 +56,7 @@ public class JRakLibInterface implements ServerInstance {
             handler.sendOption("name", getServerName());
             lastTimeSendOption = System.currentTimeMillis();
         }
-        int cnt = 0;
-        while(cnt < 2400 && handler.handlePacket()){
-            cnt++;
-        }
+        while(handler.handlePacket());
     }
 
     private String getServerName() {
@@ -110,34 +108,36 @@ public class JRakLibInterface implements ServerInstance {
      */
     public void sendPacket(PENetworkClient session, PEPacket packet, boolean immediate) {
         if(packet == null) return;
+        
+        //DEBUG: BLOCK ALL UPDATEBLOCKPACKETS
+        if(packet.getClass().equals(UpdateBlockPacket.class)) return;
+        
         System.out.println("Sending packet: " + packet.getClass().getSimpleName());
         if (packet.getData() == null) {
             packet.encode();
         }
-        if (!immediate && !(packet instanceof BatchPacket) && (packet.getData().length >= 512)) { //TODO: Compression threshold config
+        if(packet.getData() == null){ //Faild to encode?
+            return;
+        }
+        if (!(packet instanceof BatchPacket) && (packet.getData().length >= 512)) { //TODO: Compression threshold config
             BatchPacket bp = new BatchPacket();
             bp.packets.add(packet);
             bp.encode();
-            sendPacket(session, bp, false);
+            sendPacket(session, bp, true);  //We don't f**cking those kinds of packets, memory will be fucked up! 
+            return;
         }
         EncapsulatedPacket pk = new EncapsulatedPacket();
-        pk.buffer = Unpooled.wrappedBuffer(packet.getData());
+        pk.buffer = Unpooled.copiedBuffer(packet.getData());
         pk.messageIndex = 0;
-        if (packet.getChannel() != NetworkChannel.CHANNEL_NONE) {
-            pk.reliability = 2;
-            pk.orderChannel = packet.getChannel().getAsByte();
-            pk.orderIndex = 0;
-        } else {
-            pk.reliability = 2;
-        }
-        handler.sendEncapsulated(session.getRaknetSession(), pk, (byte) ((byte) 0 | (immediate || packet.getChannel() == NetworkChannel.CHANNEL_PRIORITY ? JRakLib.PRIORITY_IMMEDIATE : JRakLib.PRIORITY_NORMAL)));
-
+        pk.reliability = 2;
+        handler.sendEncapsulated(session.getRaknetSession(), pk, (byte) ((byte) 0 | (immediate || packet.isShouldSendImmidate() ? JRakLib.PRIORITY_IMMEDIATE : JRakLib.PRIORITY_NORMAL)));
     }
 
     public static String dumpHexFromBytes(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
         for (byte b : bytes) {
-            sb.append(String.format("%02X", b) + " ");
+            sb.append(String.format("%02X", b));
+            sb.append(" ");
         }
         return sb.toString();
     }

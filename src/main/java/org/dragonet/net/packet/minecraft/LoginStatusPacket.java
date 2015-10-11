@@ -32,6 +32,7 @@ public class LoginStatusPacket extends PEPacket {
 
     @Override
     public void encode() {
+        setShouldSendImmidate(true);
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PEBinaryWriter writer = new PEBinaryWriter(bos);

@@ -20,10 +20,7 @@ import java.util.Deque;
 import lombok.Getter;
 import net.glowstone.GlowChunkSnapshot;
 import net.glowstone.entity.GlowPlayer;
-import net.glowstone.util.nbt.CompoundTag;
-import net.glowstone.util.nbt.NBTOutputStream;
 import org.dragonet.ChunkLocation;
-import org.dragonet.net.inf.mcpe.NetworkChannel;
 import org.dragonet.net.packet.minecraft.FullChunkPacket;
 import org.dragonet.net.packet.minecraft.LoginStatusPacket;
 import org.dragonet.utilities.io.PEBinaryWriter;
@@ -42,6 +39,10 @@ public class ClientChunkManager {
 
     @Getter
     private boolean spawned;
+
+    //Reuse this to reduce memory usage
+    private ByteArrayOutputStream totalData = new ByteArrayOutputStream();
+    private PEBinaryWriter writer = new PEBinaryWriter(totalData);
 
     public ClientChunkManager(DragonetSession session) {
         this.ticksCountDown = 20;
@@ -197,23 +198,13 @@ public class ClientChunkManager {
                 this.getSession().getPlayer().getWorld().loadChunk(chunkX, chunkZ, true);
             }
             GlowChunkSnapshot chunk = this.getSession().getPlayer().getWorld().getChunkAt(chunkX, chunkZ).getChunkSnapshot();
-            ByteArrayOutputStream totalData = new ByteArrayOutputStream();
-            PEBinaryWriter writer = new PEBinaryWriter(totalData);
-            /*
-             if (writer.getEndianness() == PEBinaryUtils.BIG_ENDIAN) {
-             writer.switchEndianness();
-             }
-             */
-            /*
-             writer.writeInt(chunkX);
-             writer.writeInt(chunkZ);
-             */
+
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
                     for (int y = 0; y < 128; y++) {
                         if (chunk.getBlockTypeId(x, y, z) != 0) {
-                            //writer.writeByte((byte) (this.getSession().getTranslator().getItemTranslator().translateToPE(chunk.getBlockTypeId(x, y, z)) & 0xFF));
-                            writer.writeByte((byte) 0x00);
+                            writer.writeByte((byte) (this.getSession().getTranslator().getItemTranslator().translateToPE(chunk.getBlockTypeId(x, y, z)) & 0xFF));
+                            //writer.writeByte((byte) 0x00);
                         } else {
                             writer.writeByte((byte) 0x00);
                         }
@@ -271,27 +262,18 @@ public class ClientChunkManager {
             }
 
             //TODO: Extra data
-            {
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                NBTOutputStream n = new NBTOutputStream(bos);
-                n.writeTag(new CompoundTag());  //TODO
-
-                //Write them in
-                writer.switchEndianness();
-                writer.writeInt(bos.toByteArray().length);     //WARNING: This is a count for extra data and THIS IS A LITTLE-ENDIAN INT
-                writer.write(bos.toByteArray());
-                writer.switchEndianness();
-            }
+            writer.switchEndianness();
+            writer.writeInt(0);
+            writer.switchEndianness();
 
             //TODO: Tiles(NBT)
-            
-            
             FullChunkPacket packet = new FullChunkPacket();
             packet.chunkX = chunkX;
             packet.chunkZ = chunkZ;
             packet.chunkData = totalData.toByteArray();
-            //packet.compressedData = ArrayUtils.subarray(bufferDeflate, 0, deflatedSize);
             this.getSession().send(packet);
+            
+            totalData.reset();
             System.out.println("Sent chunk! " + chunkX + ", " + chunkZ);
         } catch (IOException e) {
         }

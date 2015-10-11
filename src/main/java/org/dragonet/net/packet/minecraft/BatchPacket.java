@@ -37,6 +37,8 @@ public class BatchPacket extends PEPacket {
     @Override
     public void encode() {
         try {
+            setShouldSendImmidate(true);    //We don't waste our memory
+            
             //Combine all packets
             ByteArrayOutputStream packetCombinerData = new ByteArrayOutputStream();
             PEBinaryWriter packetCombiner = new PEBinaryWriter(packetCombinerData);
