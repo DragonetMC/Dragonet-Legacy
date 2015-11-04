@@ -24,6 +24,6 @@ public final class RaknetConstants {
     public static final byte ID_OPEN_CONNECTION_REQUEST_2 = (byte) 0x07;
     public static final byte ID_OPEN_CONNECTION_REPLY_2 = (byte) 0x08;
 
-    public static final byte ACK = (byte) 0xA0;
-    public static final byte NACK = (byte) 0xC0;
+    public static final byte ACK = (byte) 0xC0;
+    public static final byte NACK = (byte) 0xA0;
 }
