@@ -366,11 +366,9 @@ public final class PENetworkClient {
         EncapsulatedPacket[] encapsulatedPacket = EncapsulatedPacket.fromPEPacket(this, packet, reliability);
         for (EncapsulatedPacket ePacket : encapsulatedPacket) {
             ePacket.encode();
-            /*
              if (this.queue.getLength() + ePacket.getData().length > this.clientMTU - 24) {
-             this.fireQueue();
+                this.fireQueue();
              }
-             */
             this.queue.getEncapsulatedPackets().add(ePacket);
             if (this.sentAndReceivedChunks != -1 && (packet instanceof FullChunkPacket) && !this.chunkPacketIDS.contains(this.queue.getSequenceNumber())) {
                 this.chunkPacketIDS.add(this.queue.getSequenceNumber());
