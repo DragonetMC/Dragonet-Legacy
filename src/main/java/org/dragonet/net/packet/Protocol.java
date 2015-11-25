@@ -15,6 +15,8 @@ public final class Protocol {
 
     static {
         protocol = new HashMap<>();
+        registerDecoder(PEPacketIDs.CLIENT_CONNECT, ClientConnectPacket.class);
+        registerDecoder(PEPacketIDs.CLIENT_HANDSHAKE, ClientHandshakePacket.class);
         registerDecoder(PEPacketIDs.DISCONNECT_PACKET, DisconnectPacket.class);
         registerDecoder(PEPacketIDs.BATCH_PACKET, BatchPacket.class);
         registerDecoder(PEPacketIDs.TEXT_PACKET, ChatPacket.class);
