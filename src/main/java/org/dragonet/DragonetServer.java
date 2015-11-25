@@ -29,7 +29,7 @@ import net.glowstone.util.ServerConfig;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.dragonet.net.SessionManager;
-import org.dragonet.net.inf.mcpe.jraklib.JRakLibInterface;
+import org.dragonet.net.inf.mcpe.NetworkHandler;
 import org.dragonet.net.inf.portal.DragonPortalServer;
 import org.dragonet.net.inf.portal.PasswordNotSetException;
 import org.dragonet.plugin.php.PHPManager;
@@ -73,7 +73,7 @@ public class DragonetServer {
 
     //---------------------------------
     @Getter
-    private JRakLibInterface network;
+    private NetworkHandler network;
 
     @Getter
     private ExecutorService threadPool;
@@ -154,7 +154,7 @@ public class DragonetServer {
         int port = config.getInt("server-port", 19132);
         this.logger.info("Trying to bind on UDP address " + ip + ":" + port + "... ");
         try {
-            this.network = new JRakLibInterface(sessionManager, new InetSocketAddress(ip, port));
+            this.network = new NetworkHandler(sessionManager, new InetSocketAddress(ip, port));
         } catch (Exception ex) {
             this.getLogger().error("FAILD TO BIND ON THE Minecraft: Pocket Edition PORT " + port + "(UDP)! ");
             this.getLogger().error("CLOSE THE PROGRAM USING THAT PORT OR CHANGE THE PORT TO SOLVE THIS PROBLEM! ");

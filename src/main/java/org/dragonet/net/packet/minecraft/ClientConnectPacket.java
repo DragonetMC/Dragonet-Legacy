@@ -14,31 +14,21 @@ package org.dragonet.net.packet.minecraft;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.UUID;
 import org.dragonet.utilities.io.PEBinaryReader;
 
-public class LoginPacket extends PEPacket {
+public class ClientConnectPacket extends PEPacket {
 
-    public String username;
-    public int protocol1;
-    public int protocol2;
     public long clientID;
-    public UUID clientUuid;
-    public String serverAddress;
-    public String clientSecret;
+    public long sessionID;
+    public boolean useSecurity;
 
-    public boolean skinTransparent;
-    
-    public boolean slim;
-    public byte[] skin;
-
-    public LoginPacket(byte[] data) {
+    public ClientConnectPacket(byte[] data) {
         this.setData(data);
     }
 
     @Override
     public int pid() {
-        return PEPacketIDs.LOGIN_PACKET;
+        return PEPacketIDs.CLIENT_CONNECT;
     }
 
     @Override
@@ -50,19 +40,9 @@ public class LoginPacket extends PEPacket {
         try {
             PEBinaryReader reader = new PEBinaryReader(new ByteArrayInputStream(this.getData()));
             reader.readByte(); //PID
-            this.username = reader.readString();
-            this.protocol1 = reader.readInt();
-            this.protocol2 = reader.readInt();
             this.clientID = reader.readLong();
-            this.clientUuid = reader.readUUID();
-            this.serverAddress = reader.readString();
-            this.clientSecret = reader.readString();
-            
-            this.skinTransparent = (reader.readByte() & 0xFF) > 0;
-            
-            this.slim = (reader.readByte() & 0xF) > 0;
-            //int len = reader.readShort();
-            this.skin = reader.read(reader.available());
+            this.sessionID = reader.readLong();
+            this.useSecurity = (reader.readByte() & 0xFF) > 0;
             this.setLength(reader.totallyRead());
         } catch (IOException e) {
         }

@@ -15,38 +15,25 @@ package org.dragonet.net.packet.minecraft;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.dragonet.inventory.PEInventorySlot;
-import org.dragonet.net.inf.mcpe.NetworkChannel;
 import org.dragonet.utilities.io.PEBinaryReader;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
-public class WindowSetSlotPacket extends PEPacket {
+public class PingPongPacket extends PEPacket {
 
-    public byte windowID;
-    public short slot;
-    public short hotbarSlot;
-    public PEInventorySlot item;
-
-    public WindowSetSlotPacket(byte[] data) {
-        this.setData(data);
-    }
+    public long pingID;
 
     @Override
     public int pid() {
-        return PEPacketIDs.WINDOW_SET_SLOT_PACKET;
+        return PEPacketIDs.PING;
     }
 
     @Override
     public void encode() {
         try {
-            setChannel(NetworkChannel.CHANNEL_PRIORITY);
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PEBinaryWriter writer = new PEBinaryWriter(bos);
             writer.writeByte((byte) (this.pid() & 0xFF));
-            writer.writeByte(this.windowID);
-            writer.writeShort(this.slot);
-            writer.writeShort(this.hotbarSlot);;
-            PEInventorySlot.writeSlot(writer, this.item);
+            writer.writeLong(this.pingID);
             this.setData(bos.toByteArray());
         } catch (IOException e) {
         }
@@ -57,10 +44,7 @@ public class WindowSetSlotPacket extends PEPacket {
         try {
             PEBinaryReader reader = new PEBinaryReader(new ByteArrayInputStream(this.getData()));
             reader.readByte();
-            this.windowID = reader.readByte();
-            this.slot = reader.readShort();
-            this.hotbarSlot = reader.readShort();
-            this.item = PEInventorySlot.readSlot(reader);
+            this.pingID = reader.readLong();
             this.setLength(reader.totallyRead());
         } catch (IOException e) {
         }

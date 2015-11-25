@@ -17,6 +17,12 @@ public final class PEPacketIDs {
     /**
      * Actual Minecraft: PE protocol version
      */
+    
+    public static final byte PING = (byte) 0x00;
+    public static final byte PONG = (byte) 0x00;
+    public static final byte CLIENT_CONNECT = (byte) 0x09;
+    public static final byte SERVER_HANDSHAKE = (byte) 0x10;
+    public static final byte CLIENT_HANDSHAKE = (byte) 0x13;
 
     public static final byte LOGIN_PACKET = (byte) 0x8f;
     public static final byte PLAY_STATUS_PACKET = (byte) 0x90;
@@ -38,7 +44,7 @@ public final class PEPacketIDs {
     public static final byte ADD_PAINTING_PACKET = (byte) 0xa0;
     public static final byte EXPLODE_PACKET = (byte) 0xa1;
     public static final byte LEVEL_EVENT_PACKET = (byte) 0xa2;
-    public static final byte TILE_EVENT_PACKET = (byte) 0xa3;
+    public static final byte BLOCK_EVENT_PACKET = (byte) 0xa3;
     public static final byte ENTITY_EVENT_PACKET = (byte) 0xa4;
     public static final byte MOB_EFFECT_PACKET = (byte) 0xa5;
     public static final byte UPDATE_ATTRIBUTES_PACKET = (byte) 0xa6;
@@ -64,7 +70,7 @@ public final class PEPacketIDs {
     public static final byte CRAFTING_DATA_PACKET = (byte) 0xba;
     public static final byte CRAFTING_EVENT_PACKET = (byte) 0xbb;
     public static final byte ADVENTURE_SETTINGS_PACKET = (byte) 0xbc;
-    public static final byte TILE_ENTITY_DATA_PACKET = (byte) 0xbd;
+    public static final byte BLOCK_ENTITY_DATA_PACKET = (byte) 0xbd;
     //public static final byte PLAYER_INPUT_PACKET = (byte) 0xbe;
     public static final byte FULL_CHUNK_DATA_PACKET = (byte) 0xbf;
     public static final byte SET_DIFFICULTY_PACKET = (byte) 0xc0;

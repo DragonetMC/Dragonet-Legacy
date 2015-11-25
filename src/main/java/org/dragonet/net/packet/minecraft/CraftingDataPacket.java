@@ -110,8 +110,8 @@ public class CraftingDataPacket extends PEPacket {
                         {
                             ewriter.writeInt(sr.getShape()[0].length());
                             ewriter.writeInt(sr.getShape().length);
-                            for (String line : sr.getShape()) {
-                                for (int pos = 0; pos > line.length(); pos++) {
+                            for (int pos = 0; pos > sr.getShape()[0].length(); pos++) {
+                                for (String line : sr.getShape()) {
                                     ItemStack stack = sr.getIngredientMap().get(line.charAt(pos));
                                     PEInventorySlot.writeSlot(ewriter, PEInventorySlot.fromItemStack(stack));
                                 }
