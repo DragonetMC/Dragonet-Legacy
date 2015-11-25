@@ -126,10 +126,13 @@ public class ItemTranslator_v0_11 implements ItemTranslator {
      */
     @Override
     public int translateToPE(int itemPC) {
+        /*
         if (itemMap_PC_to_PE.containsKey(itemPC)) {
             return itemMap_PC_to_PE.get(itemPC);
         } else {
             return DEFAULT_BLOCK_TO_PE;
         }
+        */
+        return itemPC;
     }
 }
