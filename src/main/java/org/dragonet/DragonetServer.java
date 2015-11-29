@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.EnumMap;
 import java.util.concurrent.ExecutorService;
@@ -29,7 +28,7 @@ import net.glowstone.util.ServerConfig;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.dragonet.net.SessionManager;
-import org.dragonet.net.inf.mcpe.NetworkHandler;
+import org.dragonet.net.inf.mcpe.RakNetInterface;
 import org.dragonet.net.inf.portal.DragonPortalServer;
 import org.dragonet.net.inf.portal.PasswordNotSetException;
 import org.dragonet.plugin.php.PHPManager;
@@ -73,7 +72,7 @@ public class DragonetServer {
 
     //---------------------------------
     @Getter
-    private NetworkHandler network;
+    private RakNetInterface network;
 
     @Getter
     private ExecutorService threadPool;
@@ -154,7 +153,7 @@ public class DragonetServer {
         int port = config.getInt("server-port", 19132);
         this.logger.info("Trying to bind on UDP address " + ip + ":" + port + "... ");
         try {
-            this.network = new NetworkHandler(sessionManager, new InetSocketAddress(ip, port));
+            this.network = new RakNetInterface(sessionManager, ip, port);
         } catch (Exception ex) {
             this.getLogger().error("FAILD TO BIND ON THE Minecraft: Pocket Edition PORT " + port + "(UDP)! ");
             this.getLogger().error("CLOSE THE PROGRAM USING THAT PORT OR CHANGE THE PORT TO SOLVE THIS PROBLEM! ");

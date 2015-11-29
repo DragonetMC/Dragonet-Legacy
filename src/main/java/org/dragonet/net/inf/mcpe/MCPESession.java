@@ -19,21 +19,19 @@ import net.glowstone.GlowServer;
 import net.glowstone.entity.GlowPlayer;
 import net.glowstone.net.GlowSession;
 import org.bukkit.GameMode;
-import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.dragonet.DragonetServer;
 import org.dragonet.net.DragonetSession;
 import org.dragonet.net.packet.minecraft.AdventureSettingsPacket;
 import org.dragonet.net.packet.minecraft.PEPacket;
-import org.dragonet.net.packet.minecraft.SetTimePacket;
 import org.dragonet.net.translator.BaseTranslator;
 
 public class MCPESession extends DragonetSession {
 
-    private @Getter
-    DragonetServer dServer;
+    @Getter
+    private final DragonetServer dServer;
 
-    private PENetworkClient client;
+    private final PENetworkClient client;
 
     private boolean statusActive;
 
@@ -54,6 +52,7 @@ public class MCPESession extends DragonetSession {
     public void onTick() {
         //client.onTick(); <- We don't tick here, in NetworkHandler already did. 
         super.onTick();
+        /*
         if (client.getSentAndReceivedChunks() >= dServer.getPlayerSpawnThreshold()*dServer.getPlayerSpawnThreshold() && (this.player instanceof Player)) { //TODO: Change 
             this.getLogger().info("PE player [" + this.player.getName() + "] has spawned. ");
             client.setSentAndReceivedChunks(-1);
@@ -61,6 +60,7 @@ public class MCPESession extends DragonetSession {
             SetTimePacket pkTime = new SetTimePacket((int) (this.getPlayer().getWorld().getTime() & 0xFFFFFFFF), true);
             this.send(pkTime);
         }
+        */
     }
 
     @Override
@@ -75,7 +75,7 @@ public class MCPESession extends DragonetSession {
 
     @Override
     public InetSocketAddress getAddress() {
-        return client.getRemoteInetSocketAddress();
+        return client.getRemoteAddress();
     }
     
 
@@ -142,7 +142,7 @@ public class MCPESession extends DragonetSession {
             GlowServer.logger.info(player.getName() + " kicked: " + reason);
             this.player.remove();
         } else {
-            GlowServer.logger.info("[" + client.getRemoteIP() + ":" + client.getRemotePort() + "] kicked: " + reason);
+            GlowServer.logger.info("[" + client.getRemoteAddress().getHostString() + ":" + client.getRemoteAddress().getPort() + "] kicked: " + reason);
         }
 
         client.disconnect(reason);
