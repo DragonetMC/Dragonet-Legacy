@@ -25,6 +25,7 @@ import org.dragonet.raknet.protocol.EncapsulatedPacket;
 import org.dragonet.raknet.server.RakNetServer;
 import org.dragonet.raknet.server.ServerHandler;
 import org.dragonet.raknet.server.ServerInstance;
+import org.dragonet.utilities.DragonetVersioning;
 
 public class RakNetInterface implements ServerInstance {
 
@@ -41,7 +42,13 @@ public class RakNetInterface implements ServerInstance {
         this.sesMan = sesMan;
         this.raknetServer = new RakNetServer(port, bindAddress);
         this.handler = new ServerHandler(raknetServer, this);
-        this.raknetServer.start();
+        
+        String name = "MCPE;";
+        name += sesMan.getServer().getServer().getServerName().replace(";", "\\;") + ";";
+        name += DragonetVersioning.MINECRAFT_PE_VERSION + ";";
+        name += "MCPC " + DragonetVersioning.MINECRAFT_PC_VERSION + ", MCPE " + DragonetVersioning.MINECRAFT_PE_VERSION + ";";
+        name += "-1;-1";
+        this.handler.sendOption("name", name);
     }
     
     public void onTick(){
