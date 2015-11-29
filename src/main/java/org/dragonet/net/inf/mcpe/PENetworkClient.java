@@ -20,6 +20,7 @@ import lombok.Getter;
 import net.glowstone.entity.meta.profile.PlayerProfile;
 import org.dragonet.net.DragonetSession;
 import org.dragonet.net.packet.Protocol;
+import org.dragonet.net.packet.minecraft.BatchPacket;
 import org.dragonet.net.packet.minecraft.DisconnectPacket;
 import org.dragonet.net.packet.minecraft.LoginPacket;
 import org.dragonet.net.packet.minecraft.LoginStatusPacket;
@@ -62,6 +63,10 @@ public final class PENetworkClient {
         if (packet == null) {
             return;
         }
+        handlePacket(packet);
+    }
+    
+    public void handlePacket(PEPacket packet){
         System.out.println("Received Packet: " + packet.getClass().getSimpleName());
         switch (packet.pid()) {
             case PEPacketIDs.LOGIN_PACKET:
@@ -91,6 +96,13 @@ public final class PENetworkClient {
                 }
 
                 session.setPlayer(new PlayerProfile(this.username, UUID.nameUUIDFromBytes(("OfflinePlayer:" + this.username).getBytes(StandardCharsets.UTF_8))));
+                break;
+            case PEPacketIDs.BATCH_PACKET:
+                BatchPacket packetBatch = (BatchPacket) packet;
+                if(packetBatch.packets == null || packetBatch.packets.isEmpty()) break;
+                for(PEPacket pk : packetBatch.packets){
+                    this.handlePacket(pk);
+                }
                 break;
             default:
                 if (session == null) {
