@@ -37,7 +37,7 @@ public class PlayerActionPacketTranslator extends PEPacketTranslatorToPC<Transla
                 HANDLER.handle(getSession(), msgStartBreak);
             case PlayerActionPacket.ACTION_FINISH_BREAK:
                 DiggingMessage msgFinishBreak = new DiggingMessage(DiggingMessage.FINISH_DIGGING, packet.x, packet.y, packet.z, packet.face);
-                new DiggingHandler().handle(this.getSession(), msgFinishBreak);
+                HANDLER.handle(this.getSession(), msgFinishBreak);
         }
         return null;
     }
