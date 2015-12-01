@@ -37,7 +37,7 @@ public class MCPESession extends DragonetSession {
 
 
     public MCPESession(DragonetServer dServer, PENetworkClient client, BaseTranslator translator) {
-        super(dServer, translator, "MCPE-" + client.getRemoteAddress().toString());
+        super(dServer, translator, "MCPE-" + client.getRakSession().getIdentifier());
         translator.setSession(this);
         
         this.dServer = dServer;
@@ -73,11 +73,11 @@ public class MCPESession extends DragonetSession {
         this.send(packet, 2);
     }
 
-    @Override
+	@Override
     public InetSocketAddress getAddress() {
-        return client.getRemoteAddress();
+        return client.getAddress();
     }
-    
+
 
     @Override
     public boolean isActive() {
@@ -142,7 +142,7 @@ public class MCPESession extends DragonetSession {
             GlowServer.logger.info(player.getName() + " kicked: " + reason);
             this.player.remove();
         } else {
-            GlowServer.logger.info("[" + client.getRemoteAddress().getHostString() + ":" + client.getRemoteAddress().getPort() + "] kicked: " + reason);
+            GlowServer.logger.info("[" + client.getRakSession().getIdentifier() + "] kicked: " + reason);
         }
 
         client.disconnect(reason);

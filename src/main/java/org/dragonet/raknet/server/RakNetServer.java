@@ -1,5 +1,8 @@
 package org.dragonet.raknet.server;
 
+import lombok.Setter;
+import lombok.Getter;
+
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
@@ -15,6 +18,10 @@ public class RakNetServer extends Thread {
 
     protected boolean shutdown;
 
+
+	@Getter
+	@Setter
+	ServerInstance instance;
 
     public RakNetServer(int port) {
         this(port, "0.0.0.0");
@@ -62,17 +69,17 @@ public class RakNetServer extends Thread {
         this.internalQueue.add(data);
     }
 
-    public byte[] readMainToThreadPacket() {
-        return this.internalQueue.poll();
-    }
+    //public byte[] readMainToThreadPacket() {
+    //    return this.internalQueue.poll();
+    //}
 
-    public void pushThreadToMainPacket(byte[] data) {
-        this.externalQueue.add(data);
-    }
+    //public void pushThreadToMainPacket(byte[] data) {
+    //    this.externalQueue.add(data);
+    //}
 
-    public byte[] readThreadToMainPacket() {
-        return this.externalQueue.poll();
-    }
+    //public byte[] readThreadToMainPacket() {
+    //    return this.externalQueue.poll();
+    //}
 
     private class ShutdownHandler extends Thread {
         public void run() {

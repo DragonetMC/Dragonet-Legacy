@@ -28,6 +28,7 @@ import org.dragonet.net.packet.minecraft.PEPacket;
 import org.dragonet.net.packet.minecraft.PEPacketIDs;
 import org.dragonet.net.translator.BaseTranslator;
 import org.dragonet.net.translator.TranslatorProvider;
+import org.dragonet.raknet.server.Session;
 
 public final class PENetworkClient {
 
@@ -38,24 +39,20 @@ public final class PENetworkClient {
     private MCPESession session;
     
     @Getter
-    private final String raknetIdentifier;
-    
-    @Getter
-    private final InetSocketAddress remoteAddress;
-    
-    @Getter
-    private final long clientID;
+    private final Session rakSession;
     
     @Getter
     private final RakNetInterface inf;
+
+	@Getter
+	private final InetSocketAddress address;
     
     private String username;
 
-    public PENetworkClient(RakNetInterface inf, String raknetIdentifier, InetSocketAddress remoteAddress, long clientID) {
-        this.raknetIdentifier = raknetIdentifier;
+    public PENetworkClient(RakNetInterface inf, Session rakSession) {
+        this.rakSession = rakSession;
+	    this.address = new InetSocketAddress(rakSession.getAddress(), rakSession.getPort());
         this.inf = inf;
-        this.remoteAddress = remoteAddress;
-        this.clientID = clientID;
     }
 
     public void processPacketBuffer(byte[] buffer) {
@@ -123,6 +120,18 @@ public final class PENetworkClient {
     }
     
     public void sendPacket(PEPacket packet, int reliability){
-        inf.sendPacket(raknetIdentifier, packet, true, packet.isShouldSendImmidate());
+	    //TODO: Check if should be sent immediatly
+	    if(packet.getLength() > 512) {
+
+			BatchPacket packet2 = new BatchPacket();
+		    packet2.setChannel(packet.getChannel());
+		    packet2.setData(packet.getData());
+		    packet2.encode();
+		    sendPacket(packet2, reliability);
+
+	    }
+	    inf.sendPacket(rakSession, packet, true, packet.isShouldSendImmidate());
+	    //rakSession.addEncapsulatedToQueue(packet);
+        //inf.sendPacket(raknetIdentifier, packet, true, packet.isShouldSendImmidate());
     }
 }

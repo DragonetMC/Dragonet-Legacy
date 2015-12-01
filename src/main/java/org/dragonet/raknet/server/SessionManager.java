@@ -1,5 +1,6 @@
 package org.dragonet.raknet.server;
 
+import lombok.Getter;
 import org.dragonet.raknet.protocol.packet.DATA_PACKET_7;
 import org.dragonet.raknet.protocol.packet.DATA_PACKET_9;
 import org.dragonet.raknet.protocol.packet.OPEN_CONNECTION_REQUEST_1;
@@ -49,6 +50,7 @@ import org.dragonet.DragonetServer;
 public class SessionManager {
     protected Map<Byte, Class<? extends Packet>> packetPool = new ConcurrentHashMap<>();
 
+	@Getter
     protected RakNetServer server;
 
     protected UDPServerSocket socket;
@@ -215,7 +217,7 @@ public class SessionManager {
     }
 
     public void streamEncapsulated(Session session, EncapsulatedPacket packet, int flags) {
-        String id = session.getAddress() + ":" + session.getPort();
+        /*String id = session.getAddress() + ":" + session.getPort();
         byte[] buffer = Binary.appendBytes(
                 RakNet.PACKET_ENCAPSULATED,
                 new byte[]{(byte) (id.length() & 0xff)},
@@ -223,42 +225,57 @@ public class SessionManager {
                 new byte[]{(byte) (flags & 0xff)},
                 packet.toBinary(true)
         );
-        this.server.pushThreadToMainPacket(buffer);
+        this.server.pushThreadToMainPacket(buffer);*/
+	    DragonetServer.instance().getNetwork().handleEncapsulated(session, packet, flags);
     }
 
     public void streamRAW(String address, int port, byte[] payload) {
-        byte[] buffer = Binary.appendBytes(
+        /*byte[] buffer = Binary.appendBytes(
                 RakNet.PACKET_RAW,
                 new byte[]{(byte) (address.length() & 0xff)},
                 address.getBytes(StandardCharsets.UTF_8),
                 Binary.writeShort(port),
                 payload
         );
-        this.server.pushThreadToMainPacket(buffer);
+        this.server.pushThreadToMainPacket(buffer);*/
+	    DragonetServer.instance().getNetwork().handleRaw(address, port, payload);
     }
 
-    protected void streamClose(String identifier, String reason) {
-        byte[] buffer = Binary.appendBytes(
+    protected void streamClose(Session session, String reason) {
+        /*byte[] buffer = Binary.appendBytes(
                 RakNet.PACKET_CLOSE_SESSION,
                 new byte[]{(byte) (identifier.length() & 0xff)},
                 identifier.getBytes(StandardCharsets.UTF_8),
                 new byte[]{(byte) (reason.length() & 0xff)},
                 reason.getBytes(StandardCharsets.UTF_8)
         );
-        this.server.pushThreadToMainPacket(buffer);
+        this.server.pushThreadToMainPacket(buffer);*/
+	    DragonetServer.instance().getNetwork().closeSession(session, reason);
+	    String identifier = session.getIdentifier();
+	    if (this.sessions.containsKey(identifier)) {
+		    try {
+			    this.removeSession(this.sessions.get(identifier));
+		    } catch (Exception e) {
+			    e.printStackTrace();
+		    }
+	    } else {
+		    this.streamInvalid(identifier);
+	    }
     }
 
     protected void streamInvalid(String identifier) {
-        byte[] buffer = Binary.appendBytes(
+        /*byte[] buffer = Binary.appendBytes(
                 RakNet.PACKET_INVALID_SESSION,
                 new byte[]{(byte) (identifier.length() & 0xff)},
                 identifier.getBytes(StandardCharsets.UTF_8)
         );
-        this.server.pushThreadToMainPacket(buffer);
+        this.server.pushThreadToMainPacket(buffer);*/
+
+	    //DragonetServer.instance().getNetwork().;
     }
 
     protected void streamOpen(Session session) {
-        String identifier = session.getAddress() + ":" + session.getPort();
+        /*String identifier = session.getAddress() + ":" + session.getPort();
         byte[] buffer = Binary.appendBytes(
                 RakNet.PACKET_OPEN_SESSION,
                 new byte[]{(byte) (identifier.length() & 0xff)},
@@ -268,27 +285,30 @@ public class SessionManager {
                 Binary.writeShort(session.getPort()),
                 Binary.writeLong(session.getID())
         );
-        this.server.pushThreadToMainPacket(buffer);
+        this.server.pushThreadToMainPacket(buffer);*/
+	    DragonetServer.instance().getNetwork().openSession(session);
     }
 
     protected void streamACK(String identifier, int identifierACK) {
-        byte[] buffer = Binary.appendBytes(
+        /*byte[] buffer = Binary.appendBytes(
                 RakNet.PACKET_ACK_NOTIFICATION,
                 new byte[]{(byte) (identifier.length() & 0xff)},
                 identifier.getBytes(StandardCharsets.UTF_8),
                 Binary.writeInt(identifierACK)
         );
-        this.server.pushThreadToMainPacket(buffer);
+        this.server.pushThreadToMainPacket(buffer);*/
+	    DragonetServer.instance().getNetwork().notifyACK(identifier, identifierACK);
     }
 
     protected void streamOption(String name, String value) {
-        byte[] buffer = Binary.appendBytes(
+        /*byte[] buffer = Binary.appendBytes(
                 RakNet.PACKET_SET_OPTION,
                 new byte[]{(byte) (name.length() & 0xff)},
                 name.getBytes(StandardCharsets.UTF_8),
                 value.getBytes(StandardCharsets.UTF_8)
         );
-        this.server.pushThreadToMainPacket(buffer);
+        this.server.pushThreadToMainPacket(buffer);*/
+	    DragonetServer.instance().getNetwork().handleOption(name, value);
     }
 
     private void checkSessions() {
@@ -313,7 +333,7 @@ public class SessionManager {
     }
 
     public boolean receiveStream() throws Exception {
-        byte[] packet = this.server.readMainToThreadPacket();
+        /*byte[] packet = this.server.readMainToThreadPacket();
         if (packet != null && packet.length > 0) {
             byte id = packet[0];
             int offset = 1;
@@ -393,7 +413,7 @@ public class SessionManager {
                     return false;
             }
             return true;
-        }
+        }*/
 
         return false;
     }
@@ -438,7 +458,7 @@ public class SessionManager {
         if (this.sessions.containsKey(id)) {
             this.sessions.get(id).close();
             this.sessions.remove(id);
-            this.streamClose(id, reason);
+            this.streamClose(session, reason);
         }
     }
 
