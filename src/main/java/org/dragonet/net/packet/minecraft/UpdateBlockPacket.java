@@ -48,6 +48,7 @@ public class UpdateBlockPacket extends PEPacket {
 
     @Override
     public void encode() {
+        setShouldSendImmidate(true);
         try {
             setChannel(NetworkChannel.CHANNEL_BLOCKS);
             ByteArrayOutputStream bos = new ByteArrayOutputStream();

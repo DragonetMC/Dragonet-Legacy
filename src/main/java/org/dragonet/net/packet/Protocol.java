@@ -11,7 +11,7 @@ import org.dragonet.net.packet.minecraft.*;
 
 public final class Protocol {
 
-    private static HashMap<Byte, Class<? extends PEPacket>> protocol;
+    private final static HashMap<Byte, Class<? extends PEPacket>> protocol;
 
     static {
         protocol = new HashMap<>();

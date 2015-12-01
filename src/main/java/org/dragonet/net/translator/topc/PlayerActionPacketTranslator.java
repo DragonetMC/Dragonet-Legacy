@@ -22,6 +22,8 @@ import org.dragonet.net.translator.Translator_v0_11;
 
 public class PlayerActionPacketTranslator extends PEPacketTranslatorToPC<Translator_v0_11, PlayerActionPacket> {
 
+    private final static DiggingHandler HANDLER = new DiggingHandler();
+    
     public PlayerActionPacketTranslator(Translator_v0_11 translator, DragonetSession session) {
         super(translator, session);
     }
@@ -32,12 +34,10 @@ public class PlayerActionPacketTranslator extends PEPacketTranslatorToPC<Transla
         switch (packet.action) {
             case PlayerActionPacket.ACTION_START_BREAK:
                 DiggingMessage msgStartBreak = new DiggingMessage(DiggingMessage.START_DIGGING, packet.x, packet.y, packet.z, packet.face);
-                new DiggingHandler().handle(getSession(), msgStartBreak);
-            /*
+                HANDLER.handle(getSession(), msgStartBreak);
             case PlayerActionPacket.ACTION_FINISH_BREAK:
                 DiggingMessage msgFinishBreak = new DiggingMessage(DiggingMessage.FINISH_DIGGING, packet.x, packet.y, packet.z, packet.face);
                 new DiggingHandler().handle(this.getSession(), msgFinishBreak);
-            */
         }
         return null;
     }

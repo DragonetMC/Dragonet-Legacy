@@ -123,6 +123,6 @@ public final class PENetworkClient {
     }
     
     public void sendPacket(PEPacket packet, int reliability){
-        
+        inf.sendPacket(raknetIdentifier, packet, true, packet.isShouldSendImmidate());
     }
 }
