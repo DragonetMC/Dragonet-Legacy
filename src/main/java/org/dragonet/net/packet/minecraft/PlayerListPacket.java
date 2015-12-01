@@ -15,8 +15,10 @@ package org.dragonet.net.packet.minecraft;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.UUID;
 import lombok.Data;
 import org.dragonet.net.inf.mcpe.NetworkChannel;
+import org.dragonet.utilities.io.PEBinaryReader;
 import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class PlayerListPacket extends PEPacket {
@@ -25,6 +27,17 @@ public class PlayerListPacket extends PEPacket {
     public ArrayList<PlayerInfo> players;
     public boolean isAdding;
 
+    public PlayerListPacket() {
+        players = new ArrayList<>();
+    }
+    
+    public PlayerListPacket(PlayerInfo... playerArray){
+        players = new ArrayList<>();
+        for(PlayerInfo info : playerArray){
+            players.add(info);
+        }
+    }
+    
     @Override
     public int pid() {
         return PEPacketIDs.PLAYER_LIST_PACKET;
@@ -44,7 +57,7 @@ public class PlayerListPacket extends PEPacket {
             }
             writer.writeInt(players.size());
             for(PlayerInfo info : players){
-                writer.write(info.encode(isAdding));
+                info.encode(writer, isAdding);
             }
             this.setData(bos.toByteArray());
         } catch (IOException e) {
@@ -59,11 +72,41 @@ public class PlayerListPacket extends PEPacket {
     @Data
     public static class PlayerInfo {
 
-        //REMOVE: UUID
-        //ADD: UUID, entity id, name, isSlim, skin 
+        public UUID uuid;
+        public long eid;
+        public String name;
         
-        public byte[] encode(boolean adding) {
-            return new byte[0]; //TODO
+        public boolean skinSlim;
+        public boolean skinTransparent;
+        public byte[] skin;
+
+        public PlayerInfo(UUID uuid, long eid, String name, boolean skinSlim, boolean skinTransparent, byte[] skin) {
+            this.uuid = uuid;
+            this.eid = eid;
+            this.name = name;
+            this.skinSlim = skinSlim;
+            this.skinTransparent = skinTransparent;
+            this.skin = skin;
+        }
+        
+        public void encode(PEBinaryWriter out, boolean isAdding) throws IOException {
+            out.writeUUID(uuid);
+            if(!isAdding) return;
+            out.writeLong(eid);
+            out.writeByte(skinSlim ? (byte)0x01 : (byte)0x00);
+            out.writeByte(skinTransparent ? (byte)0x01 : (byte)0x00);
+            out.write(skin);
+        }
+        
+        public static PlayerInfo decode(PEBinaryReader reader) throws IOException {
+            UUID uuid = reader.readUUID();
+            long eid = reader.readLong();
+            String name = reader.readString();
+            boolean skinSlim = (reader.readByte() & 0xFF) == 0x01;
+            boolean skinTransparent = (reader.readByte() & 0xFF) == 0x01;
+            short skinLen = reader.readShort();
+            byte[] skin = reader.read(skinLen);
+            return new PlayerInfo(uuid, eid, name, skinSlim, skinTransparent, skin);
         }
     }
 
