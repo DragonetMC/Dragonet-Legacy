@@ -94,7 +94,7 @@ public class PlayerListPacket extends PEPacket {
             if(!isAdding) return;
             out.writeLong(eid);
             out.writeByte(skinSlim ? (byte)0x01 : (byte)0x00);
-            out.writeByte(skinSlim ? (byte)0x01 : (byte)0x00);
+            out.writeByte(skinTransparent ? (byte)0x01 : (byte)0x00);
             out.write(skin);
         }
         
