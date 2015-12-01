@@ -43,6 +43,7 @@ public class AddPlayerPacket extends PEPacket {
 
     @Override
     public void encode() {
+        setShouldSendImmidate(true);
         setChannel(NetworkChannel.CHANNEL_ENTITY_SPAWNING);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         PEBinaryWriter writer = new PEBinaryWriter(bos);
