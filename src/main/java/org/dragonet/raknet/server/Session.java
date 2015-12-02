@@ -1,19 +1,6 @@
 package org.dragonet.raknet.server;
 
-import org.dragonet.raknet.protocol.packet.OPEN_CONNECTION_REPLY_1;
-import org.dragonet.raknet.protocol.packet.OPEN_CONNECTION_REQUEST_1;
-import org.dragonet.raknet.protocol.packet.SERVER_HANDSHAKE_DataPacket;
-import org.dragonet.raknet.protocol.packet.DATA_PACKET_4;
-import org.dragonet.raknet.protocol.packet.CLIENT_DISCONNECT_DataPacket;
-import org.dragonet.raknet.protocol.packet.OPEN_CONNECTION_REQUEST_2;
-import org.dragonet.raknet.protocol.packet.CLIENT_HANDSHAKE_DataPacket;
-import org.dragonet.raknet.protocol.packet.OPEN_CONNECTION_REPLY_2;
-import org.dragonet.raknet.protocol.packet.CLIENT_CONNECT_DataPacket;
-import org.dragonet.raknet.protocol.packet.NACK;
-import org.dragonet.raknet.protocol.packet.PING_DataPacket;
-import org.dragonet.raknet.protocol.packet.PONG_DataPacket;
-import org.dragonet.raknet.protocol.packet.DATA_PACKET_0;
-import org.dragonet.raknet.protocol.packet.ACK;
+import org.dragonet.raknet.protocol.packet.*;
 import org.dragonet.raknet.RakNet;
 import org.dragonet.raknet.protocol.DataPacket;
 import org.dragonet.raknet.protocol.EncapsulatedPacket;
@@ -156,9 +143,8 @@ public class Session {
         if (this.packetToSend.size() > WINDOW_SIZE) {
             this.packetToSend.clear();
         }
-
-        if (!this.needACK.isEmpty()) {
-            for (int identifierACK : new ArrayList<>(this.needACK.keySet())) {
+        if (this.needACK != null && !this.needACK.isEmpty()) {
+            for (int identifierACK : this.needACK.keySet().toArray(new Integer[needACK.size()])) {
                 Map<Integer, Integer> indexes = this.needACK.get(identifierACK);
                 if (indexes.isEmpty()) {
                     this.needACK.remove(identifierACK);
@@ -167,23 +153,24 @@ public class Session {
             }
         }
 
-        for (int seq : new ArrayList<>(this.recoveryQueue.keySet())) {
-            DataPacket pk = this.recoveryQueue.get(seq);
-            if (pk.sendTime < System.currentTimeMillis() - 8000) {
-                this.packetToSend.add(pk);
-                this.recoveryQueue.remove(seq);
-            } else {
-                break;
-            }
-        }
+	    for (int seq : this.recoveryQueue.keySet().toArray(new Integer[recoveryQueue.size()])) {
+		    DataPacket pk = this.recoveryQueue.get(seq);
+		    if (pk.sendTime < System.currentTimeMillis() - 8000) {
+			    this.packetToSend.add(pk);
+			    this.recoveryQueue.remove(seq);
+		    } else {
+			    break;
+		    }
+	    }
 
-        for (int seq : new ArrayList<>(this.receivedWindow.keySet())) {
-            if (seq < this.windowStart) {
-                this.receivedWindow.remove(seq);
-            } else {
-                break;
-            }
-        }
+	    if(this.receivedWindow != null)
+	        for (int seq : this.receivedWindow.keySet().toArray(new Integer[receivedWindow.size()])) {
+	            if (seq < this.windowStart) {
+	                this.receivedWindow.remove(seq);
+	            } else {
+	                break;
+	            }
+	        }
 
         this.sendQueue();
     }
@@ -193,7 +180,8 @@ public class Session {
     }
 
     public void disconnect(String reason) throws Exception {
-        this.sessionManager.removeSession(this, reason);
+	    sessionManager.streamClose(this, reason);
+        //this.sessionManager.removeSession(this, reason);
     }
 
     private void sendPacket(Packet packet) throws IOException {
@@ -512,6 +500,14 @@ public class Session {
             }
         } else if ((packet.buffer[0] & 0xff) > 0x00 || (packet.buffer[0] & 0xff) < (byte) 0x80) { //Not Data packet :)
             packet.decode();
+	        if(packet instanceof UNCONNECTED_PING) {
+		        UNCONNECTED_PONG pk = new UNCONNECTED_PONG();
+		        pk.serverID = sessionManager.getID();
+		        pk.pingID = ((UNCONNECTED_PING) packet).pingID;
+		        pk.serverName = sessionManager.getServer().getInstance().getServerName();
+		        pk.encode();
+		        sendPacket(pk);
+	        }
             if (packet instanceof OPEN_CONNECTION_REQUEST_1) {
                 //TODO: check protocol number and refuse connections
                 OPEN_CONNECTION_REPLY_1 pk = new OPEN_CONNECTION_REPLY_1();
@@ -540,4 +536,9 @@ public class Session {
         this.addEncapsulatedToQueue(EncapsulatedPacket.fromBinary(data), RakNet.PRIORITY_IMMEDIATE);
         this.sessionManager = null;
     }
+
+	public String getIdentifier() {
+		return getAddress() + ":" + getPort();
+	}
+
 }

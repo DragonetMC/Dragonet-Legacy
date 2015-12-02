@@ -8,15 +8,18 @@ import org.dragonet.raknet.protocol.EncapsulatedPacket;
  */
 public interface ServerInstance {
 
-    void openSession(String identifier, String address, int port, long clientID);
+    void openSession(Session rakSession);
 
-    void closeSession(String identifier, String reason);
+    void closeSession(Session rakSession, String reason);
 
-    void handleEncapsulated(String identifier, EncapsulatedPacket packet, int flags);
+    void handleEncapsulated(Session rakSession, EncapsulatedPacket packet, int flags);
 
     void handleRaw(String address, int port, byte[] payload);
 
     void notifyACK(String identifier, int identifierACK);
 
     void handleOption(String option, String value);
+
+	String getServerName();
+
 }

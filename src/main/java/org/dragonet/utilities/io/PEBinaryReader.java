@@ -16,6 +16,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 public class PEBinaryReader implements Closeable {
@@ -83,7 +84,7 @@ public class PEBinaryReader implements Closeable {
         falloc(lenLen);
         int length = (int) readNat(lenLen);
         falloc(length);
-        return new String(read(length), "UTF-8");
+        return new String(read(length), StandardCharsets.UTF_8);
     }
 
     public byte readByte() throws IOException {

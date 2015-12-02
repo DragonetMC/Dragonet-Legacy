@@ -19,12 +19,16 @@ import java.io.OutputStream;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 public class PEBinaryWriter implements Flushable, Closeable {
 
     protected OutputStream os;
     protected boolean endianness;
+
+	Charset charset = Charset.forName("UTF-8");
 
     public PEBinaryWriter(OutputStream os) {
         this(os, PEBinaryUtils.BIG_ENDIAN);
@@ -76,8 +80,10 @@ public class PEBinaryWriter implements Flushable, Closeable {
     }
 
     public void writeString(String string, int lenLen) throws IOException {
-        write(string.length(), lenLen);
-        os.write(string.getBytes());
+        //write(string.getBytes(charset).length(), lenLen);
+        writeShort((short)string.getBytes(charset).length);
+	    os.write(string.getBytes(charset));
+	    // lenLen is useless??
     }
 
     public void writeByte(byte b) throws IOException {
