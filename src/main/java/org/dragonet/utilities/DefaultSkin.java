@@ -20,10 +20,11 @@ public class DefaultSkin {
 
     protected static byte[] defaultSkin;
 
+    static {
+        loadSkin();
+    }
+    
     public static byte[] getDefaultSkin() {
-        if (defaultSkin == null) {
-            loadSkin();
-        }
         return defaultSkin;
     }
 

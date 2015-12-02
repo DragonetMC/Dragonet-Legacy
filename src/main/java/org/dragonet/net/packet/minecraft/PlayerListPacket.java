@@ -23,9 +23,9 @@ import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class PlayerListPacket extends PEPacket {
 
+    public boolean isAdding;
     
     public ArrayList<PlayerInfo> players;
-    public boolean isAdding;
 
     public PlayerListPacket() {
         players = new ArrayList<>();

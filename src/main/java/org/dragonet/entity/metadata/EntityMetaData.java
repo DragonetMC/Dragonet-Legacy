@@ -92,7 +92,7 @@ public class EntityMetaData {
     public static EntityMetaData getMetaDataFromPlayer(GlowPlayer player) {
         byte flags = (byte) 0x00;
         if (player.getFireTicks() > 0) {
-            flags |= EntityMetaData.Constants.DATA_FLAG_ACTION;
+            flags |= EntityMetaData.Constants.DATA_FLAG_ONFIRE;
         }
         if(player.isSprinting()){
             flags |= EntityMetaData.Constants.DATA_FLAG_SPRINTING;
