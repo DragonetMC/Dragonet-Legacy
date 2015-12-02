@@ -19,6 +19,7 @@ import java.io.OutputStream;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 public class PEBinaryWriter implements Flushable, Closeable {
@@ -75,9 +76,10 @@ public class PEBinaryWriter implements Flushable, Closeable {
         }
     }
 
-    public void writeString(String string, int lenLen) throws IOException {
-        write(string.length(), lenLen);
-        os.write(string.getBytes());
+    public void writeString(String string, int lenPrefix) throws IOException {
+        byte[] bin = string.getBytes(StandardCharsets.UTF_8);
+        write(bin.length, lenPrefix);
+        os.write(bin);
     }
 
     public void writeByte(byte b) throws IOException {
