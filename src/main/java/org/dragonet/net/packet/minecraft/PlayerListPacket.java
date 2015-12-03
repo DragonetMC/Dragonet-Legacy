@@ -95,9 +95,10 @@ public class PlayerListPacket extends PEPacket {
             out.writeLong(eid);
 	        out.writeString(name);
             out.writeByte(skinSlim ? (byte)0x01 : (byte)0x00);
-            out.writeByte(skinTransparent ? (byte)0x01 : (byte)0x00);
+	        out.writeByte((byte) 0x00); //TODO get the default skin to work.
+            /*out.writeByte(skinTransparent ? (byte)0x01 : (byte)0x00);
 	        out.writeShort((short) skin.length);
-            out.write(skin);
+            out.write(skin);*/
         }
         
         public static PlayerInfo decode(PEBinaryReader reader) throws IOException {

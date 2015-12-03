@@ -32,7 +32,6 @@ public class SpawnPlayerMessageTranslator extends MessageTranslatorToPE<Translat
         AddPlayerPacket pkAddPlayer = new AddPlayerPacket();
         pkAddPlayer.uuid = packet.getUuid();
         pkAddPlayer.eid = packet.getId();
-	    System.out.println("TEST + " + packet.getId());
         pkAddPlayer.username = this.getSession().getServer().getPlayer(packet.getUuid()).getDisplayName();
         pkAddPlayer.x = (float) packet.getX() / 32;
         pkAddPlayer.y = (float) packet.getY() / 32;
@@ -43,7 +42,7 @@ public class SpawnPlayerMessageTranslator extends MessageTranslatorToPE<Translat
         pkAddPlayer.speedZ = 0.0f;
         pkAddPlayer.yaw = ((float)packet.getRotation() / 256) * 360;
         pkAddPlayer.pitch = ((float)packet.getPitch() / 256) * 360;
-        pkAddPlayer.metadata = EntityMetaData.getMetaDataFromPlayer((GlowPlayer) this.getSession().getPlayer().getWorld().getEntityManager().getEntity(packet.getId()));
+        //pkAddPlayer.metadata = EntityMetaData.getMetaDataFromPlayer((GlowPlayer) this.getSession().getPlayer().getWorld().getEntityManager().getEntity(packet.getId())); TODO Fix the metadata, this one of the reasons why skins weren't working properly!
         
         PlayerListPacket lst = new PlayerListPacket(new PlayerListPacket.PlayerInfo(packet.getUuid(), packet.getId(), pkAddPlayer.username, true, false, DefaultSkin.getDefaultSkin()));
         

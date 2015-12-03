@@ -36,8 +36,8 @@ public class DefaultSkin {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
 
 	        String hex = in.readLine();
-	        defaultSkin = hexStringToByteArray(hex);
-	        Hex a;
+	        //defaultSkin = hexStringToByteArray(hex);
+	        defaultSkin = Hex.toBytes(hex);
 	        out.close();
 	        in.close();
 
