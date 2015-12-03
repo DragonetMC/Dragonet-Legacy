@@ -46,9 +46,8 @@ public class RakNetInterface implements ServerInstance {
         String name = "MCPE;";
         name += sesMan.getServer().getServer().getServerName().replace(";", "\\;") + ";";
         name += DragonetVersioning.MINECRAFT_PE_PROTOCOL + ";";
-        name += DragonetVersioning.MINECRAFT_PE_VERSION + ";";
+        name += "PC " + DragonetVersioning.MINECRAFT_PC_VERSION + ", PE " + DragonetVersioning.MINECRAFT_PE_VERSION + ";";
         name += "-1;-1";
-
         this.handler.sendOption("name", name);
     }
     
