@@ -32,7 +32,7 @@ public class MultiBlockChangeMessageTranslator extends MessageTranslatorToPE<Tra
             pkBC.records[i].z = msgBC.z;
             pkBC.records[i].y = (byte) (msgBC.y & 0xFF);
             pkBC.records[i].block = (byte) (this.getTranslator().getItemTranslator().translateToPE(msgBC.type >> 4) & 0xFF);
-            pkBC.records[i].meta = (byte) (msgBC.type & 0xFF);
+            pkBC.records[i].meta = UpdateBlockPacket.FLAG_ALL_PRIORITY;
             i++;
         }
         return new PEPacket[]{pkBC};
