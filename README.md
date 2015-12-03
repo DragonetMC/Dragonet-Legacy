@@ -24,6 +24,8 @@ Yes, mostly! But you may expirence some bugs and issues because this software is
 #### For Minecraft PE: UPDATING
 Servers are proudly sponsored by [BytePowered](http://www.bytepowered.com). 
 
+* There are more community sponsored servers [here](https://github.com/DragonetMC/Dragonet/wiki/Community-Servers). 
+
 ### About Bukkit Essentials
 #### If you are looking for Bukkit Essentials, you should use [Spigot Essentials](https://hub.spigotmc.org/jenkins/job/Spigot-Essentials/). 
 
