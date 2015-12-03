@@ -20,9 +20,9 @@ Yes, mostly! But you may expirence some bugs and issues because this software is
 ## Demo Server
 `Always Running Latest Dragonet 0.0.3 Development Build. `
 `Installed Bukkit Essentials plugins for only demo purpose. `
-#### For Minecraft PC: UPDATING
-#### For Minecraft PE: UPDATING
-Servers are proudly sponsored by [BytePowered](http://www.bytepowered.com). 
+### The official [BytePowered](http://www.bytepowered.com) server is not ready yet
+#### For Minecraft PC: `demo.cgrp.co.kr:25565`
+#### For Minecraft PE: `demo.cgrp.co.kr` with default port 19132
 
 * There are more community sponsored servers [here](https://github.com/DragonetMC/Dragonet/wiki/Community-Servers). 
 
