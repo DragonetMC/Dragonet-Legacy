@@ -32,6 +32,7 @@ public class SpawnPlayerMessageTranslator extends MessageTranslatorToPE<Translat
         AddPlayerPacket pkAddPlayer = new AddPlayerPacket();
         pkAddPlayer.uuid = packet.getUuid();
         pkAddPlayer.eid = packet.getId();
+	    System.out.println("TEST + " + packet.getId());
         pkAddPlayer.username = this.getSession().getServer().getPlayer(packet.getUuid()).getDisplayName();
         pkAddPlayer.x = (float) packet.getX() / 32;
         pkAddPlayer.y = (float) packet.getY() / 32;

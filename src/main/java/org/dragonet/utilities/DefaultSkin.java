@@ -12,6 +12,8 @@
  */
 package org.dragonet.utilities;
 
+import com.caucho.util.Hex;
+
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -33,15 +35,23 @@ public class DefaultSkin {
             DataInputStream in = new DataInputStream(DefaultSkin.class.getResourceAsStream("/defaults/SKIN.bin"));
             ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-            byte[] buffer = new byte[4096];
-            int count;
-            while ((count = in.read(buffer)) > 0) {
-                out.write(buffer, 0, count);
-            }
-            defaultSkin = out.toByteArray();
-            out.close();
-            in.close();
+	        String hex = in.readLine();
+	        defaultSkin = hexStringToByteArray(hex);
+	        Hex a;
+	        out.close();
+	        in.close();
+
         } catch (IOException e) {
         }
     }
+
+	public static byte[] hexStringToByteArray(String s) {
+		int len = s.length();
+		byte[] data = new byte[len / 2];
+		for (int i = 0; i < len; i += 2) {
+			data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
+					+ Character.digit(s.charAt(i+1), 16));
+		}
+		return data;
+	}
 }
