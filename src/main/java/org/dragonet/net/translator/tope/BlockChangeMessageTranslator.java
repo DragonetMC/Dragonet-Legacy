@@ -26,7 +26,7 @@ public class BlockChangeMessageTranslator extends MessageTranslatorToPE<Translat
         rec.z = packet.z;
         rec.y = (byte) (packet.y & 0xFF);
         rec.block = (byte) (this.getTranslator().getItemTranslator().translateToPE(packet.type >> 4) & 0xFF);
-        rec.meta = (byte) (packet.type & 0xFF);
+        rec.meta = UpdateBlockPacket.FLAG_ALL;
         pkBC.records = new UpdateBlockPacket.UpdateBlockRecord[]{rec};
         return new PEPacket[]{pkBC};
     }
