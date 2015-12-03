@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.Getter;
+import org.dragonet.DragonetServer;
 import org.dragonet.net.SessionManager;
 import org.dragonet.net.packet.minecraft.BatchPacket;
 import org.dragonet.net.packet.minecraft.PEPacket;
@@ -47,7 +48,7 @@ public class RakNetInterface implements ServerInstance {
         name += sesMan.getServer().getServer().getServerName().replace(";", "\\;") + ";";
         name += DragonetVersioning.MINECRAFT_PE_PROTOCOL + ";";
         name += DragonetVersioning.MINECRAFT_PE_VERSION + ";";
-        name += "-1;-1";
+        name += "0;" + DragonetServer.instance().getServer().getMaxPlayers();
         this.handler.sendOption("name", name);
     }
     
