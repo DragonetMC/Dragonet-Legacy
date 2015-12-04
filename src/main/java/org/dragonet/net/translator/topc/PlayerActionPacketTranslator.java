@@ -26,8 +26,6 @@ public class PlayerActionPacketTranslator extends PEPacketTranslatorToPC<Transla
         super(translator, session);
     }
 
-    private PlayerActionPacket cachedStart;
-    
     @Override
     public Message[] handleSpecific(PlayerActionPacket packet) {
         System.out.println("ACTION = " + packet.action + " @ (" + packet.x + ", " + packet.y + ", " + packet.z + ") face=" + packet.face);
@@ -35,7 +33,6 @@ public class PlayerActionPacketTranslator extends PEPacketTranslatorToPC<Transla
         switch (packet.action) {
             case PlayerActionPacket.ACTION_START_BREAK:
                 ret = new DiggingMessage(DiggingMessage.START_DIGGING, packet.x, packet.y, packet.z, packet.face);
-                cachedStart = packet;
                 break;
             /*
             case PlayerActionPacket.ACTION_FINISH_BREAK:
