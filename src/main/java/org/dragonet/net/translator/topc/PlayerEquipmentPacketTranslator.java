@@ -42,7 +42,7 @@ public class PlayerEquipmentPacketTranslator extends PEPacketTranslatorToPC<Tran
             return null;
         }
         int slot = pkEquipment.slot - 9;
-        if (slot < 36) { //Normal Inventory
+        if (slot < 27) { //Normal Inventory
             //Swap
             ItemStack item = this.getSession().getPlayer().getInventory().getItem(slot + 9);
             this.getSession().getPlayer().getInventory().setItem(slot + 9, this.getSession().getPlayer().getInventory().getItem(0));
@@ -56,7 +56,7 @@ public class PlayerEquipmentPacketTranslator extends PEPacketTranslatorToPC<Tran
                 this.getSession().getPlayer().getInventory().setHeldItemSlot(slot + 9);
             }
             this.getSession().sendInventory();
-        } else if (slot >= 36) { //Hotbar
+        } else if (slot >= 27) { //Hotbar
             ItemStack item = this.getSession().getPlayer().getInventory().getItem(slot - 27);
             if (item.getAmount() <= 0) {
                 this.getSession().getPlayer().getInventory().setItem(slot - 27, null);
