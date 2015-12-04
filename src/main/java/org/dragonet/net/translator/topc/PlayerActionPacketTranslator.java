@@ -30,19 +30,21 @@ public class PlayerActionPacketTranslator extends PEPacketTranslatorToPC<Transla
     
     @Override
     public Message[] handleSpecific(PlayerActionPacket packet) {
-        System.out.println("ACTION = " + packet.action + " @ (" + packet.x + ", " + packet.y + ", " + packet.z + ")");
+        System.out.println("ACTION = " + packet.action + " @ (" + packet.x + ", " + packet.y + ", " + packet.z + ") face=" + packet.face);
         Message ret = null;
         switch (packet.action) {
             case PlayerActionPacket.ACTION_START_BREAK:
                 ret = new DiggingMessage(DiggingMessage.START_DIGGING, packet.x, packet.y, packet.z, packet.face);
                 cachedStart = packet;
                 break;
+            /*
             case PlayerActionPacket.ACTION_FINISH_BREAK:
                 if(cachedStart != null){
                     ret = new DiggingMessage(DiggingMessage.FINISH_DIGGING, cachedStart.x, cachedStart.y, cachedStart.z, cachedStart.face);
                     cachedStart = null;
                 }
                 break;
+            */
         }
         return new Message[]{ret};
     }
