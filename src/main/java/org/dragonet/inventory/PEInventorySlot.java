@@ -68,11 +68,11 @@ public class PEInventorySlot {
     }
 
     public static void writeSlot(PEBinaryWriter writer, PEInventorySlot slot) throws IOException {
-        if(slot == null){
+        if(slot == null || (slot != null && slot.id == 0)){
             writer.writeShort((short)0);
             return;
         }
-        writer.writeShort(slot.id == 0 ? (short)0xFFFF : slot.id);
+        writer.writeShort(slot.id);
         writer.writeByte(slot.count);
         writer.writeShort(slot.meta);
         if(slot.nbt == null){
