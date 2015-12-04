@@ -17,17 +17,39 @@ Currently it supports Bukkit plugins, Sponge plugins(non-mod) and DAPIS Javascri
 ##Is this fully working now?
 Yes, mostly! But you may expirence some bugs and issues because this software is still in heavy development stage. 
 
-## Demo Server
+## How can I try Dragonet ?
+
+### Demo Servers
 `Always Running Latest Dragonet 0.0.3 Development Build. `
 `Installed Bukkit Essentials plugins for only demo purpose. `
 ### The official [BytePowered](http://www.bytepowered.com) server is not ready yet
 #### For Minecraft PC: `demo.cgrp.co.kr:25565`
 #### For Minecraft PE: `demo.cgrp.co.kr` with default port 19132
 
-* There are more community sponsored servers [here](https://github.com/DragonetMC/Dragonet/wiki/Community-Servers). 
+* There are more community sponsored servers [here](https://github.com/DragonetMC/Dragonet/wiki/Community-Servers).
+
+### Docker image
+
+We provide a Docker image which is automatically updated upon changes on our **master** branch.
+It requires [Docker](https://docs.docker.com/engine/installation/), of course.
+
+Just run:
+```
+docker run -it -p 25565:25565 -p 19132:19132/udp dragonet/dragonet:unstable
+```
+
+If you want to keep your data in a known place, you can mount `/dragonet/data` volume:
+```
+docker run -it -p 25565:25565 -p 19132:19132/udp -v /somewhere/on/my/computer:/dragonet/data dragonet/dragonet:unstable
+```
+
+If you want to run it in the background:
+```
+docker run -d -p 25565:25565 -p 19132:19132/udp -v /somewhere/on/my/computer:/dragonet/data dragonet/dragonet:unstable
+```
 
 ### About Bukkit Essentials
-#### If you are looking for Bukkit Essentials, you should use [Spigot Essentials](https://hub.spigotmc.org/jenkins/job/Spigot-Essentials/). 
+#### If you are looking for Bukkit Essentials, you should use [Spigot Essentials](https://hub.spigotmc.org/jenkins/job/Spigot-Essentials/).
 
 ## Download
 You may download pre-compiled binaries at our website:
