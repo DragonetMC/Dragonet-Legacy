@@ -98,10 +98,7 @@ public abstract class DragonetSession extends GlowSession {
     public void onPacketReceived(PEPacket packet) {
         switch (packet.pid()) {
             case PEPacketIDs.DISCONNECT_PACKET:
-                this.onDisconnect();
-                break;
-            case 0x15:
-                this.onDisconnect();
+                this.disconnect("Player disconnect");
                 break;
             case PEPacketIDs.BATCH_PACKET:
                 BatchPacket packetBatch = (BatchPacket) packet;
