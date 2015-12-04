@@ -17,6 +17,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.Getter;
+import lombok.Setter;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.dragonet.DragonetServer;
 import org.dragonet.net.SessionManager;
 import org.dragonet.net.packet.minecraft.BatchPacket;
 import org.dragonet.net.packet.minecraft.PEPacket;
@@ -26,30 +32,48 @@ import org.dragonet.raknet.server.RakNetServer;
 import org.dragonet.raknet.server.ServerHandler;
 import org.dragonet.raknet.server.ServerInstance;
 import org.dragonet.utilities.DragonetVersioning;
+import org.spongepowered.api.event.EventListener;
 
-public class RakNetInterface implements ServerInstance {
+public class RakNetInterface implements ServerInstance, Listener {
 
     @Getter
     private final SessionManager sesMan;
     
     private final RakNetServer raknetServer;
-    
-    private final ServerHandler handler;
+
+	@Getter
+    private static ServerHandler handler = null;
 
     private final Map<String, PENetworkClient> clients = Collections.synchronizedMap(new HashMap<String, PENetworkClient>());
+
+	static String serverName = "";
     
     public RakNetInterface(SessionManager sesMan, String bindAddress, int port) {
         this.sesMan = sesMan;
         this.raknetServer = new RakNetServer(port, bindAddress);
-        this.handler = new ServerHandler(raknetServer, this);
-        
-        String name = "MCPE;";
-        name += sesMan.getServer().getServer().getServerName().replace(";", "\\;") + ";";
-        name += DragonetVersioning.MINECRAFT_PE_PROTOCOL + ";";
-        name += DragonetVersioning.MINECRAFT_PE_VERSION + ";";
-        name += "-1;-1";
-        this.handler.sendOption("name", name);
+        handler = new ServerHandler(raknetServer, this);
+
+	    serverName = sesMan.getServer().getServer().getServerName().replace(";", "\\;");
+
+	    String name = "MCPE;";
+	    name += serverName + ";";
+	    name += DragonetVersioning.MINECRAFT_PE_PROTOCOL + ";";
+	    name += DragonetVersioning.MINECRAFT_PE_VERSION + ";";
+	    name += "0;" + DragonetServer.instance().getServer().getMaxPlayers();
+	    this.handler.sendOption("name", name);
+
     }
+
+	public static void sendName() {
+		String name = "MCPE;";
+		name += serverName + ";";
+		name += DragonetVersioning.MINECRAFT_PE_PROTOCOL + ";";
+		name += DragonetVersioning.MINECRAFT_PE_VERSION + ";";
+		name += DragonetServer.instance().getServer().getOnlinePlayers().size() + ";" + DragonetServer.instance().getServer().getMaxPlayers();
+		if(getHandler() != null)
+			getHandler().sendOption("name", name);
+		//TODO The name only updates when a PE client joins, gotta make it update when a PC client joins too!
+	}
     
     public void onTick(){
         int n = 0;
@@ -112,4 +136,5 @@ public class RakNetInterface implements ServerInstance {
         encapsulated.messageIndex = 0;
         this.handler.sendEncapsulated(identifier, encapsulated, (needACK ? RakNet.FLAG_NEED_ACK : 0) | (immediate ? RakNet.PRIORITY_IMMEDIATE : RakNet.PRIORITY_NORMAL));
     }
+
 }

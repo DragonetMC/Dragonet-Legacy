@@ -62,7 +62,8 @@ public class AddPlayerPacket extends PEPacket {
             writer.writeFloat(this.yaw); //Head rotation
             writer.writeFloat(this.pitch);
             PEInventorySlot.writeSlot(writer, this.item);
-            writer.write(this.metadata.encode());
+            writer.writeByte((byte) 0x00); // TODO Fix metadata, one of the reasons why skins didn't work properly!
+	        //writer.write(this.metadata.encode());
             this.setData(bos.toByteArray());
         } catch (IOException e) {
         }

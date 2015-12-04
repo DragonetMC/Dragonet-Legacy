@@ -23,7 +23,7 @@ import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class PlayerListPacket extends PEPacket {
 
-    public boolean isAdding;
+    public boolean isAdding = true;
     
     public ArrayList<PlayerInfo> players;
 
@@ -93,9 +93,12 @@ public class PlayerListPacket extends PEPacket {
             out.writeUUID(uuid);
             if(!isAdding) return;
             out.writeLong(eid);
+	        out.writeString(name);
             out.writeByte(skinSlim ? (byte)0x01 : (byte)0x00);
-            out.writeByte(skinTransparent ? (byte)0x01 : (byte)0x00);
-            out.write(skin);
+	        out.writeByte((byte) 0x00); //TODO get the default skin to work.
+            /*out.writeByte(skinTransparent ? (byte)0x01 : (byte)0x00);
+	        out.writeShort((short) skin.length);
+            out.write(skin);*/
         }
         
         public static PlayerInfo decode(PEBinaryReader reader) throws IOException {
