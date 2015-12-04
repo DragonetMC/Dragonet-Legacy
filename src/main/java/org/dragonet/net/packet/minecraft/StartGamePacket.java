@@ -50,7 +50,7 @@ public class StartGamePacket extends PEPacket {
             writer.writeInt(this.spawnY);
             writer.writeInt(this.spawnZ);
             writer.writeFloat(this.x);
-            writer.writeFloat(this.y);
+            writer.writeFloat(this.y + 1.62f);
             writer.writeFloat(this.z);
             writer.writeByte((byte)0);
             this.setData(bos.toByteArray());
