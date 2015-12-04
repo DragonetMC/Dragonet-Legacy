@@ -21,12 +21,18 @@ import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class PlayerActionPacket extends PEPacket {
 
-    public final static int ACTION_START_BREAK = 0;
-    public final static int ACTION_CANCEL_BREAK = 1;
-    public final static int ACTION_FINISH_BREAK = 2;
-    public final static int ACTION_CONSUME_ITEM = 5;
-    public final static int ACTION_WAKE_UP = 6;
-    public final static int ACTION_RESPAWN = 7;
+    public static final byte ACTION_START_BREAK = 0;
+    public static final byte ACTION_CANCEL_BREAK = 1;
+    public static final byte ACTION_FINISH_BREAK = 2;
+    public static final byte ACTION_RELEASE_ITEM = 5;
+    public static final byte ACTION_STOP_SLEEPING = 6;
+    public static final byte ACTION_RESPAWN = 7;
+    public static final byte ACTION_JUMP = 8;
+    public static final byte ACTION_START_SPRINT = 9;
+    public static final byte ACTION_STOP_SPRINT = 10;
+    public static final byte ACTION_START_SNEAK = 11;
+    public static final byte ACTION_STOP_SNEAK = 12;
+    public static final byte ACTION_DIMENSION_CHANGE = 13;
     
     public long eid;
     public int action;

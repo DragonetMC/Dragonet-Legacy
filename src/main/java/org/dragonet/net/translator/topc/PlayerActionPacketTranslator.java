@@ -22,26 +22,29 @@ import org.dragonet.net.translator.Translator_v0_11;
 
 public class PlayerActionPacketTranslator extends PEPacketTranslatorToPC<Translator_v0_11, PlayerActionPacket> {
 
-    private final static DiggingHandler HANDLER = new DiggingHandler();
-    
     public PlayerActionPacketTranslator(Translator_v0_11 translator, DragonetSession session) {
         super(translator, session);
     }
 
+    private PlayerActionPacket cachedStart;
+    
     @Override
     public Message[] handleSpecific(PlayerActionPacket packet) {
-        System.out.println("ACTION = " + packet.action);
+        System.out.println("ACTION = " + packet.action + " @ (" + packet.x + ", " + packet.y + ", " + packet.z + ")");
+        Message ret = null;
         switch (packet.action) {
             case PlayerActionPacket.ACTION_START_BREAK:
-                DiggingMessage msgStartBreak = new DiggingMessage(DiggingMessage.START_DIGGING, packet.x, packet.y, packet.z, packet.face);
-                HANDLER.handle(getSession(), msgStartBreak);
+                ret = new DiggingMessage(DiggingMessage.START_DIGGING, packet.x, packet.y, packet.z, packet.face);
+                cachedStart = packet;
                 break;
             case PlayerActionPacket.ACTION_FINISH_BREAK:
-                DiggingMessage msgFinishBreak = new DiggingMessage(DiggingMessage.FINISH_DIGGING, packet.x, packet.y, packet.z, packet.face);
-                HANDLER.handle(this.getSession(), msgFinishBreak);
+                if(cachedStart != null){
+                    ret = new DiggingMessage(DiggingMessage.FINISH_DIGGING, cachedStart.x, cachedStart.y, cachedStart.z, cachedStart.face);
+                    cachedStart = null;
+                }
                 break;
         }
-        return null;
+        return new Message[]{ret};
     }
 
 }
