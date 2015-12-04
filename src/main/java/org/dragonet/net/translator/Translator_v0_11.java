@@ -143,6 +143,7 @@ public class Translator_v0_11 extends BaseTranslator {
         mapToPC.put(ChatPacket.class, new ChatPacketTranslator(this, this.getSession()));
         mapToPC.put(MovePlayerPacket.class, new MovePlayerPacketTranslator(this, this.getSession()));
         mapToPC.put(PlayerEquipmentPacket.class, new PlayerEquipmentPacketTranslator(this, this.getSession()));
+        mapToPC.put(RemoveBlockPacket.class, new RemoveBlockPacketTranslator(this, this.getSession()));
         mapToPC.put(PlayerActionPacket.class, new PlayerActionPacketTranslator(this, this.getSession()));
         mapToPC.put(UseItemPacket.class, new UseItemPacketTranslator(this, this.getSession()));
         mapToPC.put(WindowSetSlotPacket.class, new WindowSetSlotPacketTranslator(this, this.getSession()));
