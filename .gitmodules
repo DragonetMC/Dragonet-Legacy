@@ -1,9 +1,3 @@
- [submodule "Dragonet-core/src/main/java/GlowStonePlusPlus"]
- 	path = Dragonet-core/src/main/java/GlowStonePlusPlus
- 	url = https://github.com/DragonetMC/GlowStonePlusPlus
 [submodule "GlowstonePlusPlus"]
 	path = GlowstonePlusPlus
-	url = https://github.com/DragonetMC/GlowstonePlusPlus.git
- [submodule "GlowstonePlusPlus-upstream"]
- 	path = GlowstonePlusPlus-upstream
- 	url = https://github.com/GlowstonePlusPlus/GlowstonePlusPlus.git
+	url = https://github.com/jlirochon/GlowstonePlusPlus.git
