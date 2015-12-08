@@ -49,13 +49,13 @@ public class DragonetServer {
     }
 
     @Getter
-    private GlowServer server;
+    private final GlowServer server;
 
     @Getter
-    private Logger logger;
+    private final Logger logger;
 
     @Getter
-    private SessionManager sessionManager;
+    private final SessionManager sessionManager;
 
     //---------------------------------
     @Getter
@@ -226,11 +226,7 @@ public class DragonetServer {
         if(network != null) network.shutdown();
         threadPool.shutdown();
     }
-	
-	
-	public SessionManager getSessionManager(){
-		return sessionManager;
-	}
+    
     /**
      * Reload the server. Currently only used to re-scan Rhino scripts, but
      * could be useful later.
