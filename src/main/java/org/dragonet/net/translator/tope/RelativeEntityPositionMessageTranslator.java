@@ -28,7 +28,7 @@ public class RelativeEntityPositionMessageTranslator extends MessageTranslatorTo
             return null;
         }
         if (entity instanceof GlowPlayer) {
-            boolean isTeleport = Math.sqrt(packet.deltaX ^ 2 + packet.deltaY ^ 2 + packet.deltaZ ^ 2) > 2;
+            boolean isTeleport = (packet.deltaX ^ 2 + packet.deltaY ^ 2 + packet.deltaZ ^ 2) > 4;
             MovePlayerPacket pkMovePlayer = new MovePlayerPacket(packet.id, (float) entity.getLocation().getX(), (float) entity.getLocation().getY(), (float) entity.getLocation().getZ(), entity.getLocation().getYaw(), entity.getLocation().getPitch(), entity.getLocation().getYaw(), isTeleport);
             return new PEPacket[]{pkMovePlayer};
         } else {

@@ -28,7 +28,7 @@ public class RelativeEntityPositionRotationMessageTranslator extends MessageTran
             return null;
         }
         if (entity instanceof GlowPlayer) {
-            boolean isTeleport = Math.sqrt(packet.deltaX ^ 2 + packet.deltaY ^ 2 + packet.deltaZ ^ 2) > 2;
+            boolean isTeleport = (packet.deltaX ^ 2 + packet.deltaY ^ 2 + packet.deltaZ ^ 2) > 4;
             MovePlayerPacket pkMovePlayer = new MovePlayerPacket(
                     packet.id, 
                     (float) entity.getLocation().getX(), 
