@@ -15,6 +15,8 @@ package org.dragonet.net.packet.minecraft;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import org.bukkit.Material;
 import org.dragonet.inventory.PEInventorySlot;
 import org.dragonet.inventory.PEWindowConstantID;
 import org.dragonet.net.inf.mcpe.NetworkChannel;
@@ -23,6 +25,8 @@ import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class WindowItemsPacket extends PEPacket {
 
+    public final static WindowItemsPacket CREATIVE_INVENTORY;
+    
     public byte windowID;
     public PEInventorySlot[] slots;
     public int[] hotbar;
@@ -80,4 +84,16 @@ public class WindowItemsPacket extends PEPacket {
         }
     }
 
+    
+    static{
+        CREATIVE_INVENTORY = new WindowItemsPacket();
+        CREATIVE_INVENTORY.windowID = PEWindowConstantID.PLAYER_CREATIVE;
+        ArrayList<PEInventorySlot> slots = new ArrayList<>();
+        for(Material mat : Material.values()){
+            for(int i = 0; i < mat.getMaxDurability() && i < 16; i++){
+                slots.add(new PEInventorySlot((short)mat.getId(), (byte)1, (short)(i & 0xFF)));
+            }
+        }
+        CREATIVE_INVENTORY.slots = slots.toArray(new PEInventorySlot[0]);
+    }
 }

@@ -202,14 +202,20 @@ public abstract class DragonetSession extends GlowSession {
         
         player.join(this, reader);
 
+        WindowItemsPacket creativeInv = null;
+        
         //Send the StartGamePacket
         StartGamePacket pkStartGame = new StartGamePacket();
         pkStartGame.seed = 0;
         pkStartGame.generator = 1;
         if (this.player.getGameMode().equals(GameMode.CREATIVE)) {
             pkStartGame.gamemode = 1;
-        } else {
+            creativeInv = WindowItemsPacket.CREATIVE_INVENTORY;
+        } else if(this.player.getGameMode().equals(GameMode.SURVIVAL) && this.player.getGameMode().equals(GameMode.ADVENTURE)) {
             pkStartGame.gamemode = 0;
+        } else {
+            creativeInv = new WindowItemsPacket();
+            creativeInv.windowID = PEWindowConstantID.PLAYER_CREATIVE;
         }
         pkStartGame.eid = (long)this.player.getEntityId();
         pkStartGame.spawnX = this.player.getWorld().getSpawnLocation().getBlockX();
@@ -219,7 +225,11 @@ public abstract class DragonetSession extends GlowSession {
         pkStartGame.y = (float) this.player.getLocation().getY();
         pkStartGame.z = (float) this.player.getLocation().getZ();
         this.send(pkStartGame);
-
+        
+        if(creativeInv != null){
+            this.send(creativeInv);
+        }
+        
         //Send crafting recipie list
         sendRecipies();
         
