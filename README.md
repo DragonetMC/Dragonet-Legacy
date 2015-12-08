@@ -5,7 +5,7 @@ Dragonet
 
 ### Brought to you by [BytePowered](http://www.bytepowered.com)
 
-The universal Minecraft server, supports both `Minecraft PC` and `Minecraft PE` clients.  
+The universal Minecraft server, supports both `Minecraft PC/Mac` and `Minecraft PE` clients.  
 
 [![Build status indicator](https://circleci.com/gh/DragonetMC/Dragonet/tree/master.svg?style=badge)](https://circleci.com/gh/DragonetMC/Dragonet/tree/master)  
 
@@ -23,7 +23,7 @@ Yes, mostly! But you may expirence some bugs and issues because this software is
 `Always Running Latest Dragonet 0.0.3 Development Build. `
 `Installed Bukkit Essentials plugins for only demo purpose. `
 ### The official [BytePowered](http://www.bytepowered.com) server is not ready yet
-#### For Minecraft PC: `demo.cgrp.co.kr:25565`
+#### For Minecraft PC/Mac: `demo.cgrp.co.kr:25565`
 #### For Minecraft PE: `demo.cgrp.co.kr` with default port 19132
 
 * There are more community sponsored servers [here](https://github.com/DragonetMC/Dragonet/wiki/Community-Servers).
@@ -57,7 +57,7 @@ You may download pre-compiled binaries at our website:
 You can also get development builds from the [CircleCI](https://circleci.com/gh/DragonetMC/Dragonet/tree/master) page(*Github login required*).  
 
 ### Credits & Licencing
-Dragonet software: "A universal Minecraft server that supports both Minecraft for PC and Minecraft: Pocket Edition. "<br>
+Dragonet software: "A universal Minecraft server that supports both Minecraft for PC/Mac and Minecraft: Pocket Edition. "<br>
 Dragonet's code is under `org.dragonet` package and they are under LGPL v3. <br>
 Glowstone software: `A Minecraft server that written from zero and no Mojang code included. `<br>
 Glowstone++ software: `A Glowstone fork by @GlowstonePlusPlus team. `<br />
