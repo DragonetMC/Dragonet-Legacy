@@ -36,7 +36,7 @@ public class RespawnPacket extends PEPacket {
             PEBinaryWriter writer = new PEBinaryWriter(bos);
             writer.writeByte((byte) (this.pid() & 0xFF));
             writer.writeFloat(x);
-            writer.writeFloat(y);
+            writer.writeFloat(y + 1.62f);
             writer.writeFloat(z);
             this.setData(bos.toByteArray());
         } catch (IOException e) {

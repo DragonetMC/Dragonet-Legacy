@@ -25,6 +25,7 @@ import net.glowstone.net.message.play.entity.CollectItemMessage;
 import net.glowstone.net.message.play.entity.DestroyEntitiesMessage;
 import net.glowstone.net.message.play.entity.EntityEffectMessage;
 import net.glowstone.net.message.play.entity.EntityEquipmentMessage;
+import net.glowstone.net.message.play.entity.EntityHeadRotationMessage;
 import net.glowstone.net.message.play.entity.EntityMetadataMessage;
 import net.glowstone.net.message.play.entity.EntityVelocityMessage;
 import net.glowstone.net.message.play.entity.RelativeEntityPositionMessage;
@@ -121,6 +122,7 @@ public class Translator_v0_11 extends BaseTranslator {
         mapToPE.put(EntityEquipmentMessage.class, new EntityEquipmentMessageTranslator(this, this.getSession()));
         mapToPE.put(EntityMetadataMessage.class, new EntityMetadataMessageTranslator(this, this.getSession()));
         mapToPE.put(EntityVelocityMessage.class, new EntityVelocityMessageTranslator(this, this.getSession()));
+        mapToPE.put(EntityHeadRotationMessage.class, new EntityHeadRotationTranslator(this, this.getSession()));
         mapToPE.put(KickMessage.class, new KickMessageTranslator(this, this.getSession()));
         mapToPE.put(MultiBlockChangeMessage.class, new MultiBlockChangeMessageTranslator(this, this.getSession()));
         mapToPE.put(OpenWindowMessage.class, new OpenWindowMessageTranslator(this, this.getSession()));
@@ -177,13 +179,6 @@ public class Translator_v0_11 extends BaseTranslator {
     /* ===== TO PE ===== */
     @Override
     public PEPacket[] translateToPE(Message message) {
-        /*
-         if (!message.getClass().getSimpleName().contains("Time") && !message.getClass().getSimpleName().contains("Chunk")
-         && !message.getClass().getSimpleName().contains("Move")) {
-         System.out.print("Trnaslating to PE: " + message.getClass().getSimpleName() + "\nDetail: " + message.toString());
-         }
-         */
-
         if (mapToPE.containsKey(message.getClass())) {
             return mapToPE.get(message.getClass()).handle(message);
         } else {

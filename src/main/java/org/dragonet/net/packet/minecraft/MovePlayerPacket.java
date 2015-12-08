@@ -21,6 +21,10 @@ import org.dragonet.utilities.io.PEBinaryWriter;
 
 public class MovePlayerPacket extends PEPacket {
 
+    public static final byte MODE_NORMAL = 0;
+    public static final byte MODE_RESET = 1;
+    public static final byte MODE_ROTATION = 2;
+    
     public long eid;
     public float x;
     public float y;
@@ -28,6 +32,7 @@ public class MovePlayerPacket extends PEPacket {
     public float yaw;
     public float pitch;
     public float bodyYaw;
+    public byte mode = MODE_NORMAL;
     public boolean teleport;
 
     public MovePlayerPacket(byte[] data) {
@@ -67,7 +72,7 @@ public class MovePlayerPacket extends PEPacket {
             writer.writeFloat(this.yaw);
             writer.writeFloat(this.bodyYaw);
             writer.writeFloat(this.pitch);
-            //writer.writeByte((byte)0x80);
+            writer.writeByte(this.mode);
             writer.writeByte((byte) (this.teleport ? 0x80 : 0x00));
             this.setData(bos.toByteArray());
         } catch (IOException e) {
@@ -86,6 +91,8 @@ public class MovePlayerPacket extends PEPacket {
             this.yaw = reader.readFloat();
             this.bodyYaw = reader.readFloat();
             this.pitch = reader.readFloat();
+            this.mode = reader.readByte();
+            this.teleport = reader.readByte() > 0;
             this.setLength(reader.totallyRead());
         } catch (IOException e) {
         }
