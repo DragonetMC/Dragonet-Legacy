@@ -5,6 +5,10 @@ Dragonet
 
 ### Brought to you by [BytePowered](http://www.bytepowered.com)
 
+## Dragonet is out of fasion now, we made [DragonProxy](https://github.com/DragonetMC/DragonProxy), by which you can connect to any Minecraft PC/Mac server. 
+## Don't believe me? Try to join `hypixel.dragonet.org` with port `19132`. 
+![Screenshot](https://raw.githubusercontent.com/DragonetMC/DragonProxy/master/screenshots/Hypixel.png)
+
 The universal Minecraft server, supports both `Minecraft PC/Mac` and `Minecraft PE` clients.  
 
 [![Build status indicator](https://circleci.com/gh/DragonetMC/Dragonet/tree/master.svg?style=badge)](https://circleci.com/gh/DragonetMC/Dragonet/tree/master)  
