@@ -6,9 +6,6 @@ machine:
 
 checkout:
     post:
-        - git submodule sync
-        - git submodule update --init --recursive
-        - (cd GlowstonePlusPlus/Glowkit && mvn install)
         - mvn package
 test:
     post:
