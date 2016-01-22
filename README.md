@@ -1,3 +1,4 @@
+# Project abandoned, please use [DragonProxy](https://github.com/DragonetMC/DragonProxy) instead! 
 ### Dragonet is out of fasion now, we made [DragonProxy](https://github.com/DragonetMC/DragonProxy), by which you can connect to any Minecraft PC/Mac server. 
 ### Don't believe me? Try to join `demo.dragonet.org` with port `19132`. 
 ![Screenshot](https://raw.githubusercontent.com/DragonetMC/DragonProxy/master/screenshots/Hypixel.png)
