@@ -1,3 +1,2 @@
-# Project abandoned, please use [DragonProxy](https://github.com/DragonetMC/DragonProxy) instead! 
-
-####If you would like to take over the project, create an issue in this repository.
+##Dragonet
+#####Project no longer inactive! But development will be slow, and we recommend you use [DragonProxy](https://github.com/DragonetMC/DragonProxy).
