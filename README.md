@@ -3,4 +3,4 @@
 
 ###Third-party Builds
 #####Third party builds of Dragonet
-[EurekaMine-MP](https://GitHub.com/EurekaMineTeam/EurekaMine-MP)
+[EurekaMine-MP](https://github.com/Electrota/EurekaMine-MP)
